@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+
 // (सभी 'पेज' (page) 'इम्पोर्ट' (import) करें)
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';

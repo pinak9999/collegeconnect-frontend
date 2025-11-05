@@ -1,0 +1,210 @@
+# Query: http://localhost:5000
+# Flags: CaseSensitive WordMatch
+# ContextLines: 1
+
+52 results - 20 files
+
+src\components\FeaturedSeniors.js:
+  16                  // ('Public' (पब्लिक) (सार्वजनिक) 'API' (एपीआई) 'कॉल' (call) (call) 'करें' (do))
+  17:                 const seniorsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/public/top-rated');
+  18                  setSeniors(seniorsRes.data);
+  19                  
+  20:                 const settingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
+  21                  setPlatformFee(settingsRes.data.platformFee);
+
+src\pages\AdminDashboard.js:
+   26          // ('अब' (Now) 'यह' (this) 'Page' (पेज) (page) 'नंबर' (number) (संख्या) 'भेजता' (sends) 'है' (है))
+   27:         const usersRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/users?page=${page}&limit=10`, { 
+   28              headers: { 'x-auth-token': token } 
+
+   50          
+   51:         const bookingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/bookings/admin/all?page=${page}&limit=10`, { 
+   52              headers: { 'x-auth-token': token } 
+
+   83        const token = localStorage.getItem('token');
+   84:       const res = await axios.put( `https://collegeconnect-backend-mrkz.onrender.com/api/users/${userId}/make-senior`, null, { headers: { 'x-auth-token': token } });
+   85        // ('UI' (यूआई) (UI (यूआई)) 'को' (to) 'अपडेट' (update) 'करें' (do))
+
+   97          const token = localStorage.getItem('token');
+   98:         await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/users/${userId}`, { headers: { 'x-auth-token': token } });
+   99          toast.dismiss(toastId);
+
+  113          const token = localStorage.getItem('token');
+  114:         const res = await axios.put( `https://collegeconnect-backend-mrkz.onrender.com/api/disputes/resolve/${bookingId}`, null, { headers: { 'x-auth-token': token } });
+  115          setBookings(prevBookings => prevBookings.map(b => b._id === bookingId ? res.data.booking : b));
+
+src\pages\AdminEditProfilePage.js:
+  28  
+  29:         const profileRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`, { headers: { 'x-auth-token': token } });
+  30          
+
+  43  
+  44:         const tagsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } });
+  45          setAllTags(tagsRes.data);
+  46:         const collegesRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } });
+  47          setAllColleges(collegesRes.data);
+
+  58              const token = localStorage.getItem('token');
+  59:             const tagsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } });
+  60              setAllTags(tagsRes.data);
+  61:             const collegesRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } });
+  62              setAllColleges(collegesRes.data);
+
+  97        const token = localStorage.getItem('token');
+  98:       await axios.post(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/admin/${userId}`, data, {
+  99          headers: { 'x-auth-token': token, 'Content-Type': 'multipart/form-data' }
+
+src\pages\AdminManageColleges.js:
+  12              const token = localStorage.getItem('token');
+  13:             const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', {
+  14                  headers: { 'x-auth-token': token }
+
+  26              const token = localStorage.getItem('token');
+  27:             const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { name }, { headers: { 'x-auth-token': token } });
+  28              toast.dismiss(toastId);
+
+  42              const token = localStorage.getItem('token');
+  43:             await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/colleges/${id}`, { headers: { 'x-auth-token': token } });
+  44              toast.dismiss(toastId);
+
+src\pages\AdminManageDisputes.js:
+  12              const token = localStorage.getItem('token');
+  13:             const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons', {
+  14                  headers: { 'x-auth-token': token }
+
+  26              const token = localStorage.getItem('token');
+  27:             const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons', { reason }, { headers: { 'x-auth-token': token } });
+  28              toast.dismiss(toastId);
+
+  42              const token = localStorage.getItem('token');
+  43:             await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons/${id}`, { headers: { 'x-auth-token': token } });
+  44              toast.dismiss(toastId);
+
+src\pages\AdminManageTags.js:
+  13              const token = localStorage.getItem('token');
+  14:             const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', {
+  15                  headers: { 'x-auth-token': token }
+
+  30              const token = localStorage.getItem('token');
+  31:             const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/tags',
+  32                  { name: newTagName },
+
+  51              const token = localStorage.getItem('token');
+  52:             await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/tags/${tagId}`, {
+  53                  headers: { 'x-auth-token': token }
+
+src\pages\AdminPayoutsPage.js:
+  13              const token = localStorage.getItem('token');
+  14:             const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/payouts/admin', {
+  15                  headers: { 'x-auth-token': token }
+
+  31              const res = await axios.put(
+  32:                 `https://collegeconnect-backend-mrkz.onrender.com/api/payouts/mark-paid/${seniorId}`,
+  33                  null,
+
+src\pages\AdminSettingsPage.js:
+  12              try {
+  13:                 const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings');
+  14                  setPlatformFee(res.data.platformFee);
+
+  32              await axios.put(
+  33:                 'https://collegeconnect-backend-mrkz.onrender.com/api/settings',
+  34                  { platformFee: Number(platformFee) }, // (नंबर (Number) (संख्या) 'के' (as) 'रूप' (form) 'में' (in) 'भेजें' (Send))
+
+src\pages\BookingPage.js:
+  21                  
+  22:                 const res = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { 'x-auth-token': token } });
+  23:                 const settingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
+  24                  
+
+  46              const token = localStorage.getItem('token');
+  47:             const orderRes = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/payment/order', 
+  48                  { seniorId: profile.user._id }, { headers: { 'x-auth-token': token } }
+
+  65                      try {
+  66:                         await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify', 
+  67                              {...response, bookingDetails: bookingDetails},
+
+src\pages\ChatPage.js:
+   8  // 2. ('बैकएंड' (Backend) 'Socket' (सॉकेट) (Socket (सॉकेट)) 'सर्वर' (server) (सर्वर) 'से' (to) 'कनेक्ट' (connect) (कनेक्ट) 'करें' (do))
+   9: const socket = io('https://collegeconnect-backend-mrkz.onrender.com');
+  10  
+
+  35                  // 6. (API (एपीआई) 'से' (from) 'पुराने' (old) 'चैट' (chat) (चैट) 'लाएँ' (Fetch))
+  36:                 const res = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/chat/${bookingId}`, {
+  37                      headers: { 'x-auth-token': token }
+
+  41                  // (हम 'Booking' (बुकिंग) 'डेटा' (data) (डेटा) 'भी' (also) 'ला' (fetch) 'रहे' (are) 'हैं' (हैं) 'ताकि' (so that) 'हम' (we) 'Header' (हेडर) (शीर्ष लेख) 'दिखा' (show) 'सकें' (can))
+  42:                 const bookingRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my', { headers: { 'x-auth-token': token } });
+  43                  const foundBooking = bookingRes.data.find(b => b._id === bookingId);
+
+src\pages\ForgotPasswordPage.js:
+  14          try {
+  15:             const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/forgot-password', { email });
+  16              toast.dismiss(toastId);
+
+src\pages\LoginPage.js:
+  21      try {
+  22:       const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/login', formData);
+  23        
+
+src\pages\RaiseDisputePage.js:
+  20                  const token = localStorage.getItem('token');
+  21:                 const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons', {
+  22                      headers: { 'x-auth-token': token }
+
+  39              await axios.post(
+  40:                 `https://collegeconnect-backend-mrkz.onrender.com/api/disputes/raise/${bookingId}`,
+  41                  { reasonId: reasonId },
+
+src\pages\RateBookingPage.js:
+  36              await axios.post(
+  37:                 `https://collegeconnect-backend-mrkz.onrender.com/api/ratings/submit/${bookingId}`,
+  38                  { rating, review_text },
+
+src\pages\RegisterPage.js:
+  23      try {
+  24:       const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/register', formData);
+  25        
+
+src\pages\ResetPasswordPage.js:
+  26              const res = await axios.post(
+  27:                 `https://collegeconnect-backend-mrkz.onrender.com/api/auth/reset-password/${token}`, 
+  28                  { password }
+
+src\pages\SeniorAvailabilityPage.js:
+  20          // 'GET /api/profile/me' (मेरी (me) प्रोफाइल (profile) लाओ) को कॉल (call) करें
+  21:         const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/me', {
+  22            headers: { 'x-auth-token': token }
+
+  53        await axios.put(
+  54:         'https://collegeconnect-backend-mrkz.onrender.com/api/profile/availability', 
+  55          { availability: availability }, // (हम सिर्फ 'availability' (उपलब्धता) का डेटा (data) भेज रहे हैं)
+
+src\pages\SeniorDashboard.js:
+  78        const token = localStorage.getItem('token');
+  79:       const bookingsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } });
+  80        setMyBookings(bookingsRes.data);
+
+  96          await axios.put(
+  97:             `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${bookingId}`, null, { headers: { 'x-auth-token': token } }
+  98          );
+
+src\pages\SeniorEarningsPage.js:
+  44          const [statsRes, bookingsRes, settingsRes] = await Promise.all([
+  45:             axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/stats', { headers: { 'x-auth-token': token } }),
+  46:             axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } }),
+  47:             axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings') // ('Platform Fee' (प्लेटफार्म फीस) 'लाएँ' (Fetch))
+  48          ]);
+
+src\pages\StudentDashboard.js:
+   29                  const [seniorsRes, collegesRes, tagsRes, settingsRes] = await Promise.all([
+   30:                     axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/all', { headers: { 'x-auth-token': token } }),
+   31:                     axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } }),
+   32:                     axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } }),
+   33:                     axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings')
+   34                  ]);
+
+  117                  const token = localStorage.getItem('token');
+  118:                 const bookingsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my', { headers: { 'x-auth-token': token } });
+  119                  setMyBookings(bookingsRes.data);
