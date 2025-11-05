@@ -21,7 +21,7 @@ function RegisterPage() {
     const toastId = toast.loading('Registering...'); // 'Toast' (टोस्ट) (टोस्ट) 'दिखाएँ' (Show)
     
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/register', formData);
       
       toast.dismiss(toastId); // 'लोडिंग' (Loading) (लोड हो रहा है) 'Toast' (टोस्ट) (टोस्ट) 'हटाएँ' (Remove)
       toast.success(res.data.msg); // 'सफलता' (Success) 'दिखाएँ' (Show) (जैसे, "Registration successful!")

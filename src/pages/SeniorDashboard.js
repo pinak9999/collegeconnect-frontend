@@ -76,7 +76,7 @@ function SeniorDashboard() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const bookingsRes = await axios.get('http://localhost:5000/api/bookings/senior/my', { headers: { 'x-auth-token': token } });
+      const bookingsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } });
       setMyBookings(bookingsRes.data);
       setLoading(false);
     } catch (err) { 
@@ -94,7 +94,7 @@ function SeniorDashboard() {
     try {
         const token = localStorage.getItem('token');
         await axios.put(
-            `http://localhost:5000/api/bookings/mark-complete/${bookingId}`, null, { headers: { 'x-auth-token': token } }
+            `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${bookingId}`, null, { headers: { 'x-auth-token': token } }
         );
         toast.dismiss(toastId);
         toast.success('Booking marked as Completed!');

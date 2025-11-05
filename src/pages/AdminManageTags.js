@@ -11,7 +11,7 @@ function AdminManageTags() {
     const fetchTags = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/tags', {
+            const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', {
                 headers: { 'x-auth-token': token }
             });
             setTags(res.data);
@@ -28,7 +28,7 @@ function AdminManageTags() {
         const toastId = toast.loading('Creating tag...');
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:5000/api/tags',
+            const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/tags',
                 { name: newTagName },
                 { headers: { 'x-auth-token': token } }
             );
@@ -49,7 +49,7 @@ function AdminManageTags() {
         const toastId = toast.loading('Deleting tag...');
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/tags/${tagId}`, {
+            await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/tags/${tagId}`, {
                 headers: { 'x-auth-token': token }
             });
             toast.dismiss(toastId);

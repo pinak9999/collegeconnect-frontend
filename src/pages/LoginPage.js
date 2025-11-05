@@ -19,7 +19,7 @@ function LoginPage() {
     e.preventDefault(); 
     setLoading(true); // (लोडिंग (Loading) 'शुरू' (Start))
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+      const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/login', formData);
       
       // 4. (यह रहा 'नया' (New) 'Context' (कॉन्टेक्स्ट) (बक्सा) 'लॉजिक' (logic) (तर्क))
       login(res.data.token, res.data.user); // ('localStorage' (लोकल स्टोरेज) (लोकल स्टोरेज) 'की' (of) 'जगह' (place) 'Context' (कॉन्टेक्स्ट) (बक्से) 'को' (to) 'अपडेट' (update) 'करें' (do))

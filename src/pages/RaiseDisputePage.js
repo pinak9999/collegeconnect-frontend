@@ -18,7 +18,7 @@ function RaiseDisputePage() {
         const fetchReasons = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/disputereasons', {
+                const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons', {
                     headers: { 'x-auth-token': token }
                 });
                 setAllReasons(res.data);
@@ -37,7 +37,7 @@ function RaiseDisputePage() {
             const token = localStorage.getItem('token');
             // (यह 'अब' (now) 'ID' (आईडी) (ID (आईडी)) 'भेजता' (sends) 'है' (है))
             await axios.post(
-                `http://localhost:5000/api/disputes/raise/${bookingId}`,
+                `https://collegeconnect-backend-mrkz.onrender.com/api/disputes/raise/${bookingId}`,
                 { reasonId: reasonId },
                 { headers: { 'x-auth-token': token } }
             );

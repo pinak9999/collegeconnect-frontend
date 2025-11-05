@@ -10,7 +10,7 @@ function AdminManageDisputes() {
     const fetchReasons = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/disputereasons', {
+            const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons', {
                 headers: { 'x-auth-token': token }
             });
             setReasons(res.data);
@@ -24,7 +24,7 @@ function AdminManageDisputes() {
         const toastId = toast.loading('Creating reason...');
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:5000/api/disputereasons', { reason }, { headers: { 'x-auth-token': token } });
+            const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons', { reason }, { headers: { 'x-auth-token': token } });
             toast.dismiss(toastId);
             toast.success(`Reason "${res.data.reason}" created!`);
             setReasons([...reasons, res.data]);
@@ -40,7 +40,7 @@ function AdminManageDisputes() {
         const toastId = toast.loading('Deleting...');
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/disputereasons/${id}`, { headers: { 'x-auth-token': token } });
+            await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons/${id}`, { headers: { 'x-auth-token': token } });
             toast.dismiss(toastId);
             toast.success('Reason deleted!');
             setReasons(reasons.filter(r => r._id !== id));

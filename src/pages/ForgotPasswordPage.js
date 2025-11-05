@@ -12,7 +12,7 @@ function ForgotPasswordPage() {
         setLoading(true);
         const toastId = toast.loading('Sending reset link...');
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+            const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/forgot-password', { email });
             toast.dismiss(toastId);
             
             // --- (यह रहा 'नया' (New) 'फिक्स' (Fix) (ठीक)) ---

@@ -27,10 +27,10 @@ const FindSenior = () => {
             try {
                 const token = localStorage.getItem('token');
                 const [seniorsRes, collegesRes, tagsRes, settingsRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/profile/all', { headers: { 'x-auth-token': token } }),
-                    axios.get('http://localhost:5000/api/colleges', { headers: { 'x-auth-token': token } }),
-                    axios.get('http://localhost:5000/api/tags', { headers: { 'x-auth-token': token } }),
-                    axios.get('http://localhost:5000/api/settings')
+                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/all', { headers: { 'x-auth-token': token } }),
+                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } }),
+                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } }),
+                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings')
                 ]);
                 setSeniors(seniorsRes.data);
                 setColleges(collegesRes.data);
@@ -115,7 +115,7 @@ const MyBookings = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const bookingsRes = await axios.get('http://localhost:5000/api/bookings/student/my', { headers: { 'x-auth-token': token } });
+                const bookingsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my', { headers: { 'x-auth-token': token } });
                 setMyBookings(bookingsRes.data);
                 setLoading(false);
             } catch (err) {

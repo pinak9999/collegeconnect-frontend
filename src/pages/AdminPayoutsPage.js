@@ -11,7 +11,7 @@ function AdminPayoutsPage() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/payouts/admin', {
+            const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/payouts/admin', {
                 headers: { 'x-auth-token': token }
             });
             setPayouts(res.data);
@@ -29,7 +29,7 @@ function AdminPayoutsPage() {
         try {
             const token = localStorage.getItem('token');
             const res = await axios.put(
-                `http://localhost:5000/api/payouts/mark-paid/${seniorId}`,
+                `https://collegeconnect-backend-mrkz.onrender.com/api/payouts/mark-paid/${seniorId}`,
                 null,
                 { headers: { 'x-auth-token': token } }
             );

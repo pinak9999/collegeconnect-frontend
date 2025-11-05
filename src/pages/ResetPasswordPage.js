@@ -24,7 +24,7 @@ function ResetPasswordPage() {
         const toastId = toast.loading('Resetting password...');
         try {
             const res = await axios.post(
-                `http://localhost:5000/api/auth/reset-password/${token}`, 
+                `https://collegeconnect-backend-mrkz.onrender.com/api/auth/reset-password/${token}`, 
                 { password }
             );
             toast.dismiss(toastId);

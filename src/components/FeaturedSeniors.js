@@ -14,10 +14,10 @@ function FeaturedSeniors() {
         const loadData = async () => {
             try {
                 // ('Public' (पब्लिक) (सार्वजनिक) 'API' (एपीआई) 'कॉल' (call) (call) 'करें' (do))
-                const seniorsRes = await axios.get('http://localhost:5000/api/profile/public/top-rated');
+                const seniorsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/public/top-rated');
                 setSeniors(seniorsRes.data);
                 
-                const settingsRes = await axios.get(`http://localhost:5000/api/settings`);
+                const settingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
                 setPlatformFee(settingsRes.data.platformFee);
                 
                 setLoading(false);

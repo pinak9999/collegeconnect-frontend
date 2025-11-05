@@ -10,7 +10,7 @@ function AdminSettingsPage() {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/settings');
+                const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings');
                 setPlatformFee(res.data.platformFee);
                 setLoading(false);
             } catch (err) {
@@ -30,7 +30,7 @@ function AdminSettingsPage() {
             
             // 3. (PUT API (एपीआई) 'को' (to) 'कॉल' (call) (call) 'करें' (do))
             await axios.put(
-                'http://localhost:5000/api/settings',
+                'https://collegeconnect-backend-mrkz.onrender.com/api/settings',
                 { platformFee: Number(platformFee) }, // (नंबर (Number) (संख्या) 'के' (as) 'रूप' (form) 'में' (in) 'भेजें' (Send))
                 { headers: { 'x-auth-token': token } }
             );

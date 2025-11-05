@@ -19,8 +19,8 @@ function BookingPage() {
                 const token = localStorage.getItem('token');
                 if (!token) { setLoading(false); setError('Error: You are not logged in.'); return; }
                 
-                const res = await axios.get(`http://localhost:5000/api/profile/senior/${userId}`, { headers: { 'x-auth-token': token } });
-                const settingsRes = await axios.get(`http://localhost:5000/api/settings`);
+                const res = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { 'x-auth-token': token } });
+                const settingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
                 
                 setProfile(res.data);
                 const fee = res.data.price_per_session + settingsRes.data.platformFee;
@@ -44,7 +44,7 @@ function BookingPage() {
         const toastId = toast.loading('Creating your order...'); 
         try {
             const token = localStorage.getItem('token');
-            const orderRes = await axios.post('http://localhost:5000/api/payment/order', 
+            const orderRes = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/payment/order', 
                 { seniorId: profile.user._id }, { headers: { 'x-auth-token': token } }
             );
             const order = orderRes.data;
@@ -63,7 +63,7 @@ function BookingPage() {
                 handler: async function (response) {
                     const verifyToastId = toast.loading('Verifying payment...');
                     try {
-                        await axios.post('http://localhost:5000/api/payment/verify', 
+                        await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify', 
                             {...response, bookingDetails: bookingDetails},
                             { headers: { 'x-auth-token': token } }
                         );

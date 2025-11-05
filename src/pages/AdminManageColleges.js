@@ -10,7 +10,7 @@ function AdminManageColleges() {
     const fetchColleges = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/colleges', {
+            const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', {
                 headers: { 'x-auth-token': token }
             });
             setColleges(res.data);
@@ -24,7 +24,7 @@ function AdminManageColleges() {
         const toastId = toast.loading('Creating college...');
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:5000/api/colleges', { name }, { headers: { 'x-auth-token': token } });
+            const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { name }, { headers: { 'x-auth-token': token } });
             toast.dismiss(toastId);
             toast.success(`College "${res.data.name}" created!`);
             setColleges([...colleges, res.data]);
@@ -40,7 +40,7 @@ function AdminManageColleges() {
         const toastId = toast.loading('Deleting...');
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/colleges/${id}`, { headers: { 'x-auth-token': token } });
+            await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/colleges/${id}`, { headers: { 'x-auth-token': token } });
             toast.dismiss(toastId);
             toast.success('College deleted!');
             setColleges(colleges.filter(c => c._id !== id));

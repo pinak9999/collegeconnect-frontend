@@ -42,9 +42,9 @@ function SeniorEarningsPage() {
         
         // (हम 'अब' (now) 3 'API' (एपीआई) 'कॉल्स' (calls) (calls) 'कर' (doing) 'रहे' (are) 'हैं' (हैं))
         const [statsRes, bookingsRes, settingsRes] = await Promise.all([
-            axios.get('http://localhost:5000/api/profile/senior/stats', { headers: { 'x-auth-token': token } }),
-            axios.get('http://localhost:5000/api/bookings/senior/my', { headers: { 'x-auth-token': token } }),
-            axios.get('http://localhost:5000/api/settings') // ('Platform Fee' (प्लेटफार्म फीस) 'लाएँ' (Fetch))
+            axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/stats', { headers: { 'x-auth-token': token } }),
+            axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } }),
+            axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings') // ('Platform Fee' (प्लेटफार्म फीस) 'लाएँ' (Fetch))
         ]);
         
         setStats(statsRes.data);

@@ -24,7 +24,7 @@ function AdminDashboard() {
         if (!token) { setLoading(false); setError("No token found."); return; }
         
         // ('अब' (Now) 'यह' (this) 'Page' (पेज) (page) 'नंबर' (number) (संख्या) 'भेजता' (sends) 'है' (है))
-        const usersRes = await axios.get(`http://localhost:5000/api/users?page=${page}&limit=10`, { 
+        const usersRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/users?page=${page}&limit=10`, { 
             headers: { 'x-auth-token': token } 
         });
         
@@ -48,7 +48,7 @@ function AdminDashboard() {
         const token = localStorage.getItem('token');
         if (!token) { setLoading(false); setError("No token found."); return; }
         
-        const bookingsRes = await axios.get(`http://localhost:5000/api/bookings/admin/all?page=${page}&limit=10`, { 
+        const bookingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/bookings/admin/all?page=${page}&limit=10`, { 
             headers: { 'x-auth-token': token } 
         });
         
@@ -81,7 +81,7 @@ function AdminDashboard() {
     const toastId = toast.loading('Updating user...');
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put( `http://localhost:5000/api/users/${userId}/make-senior`, null, { headers: { 'x-auth-token': token } });
+      const res = await axios.put( `https://collegeconnect-backend-mrkz.onrender.com/api/users/${userId}/make-senior`, null, { headers: { 'x-auth-token': token } });
       // ('UI' (यूआई) (UI (यूआई)) 'को' (to) 'अपडेट' (update) 'करें' (do))
       setUsers(prevUsers => prevUsers.map(user => user._id === userId ? res.data : user));
       toast.dismiss(toastId);
@@ -95,7 +95,7 @@ function AdminDashboard() {
     const toastId = toast.loading(`Deleting ${userName}...`);
     try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/users/${userId}`, { headers: { 'x-auth-token': token } });
+        await axios.delete(`https://collegeconnect-backend-mrkz.onrender.com/api/users/${userId}`, { headers: { 'x-auth-token': token } });
         toast.dismiss(toastId);
         toast.success(`${userName} deleted successfully.`);
         loadUsers(userPageData.currentPage); // 'करंट' (Current) (वर्तमान) 'पेज' (page) (page) 'री-लोड' (re-load) (पुनः लोड) 'करें' (do)
@@ -111,7 +111,7 @@ function AdminDashboard() {
       const toastId = toast.loading('Resolving dispute...');
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.put( `http://localhost:5000/api/disputes/resolve/${bookingId}`, null, { headers: { 'x-auth-token': token } });
+        const res = await axios.put( `https://collegeconnect-backend-mrkz.onrender.com/api/disputes/resolve/${bookingId}`, null, { headers: { 'x-auth-token': token } });
         setBookings(prevBookings => prevBookings.map(b => b._id === bookingId ? res.data.booking : b));
         toast.dismiss(toastId);
         toast.success(res.data.msg);

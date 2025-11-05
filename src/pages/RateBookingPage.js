@@ -34,7 +34,7 @@ function RateBookingPage() {
         try {
             const token = localStorage.getItem('token');
             await axios.post(
-                `http://localhost:5000/api/ratings/submit/${bookingId}`,
+                `https://collegeconnect-backend-mrkz.onrender.com/api/ratings/submit/${bookingId}`,
                 { rating, review_text },
                 { headers: { 'x-auth-token': token } }
             );

@@ -18,7 +18,7 @@ function SeniorAvailabilityPage() {
       try {
         const token = localStorage.getItem('token');
         // 'GET /api/profile/me' (मेरी (me) प्रोफाइल (profile) लाओ) को कॉल (call) करें
-        const res = await axios.get('http://localhost:5000/api/profile/me', {
+        const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/me', {
           headers: { 'x-auth-token': token }
         });
         
@@ -51,7 +51,7 @@ function SeniorAvailabilityPage() {
       
       // हमारे नए 'Senior' (सीनियर) API (PUT /api/profile/availability) को कॉल (call) करें
       await axios.put(
-        'http://localhost:5000/api/profile/availability', 
+        'https://collegeconnect-backend-mrkz.onrender.com/api/profile/availability', 
         { availability: availability }, // (हम सिर्फ 'availability' (उपलब्धता) का डेटा (data) भेज रहे हैं)
         { headers: { 'x-auth-token': token } }
       );

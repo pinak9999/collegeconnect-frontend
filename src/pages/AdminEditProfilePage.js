@@ -26,7 +26,7 @@ function AdminEditProfilePage() {
         const token = localStorage.getItem('token');
         if (!token) { setLoading(false); toast.error("No token found."); return; }
 
-        const profileRes = await axios.get(`http://localhost:5000/api/profile/user/${userId}`, { headers: { 'x-auth-token': token } });
+        const profileRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`, { headers: { 'x-auth-token': token } });
         
         setFormData({
             college: profileRes.data.college ? profileRes.data.college._id : '',
@@ -41,9 +41,9 @@ function AdminEditProfilePage() {
         if (profileRes.data.tags) setSelectedTags(profileRes.data.tags.map(t => t._id));
         if (profileRes.data.id_card_url) setCurrentIdCard(profileRes.data.id_card_url);
 
-        const tagsRes = await axios.get('http://localhost:5000/api/tags', { headers: { 'x-auth-token': token } });
+        const tagsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } });
         setAllTags(tagsRes.data);
-        const collegesRes = await axios.get('http://localhost:5000/api/colleges', { headers: { 'x-auth-token': token } });
+        const collegesRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } });
         setAllColleges(collegesRes.data);
         
         setLoading(false);
@@ -56,9 +56,9 @@ function AdminEditProfilePage() {
         // (Dropdowns (ड्रॉपडाउन) (ड्रॉप-डाउन) 'को' (to) 'फिर' (still) 'भी' (also) 'लोड' (load) (लोड) 'करें' (do))
         try {
             const token = localStorage.getItem('token');
-            const tagsRes = await axios.get('http://localhost:5000/api/tags', { headers: { 'x-auth-token': token } });
+            const tagsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } });
             setAllTags(tagsRes.data);
-            const collegesRes = await axios.get('http://localhost:5000/api/colleges', { headers: { 'x-auth-token': token } });
+            const collegesRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } });
             setAllColleges(collegesRes.data);
         } catch (subErr) {
              toast.error("Failed to load colleges/tags.");
@@ -95,7 +95,7 @@ function AdminEditProfilePage() {
     if (idCardFile) data.append('id_card', idCardFile);
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:5000/api/profile/admin/${userId}`, data, {
+      await axios.post(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/admin/${userId}`, data, {
         headers: { 'x-auth-token': token, 'Content-Type': 'multipart/form-data' }
       });
       toast.dismiss(toastId);
