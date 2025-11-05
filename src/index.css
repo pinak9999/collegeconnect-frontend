@@ -1,289 +1,326 @@
-/* --- 1. 'नया' (New) 'बेसिक' (Basic) 'सेटअप' (Setup) --- */
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f7f6; 
-    color: #333;
-    /* (यह 'स्क्रॉलिंग' (scrolling) (scrolling) 'को' (to) 'स्मूथ' (smooth) (सहज) 'बनाएगा' (will make)) */
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
+/* =============================================
+   1️⃣  BASE SETUP (Modernized Foundation)
+============================================= */
+:root {
+  --primary: #2563eb;          /* modern blue */
+  --primary-dark: #1d4ed8;
+  --accent: #06b6d4;           /* cyan accent */
+  --bg-light: #f8fafc;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --card-bg: rgba(255,255,255,0.7);
+  --shadow: 0 10px 25px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  background: linear-gradient(135deg,#eef2ff,#f8fafc);
+  color: var(--text-dark);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
-    width: 100%;
-    box-sizing: border-box; /* (यह 'पैडिंग' (padding) (padding) 'को' (to) 'सही' (correctly) 'रखेगा' (will keep)) */
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
-main {
-    min-height: 70vh; 
-}
+main { min-height: 70vh; }
 
-/* --- 2. 'नया' (New) 'एडवांस' (Advance) 'बटन' (Button) 'डिज़ाइन' (Design) --- */
+/* =============================================
+   2️⃣  BUTTONS (Fluid & Dynamic)
+============================================= */
 .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 12px 22px;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  letter-spacing: 0.3px;
 }
 .btn-primary {
-    background-color: #1abc9c; 
-    color: white;
+  background: linear-gradient(135deg,var(--primary),var(--accent));
+  color: #fff;
 }
 .btn-primary:hover {
-    background-color: #16a085;
-    transform: translateY(-2px); 
-    box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(37,99,235,0.35);
 }
 .btn-secondary {
-    background-color: #ecf0f1; 
-    color: #34495e;
-    border: 1px solid #e0e0e0;
+  background: #fff;
+  color: var(--text-dark);
+  border: 1px solid #e2e8f0;
 }
 .btn-secondary:hover {
-    background-color: #bdc3c7;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  background: #f1f5f9;
+  transform: translateY(-2px);
 }
 
-/* --- 3. 'नया' (New) 'Navbar' (नेवबार) 'डिज़ाइन' (Design) --- */
+/* =============================================
+   3️⃣  NAVBAR (Frosted Glass Style)
+============================================= */
 .navbar {
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-    padding: 15px 0;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+  padding: 15px 0;
+  z-index: 100;
 }
 .navbar .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: #34495e; 
-    text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-decoration: none;
+  letter-spacing: 0.5px;
 }
 .nav-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0;
+  margin: 0;
 }
-.nav-links li { margin: 0; }
-.nav-links button.btn, .nav-links a.btn {
-    font-size: 14px;
-}
+.nav-links a.btn { font-size: 14px; }
 
-/* --- 4. 'नया' (New) 'Hero' (हीरो) (नायक) 'डिज़ाइन' (Design) --- */
+/* =============================================
+   4️⃣  HERO SECTION (Vibrant Gradient + Subtle Motion)
+============================================= */
 .hero {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); 
-    color: white;
-    text-align: center;
-    padding: 100px 20px; /* ('मोबाइल' (Mobile) 'के लिए' (for) 'पैडिंग' (padding) (padding)) */
+  background: radial-gradient(circle at 30% 20%, var(--accent) 0%, var(--primary) 40%, #1e1b4b 100%);
+  color: #fff;
+  text-align: center;
+  padding: 110px 20px;
+  overflow: hidden;
+  position: relative;
 }
-.hero h1 { font-size: 48px; margin-bottom: 10px; }
-.subtitle { font-size: 20px; margin-bottom: 30px; }
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("https://www.transparenttextures.com/patterns/cubes.png");
+  opacity: 0.08;
+}
+.hero h1 {
+  font-size: clamp(2rem,5vw,3rem);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.subtitle {
+  font-size: clamp(1rem,2vw,1.25rem);
+  opacity: 0.9;
+  margin-bottom: 35px;
+}
 
-/* --- 5. 'नया' (New) 'Form' (फॉर्म) 'डिज़ाइन' (Design) --- */
+/* =============================================
+   5️⃣  FORM CONTAINER (Glass Form + Shadows)
+============================================= */
 .form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px;
-    background-color: #f4f7f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 70px 20px;
+  background: var(--bg-light);
 }
 .form-container form {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
-    width: 100%;
-    max-width: 500px;
+  background: var(--card-bg);
+  padding: 45px;
+  border-radius: var(--radius);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 480px;
+  backdrop-filter: blur(15px);
 }
-.form-container h2 { text-align: center; margin-top: 0; margin-bottom: 30px; color: #2c3e50; }
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="number"],
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 16px;
-    font-family: 'Poppins', sans-serif;
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--primary-dark);
+  font-weight: 700;
 }
-.form-group textarea { resize: vertical; }
-.btn-full { width: 100%; padding: 12px; font-size: 16px; }
-.form-footer { text-align: center; margin-top: 20px; }
-.form-footer a { color: #1abc9c; text-decoration: none; }
-
-/* --- 6. 'टेबल' (Table) (table) 'डिज़ाइन' (Design) (और (And) 'रिस्पॉन्सिव' (Responsive) (उत्तरदायी) 'फिक्स' (Fix) (ठीक)) --- */
-.table-container {
-  /* (यह 'टेबल' (table) (table) 'को' (to) 'मोबाइल' (mobile) (मोबाइल) 'पर' (on) 'स्क्रॉल' (scroll) (scroll) 'करने' (to do) 'देगा' (will allow)) */
-  overflow-x: auto; 
-  margin-bottom: 30px;
-  border: none;
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
   border-radius: 8px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-  background: #ffffff;
+  border: 1px solid #dfe3ea;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.25s ease;
+  background-color: #fff;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+.btn-full { width: 100%; padding: 13px; font-size: 16px; }
+.form-footer { text-align: center; margin-top: 20px; }
+.form-footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
+
+/* =============================================
+   6️⃣  TABLE (Responsive + Sleek)
+============================================= */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 30px;
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--shadow);
 }
 .user-table {
   width: 100%;
-  min-width: 1000px; /* ('टेबल' (Table) (table) 'को' (to) 'बहुत' (too) 'ज़्यादा' (much) 'सिकुड़ने' (shrink) 'से' (from) 'रोकता' (prevents) 'है' (is)) */
+  min-width: 900px;
   border-collapse: collapse;
 }
-.user-table th, 
-.user-table td {
-  border-bottom: 1px solid #eee;
-  padding: 15px 18px;
+.user-table th, .user-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #e2e8f0;
   text-align: left;
-  vertical-align: middle;
-  white-space: nowrap; 
+  font-size: 15px;
 }
 .user-table th {
-  background-color: #34495e; 
-  color: white;
-  font-weight: 600;
+  background: var(--primary-dark);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.user-table td.col-reason {
-  min-width: 250px; 
-  white-space: normal; /* (सिर्फ 'Reason' (कारण) (कारण) 'कॉलम' (column) (स्तंभ) 'रैप' (wrap) (लपेट) 'होगा' (will be)) */
-  color: #333; 
-  font-weight: 500; 
+.user-table tr:hover td {
+  background-color: #f9fafc;
 }
-.user-table td.col-action { width: 1%; }
-.status-completed { color: #2ecc71; font-weight: bold; }
-.status-pending { color: #e74c3c; font-weight: bold; }
-.user-table tbody tr:hover { background-color: #f9f9f9; }
+.status-completed { color: #16a34a; font-weight: 700; }
+.status-pending { color: #dc2626; font-weight: 700; }
 
-/* --- 7. 'सीनियर' (Senior) 'कार्ड' (Card) (कार्ड) 'डिज़ाइन' (Design) --- */
-.search-container { padding: 40px 0 20px 0; text-align: center; }
-.search-container input[type="text"] {
-    width: 80%; max-width: 600px; padding: 15px 20px;
-    font-size: 18px; border: 1px solid #ddd;
-    border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    outline: none;
-}
-.filters-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-}
-.senior-grid-container { padding: 20px 0 60px 0; min-height: 60vh; }
+/* =============================================
+   7️⃣  SENIOR CARDS (Interactive Grid)
+============================================= */
+.senior-grid-container { padding: 40px 0 80px; }
 .senior-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* ('डेस्कटॉप' (Desktop) (डेस्कटॉप) 'पर' (on) 3 'कॉलम' (column) (स्तंभ)) */
-    gap: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(270px,1fr));
+  gap: 25px;
 }
 .senior-card {
-    background: #ffffff;
-    border: none;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 25px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 .senior-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  border-color: rgba(37,99,235,0.2);
 }
-.senior-card img { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 15px; border: 3px solid #f0f0f0; }
-.senior-card h4 { margin: 10px 0 5px 0; font-size: 20px; }
-.college { color: #555; font-weight: 600; margin-bottom: 10px; }
-.senior-card .bio { font-size: 14px; color: #666; margin-bottom: 20px; min-height: 40px; }
-.senior-card .price { font-size: 1.2rem; font-weight: 700; color: #34495e; margin-bottom: 20px; }
-.tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
-.tag-pill { background-color: #ecf0f1; color: #34495e; border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 600; }
-.tag-checkbox-container { display: flex; flex-wrap: wrap; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 5px; }
-.tag-checkbox { display: flex; align-items: center; gap: 5px; }
-.tag-checkbox input { width: auto; }
+.senior-card img {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+.senior-card h4 { font-size: 1.15rem; margin-bottom: 6px; color: var(--primary-dark); }
+.college { color: var(--text-light); font-weight: 600; margin-bottom: 10px; }
+.price { color: var(--accent); font-weight: 700; margin-bottom: 15px; }
+.tags-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.tag-pill {
+  background: var(--bg-light);
+  color: var(--primary-dark);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-/* --- 8. 'HowItWorks' (यह कैसे काम करता है) 'CSS' (सीएसएस) (CSS (सीएसएस)) ('अलग' (Separate) 'फाइल' (file) (file) 'की' (of) 'जगह' (place) 'यहाँ' (here) 'ऐड' (add) (जोड़) 'कर' (do) 'दिया' (did) 'गया' (was) 'है' (है)) --- */
-.how-it-works { padding: 60px 0; background: #ffffff; text-align: center; }
-.how-it-works h2 { font-size: 32px; margin-bottom: 50px; color: #34495e; }
+/* =============================================
+   8️⃣  HOW IT WORKS (Icon Glow)
+============================================= */
+.how-it-works {
+  padding: 70px 20px;
+  background: #fff;
+  text-align: center;
+}
+.how-it-works h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: var(--primary-dark);
+}
 .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* ('डेस्कटॉप' (Desktop) (डेस्कटॉप) 'पर' (on) 3 'कॉलम' (column) (स्तंभ)) */
-    gap: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap: 30px;
 }
-.step { padding: 20px; }
-.step-icon { width: 60px; height: 60px; background-color: #1abc9c; color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; margin-bottom: 20px; transition: all 0.3s ease; }
-.step:hover .step-icon { transform: scale(1.1); box-shadow: 0 10px 20px rgba(26, 188, 156, 0.3); }
-.step h3 { margin-bottom: 10px; font-size: 22px; color: #34495e; }
-.step p { font-size: 16px; color: #555; line-height: 1.6; }
+.step {
+  padding: 20px;
+}
+.step-icon {
+  width: 65px; height: 65px;
+  background: linear-gradient(135deg,var(--primary),var(--accent));
+  color: #fff;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700;
+  margin-bottom: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(37,99,235,0.25);
+}
+.step:hover .step-icon {
+  transform: scale(1.1);
+  box-shadow: 0 10px 25px rgba(37,99,235,0.4);
+}
+.step h3 { font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 8px; }
+.step p { font-size: 15px; color: var(--text-light); }
 
-/* --- 9. 'Footer' (फुटर) (फुटर) 'डिज़ाइन' (Design) (design) --- */
+/* =============================================
+   9️⃣  FOOTER
+============================================= */
 .footer {
-    text-align: center;
-    padding: 30px;
-    background-color: #34495e; /* ('डार्क' (Dark) (गहरा) 'फुटर' (footer) (फुटर)) */
-    color: #ecf0f1;
-    margin-top: 60px;
+  text-align: center;
+  padding: 35px 20px;
+  background: linear-gradient(135deg,var(--primary-dark),#1e293b);
+  color: #f1f5f9;
+  font-size: 15px;
+  margin-top: 60px;
 }
 
-/* ===============================================
---- 10. (यह रहा 'नया' (New) 'फिक्स' (Fix) (ठीक)!) ---
---- 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) 'RESPONSIVE' (रिस्पॉन्सिव) (RESPONSIVE (उत्तरदायी)) 'CSS' (सीएसएस) (CSS (सीएसएस)) ---
-===============================================
-*/
+/* =============================================
+   🔟  MOBILE RESPONSIVENESS
+============================================= */
 @media (max-width: 992px) {
-    /* ('टैबलेट' (Tablet) (टैबलेट) 'पर' (on) '`Senior Cards`' (सीनियर कार्ड्स) (Senior Cards (सीनियर कार्ड)) 'को' (to) 2 'कॉलम' (column) (स्तंभ) 'में' (in) 'दिखाओ' (show)) */
-    .senior-grid { 
-        grid-template-columns: repeat(2, 1fr); 
-    }
+  .navbar .container { flex-direction: column; gap: 10px; }
+  .nav-links { justify-content: center; }
 }
-
 @media (max-width: 768px) {
-    /* --- 'मोबाइल' (Mobile) (MOBILE (मोबाइल)) 'पर' (on) '`Navbar`' (नेवबार) (Navbar (नेवबार)) 'फिक्स' (Fix) (ठीक) --- */
-    .navbar .container {
-        flex-direction: column; /* ('Logo' (लोगो) (लोगो) 'और' (and) 'Links' (लिंक्स) (links) 'को' (to) 'ऊपर-नीचे' (stack) (ऊपर-नीचे (stack)) 'करो' (do)) */
-        gap: 15px;
-    }
-    .nav-links {
-        justify-content: center;
-        width: 100%;
-    }
-
-    /* --- 'मोबाइल' (Mobile) (MOBILE (मोबाइल)) 'पर' (on) '`Grids`' (ग्रिड) (Grids (ग्रिड)) 'फिक्स' (Fix) (ठीक) --- */
-    .senior-grid,
-    .steps-grid { 
-        grid-template-columns: 1fr; /* ('सभी' (All) 'ग्रिड' (grid) (ग्रिड) 'को' (to) 1 'कॉलम' (column) (स्तंभ) 'बना' (make) 'दो' (it)) */
-    }
-    
-    /* --- 'मोबाइल' (Mobile) (MOBILE (मोबाइल)) 'पर' (on) '`Hero`' (हीरो) (Hero (नायक)) 'फिक्स' (Fix) (ठीक) --- */
-    .hero h1 {
-        font-size: 32px; /* ('टाइटल' (Title) (शीर्षक) 'छोटा' (small) (छोटा) 'करो' (do)) */
-    }
-    .hero {
-        padding: 60px 20px;
-    }
-
-    /* --- 'मोबाइल' (Mobile) (MOBILE (मोबाइल)) 'पर' (on) '`Filters`' (फिल्टर्स) (Filters (फ़िल्टर)) 'फिक्स' (Fix) (ठीक) --- */
-    .filters-container {
-        grid-template-columns: 1fr; /* ('Dropdowns' (ड्रॉपडाउन) (ड्रॉप-डाउन) 'को' (to) 'भी' (also) 'ऊपर-नीचे' (stack) (ऊपर-नीचे (stack)) 'करो' (do)) */
-    }
-
-    /* --- 'मोबाइल' (Mobile) (MOBILE (मोबाइल)) 'पर' (on) '`Form`' (फॉर्म) (Form (फॉर्म)) 'फिक्स' (Fix) (ठीक) --- */
-    .form-container form {
-        padding: 25px; /* ('छोटी' (Smaller) 'पैडिंग' (padding) (padding)) */
-    }
+  .hero { padding: 70px 15px; }
+  .hero h1 { font-size: 1.9rem; }
+  .steps-grid, .senior-grid { grid-template-columns: 1fr; }
+  .form-container form { padding: 30px 25px; }
+  .logo { font-size: 1.4rem; }
+  .btn { padding: 10px 16px; font-size: 15px; }
 }
