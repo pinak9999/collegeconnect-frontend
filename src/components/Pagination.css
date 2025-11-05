@@ -1,0 +1,31 @@
+/* --- 'Pagination' (पेजिनेशन) (पृष्ठांकन) 'डिज़ाइन' (Design) (design) --- */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 30px;
+}
+.page-item {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    color: #34495e;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.page-item:hover:not(:disabled) {
+    background-color: #f4f7f6;
+}
+.page-item.active {
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+    color: white;
+}
+.page-item:disabled {
+    color: #aaa;
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+}

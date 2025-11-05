@@ -1,0 +1,69 @@
+/* --- (यह 'पूरा' (Entire) '3-Step' (3-चरणीय) 'सेक्शन' (section) (अनुभाग) 'है' (is)) --- */
+.how-it-works {
+    padding: 60px 20px;
+    background: #ffffff; /* (इसे (It) 'सफ़ेद' (white) 'बैकग्राउंड' (background) (पृष्ठभूमि) 'दो' (Give)) */
+    text-align: center;
+}
+
+/* (यह 'Main' (मुख्य) 'Heading' (शीर्षक) (शीर्षक) 'है' (is)) */
+.how-it-works h2 {
+    font-size: 32px;
+    margin-bottom: 50px;
+    color: #34495e; /* ('डार्क' (Dark) (गहरा) 'नेवी' (Navy) (नौसेना) 'कलर' (color) (रंग)) */
+}
+
+/* (यह 'Grid' (ग्रिड) (ग्रिड) 'है' (is) 'जो' (which) 'तीनों' (all three) 'स्टेप्स' (steps) (चरणों) 'को' (to) 'रखेगा' (will hold)) */
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* (1 'लाइन' (line) (पंक्ति) 'में' (in) 3 'कॉलम' (column) (स्तंभ)) */
+    gap: 30px;
+}
+
+/* (यह 'हर' (Each) 'एक' (one) 'स्टेप' (step) (step) 'है' (is)) */
+.step {
+    padding: 20px;
+}
+
+/* (यह '1', '2', '3' 'नंबर' (number) (संख्या) 'वाला' (wala) 'आइकन' (icon) (आइकन) 'है' (is)) */
+.step-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #1abc9c; /* ('टील' (Teal) (हरा) 'कलर' (color) (रंग)) */
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+/* ('हॉवर' (Hover) (hover) 'इफेक्ट' (Effect) (प्रभाव)) */
+.step:hover .step-icon {
+    transform: scale(1.1);
+    box-shadow: 0 10px 20px rgba(26, 188, 156, 0.3);
+}
+
+/* ('स्टेप' (Step) (step) 'का' (of) 'टाइटल' (title) (शीर्षक)) */
+.step h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    color: #34495e;
+}
+
+/* ('स्टेप' (Step) (step) 'का' (of) 'डिस्क्रिप्शन' (description) (विवरण)) */
+.step p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* ('मोबाइल' (Mobile) 'के लिए' (for) 'फिक्स' (Fix) (ठीक)) */
+@media (max-width: 768px) {
+  .steps-grid { 
+      grid-template-columns: 1fr; /* ('मोबाइल' (Mobile) 'पर' (on) 'उन्हें' (them) 'एक' (one) 'के' (of) 'नीचे' (bottom) 'एक' (one) 'दिखाओ' (show)) */
+  }
+}
+/* 🔴 Dispute text red color */

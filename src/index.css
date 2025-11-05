@@ -1,0 +1,435 @@
+/* --- 1. 'नया' (New) 'बेसिक' (Basic) 'सेटअप' (Setup) (Clean Font & BG) --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6; /* (बहुत 'लाइट' (light) (हल्का) 'ग्रे' (grey) (धूसर) 'बैकग्राउंड' (background) (पृष्ठभूमि)) */
+    color: #333;
+}
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+main {
+    min-height: 70vh; /* (यह 'फुटर' (footer) को 'नीचे' (bottom) 'रखेगा' (keep)) */
+}
+
+/* --- 2. 'नया' (New) 'एडवांस' (Advance) 'बटन' (Button) 'डिज़ाइन' (Design) ('हॉवर' (Hover) 'इफेक्ट' (Effect) (प्रभाव) के साथ) --- */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px; /* (ज़्यादा 'राउंड' (round) (गोलाकार)) */
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.btn-primary {
+    background-color: #1abc9c; /* ('ब्राइट' (Bright) (उज्ज्वल) 'टील' (Teal) (हरा) 'एक्सेंट' (accent) (लहजा)) */
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #16a085;
+    transform: translateY(-2px); /* ('हॉवर' (Hover) (hover) पर 'उठने' (lift) का 'इफेक्ट' (effect) (प्रभाव)) */
+    box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+}
+.btn-secondary {
+    background-color: #ecf0f1; /* ('लाइट' (Light) (हल्का) 'ग्रे' (grey) (धूसर) 'बटन' (button)) */
+    color: #34495e;
+    border: 1px solid #e0e0e0;
+}
+.btn-secondary:hover {
+    background-color: #bdc3c7;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 3. 'नया' (New) 'Navbar' (नेवबार) 'डिज़ाइन' (Design) ('क्लीन' (Clean) (साफ़)) --- */
+.navbar {
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* ('सॉफ्ट' (Soft) (नरम) 'शैडो' (shadow) (छाया)) */
+    padding: 15px 0;
+}
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #34495e; /* ('डीप' (Deep) (गहरा) 'नेवी' (Navy) (नौसेना) 'ब्लू' (blue) (नीला)) */
+    text-decoration: none;
+}
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.nav-links li { margin: 0; }
+.nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+}
+.nav-links button.btn, .nav-links a.btn {
+    font-size: 14px;
+}
+
+/* --- 4. 'नया' (New) 'Hero' (हीरो) 'डिज़ाइन' (Design) ('प्रोफेशनल' (Professional) 'डार्क' (Dark) (गहरा)) --- */
+.hero {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); /* ('डार्क' (Dark) (गहरा) 'नेवी' (Navy) (नौसेना) 'ग्रेडिएंट' (gradient) (ढाल)) */
+    color: white;
+    text-align: center;
+    padding: 100px 0;
+}
+.hero h1 { font-size: 48px; margin-bottom: 10px; }
+.subtitle { font-size: 20px; margin-bottom: 30px; }
+
+/* --- 5. 'नया' (New) 'Form' (फॉर्म) 'डिज़ाइन' (Design) ('मॉडर्न' (Modern) (आधुनिक) 'शैडो' (shadow) (छाया)) --- */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background-color: #f4f7f6;
+}
+.form-container form {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* ('बड़ा' (Bigger) 'शैडो' (shadow) (छाया)) */
+    width: 100%;
+    max-width: 500px;
+}
+.form-container h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+}
+.form-group textarea { resize: vertical; }
+.btn-full { width: 100%; padding: 12px; font-size: 16px; }
+.form-footer { text-align: center; margin-top: 20px; }
+.form-footer a { color: #1abc9c; text-decoration: none; }
+/* --- 6. (100% 'Accurate' (सही) 'अलाइनमेंट' (Alignment) (संरेखण) 'फिक्स' (Fix) (ठीक)) 'टेबल' (Table) 'डिज़ाइन' (Design) --- */
+
+.table-container {
+  overflow-x: auto; 
+  margin-bottom: 30px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+  background: #ffffff;
+}
+.user-table {
+  width: 100%;
+  min-width: 1000px; /* ('मिनिमम' (Minimum) (न्यूनतम) 'चौड़ाई' (width)) */
+  border-collapse: collapse;
+}
+
+/* 1. (यह 'हेडर' (Header) (शीर्ष लेख) (<th>) और 'डेटा' (data) (<td>) दोनों (both) पर 'लागू' (apply) (लागू) होगा) */
+.user-table th, 
+.user-table td {
+  border-bottom: 1px solid #eee;
+  padding: 15px 18px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap; /* ('टेक्स्ट' (Text) (पाठ) को 'रैप' (wrap) (लपेट) न करें) */
+}
+
+/* 2. (यह 'सिर्फ' (Only) 'हेडर' (Header) (शीर्ष लेख) (<th>) 'सेल्स' (cells) (cells) पर 'लागू' (apply) (लागू) होगा) */
+.user-table th {
+  background-color: #34495e; 
+  color: white;
+  font-weight: 600;
+}
+
+/* 3. (यह 'सिर्फ' (Only) 'Dispute Reason' (विवाद कारण) 'डेटा' (data) 'सेल' (cell) (<td>) पर 'लागू' (apply) (लागू) होगा) */
+.user-table td.col-reason {
+  min-width: 250px; 
+  white-space: normal; /* (सिर्फ 'यह' (This) 'कॉलम' (column) (स्तंभ) 'रैप' (wrap) (लपेट) हो सकता है) */
+  color: #333; /* (अब 'लाल' (red) (लाल) 'नहीं' (not) है!) */
+  font-weight: 500; /* (अब 'बोल्ड' (bold) (मोटा) 'नहीं' (not) है!) */
+}
+
+/* 4. ('Action' (एक्शन) 'कॉलम' (column) (स्तंभ) (<td>)) */
+.user-table td.col-action {
+  width: 1%;
+}
+/* 5. ('Status' (स्टेटस) (स्थिति) 'टेक्स्ट' (text) (पाठ) (<span>)) */
+.status-completed {
+  color: #2ecc71;
+  font-weight: bold;
+}
+.status-pending {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* --- 7. 'नया' (New) 'सीनियर' (Senior) 'कार्ड' (Card) 'डिज़ाइन' (Design) --- */
+.search-container {
+    padding: 40px 0 20px 0;
+    text-align: center;
+}
+.search-container input[type="text"] {
+    width: 80%; max-width: 600px; padding: 15px 20px;
+    font-size: 18px; border: 1px solid #ddd;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    outline: none;
+}
+.search-container input[type="text"]:focus {
+    border-color: #1abc9c;
+    box-shadow: 0 4px 20px rgba(26, 188, 156, 0.3);
+}
+.senior-grid-container {
+    padding: 20px 0 60px 0;
+    min-height: 60vh;
+}
+.senior-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+.senior-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+.senior-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.senior-card img {
+    width: 100px; height: 100px; border-radius: 50%;
+    margin-bottom: 15px; border: 3px solid #f0f0f0;
+}
+.senior-card h4 { margin: 10px 0 5px 0; font-size: 20px; }
+.college { color: #555; font-weight: 600; margin-bottom: 10px; }
+.senior-card .bio {
+    font-size: 14px; color: #666;
+    margin-bottom: 20px; min-height: 40px;
+}
+.senior-card .price {
+    font-size: 1.2rem; font-weight: 700;
+    color: #34495e; /* ('नया' (New) 'डार्क' (dark) (गहरा) 'प्राइमरी' (primary) (प्राथमिक) 'कलर' (color) (रंग)) */
+    margin-bottom: 20px;
+}
+.senior-card .btn { font-size: 14px; }
+
+/* (RWD (आरडब्ल्यूडी) - 'मोबाइल' (Mobile) 'अलाइनमेंट' (Alignment) (संरेखण)) */
+@media (max-width: 992px) {
+  .senior-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .senior-grid { grid-template-columns: 1fr; }
+  .steps-grid { flex-direction: column; align-items: center; gap: 20px; }
+}
+/* --- Tag (टैग) (Tag (टैग)) 'Pill' (पिल) (Pill (पिल)) Styles (स्टाइल्स) --- */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+  justify-content: center; /* ('कार्ड' (Card) (कार्ड) 'पर' (on) 'सेंटर' (center) (केंद्र) 'में' (in)) */
+}
+.tag-pill {
+  background-color: #ecf0f1;
+  color: #34495e;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+/* (एडमिन (Admin) 'फॉर्म' (form) 'के लिए' (for) 'चेकबॉक्स' (checkbox) (चेकबॉक्स) 'डिज़ाइन' (design) (design)) */
+.tag-checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+}
+.tag-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tag-checkbox input {
+    width: auto; /* ('डिफ़ॉल्ट' (Default) (डिफ़ॉल्ट) 'चौड़ाई' (width) 'न' (not) 'लें' (take)) */
+}
+/* --- 8. 'नया' (New) 'Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन) 'डिज़ाइन' (Design) (design) --- */
+.dashboard-nav {
+  display: flex;
+  gap: 10px;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+  margin-bottom: 20px;
+}
+.dashboard-nav-item {
+  padding: 10px 20px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #34495e;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.dashboard-nav-item:hover {
+  background-color: #f4f7f6;
+}
+/* (यह 'Active' (एक्टिव) (सक्रिय) 'टैब' (tab) (टैब) 'को' (to) 'हाईलाइट' (highlight) (प्रकाशित) 'करेगा' (will do)) */
+.dashboard-nav-item.active {
+  background-color: #1abc9c;
+  color: white;
+}
+
+/* --- 9. 'नया' (New) 'Filters' (फिल्टर्स) (फ़िल्टर) 'डिज़ाइन' (Design) (design) --- */
+.filters-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+}
+.filters-container .form-group {
+  flex: 1; /* ('सभी' (All) 'dropdowns' (ड्रॉपडाउन) (ड्रॉप-डाउन) 'को' (to) 'बराबर' (equal) 'जगह' (space) 'दो' (give)) */
+  margin-bottom: 0;
+}
+
+/* --- 10. 'नया' (New) 'Chat' (चैट) (चैट) 'UI' (यूआई) (UI (यूआई)) 'डिज़ाइन' (Design) (design) --- */
+.chat-page-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+.chat-window {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+}
+.chat-header {
+  background: #34495e;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px 8px 0 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.chat-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.message {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+.message .sender-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+  color: #555;
+}
+.message.sent {
+  background-color: #1abc9c;
+  color: white;
+  align-self: flex-end; /* ('आपका' (Your) 'मैसेज' (message) (संदेश) 'दाईं' (right) 'ओर' (side)) */
+  border-radius: 20px 20px 5px 20px;
+}
+.message.received {
+  background-color: #ecf0f1;
+  color: #333;
+  align-self: flex-start; /* ('दूसरे' (Other) 'का' (of) 'मैसेज' (message) (संदेश) 'बाईं' (left) 'ओर' (side)) */
+  border-radius: 20px 20px 20px 5px;
+}
+.message.received .sender-name {
+  color: #1abc9c;
+}
+.chat-footer {
+  padding: 15px;
+  border-top: 1px solid #eee;
+}
+.chat-footer form {
+  display: flex;
+  gap: 10px;
+}
+.chat-footer input[type="text"] {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  font-size: 16px;
+  outline: none;
+}
+.chat-footer button {
+  border-radius: 50px;
+  white-space: nowrap;
+}
+/* --- 11. 'नया' (New) 'Senior Stats' (सीनियर आँकड़े) 'ग्रिड' (Grid) (ग्रिड) 'डिज़ाइन' (Design) (design) --- */
+.stats-grid {
+    display: grid;
+    /* ('मोबाइल' (Mobile) 'पर' (on) 1 'कॉलम' (column) (स्तंभ), 'बड़ी' (large) 'स्क्रीन' (screen) (स्क्रीन) 'पर' (on) 3 'कॉलम' (column) (स्तंभ)) */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+.stat-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+.stat-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    color: #555;
+    text-transform: uppercase; /* ('बड़े' (Uppercase) (बड़े) 'अक्षर' (letters)) */
+}
+.stat-card p {
+    margin: 0;
+    font-size: 2.5rem; /* ('बड़ा' (Big) 'नंबर' (number) (संख्या)) */
+    font-weight: 700;
+    color: #34495e;
+}
+/* ('Earning' (कमाई) (कमाई) 'कार्ड' (card) (कार्ड) 'के लिए' (for) 'हरा' (Green) 'कलर' (color) (रंग)) */
+.stat-card.earning p {
+    color: #1abc9c;
+}
