@@ -2,46 +2,60 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import io from 'socket.io-client'; // 1. 'Socket.io' (सॉकेट.आईओ) (Socket.io (सॉकेट.आईओ)) 'Client' (क्लाइंट) (क्लाइंट) 'इम्पोर्ट' (import) (आयात) करें
+import io from 'socket.io-client'; 
 import toast from 'react-hot-toast';
 
-// 2. ('बैकएंड' (Backend) 'Socket' (सॉकेट) (Socket (सॉकेट)) 'सर्वर' (server) (सर्वर) 'से' (to) 'कनेक्ट' (connect) (कनेक्ट) 'करें' (do))
-const socket = io('http://localhost:5000');
+// --- (1. 'यह' (This) 'रहा' (is) 100% 'Accurate' (सही) 'फिक्स' (Fix) (ठीक)) ---
+// ('दोनों' (Both) 'URL' (यूआरएल) (URLs (यूआरएल)) 'को' (to) 'एक' (one) 'ही' (same) 'जगह' (place) 'पर' (on) 'डिफाइन' (define) (परिभाषित) 'करें' (do))
+const API_URL = 'https://collegeconnect-backend-mrkz.onrender.com';
+const SOCKET_URL = 'https://collegeconnect-backend-mrkz.onrender.com';
+// --- (अपडेट (Update) खत्म) ---
+
+const socket = io(SOCKET_URL); // ('Socket' (सॉकेट) (Socket (सॉकेट)) 'कनेक्ट' (connect) (कनेक्ट) 'करें' (do))
 
 function ChatPage() {
     const { bookingId } = useParams();
-    const { auth } = useAuth(); // (लॉग-इन' (Logged-in) 'यूज़र' (user) (उपयोगकर्ता))
+    const { auth } = useAuth(); 
     
-    const [messages, setMessages] = useState([]); // (सभी 'मैसेज' (message) (संदेश) 'की' (of) 'लिस्ट' (list) (सूची))
-    const [newMessage, setNewMessage] = useState(''); // (जो 'आप' (you) 'टाइप' (type) (type) 'कर' (doing) 'रहे' (are) 'हैं' (हैं))
+    const [messages, setMessages] = useState([]); 
+    const [newMessage, setNewMessage] = useState(''); 
     const [bookingInfo, setBookingInfo] = useState(null);
     const [loading, setLoading] = useState(true);
-    const chatBodyRef = useRef(null); // ('ऑटो-स्क्रॉल' (auto-scroll) (स्वतः स्क्रॉल) 'के लिए' (for))
+    const chatBodyRef = useRef(null); 
 
-    // 3. (यह 'पेज' (page) (page) 'लोड' (load) 'होते' (on) 'ही' (as soon as) 'चलेगा' (will run))
     useEffect(() => {
-        // 4. (यह 'Socket.io' (सॉकेट.आईओ) (Socket.io (सॉकेट.आईओ)) 'को' (to) 'बताता' (tells) 'है' (it) 'कि' (that) 'हम' (we) 'इस' (this) 'रूम' (room) (कमरे) 'में' (in) 'हैं' (are))
         socket.emit('join_room', bookingId);
         
-        // 5. (यह 'बैकएंड' (Backend) 'से' (from) 'नए' (new) 'मैसेज' (message) (संदेश) 'सुनता' (listens) 'है' (it))
         socket.on('receive_message', (newMessageData) => {
             setMessages(prevMessages => [...prevMessages, newMessageData]);
         });
 
-        // (पुराने' (Old) 'मैसेज' (message) (संदेश) 'लोड' (load) (लोड) 'करें' (do))
         const loadChatHistory = async () => {
             try {
                 const token = localStorage.getItem('token');
-                // 6. (API (एपीआई) 'से' (from) 'पुराने' (old) 'चैट' (chat) (चैट) 'लाएँ' (Fetch))
-                const res = await axios.get(`http://localhost:5000/api/chat/${bookingId}`, {
+                
+                // --- (2. 'यह' (This) 'रहा' (is) 100% 'Accurate' (सही) 'फिक्स' (Fix) (ठीक)) ---
+                // ('`localhost`' (लोकलहोस्ट) (localhost) 'की' (of) 'जगह' (place) '`API_URL`' (एपीआई_यूआरएल) (API_URL) 'का' (of) 'इस्तेमाल' (use) 'करें' (do))
+                const res = await axios.get(`${API_URL}/api/chat/${bookingId}`, {
                     headers: { 'x-auth-token': token }
                 });
                 setMessages(res.data);
                 
-                // (हम 'Booking' (बुकिंग) 'डेटा' (data) (डेटा) 'भी' (also) 'ला' (fetch) 'रहे' (are) 'हैं' (हैं) 'ताकि' (so that) 'हम' (we) 'Header' (हेडर) (शीर्ष लेख) 'दिखा' (show) 'सकें' (can))
-                const bookingRes = await axios.get('http://localhost:5000/api/bookings/student/my', { headers: { 'x-auth-token': token } });
+                // ('`localhost`' (लोकलहोस्ट) (localhost) 'की' (of) 'जगह' (place) '`API_URL`' (एपीआई_यूआरएल) (API_URL) 'का' (of) 'इस्तेमाल' (use) 'करें' (do))
+                // ('`Student`' (छात्र) (Student (छात्र)) 'और' (and) '`Senior`' (सीनियर) (Senior (सीनियर)) 'दोनों' (both) 'को' (to) 'सपोर्ट' (support) (समर्थन) 'करने' (to do) 'के लिए' (for) 'लॉजिक' (logic) (तर्क) 'बदलें' (Change))
+                let bookingDataUrl = auth.user.isSenior 
+                    ? `${API_URL}/api/bookings/senior/my` 
+                    : `${API_URL}/api/bookings/student/my`;
+                    
+                const bookingRes = await axios.get(bookingDataUrl, { headers: { 'x-auth-token': token } });
+                // --- (अपडेट (Update) खत्म) ---
+
                 const foundBooking = bookingRes.data.find(b => b._id === bookingId);
-                setBookingInfo(foundBooking);
+                if (foundBooking) {
+                    setBookingInfo(foundBooking);
+                } else {
+                    toast.error("Could not find booking details.");
+                }
 
                 setLoading(false);
             } catch (err) {
@@ -51,33 +65,30 @@ function ChatPage() {
         };
         loadChatHistory();
 
-        // 7. ('कॉम्पोनेंट' (Component) (घटक) 'बंद' (close) 'होने' (on) 'पर' (on) 'क्लीन-अप' (clean-up) (सफ़ाई) 'करें' (do))
         return () => {
             socket.off('receive_message');
         };
-    }, [bookingId]);
+    }, [bookingId, auth.user.isSenior, auth.user.id]); // ('auth' (ऑथ) (auth) 'डिपेंडेंसी' (dependency) (निर्भरता) 'जोड़ें' (Add))
     
-    // (यह 'स्क्रॉल' (scroll) (scroll) 'को' (to) 'नीचे' (bottom) 'रखेगा' (will keep))
     useEffect(() => {
         if (chatBodyRef.current) {
             chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
         }
     }, [messages]);
 
-    // 8. (जब 'आप' (you) "Send" (भेजें) 'दबाते' (press) 'हैं' (हैं))
     const handleSendMessage = (e) => {
         e.preventDefault();
         if (!newMessage.trim()) return;
-
-        // 9. (पक्का (Ensure) (सुनिश्चित) 'करें' (do) 'कि' (that) 'हम' (we) 'जानते' (know) 'हैं' (it) 'कि' (that) 'कौन' (who) 'भेज' (sending) 'रहा' (is) 'है' (है) 'और' (and) 'किसे' (to whom))
         if (!bookingInfo) {
             toast.error("Booking info not loaded yet.");
             return;
         }
         
-        const receiverId = (auth.user.id === bookingInfo.student) ? bookingInfo.senior._id : bookingInfo.student;
+        // ('रिसीवर' (Receiver) (रिसीवर) 'को' (to) 'सही' (correctly) 'ढूँढें' (Find))
+        const receiverId = auth.user.id === (bookingInfo.student._id || bookingInfo.student) 
+            ? (bookingInfo.senior._id || bookingInfo.senior) 
+            : (bookingInfo.student._id || bookingInfo.student);
 
-        // 10. ('मैसेज' (Message) (संदेश) 'Socket.io' (सॉकेट.आईओ) (Socket.io (सॉकेट.आईओ)) 'को' (to) 'भेजें' (Send))
         socket.emit('send_message', {
             booking: bookingId,
             sender: auth.user.id,
@@ -85,23 +96,37 @@ function ChatPage() {
             text: newMessage
         });
         
-        setNewMessage(''); // 'इनपुट' (Input) (इनपुट) 'खाली' (empty) करें
+        setNewMessage(''); 
     };
 
     if (loading) return <div className="container" style={{padding: '40px 0'}}><h2>Loading Chat...</h2></div>;
+
+    // ('चैट' (Chat) (चैट) 'हेडर' (header) (शीर्ष लेख) 'को' (to) 'और' (more) 'स्मार्ट' (smart) (स्मार्ट) 'बनाएँ' (Make))
+    const getChatHeader = () => {
+        if (!bookingInfo) return '...';
+        if (auth.user.role === 'Admin') return 'Admin View';
+        
+        // ('Student' (छात्र) (Student (छात्र)) 'के लिए' (for) 'Senior' (सीनियर) (सीनियर) 'का' (of) 'नाम' (name) (नाम) 'दिखाएँ' (Show))
+        if (auth.user.id === (bookingInfo.student._id || bookingInfo.student)) {
+            return `Chat with ${bookingInfo.senior.name}`;
+        }
+        // ('Senior' (सीनियर) (सीनियर) 'के लिए' (for) 'Student' (छात्र) (छात्र) 'का' (of) 'नाम' (name) (नाम) 'दिखाएँ' (Show))
+        if (auth.user.id === (bookingInfo.senior._id || bookingInfo.senior)) {
+            return `Chat with ${bookingInfo.student.name}`;
+        }
+        return 'Chat Room';
+    };
 
     return (
         <div className="chat-page-container">
             <div className="chat-window">
                 <div className="chat-header">
-                    Chat for Booking: {bookingInfo ? (auth.user.role === 'Admin' ? 'Admin View' : (auth.user.id === bookingInfo.student ? bookingInfo.senior.name : bookingInfo.student.name)) : '...'}
+                    {getChatHeader()}
                 </div>
                 <div className="chat-body" ref={chatBodyRef}>
-                    {/* (सभी 'मैसेज' (message) (संदेश) 'यहाँ' (here) 'दिखाएँ' (Show)) */}
-                    {messages.map((msg) => (
+                    {messages.map((msg, index) => (
                         <div 
-                            key={msg._id} 
-                            // ('चेक' (Check) (जाँच) 'करें' (do) 'कि' (that) 'यह' (this) 'मेरा' (my) 'मैसेज' (message) (संदेश) 'है' (is) 'या' (or) 'दूसरे' (other) 'का' (of))
+                            key={msg._id || `msg-${index}`} 
                             className={`message ${msg.sender._id === auth.user.id ? 'sent' : 'received'}`}
                         >
                             <div className="sender-name">{msg.sender.name}</div>
