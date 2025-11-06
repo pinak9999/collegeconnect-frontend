@@ -17,7 +17,7 @@ function ForgotPasswordPage() {
             
             // --- (यह रहा 'नया' (New) 'फिक्स' (Fix) (ठीक)) ---
             // ('यूज़र' (User) (उपयोगकर्ता) 'को' (to) 'बताएँ' (Tell) 'कि' (that) 'कंसोल' (console) (console) 'चेक' (check) (जाँच) 'करे' (do))
-            toast.success("Reset link generated! (Check Backend Console to see the link)");
+          toast.success(res.data.msg);
             // --- (अपडेट (Update) खत्म) ---
 
         } catch (err) {
