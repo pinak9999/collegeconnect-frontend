@@ -8,14 +8,12 @@ main { min-height: 70vh; }
 .btn-primary { background-color: #1abc9c; color: white; }
 .btn-primary:hover { background-color: #16a085; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4); }
 .btn-secondary { background-color: #ecf0f1; color: #34495e; border: 1px solid #e0e0e0; }
-.btn-secondary:hover { background-color: #bdc3c7; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
 
 /* --- 3. 'Navbar' (नेवबार) 'डिज़ाइन' (Design) --- */
 .navbar { background: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 15px 0; }
 .navbar .container { display: flex; justify-content: space-between; align-items: center; }
 .logo { font-size: 24px; font-weight: 700; color: #34495e; text-decoration: none; }
 .nav-links { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 15px; }
-.nav-links button.btn, .nav-links a.btn { font-size: 14px; }
 
 /* --- 4. 'Hero' (हीरो) (नायक) 'डिज़ाइन' (Design) --- */
 .hero { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; text-align: center; padding: 100px 20px; }
@@ -33,10 +31,7 @@ main { min-height: 70vh; }
     border-radius: 5px; box-sizing: border-box;
     font-size: 16px; font-family: 'Poppins', sans-serif;
 }
-.form-group textarea { resize: vertical; }
-.btn-full { width: 100%; padding: 12px; font-size: 16px; }
-.form-footer { text-align: center; margin-top: 20px; }
-.form-footer a { color: #1abc9c; text-decoration: none; }
+.btn-full { width: 100%; }
 
 /* --- 6. 'टेबल' (Table) (table) 'डिज़ाइन' (Design) ('Desktop' (डेस्कटॉप) (Desktop (डेस्कटॉप)) 'के लिए' (for)) --- */
 .table-container { overflow-x: auto; margin-bottom: 30px; border: none; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.07); background: #ffffff; }
@@ -50,25 +45,11 @@ main { min-height: 70vh; }
 
 /* --- 7. 'सीनियर' (Senior) 'कार्ड' (Card) (कार्ड) 'डिज़ाइन' (Design) --- */
 .search-container { padding: 40px 0 20px 0; text-align: center; }
-.search-container input[type="text"] {
-    width: 80%; max-width: 600px; padding: 15px 20px;
-    font-size: 18px; border: 1px solid #ddd; border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); outline: none;
-}
-.filters-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px; margin-bottom: 20px; padding: 20px;
-  background: #ffffff; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-}
+.search-container input[type="text"] { width: 80%; max-width: 600px; padding: 15px 20px; font-size: 18px; border: 1px solid #ddd; border-radius: 50px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); outline: none; }
+.filters-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 20px; background: #ffffff; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.07); }
 .senior-grid-container { padding: 20px 0 60px 0; min-height: 60vh; }
 .senior-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
-.senior-card {
-    background: #ffffff; border: none; border-radius: 10px;
-    padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-}
+.senior-card { background: #ffffff; border: none; border-radius: 10px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.07); transition: transform 0.3s ease, box-shadow 0.3s ease; text-align: center; }
 .senior-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
 .senior-card img { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 15px; border: 3px solid #f0f0f0; }
 .senior-card h4 { margin: 10px 0 5px 0; font-size: 20px; }
@@ -124,102 +105,48 @@ main { min-height: 70vh; }
 .mobile-only { display: none; }
 /* ('यह' (This) 'सिर्फ' (only) 'डेस्कटॉप' (desktop) (डेस्कटॉप) 'पर' (on) 'दिखेगा' (will show)) */
 .desktop-only { display: block; }
-/* ('Tables' (टेबल्स) (tables) 'के लिए' (for) '`display: table`' (डिस्प्ले: टेबल) (display: table) 'ज़रूरी' (important) 'है' (is)) */
 .desktop-only.table-container { display: block; }
 
-/* (यह 'Student Dashboard' (छात्र डैशबोर्ड) 'के' (of) '`My Bookings`' (मेरी बुकिंग्स) (My Bookings (मेरी बुकिंग्स)) 'के लिए' (for) '`Card`' (कार्ड) (Card (कार्ड)) 'स्टाइल' (style) (रूप) 'है' (is)) */
-.booking-card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-.booking-card {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-  padding: 20px;
-}
-.booking-card h3 {
-  margin: 0 0 10px 0;
-  font-size: 1.2rem;
-  color: #34495e;
-}
-.booking-card .details {
-  font-size: 0.9rem;
-  color: #555;
-  line-height: 1.6;
-}
-.booking-card .details strong {
-  color: #333;
-}
-.booking-card .actions {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid #f0f0f0;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
+/* ('Student Dashboard' (छात्र डैशबोर्ड) 'Booking Card' (बुकिंग कार्ड) 'स्टाइल' (style) (रूप)) */
+.booking-card-list { display: flex; flex-direction: column; gap: 15px; }
+.booking-card { background: #ffffff; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.07); padding: 20px; }
+.booking-card h3 { margin: 0 0 10px 0; font-size: 1.2rem; color: #34495e; }
+.booking-card .details { font-size: 0.9rem; color: #555; line-height: 1.6; }
+.booking-card .details strong { color: #333; }
+.booking-card .actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0f0f0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
-/* (यह 'Filter' (फ़िल्टर) 'Toggle' (टॉगल) (टॉगल) 'बटन' (button) (बटन) 'है' (is)) */
+/* ('Filter' (फ़िल्टर) 'Toggle' (टॉगल) (टॉगल) 'बटन' (button) (बटन)) */
 .filter-toggle-btn {
-  display: none; /* ('डेस्कटॉप' (Desktop) (डेस्कटॉप) 'पर' (on) 'छिपा' (Hide) 'रहेगा' (will be)) */
-  width: 100%;
-  margin-bottom: 15px;
-  background-color: #fff;
-  color: #34495e;
-  text-align: center;
-  border: 1px solid #ddd;
+  display: none; 
+  width: 100%; margin-bottom: 15px; background-color: #fff;
+  color: #34495e; text-align: center; border: 1px solid #ddd;
 }
 
 /* --- (Media Query (मीडिया क्वेरी) (Media Query (मीडिया क्वेरी)) 'शुरू' (Starts)) --- */
 @media (max-width: 768px) {
-    /* ('Navbar' (नेवबार) (Navbar (नेवबार)) 'फिक्स' (Fix) (ठीक)) */
     .navbar .container { flex-direction: column; gap: 15px; }
     .nav-links { justify-content: center; width: 100%; }
-
-    /* ('Grids' (ग्रिड) (Grids (ग्रिड)) 'फिक्स' (Fix) (ठीक)) */
-    .senior-grid,
-    .steps-grid { 
-        grid-template-columns: 1fr; /* ('सभी' (All) 'ग्रिड' (grid) (ग्रिड) 'को' (to) 1 'कॉलम' (column) (स्तंभ) 'बना' (make) 'दो' (it)) */
-    }
-    
-    /* ('Hero' (हीरो) (Hero (नायक)) 'फिक्स' (Fix) (ठीक)) */
+    .senior-grid, .steps-grid { grid-template-columns: 1fr; }
     .hero h1 { font-size: 32px; }
     .hero { padding: 60px 20px; }
-
-    /* ('Form' (फॉर्म) (Form (फॉर्म)) 'फिक्स' (Fix) (ठीक)) */
     .form-container form { padding: 25px; }
     
-    /* --- (यह रहा 'नया' (New) '`TABLET`' (टैबलेट) (Tablet (टैबलेट))/'`MOBILE`' (मोबाइल) (MOBILE (मोबाइल)) 'फिक्स' (Fix) (ठीक)!) --- */
+    /* --- (यह रहा 100% 'Accurate' (सही) 'फिक्स' (Fix) (ठीक)) --- */
     
     /* 1. ('`Tables`' (टेबल्स) (Tables (टेबल)) 'को' (to) '`छिपा`' (Hide) ('छिपा' (Hide) (छिपा)) 'दो' (it)) */
-    .desktop-only {
-        display: none !important;
-    }
-    .desktop-only.table-container {
-        display: none !important; /* (यह '`important`' (इम्पॉरटेंट) (important (महत्वपूर्ण)) 'टैग' (tag) (टैग) 'ज़रूरी' (necessary) 'है' (is)) */
-    }
+    .desktop-only { display: none !important; }
+    /* (यह '`important`' (इम्पॉरटेंट) (important (महत्वपूर्ण)) 'टैग' (tag) (टैग) 'ज़रूरी' (necessary) 'है' (is)!) */
+    .desktop-only.table-container { display: none !important; } 
     
     /* 2. ('`Mobile Cards`' (मोबाइल कार्ड्स) (Mobile Cards (मोबाइल कार्ड)) 'को' (to) '`दिखाओ`' (Show) ('दिखाओ' (Show) (दिखाएँ))) */
-    .mobile-only {
-        display: block !important;
-    }
+    .mobile-only { display: block !important; }
     
     /* 3. ('`Filters`' (फिल्टर्स) (Filters (फ़िल्टर)) 'को' (to) '`छिपाओ`' (Hide) ('छिपा' (Hide) (छिपा))) */
-    .filters-container {
-        display: none;
-    }
+    .filters-container { display: none; }
     /* ('`Filters`' (फिल्टर्स) (Filters (फ़िल्टर)) 'के' (of) '`Toggle Button`' (टॉगल बटन) (Toggle Button (टॉगल बटन)) 'को' (to) '`दिखाओ`' (Show) ('दिखाओ' (Show) (दिखाएँ))) */
-    .filter-toggle-btn {
-        display: block;
-    }
+    .filter-toggle-btn { display: block; }
+    
     /* ('Dashboard Tabs' (डैशबोर्ड टैब) (डैशबोर्ड (dashboard) 'टैब' (tabs) (टैब)) 'को' (to) 'स्क्रॉल' (scroll) (scroll) 'करने' (to do) 'लायक' (scrollable) 'बनाओ' (Make)) */
-    .dashboard-nav {
-        overflow-x: auto;
-        padding: 10px;
-    }
-    .dashboard-nav-item {
-        white-space: nowrap; /* ('Tabs' (टैब) (टैब) 'को' (to) 'टूटने' (wrap) 'से' (from) 'रोको' (Prevent)) */
-    }
+    .dashboard-nav { overflow-x: auto; padding: 10px; }
+    .dashboard-nav-item { white-space: nowrap; }
 }

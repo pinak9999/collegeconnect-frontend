@@ -19,7 +19,6 @@ const FindSenior = () => {
     
     // --- (1. 'यह' (This) 'रहा' (is) 'नया' (new) 'Filter' (फ़िल्टर) (Filter (फ़िल्टर)) 'Toggle' (टॉगल) (टॉगल) 'State' (स्टेट) (स्थिति)) ---
     const [showFilters, setShowFilters] = useState(false);
-    // --- (अपडेट (Update) खत्म) ---
     
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCollege, setSelectedCollege] = useState('');
@@ -31,11 +30,14 @@ const FindSenior = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem('token');
+                // ('Live' (लाइव) (लाइव) 'URL' (यूआरएल) (URL (यूआरएल)) 'का' (of) 'इस्तेमाल' (Use) 'करें' (do))
+                const API_URL = 'https://collegeconnect-backend-mrkz.onrender.com';
+                
                 const [seniorsRes, collegesRes, tagsRes, settingsRes] = await Promise.all([
-                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/all', { headers: { 'x-auth-token': token } }),
-                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } }),
-                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } }),
-                    axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings')
+                    axios.get(`${API_URL}/api/profile/all`, { headers: { 'x-auth-token': token } }),
+                    axios.get(`${API_URL}/api/colleges`, { headers: { 'x-auth-token': token } }),
+                    axios.get(`${API_URL}/api/tags`, { headers: { 'x-auth-token': token } }),
+                    axios.get(`${API_URL}/api/settings`)
                 ]);
                 setSeniors(seniorsRes.data);
                 setColleges(collegesRes.data);
@@ -50,7 +52,7 @@ const FindSenior = () => {
         loadData();
     }, []);
 
-    // ('Filter/Sort' (फ़िल्टर/सॉर्ट) (Filter/Sort (फ़िल्टर/क्रमबद्ध)) 'लॉजिक' (logic) (तर्क) (वही है))
+    // ('Filter/Sort' (फ़िल्टर/सॉर्ट) (Filter/Sort (फ़िल्टर/क्रमबद्ध)) 'लॉजिक' (logic) (तर्क))
     const filteredAndSortedSeniors = seniors
         .filter(senior => { 
             const query = searchQuery.toLowerCase();
@@ -78,26 +80,25 @@ const FindSenior = () => {
                   value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
             
-            {/* --- (2. 'यह' (This) 'रहा' (is) 'नया' (new) 'Filter' (फ़िल्टर) (Filter (फ़िल्टर)) 'Toggle' (टॉगल) (टॉगल) 'बटन' (Button) (बटन)) --- */}
+            {/* --- (2. 'Filter' (फ़िल्टर) (Filter (फ़िल्टर)) 'Toggle' (टॉगल) (टॉगल) 'बटन' (Button) (बटन)) --- */}
             <button 
                 className="btn btn-secondary filter-toggle-btn"
                 onClick={() => setShowFilters(!showFilters)}
             >
                 {showFilters ? 'Hide Filters' : 'Show Filters & Sort'}
             </button>
-            {/* --- (अपडेट (Update) खत्म) --- */}
             
-            {/* ('Filters' (फिल्टर्स) (Filters (फ़िल्टर)) 'कंटेनर' (Container) (कंटेनर) 'अब' (now) 'CSS' (सीएसएस) (CSS (सीएसएस)) 'से' (from) 'छिपेगा' (will hide) 'या' (or) 'दिखेगा' (show)) */}
+            {/* ('Filters' (फिल्टर्स) (Filters (फ़िल्टर)) 'कंटेनर' (Container) (कंटेनर)) */}
             <div 
                 className="filters-container" 
-                style={{display: showFilters ? 'grid' : 'none'}} // ('Mobile' (मोबाइल) (मोबाइल) 'टॉगल' (toggle) (टॉगल) 'के लिए' (for) '`display`' (डिस्प्ले) (display) '`grid`' (ग्रिड) (grid) 'या' (or) '`none`' (नन) (none (कोई नहीं)) 'सेट' (set) (सेट) 'करें' (do))
+                style={{display: showFilters ? 'grid' : ''}} 
             >
                 <div className="form-group"><label>Filter by College</label><select value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}><option value="">All Colleges</option>{colleges.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}</select></div>
                 <div className="form-group"><label>Filter by Tag</label><select value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)}><option value="">All Tags</option>{tags.map(t => <option key={t._id} value={t._id}>{t.name}</option>)}</select></div>
                 <div className="form-group"><label>Sort By</label><select value={sortBy} onChange={(e) => setSortBy(e.target.value)}><option value="rating">Rating: High to Low</option><option value="price_asc">Price: Low to High</option><option value="price_desc">Price: High to Low</option></select></div>
             </div>
             
-            {/* ('Senior' (सीनियर) 'Cards' (कार्ड्स) (Cards (कार्ड)) (वही है)) */}
+            {/* ('Senior' (सीनियर) 'Cards' (कार्ड्स) (Cards (कार्ड))) */}
             <div className="container senior-grid-container">
                 {filteredAndSortedSeniors.length > 0 ? (
                     <div className="senior-grid">
@@ -193,7 +194,7 @@ const MyBookings = () => {
 
     return (
         <div>
-            {/* --- 3. 'यह' (This) 'रहा' (is) 'नया' (new) 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) '`Card`' (कार्ड) (Card (कार्ड)) 'UI' (यूआई) (UI (यूआई))! --- */}
+            {/* --- 3. 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) '`Card`' (कार्ड) (Card (कार्ड)) 'UI' (यूआई) (UI (यूआई)) --- */}
             <div className="mobile-only">
                 <h2>My Upcoming Bookings</h2>
                 {upcomingBookings.length > 0 ? (
@@ -234,7 +235,7 @@ const MyBookings = () => {
                 ) : ( <p>You have no completed bookings.</p> )}
             </div>
             
-            {/* --- 4. 'यह' (This) 'रही' (is) 'पुरानी' (old) 'DESKTOP' (डेस्कटॉप) (DESKTOP (डेस्कटॉप)) '`Table`' (टेबल) (Table (टेबल)) UI (यूआई) (UI (यूआई))! --- */}
+            {/* --- 4. 'DESKTOP' (डेस्कटॉप) (DESKTOP (डेस्कटॉप)) '`Table`' (टेबल) (Table (टेबल)) UI (यूआई) (UI (यूआई)) --- */}
             <div className="desktop-only">
                 <h2>My Upcoming Bookings</h2>
                 {upcomingBookings.length > 0 ? (
@@ -285,7 +286,7 @@ function StudentDashboard() {
 
     return (
         <div className="container" style={{ padding: '40px 0', minHeight: '60vh' }}>
-            {/* ('Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन) (वही है)) */}
+            {/* ('Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन)) */}
             <div className="dashboard-nav">
                 <Link to="/student-dashboard" className={`dashboard-nav-item ${!onBookingsTab ? 'active' : ''}`}>
                     Find a Senior
@@ -295,7 +296,7 @@ function StudentDashboard() {
                 </Link>
             </div>
             
-            {/* ('Routing' (रूटिंग) (Routing (रूटिंग)) (वही है)) */}
+            {/* ('Routing' (रूटिंग) (Routing (रूटिंग))) */}
             <div style={{marginTop: '30px'}}>
                 <Routes>
                     <Route path="/" element={<FindSenior />} />
