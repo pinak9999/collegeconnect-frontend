@@ -15,8 +15,8 @@ function Navbar() {
   };
 
   const getDashboardLink = () => {
-    if (auth.user.role === 'Admin') return '/admin-dashboard';
-    if (auth.user.isSenior) return '/senior-dashboard';
+    if (auth.user?.role === 'Admin') return '/admin-dashboard';
+    if (auth.user?.isSenior) return '/senior-dashboard';
     return '/student-dashboard';
   };
 
@@ -25,16 +25,15 @@ function Navbar() {
       style={{
         position: 'sticky',
         top: 0,
-        zIndex: 1000,
-        background: 'linear-gradient(90deg,#2563eb,#7c3aed)',
+        zIndex: 100,
+        background: 'linear-gradient(90deg,#2563eb,#1e40af)',
         color: 'white',
-        padding: '10px 20px',
+        padding: '12px 18px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
         backdropFilter: 'blur(10px)',
         transition: 'all 0.3s ease',
       }}
     >
-      {/* 🌟 Navbar Container */}
       <div
         style={{
           display: 'flex',
@@ -44,7 +43,7 @@ function Navbar() {
           margin: '0 auto',
         }}
       >
-        {/* 🚀 Logo */}
+        {/* 🎓 Logo */}
         <Link
           to="/"
           style={{
@@ -58,36 +57,35 @@ function Navbar() {
           onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
-          🎓 College<span style={{ color: '#A5B4FC' }}>Connect</span>
+          College<span style={{ color: '#93c5fd' }}>Connect</span>
         </Link>
 
-        {/* 📱 Hamburger Menu for Mobile */}
+        {/* 📱 Hamburger for Mobile */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#fff',
-            fontSize: '1.6rem',
+            color: 'white',
+            fontSize: '1.8rem',
             cursor: 'pointer',
             display: 'block',
-            marginLeft: '10px',
           }}
-          className="mobile-menu-toggle"
+          className="mobile-toggle"
         >
           {menuOpen ? '✖' : '☰'}
         </button>
 
-        {/* 🧭 Links Section */}
+        {/* 🌐 Nav Links */}
         <ul
           style={{
             listStyle: 'none',
             display: menuOpen ? 'block' : 'flex',
             flexDirection: menuOpen ? 'column' : 'row',
             gap: menuOpen ? '15px' : '25px',
-            alignItems: 'center',
             margin: 0,
             padding: 0,
+            alignItems: 'center',
             position: menuOpen ? 'absolute' : 'static',
             top: menuOpen ? '60px' : 'auto',
             right: menuOpen ? '10px' : '0',
@@ -105,31 +103,30 @@ function Navbar() {
                   style={{
                     fontWeight: 600,
                     color: '#10b981',
-                    fontSize: '0.9rem',
                     background: 'rgba(16,185,129,0.15)',
-                    padding: '5px 12px',
+                    padding: '6px 12px',
                     borderRadius: '8px',
+                    textAlign: 'center',
                   }}
                 >
                   💰 Wallet: ₹{auth.user.wallet_balance}
                 </li>
               )}
 
-              {/* Dashboard Link */}
               <li>
                 <Link
                   to={getDashboardLink()}
                   onClick={() => setMenuOpen(false)}
                   style={{
-                    color: '#fff',
                     background: 'linear-gradient(45deg,#3b82f6,#2563eb)',
+                    color: '#fff',
                     textDecoration: 'none',
-                    padding: '8px 14px',
+                    padding: '8px 16px',
                     borderRadius: '10px',
                     fontWeight: 600,
-                    transition: '0.3s',
-                    display: 'inline-block',
                     boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
+                    transition: 'all 0.3s',
+                    display: 'inline-block',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
@@ -138,7 +135,6 @@ function Navbar() {
                 </Link>
               </li>
 
-              {/* Logout Button */}
               <li>
                 <button
                   onClick={() => {
@@ -146,15 +142,15 @@ function Navbar() {
                     setMenuOpen(false);
                   }}
                   style={{
-                    color: '#fff',
                     background: 'linear-gradient(45deg,#ef4444,#dc2626)',
+                    color: '#fff',
                     border: 'none',
-                    padding: '8px 14px',
+                    padding: '8px 16px',
                     borderRadius: '10px',
                     fontWeight: 600,
                     cursor: 'pointer',
-                    transition: '0.3s',
                     boxShadow: '0 3px 10px rgba(239,68,68,0.3)',
+                    transition: 'all 0.3s',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
@@ -165,7 +161,6 @@ function Navbar() {
             </>
           ) : (
             <>
-              {/* Register */}
               <li>
                 <Link
                   to="/register"
@@ -174,11 +169,11 @@ function Navbar() {
                     background: 'linear-gradient(45deg,#6366f1,#4f46e5)',
                     color: '#fff',
                     textDecoration: 'none',
-                    padding: '8px 14px',
+                    padding: '8px 16px',
                     borderRadius: '10px',
                     fontWeight: 600,
-                    transition: '0.3s',
                     boxShadow: '0 3px 10px rgba(99,102,241,0.3)',
+                    transition: '0.3s',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
@@ -186,8 +181,6 @@ function Navbar() {
                   📝 Register
                 </Link>
               </li>
-
-              {/* Login */}
               <li>
                 <Link
                   to="/login"
@@ -196,11 +189,11 @@ function Navbar() {
                     background: 'linear-gradient(45deg,#10b981,#059669)',
                     color: '#fff',
                     textDecoration: 'none',
-                    padding: '8px 14px',
+                    padding: '8px 16px',
                     borderRadius: '10px',
                     fontWeight: 600,
-                    transition: '0.3s',
                     boxShadow: '0 3px 10px rgba(16,185,129,0.3)',
+                    transition: '0.3s',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
