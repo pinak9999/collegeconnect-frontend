@@ -1,76 +1,167 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext'; // 1. 'Context' (कॉन्टेक्स्ट) (बक्सा) 'इम्पोर्ट' (import) करें
-import toast from 'react-hot-toast'; // 2. 'Toasts' (टोस्ट) 'इम्पोर्ट' (import) करें
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // 3. 'Context' (कॉन्टेक्स्ट) (बक्से) से 'login' (लॉगिन) 'फंक्शन' (function) 'लें' (Get)
-  
+  const { login } = useAuth();
+
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false); // (पेज (page) 'फ्रीज' (freeze) (जम) 'न' (not) 'हो' (get) 'इसके' (that's) 'लिए' (why))
+  const [loading, setLoading] = useState(false);
 
   const onChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault(); 
-    setLoading(true); // (लोडिंग (Loading) 'शुरू' (Start))
+    e.preventDefault();
+    setLoading(true);
     try {
-      const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/login', formData);
-      
-      // 4. (यह रहा 'नया' (New) 'Context' (कॉन्टेक्स्ट) (बक्सा) 'लॉजिक' (logic) (तर्क))
-      login(res.data.token, res.data.user); // ('localStorage' (लोकल स्टोरेज) (लोकल स्टोरेज) 'की' (of) 'जगह' (place) 'Context' (कॉन्टेक्स्ट) (बक्से) 'को' (to) 'अपडेट' (update) 'करें' (do))
-      // 5. (यह रहा 'नया' (New) 'Toast' (टोस्ट) 'मैसेज' (message) (संदेश))
-      toast.success('Login Successful! Welcome back.');
-      
-      // 6. "स्मार्ट" (Smart) 'रीडायरेक्ट' (Redirect)
+      const res = await axios.post(
+        'https://collegeconnect-backend-mrkz.onrender.com/api/auth/login',
+        formData
+      );
+      login(res.data.token, res.data.user);
+      toast.success('🎉 Login Successful! Welcome back.');
+
       const userRole = res.data.user.role;
       const isSenior = res.data.user.isSenior;
+
       if (userRole === 'Admin') navigate('/admin-dashboard');
       else if (isSenior === true) navigate('/senior-dashboard');
       else navigate('/student-dashboard');
-      
-      // (window.location.reload() 'हटा' (remove) दिया गया है!)
-
     } catch (err) {
       let errorMsg = err.response ? (err.response.data.msg || err.response.data) : err.message;
-      toast.error('Error: ' + errorMsg); // 7. (नया 'Toast' (टोस्ट) 'एरर' (Error) (त्रुटि))
+      toast.error('❌ ' + errorMsg);
     }
-    setLoading(false); // (लोडिंग (Loading) 'खत्म' (End))
+    setLoading(false);
   };
 
-  // ... (onSubmitHandler 'फंक्शन' (function) 'के' (of) 'बाद' (after))
+  // Inline styles
+  const styles = {
+    page: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      background: 'linear-gradient(135deg, #2563eb, #1e3a8a)',
+      fontFamily: "'Poppins', sans-serif",
+      padding: '1rem',
+    },
+    card: {
+      background: '#fff',
+      padding: '2.5rem',
+      borderRadius: '1.5rem',
+      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+      maxWidth: '400px',
+      width: '100%',
+      textAlign: 'center',
+      animation: 'slideUp 0.8s ease',
+    },
+    title: {
+      fontSize: '1.8rem',
+      fontWeight: '600',
+      marginBottom: '0.4rem',
+      color: '#1e3a8a',
+    },
+    subtitle: {
+      fontSize: '0.9rem',
+      color: '#666',
+      marginBottom: '2rem',
+    },
+    formGroup: {
+      textAlign: 'left',
+      marginBottom: '1.3rem',
+    },
+    label: {
+      display: 'block',
+      fontSize: '0.9rem',
+      color: '#444',
+      marginBottom: '0.4rem',
+    },
+    input: {
+      width: '100%',
+      padding: '0.75rem',
+      border: '1.8px solid #ddd',
+      borderRadius: '10px',
+      transition: 'all 0.3s ease',
+      fontSize: '0.95rem',
+      outline: 'none',
+    },
+    button: {
+      width: '100%',
+      padding: '0.9rem',
+      background: 'linear-gradient(45deg, #2563eb, #1e40af)',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '12px',
+      fontSize: '1rem',
+      fontWeight: '500',
+      cursor: 'pointer',
+      transition: '0.3s',
+    },
+    extraLinks: {
+      marginTop: '1rem',
+    },
+    link: {
+      color: '#2563eb',
+      fontWeight: '500',
+      textDecoration: 'none',
+    },
+  };
+
   return (
-    <div className="form-container">
-      <form onSubmit={onSubmitHandler}>
-        <h2>Welcome Back!</h2>
-        <div className="form-group">
-          <label htmlFor="email">Email Address</label>
-          <input type="email" id="email" name="email" value={formData.email} onChange={onChangeHandler} required />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" name="password" value={formData.password} onChange={onChangeHandler} required />
-        </div>
-        
-        <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-        </button>
-        
-        {/* --- (यह 'नया' (New) 'लिंक' (Link) 'है' (is)) --- */}
-        <div style={{textAlign: 'right', marginTop: '10px'}}>
-            <Link to="/forgot-password" style={{fontSize: '0.9rem', color: '#555'}}>Forgot Password?</Link>
-        </div>
-        {/* --- (अपडेट (Update) खत्म) --- */}
-        
-        <p className="form-footer">
-          Don't have an account? <Link to="/register">Register here</Link>
+    <div style={styles.page}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Welcome Back 👋</h2>
+        <p style={styles.subtitle}>
+          Sign in to continue your journey with <b>CollegeConnect</b>
         </p>
-      </form>
+
+        <form onSubmit={onSubmitHandler}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Email Address</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={onChangeHandler}
+              required
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={onChangeHandler}
+              required
+              style={styles.input}
+            />
+          </div>
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+
+          <div style={styles.extraLinks}>
+            <Link to="/forgot-password" style={styles.link}>Forgot Password?</Link>
+            <p style={{ marginTop: '0.6rem', color: '#555' }}>
+              Don’t have an account?{' '}
+              <Link to="/register" style={styles.link}>Register</Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
+
 export default LoginPage;
