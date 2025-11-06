@@ -321,7 +321,8 @@ function StudentDashboard() {
       <div style={{ marginTop: '20px' }}>
         <Routes>
           <Route path="/" element={<FindSenior />} />
-          <Route path="/bookings" element={<h2 style={{ textAlign: 'center' }}>📅 My Bookings Coming Soon...</h2>} />
+         <Route path="/bookings" element={<MyBookings />} />
+
         </Routes>
       </div>
     </div>

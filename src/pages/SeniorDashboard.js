@@ -4,8 +4,32 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext'; 
 
-// (BookingsTable 'हेल्पर' (helper) (helper) 'कॉम्पोनेंट' (component) (घटक) (वही है))
-const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
+// ---------------------------------------------
+// ('Helper' (हेल्पर) (helper) 'कॉम्पोनेंट' (component) (घटक) 1: 'Stats' (स्टेट्स) (आँकड़े) 'ग्रिड' (Grid) (ग्रिड))
+// ---------------------------------------------
+const StatsGrid = ({ stats, loading }) => (
+    <div className="stats-grid" style={{marginTop: '30px'}}>
+        <div className="stat-card">
+            <h4>Pending Bookings (New)</h4>
+            <p>{loading ? '...' : stats.totalPending}</p>
+        </div>
+        <div className="stat-card">
+            <h4>Total Completed Calls</h4>
+            <p>{loading ? '...' : stats.totalCompleted}</p>
+        </div>
+        <div className="stat-card earning">
+            <h4>Your Next Payout (Unpaid)</h4>
+            <p>₹{loading ? '...' : stats.unpaidAmount}</p>
+        </div>
+    </div>
+);
+
+// ---------------------------------------------
+// ('Helper' (हेल्पर) (helper) 'कॉम्पोनेंट' (component) (घटक) 2: 'Bookings' (बुकिंग्स) (बुकिंग्स) 'टेबल' (Table) (table) / 'कार्ड्स' (Cards) (कार्ड))
+// ---------------------------------------------
+const BookingsDisplay = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
+    
+    // ('Action' (एक्शन) (कार्रवाई) 'कॉलम' (column) (स्तंभ) 'को' (to) 'हैंडल' (handle) (संभाल) 'करेगा' (will do))
     const renderActionColumn = (booking) => {
         if (booking.dispute_status === 'Pending') {
           return ( <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
@@ -27,10 +51,16 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
         }
         return null;
     };
+    
     if (loading) return <p>Loading bookings...</p>;
     if (bookings.length === 0) return <p>No bookings found in this category.</p>;
+
+    // --- (1. 'यह' (This) 'रहा' (is) 'नया' (new) '100% Accurate' (सही) 'फिक्स' (Fix) (ठीक)) ---
+    // (हम 'Desktop' (डेस्कटॉप) (डेस्कटॉप) 'और' (and) 'Mobile' (मोबाइल) (मोबाइल) 'दोनों' (both) 'के लिए' (for) 'UI' (यूआई) (UI (यूआई)) 'दिखा' (showing) 'रहे' (are) 'हैं' (हैं))
     return (
-        <div className="table-container">
+      <>
+        {/* --- (A) 'DESKTOP' (डेस्कटॉप) (DESKTOP (डेस्कटॉप)) 'UI' (यूआई) (UI (यूआई)): (Table (टेबल) (टेबल)) --- */}
+        <div className="desktop-only table-container">
             <table className="user-table">
                 <thead>
                 <tr>
@@ -56,8 +86,27 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
                 </tbody>
             </table>
         </div>
+
+        {/* --- (B) 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) 'UI' (यूआई) (UI (यूआई)): (Cards (कार्ड्स) (Cards (कार्ड))) --- */}
+        <div className="mobile-only booking-card-list">
+            {bookings.map(booking => (
+                <div key={booking._id} className="booking-card" style={{ background: booking.dispute_status === 'Pending' ? '#fff0f0' : (booking.status === 'Completed' ? '#f0fff0' : '') }}>
+                    <h3>{booking.student ? booking.student.name : '...'}</h3>
+                    <div className="details">
+                        <strong>Mobile:</strong> {booking.student ? booking.student.mobileNumber : '...'} <br/>
+                        <strong>Status:</strong> {booking.status} <br/>
+                        <strong>Dispute:</strong> {booking.dispute_status === 'Pending' ? (booking.dispute_reason ? booking.dispute_reason.reason : 'Pending') : booking.dispute_status}
+                    </div>
+                    <div className="actions">
+                        {renderActionColumn(booking)}
+                    </div>
+                </div>
+            ))}
+        </div>
+      </>
     );
 };
+
 
 // ---------------------------------------------
 // ('मुख्य' (Main) 'Senior Dashboard' (सीनियर डैशबोर्ड) 'कॉम्पोनेंट' (component) (घटक))
@@ -69,23 +118,27 @@ function SeniorDashboard() {
   
   const [myBookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  // 1. ('Stats' (स्टेट्स) (आँकड़े) 'State' (स्टेट) (स्थिति) 'हटा' (remove) 'दिया' (did) 'गया' (was) 'है' (है)!)
+  const [stats, setStats] = useState({ totalCompleted: 0, totalPending: 0, unpaidAmount: 0 });
 
-  // 2. (यह 'सिर्फ' (only) 'Bookings' (बुकिंग्स) (बुकिंग्स) 'लोड' (load) (लोड) 'करेगा' (will do))
-  const loadBookings = useCallback(async () => {
+  // (डेटा' (Data) (डेटा) 'लोड' (load) (लोड) 'करने' (to do) 'का' (of) 'फंक्शन' (function) (Function (फंक्शन)))
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const bookingsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } });
+      const [bookingsRes, statsRes] = await Promise.all([
+          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } }),
+          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/stats', { headers: { 'x-auth-token': token } })
+      ]);
       setMyBookings(bookingsRes.data);
+      setStats(statsRes.data);
       setLoading(false);
     } catch (err) { 
-        console.error('Error fetching bookings:', err.response ? err.response.data.msg : err.message); 
+        console.error('Error fetching dashboard data:', err.response ? err.response.data.msg : err.message); 
         setLoading(false);
-        toast.error("Failed to load bookings.");
+        toast.error("Failed to load dashboard data.");
     }
   }, []); 
-  useEffect(() => { loadBookings(); }, [loadBookings]); 
+  useEffect(() => { loadData(); }, [loadData]); 
 
   // ('Action' (एक्शन) (कार्रवाई) 'Handlers' (हैंडलर्स) (संभालक))
   const markAsCompletedHandler = async (bookingId) => {
@@ -98,7 +151,7 @@ function SeniorDashboard() {
         );
         toast.dismiss(toastId);
         toast.success('Booking marked as Completed!');
-        loadBookings(); // ('डेटा' (Data) (डेटा) 'री-लोड' (re-load) (पुनः लोड) 'करें' (do))
+        loadData(); 
     } catch (err) {
         toast.dismiss(toastId);
         toast.error('Error: ' + (err.response ? err.response.data.msg : err.message));
@@ -118,38 +171,23 @@ function SeniorDashboard() {
       <h2>Welcome, Senior {auth.user ? auth.user.name : ''}!</h2>
       <p>आपका काम 'नई' (new) 'बुकिंग्स' (bookings) को 'चेक' (check) करना और 'स्टूडेंट' (student) 'से' (from) 'चैट' (chat) (चैट) 'के' (of) 'ज़रिए' (via) 'बात' (talk) 'करना' (do) 'है' (is)।</p>
       
-      {/* 3. ('Stats' (स्टेट्स) (आँकड़े) 'ग्रिड' (Grid) (ग्रिड) 'हटा' (remove) 'दिया' (did) 'गया' (was) 'है' (है)) */}
-      {/* <StatsGrid ... /> */}
+      <StatsGrid stats={stats} loading={loading} />
 
       <hr style={{margin: '40px 0'}} />
 
-      {/* 4. 'Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन) 'को' (to) 'अपडेट' (update) (अद्यतन) 'किया' (did) 'गया' (was) 'है' (है) */}
+      {/* ('Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन)) */}
       <div className="dashboard-nav">
-          <Link 
-            to="/senior-dashboard" 
-            className={`dashboard-nav-item ${activeTab === '/senior-dashboard' ? 'active' : ''}`}
-          >
+          <Link to="/senior-dashboard" className={`dashboard-nav-item ${activeTab === '/senior-dashboard' ? 'active' : ''}`}>
             New Bookings ({tasksToComplete.length})
           </Link>
-          <Link 
-            to="/senior-dashboard/disputes" 
-            className={`dashboard-nav-item ${activeTab.includes('/disputes') ? 'active' : ''}`}
-          >
+          <Link to="/senior-dashboard/disputes" className={`dashboard-nav-item ${activeTab.includes('/disputes') ? 'active' : ''}`}>
             Active Disputes ({disputedBookings.length})
           </Link>
-          <Link 
-            to="/senior-dashboard/history" 
-            className={`dashboard-nav-item ${activeTab.includes('/history') ? 'active' : ''}`}
-          >
+          <Link to="/senior-dashboard/history" className={`dashboard-nav-item ${activeTab.includes('/history') ? 'active' : ''}`}>
             Completed History ({completedHistory.length})
           </Link>
-          {/* --- (5. 'यह' (This) 'रहा' (is) 'नया' (new) 'Earning' (कमाई) (कमाई) 'लिंक' (Link) (लिंक)!) --- */}
-          <Link 
-            to="/senior-earnings" 
-            className="btn btn-primary" 
-            style={{marginLeft: 'auto'}}
-          >
-            View My Earnings & Stats
+          <Link to="/senior-earnings" className="btn btn-primary" style={{marginLeft: 'auto'}}>
+            View My Earnings
           </Link>
       </div>
       
@@ -157,7 +195,7 @@ function SeniorDashboard() {
       <div style={{marginTop: '30px'}}>
         <Routes>
             <Route path="/" element={
-                <BookingsTable 
+                <BookingsDisplay 
                     title="New Bookings" 
                     bookings={tasksToComplete} 
                     loading={loading}
@@ -166,7 +204,7 @@ function SeniorDashboard() {
                 />
             } />
             <Route path="/disputes" element={
-                <BookingsTable 
+                <BookingsDisplay 
                     title="Active Disputes" 
                     bookings={disputedBookings} 
                     loading={loading}
@@ -175,7 +213,7 @@ function SeniorDashboard() {
                 />
             } />
             <Route path="/history" element={
-                <BookingsTable 
+                <BookingsDisplay 
                     title="Completed History" 
                     bookings={completedHistory} 
                     loading={loading}
@@ -189,4 +227,4 @@ function SeniorDashboard() {
     </div>
   );
 }
-export default SeniorDashboard;
+export default SeniorDashboard;git add .
