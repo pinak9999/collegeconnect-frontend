@@ -28,7 +28,7 @@ function AdminDashboard() {
         totalPages: res.data.totalPages,
       });
       setLoading(false);
-    } catch (err) {
+    } catch {
       toast.error('Failed to load users');
       setLoading(false);
     }
@@ -48,7 +48,7 @@ function AdminDashboard() {
         totalPages: res.data.totalPages,
       });
       setLoading(false);
-    } catch (err) {
+    } catch {
       toast.error('Failed to load bookings');
       setLoading(false);
     }
@@ -158,6 +158,23 @@ function AdminDashboard() {
         🛠 Admin Dashboard
       </h2>
 
+      {/* 🔹 Admin Management Links (Top Buttons) */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+          justifyContent: 'center',
+          marginBottom: '25px',
+        }}
+      >
+        <Link to="/admin-payouts" style={adminBtn('#22c55e')}>💰 Manage Payouts</Link>
+        <Link to="/admin-settings" style={adminBtn('#2563eb')}>⚙️ Manage Settings</Link>
+        <Link to="/admin-manage-tags" style={adminBtn('#6366f1')}>🏷 Manage Tags</Link>
+        <Link to="/admin-manage-colleges" style={adminBtn('#0891b2')}>🎓 Manage Colleges</Link>
+        <Link to="/admin-manage-dispute-reasons" style={adminBtn('#f97316')}>⚠️ Manage Dispute Reasons</Link>
+      </div>
+
       {/* Tabs */}
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <button
@@ -180,7 +197,7 @@ function AdminDashboard() {
         <>
           <h3 style={{ textAlign: 'center', color: '#1e40af' }}>All Users</h3>
 
-          {/* Mobile Cards */}
+          {/* Responsive User Cards */}
           <div
             style={{
               display: 'grid',
@@ -308,5 +325,16 @@ const btnLink = {
   fontWeight: 600,
   marginRight: '4px',
 };
+
+const adminBtn = (color) => ({
+  background: color,
+  color: '#fff',
+  padding: '8px 14px',
+  borderRadius: '8px',
+  fontWeight: 600,
+  textDecoration: 'none',
+  transition: '0.3s',
+  boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+});
 
 export default AdminDashboard;
