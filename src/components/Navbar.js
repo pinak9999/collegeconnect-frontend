@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 function Navbar() {
-  const navigate = useNavigate();
   const { auth, logout } = useAuth();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const logoutHandler = () => {
@@ -27,47 +27,44 @@ function Navbar() {
         top: 0,
         zIndex: 1000,
         background: 'linear-gradient(90deg,#2563eb,#1e40af)',
-        color: 'white',
-        padding: '12px 20px',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-        backdropFilter: 'blur(8px)',
-        transition: 'all 0.3s ease',
+        color: '#fff',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+        backdropFilter: 'blur(10px)',
+        padding: '10px 16px',
+        transition: '0.3s ease',
       }}
     >
-      {/* Navbar Container */}
+      {/* Container */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          maxWidth: '1200px',
+          maxWidth: '1100px',
           margin: '0 auto',
         }}
       >
-        {/* 🎓 Logo */}
+        {/* LOGO */}
         <Link
           to="/"
           style={{
-            fontSize: '1.6rem',
+            fontSize: '1.5rem',
             fontWeight: 700,
-            color: '#fff',
             textDecoration: 'none',
-            letterSpacing: '1px',
-            transition: 'opacity 0.3s',
+            color: '#fff',
+            letterSpacing: '0.5px',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
           College<span style={{ color: '#bfdbfe' }}>Connect</span>
         </Link>
 
-        {/* 📱 Hamburger for Mobile */}
+        {/* HAMBURGER ICON (Visible only in mobile) */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
             background: 'transparent',
             border: 'none',
-            color: 'white',
+            color: '#fff',
             fontSize: '1.8rem',
             cursor: 'pointer',
             display: 'block',
@@ -75,125 +72,185 @@ function Navbar() {
         >
           {menuOpen ? '✖' : '☰'}
         </button>
+      </div>
 
-        {/* 🌐 Navigation Links */}
-        <ul
-          style={{
-            listStyle: 'none',
-            display: menuOpen ? 'block' : 'flex',
-            flexDirection: menuOpen ? 'column' : 'row',
-            gap: menuOpen ? '15px' : '25px',
-            alignItems: 'center',
-            margin: 0,
-            padding: 0,
-            position: menuOpen ? 'absolute' : 'static',
-            top: menuOpen ? '60px' : 'auto',
-            right: menuOpen ? '10px' : '0',
-            background: menuOpen ? 'rgba(255,255,255,0.95)' : 'transparent',
-            borderRadius: menuOpen ? '12px' : '0',
-            boxShadow: menuOpen ? '0 6px 20px rgba(0,0,0,0.15)' : 'none',
-            padding: menuOpen ? '15px 20px' : '0',
-            transition: 'all 0.4s ease',
-          }}
-        >
-          {auth.isAuthenticated && auth.user ? (
-            <>
-              {/* Dashboard Link */}
-              <li>
+      {/* NAV LINKS (Below in mobile view) */}
+      <div
+        style={{
+          display: menuOpen ? 'flex' : 'none',
+          flexDirection: 'column',
+          alignItems: 'center',
+          background: 'rgba(255,255,255,0.95)',
+          marginTop: '10px',
+          borderRadius: '12px',
+          padding: '15px 0',
+          boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+          animation: 'fadeIn 0.3s ease',
+        }}
+      >
+        {auth.isAuthenticated && auth.user ? (
+          <>
+            <Link
+              to={getDashboardLink()}
+              onClick={() => setMenuOpen(false)}
+              style={{
+                color: '#fff',
+                background: 'linear-gradient(45deg,#3b82f6,#2563eb)',
+                textDecoration: 'none',
+                padding: '10px 20px',
+                borderRadius: '10px',
+                fontWeight: 600,
+                width: '85%',
+                textAlign: 'center',
+                marginBottom: '10px',
+                boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
+              }}
+            >
+              📊 Dashboard
+            </Link>
+            <button
+              onClick={() => {
+                logoutHandler();
+                setMenuOpen(false);
+              }}
+              style={{
+                background: 'linear-gradient(45deg,#ef4444,#dc2626)',
+                color: '#fff',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '10px',
+                fontWeight: 600,
+                width: '85%',
+                textAlign: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 3px 10px rgba(239,68,68,0.3)',
+              }}
+            >
+              🚪 Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/register"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                background: 'linear-gradient(45deg,#6366f1,#4f46e5)',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '10px 20px',
+                borderRadius: '10px',
+                fontWeight: 600,
+                width: '85%',
+                textAlign: 'center',
+                marginBottom: '10px',
+                boxShadow: '0 3px 10px rgba(99,102,241,0.3)',
+              }}
+            >
+              📝 Register
+            </Link>
+
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                background: 'linear-gradient(45deg,#10b981,#059669)',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '10px 20px',
+                borderRadius: '10px',
+                fontWeight: 600,
+                width: '85%',
+                textAlign: 'center',
+                boxShadow: '0 3px 10px rgba(16,185,129,0.3)',
+              }}
+            >
+              🔐 Login
+            </Link>
+          </>
+        )}
+      </div>
+
+      {/* DESKTOP LINKS (Always visible in large screens) */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          gap: '20px',
+          marginTop: '10px',
+        }}
+        className="desktop-nav"
+      >
+        {!menuOpen && (
+          <>
+            {auth.isAuthenticated && auth.user ? (
+              <>
                 <Link
                   to={getDashboardLink()}
-                  onClick={() => setMenuOpen(false)}
                   style={{
                     background: 'linear-gradient(45deg,#3b82f6,#2563eb)',
                     color: '#fff',
                     textDecoration: 'none',
-                    padding: '8px 16px',
+                    padding: '8px 14px',
                     borderRadius: '10px',
                     fontWeight: 600,
                     boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
-                    transition: 'all 0.3s ease',
-                    display: 'inline-block',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 >
                   📊 Dashboard
                 </Link>
-              </li>
-
-              {/* Logout */}
-              <li>
                 <button
-                  onClick={() => {
-                    logoutHandler();
-                    setMenuOpen(false);
-                  }}
+                  onClick={logoutHandler}
                   style={{
                     background: 'linear-gradient(45deg,#ef4444,#dc2626)',
                     color: '#fff',
                     border: 'none',
-                    padding: '8px 16px',
+                    padding: '8px 14px',
                     borderRadius: '10px',
                     fontWeight: 600,
                     cursor: 'pointer',
                     boxShadow: '0 3px 10px rgba(239,68,68,0.3)',
-                    transition: 'all 0.3s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 >
                   🚪 Logout
                 </button>
-              </li>
-            </>
-          ) : (
-            <>
-              {/* Register */}
-              <li>
+              </>
+            ) : (
+              <>
                 <Link
                   to="/register"
-                  onClick={() => setMenuOpen(false)}
                   style={{
                     background: 'linear-gradient(45deg,#6366f1,#4f46e5)',
                     color: '#fff',
                     textDecoration: 'none',
-                    padding: '8px 16px',
+                    padding: '8px 14px',
                     borderRadius: '10px',
                     fontWeight: 600,
                     boxShadow: '0 3px 10px rgba(99,102,241,0.3)',
-                    transition: '0.3s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 >
                   📝 Register
                 </Link>
-              </li>
 
-              {/* Login */}
-              <li>
                 <Link
                   to="/login"
-                  onClick={() => setMenuOpen(false)}
                   style={{
                     background: 'linear-gradient(45deg,#10b981,#059669)',
                     color: '#fff',
                     textDecoration: 'none',
-                    padding: '8px 16px',
+                    padding: '8px 14px',
                     borderRadius: '10px',
                     fontWeight: 600,
                     boxShadow: '0 3px 10px rgba(16,185,129,0.3)',
-                    transition: '0.3s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 >
                   🔐 Login
                 </Link>
-              </li>
-            </>
-          )}
-        </ul>
+              </>
+            )}
+          </>
+        )}
       </div>
     </nav>
   );
