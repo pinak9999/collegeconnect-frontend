@@ -25,15 +25,16 @@ function Navbar() {
       style={{
         position: 'sticky',
         top: 0,
-        zIndex: 100,
+        zIndex: 1000,
         background: 'linear-gradient(90deg,#2563eb,#1e40af)',
         color: 'white',
-        padding: '12px 18px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-        backdropFilter: 'blur(10px)',
+        padding: '12px 20px',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+        backdropFilter: 'blur(8px)',
         transition: 'all 0.3s ease',
       }}
     >
+      {/* Navbar Container */}
       <div
         style={{
           display: 'flex',
@@ -47,17 +48,17 @@ function Navbar() {
         <Link
           to="/"
           style={{
-            fontSize: '1.5rem',
+            fontSize: '1.6rem',
             fontWeight: 700,
             color: '#fff',
             textDecoration: 'none',
             letterSpacing: '1px',
-            transition: '0.3s',
+            transition: 'opacity 0.3s',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
-          College<span style={{ color: '#93c5fd' }}>Connect</span>
+          College<span style={{ color: '#bfdbfe' }}>Connect</span>
         </Link>
 
         {/* 📱 Hamburger for Mobile */}
@@ -71,21 +72,20 @@ function Navbar() {
             cursor: 'pointer',
             display: 'block',
           }}
-          className="mobile-toggle"
         >
           {menuOpen ? '✖' : '☰'}
         </button>
 
-        {/* 🌐 Nav Links */}
+        {/* 🌐 Navigation Links */}
         <ul
           style={{
             listStyle: 'none',
             display: menuOpen ? 'block' : 'flex',
             flexDirection: menuOpen ? 'column' : 'row',
             gap: menuOpen ? '15px' : '25px',
+            alignItems: 'center',
             margin: 0,
             padding: 0,
-            alignItems: 'center',
             position: menuOpen ? 'absolute' : 'static',
             top: menuOpen ? '60px' : 'auto',
             right: menuOpen ? '10px' : '0',
@@ -98,21 +98,7 @@ function Navbar() {
         >
           {auth.isAuthenticated && auth.user ? (
             <>
-              {auth.user.role === 'Student' && auth.user.wallet_balance > 0 && (
-                <li
-                  style={{
-                    fontWeight: 600,
-                    color: '#10b981',
-                    background: 'rgba(16,185,129,0.15)',
-                    padding: '6px 12px',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                  }}
-                >
-                  💰 Wallet: ₹{auth.user.wallet_balance}
-                </li>
-              )}
-
+              {/* Dashboard Link */}
               <li>
                 <Link
                   to={getDashboardLink()}
@@ -125,7 +111,7 @@ function Navbar() {
                     borderRadius: '10px',
                     fontWeight: 600,
                     boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
-                    transition: 'all 0.3s',
+                    transition: 'all 0.3s ease',
                     display: 'inline-block',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
@@ -135,6 +121,7 @@ function Navbar() {
                 </Link>
               </li>
 
+              {/* Logout */}
               <li>
                 <button
                   onClick={() => {
@@ -150,7 +137,7 @@ function Navbar() {
                     fontWeight: 600,
                     cursor: 'pointer',
                     boxShadow: '0 3px 10px rgba(239,68,68,0.3)',
-                    transition: 'all 0.3s',
+                    transition: 'all 0.3s ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
@@ -161,6 +148,7 @@ function Navbar() {
             </>
           ) : (
             <>
+              {/* Register */}
               <li>
                 <Link
                   to="/register"
@@ -173,7 +161,7 @@ function Navbar() {
                     borderRadius: '10px',
                     fontWeight: 600,
                     boxShadow: '0 3px 10px rgba(99,102,241,0.3)',
-                    transition: '0.3s',
+                    transition: '0.3s ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
@@ -181,6 +169,8 @@ function Navbar() {
                   📝 Register
                 </Link>
               </li>
+
+              {/* Login */}
               <li>
                 <Link
                   to="/login"
@@ -193,7 +183,7 @@ function Navbar() {
                     borderRadius: '10px',
                     fontWeight: 600,
                     boxShadow: '0 3px 10px rgba(16,185,129,0.3)',
-                    transition: '0.3s',
+                    transition: '0.3s ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
