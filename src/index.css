@@ -150,3 +150,15 @@ main { min-height: 70vh; }
     .dashboard-nav { overflow-x: auto; padding: 10px; }
     .dashboard-nav-item { white-space: nowrap; }
 }
+/* ... ('main' (मेन) (main) 'के' (of) 'नीचे' (bottom)) ... */
+main { min-height: 70vh; }
+
+/* --- (यह 'नया' (New) 'CSS' (सीएसएस) (CSS (सीएसएस)) 'ऐड' (add) (जोड़) 'करें' (Do)) --- */
+.page-container {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+/* --- (अपडेट (Update) खत्म) --- */
+
+/* --- 2. 'नया' (New) 'एडवांस' (Advance) 'बटन' (Button) 'डिज़ाइन' (Design) --- */
+/* ... (बाकी (Rest) 'CSS' (सीएसएस) (CSS (सीएसएस)) 'वही' (same) 'रहेगा' (will remain)) ... */

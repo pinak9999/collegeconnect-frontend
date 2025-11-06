@@ -284,8 +284,8 @@ function StudentDashboard() {
     const location = useLocation(); 
     const onBookingsTab = location.pathname.includes('/bookings');
 
-    return (
-        <div className="container" style={{ padding: '40px 0', minHeight: '60vh' }}>
+   return (
+        <div className="container page-container" style={{ minHeight: '60vh' }}>
             {/* ('Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन)) */}
             <div className="dashboard-nav">
                 <Link to="/student-dashboard" className={`dashboard-nav-item ${!onBookingsTab ? 'active' : ''}`}>

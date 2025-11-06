@@ -114,7 +114,7 @@ function SeniorDashboard() {
   const activeTab = location.pathname;
 
   return (
-    <div className="container" style={{ padding: '40px 0', minHeight: '60vh' }}>
+    <div className="container page-container" style={{ minHeight: '60vh' }}>
       <h2>Welcome, Senior {auth.user ? auth.user.name : ''}!</h2>
       <p>आपका काम 'नई' (new) 'बुकिंग्स' (bookings) को 'चेक' (check) करना और 'स्टूडेंट' (student) 'से' (from) 'चैट' (chat) (चैट) 'के' (of) 'ज़रिए' (via) 'बात' (talk) 'करना' (do) 'है' (is)।</p>
       

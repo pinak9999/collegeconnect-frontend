@@ -122,7 +122,7 @@ function AdminDashboard() {
   if (error) return <div className="container" style={{padding: '40px 0'}}><h2 style={{color: 'red'}}>{error}</h2></div>;
 
   return (
-    <div className="container" style={{ padding: '40px 0', minHeight: '60vh' }}>
+    <div className="container page-container" style={{ minHeight: '60vh' }}>
       
       {/* ('Admin' (एडमिन) 'Management' (प्रबंधन) 'Links' (लिंक्स) (links)) */}
       <div style={{marginBottom: '30px', display: 'flex', flexWrap: 'wrap', gap: '15px'}}>
