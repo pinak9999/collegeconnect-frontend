@@ -48,6 +48,7 @@ const FindSenior = () => {
         loadData();
     }, []);
 
+    // ('Filter/Sort' (फ़िल्टर/सॉर्ट) (Filter/Sort (फ़िल्टर/क्रमबद्ध)) 'लॉजिक' (logic) (तर्क))
     const filteredAndSortedSeniors = seniors
         .filter(senior => { 
             const query = searchQuery.toLowerCase();
@@ -128,7 +129,6 @@ const MyBookings = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // (यह 'useEffect' (यूज़इफेक्ट) (useEffect) 'है' (is) 'जो' (which) '`लोड`' (load) ('लोड' (Load) (लोड)) '`करता`' (does) '`है`' (is))
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
@@ -143,14 +143,12 @@ const MyBookings = () => {
             }
         };
         loadData();
-    }, []); // (Dependency array (निर्भरता सरणी) 'खाली' (empty) 'है' (is), 'मतलब' (meaning) (अर्थ) 'यह' (it) '1' (1) 'बार' (time) 'चलेगा' (will run))
+    }, []);
 
-    // ('Action' (एक्शन) (कार्रवाई) 'Handlers' (हैंडलर्स) (संभालक))
     const handleRate = (bookingId) => navigate(`/rate-booking/${bookingId}`);
     const handleDispute = (bookingId) => navigate(`/raise-dispute/${bookingId}`);
     const handleStartChat = (bookingId) => navigate(`/chat/${bookingId}`);
 
-    // ('Helper' (हेल्पर) (helper) 'फंक्शन' (function) (Function (फंक्शन)))
     const renderBookingContext = (booking) => {
         if (!booking.profile) return <span>...</span>;
         return ( <div>
@@ -159,7 +157,6 @@ const MyBookings = () => {
         </div> );
     };
 
-    // ('Action' (एक्शन) (कार्रवाई) 'Renderer' (रेंडरर) (रेंडरर) 'फंक्शन' (function) (Function (फंक्शन)))
     const renderStudentAction = (booking) => {
         if (booking.rating) {
             return <span style={{color: '#f39c12', fontWeight: 'bold'}}>{booking.rating} ★ Rated</span>;
@@ -182,7 +179,6 @@ const MyBookings = () => {
         return null; 
     };
 
-    // ('Tabs' (टैब) (टैब) 'के लिए' (for) '`filter`' (फ़िल्टर) (Filter (फ़िल्टर)))
     const upcomingBookings = myBookings.filter(b => b.status === 'Confirmed');
     const historyBookings = myBookings.filter(b => b.status === 'Completed' || b.status === 'Cancelled (Refunded)');
     
@@ -244,7 +240,12 @@ const MyBookings = () => {
                                 <td>{booking.senior ? booking.senior.name : '...'}</td>
                                 <td>{renderBookingContext(booking)}</td>
                                 <td>{booking.status}</td>
-                                <td className="col-reason" style={{fontWeight: 'normal'}}>{booking.dispute_status === 'Pending' ? (booking.dispute_reason ? booking.dispute_reason.reason : 'Pending') : booking.disDASHBOARD</tbody>
+                                <td className="col-reason" style={{fontWeight: 'normal'}}>
+                                    {booking.dispute_status === 'Pending' ? (booking.dispute_reason ? booking.dispute_reason.reason : 'Pending') : booking.dispute_status}
+                                </td>
+                                <td className="col-action">{renderStudentAction(booking)}</td>
+                            </tr>
+                        ))}</tbody>
                         </table>
                     </div>
                 ) : ( <p>You have no upcoming bookings.</p> )}
@@ -259,7 +260,9 @@ const MyBookings = () => {
                                 <td>{booking.senior ? booking.senior.name : '...'}</td>
                                 <td>{renderBookingContext(booking)}</td>
                                 <td className={booking.status === 'Completed' ? 'status-completed' : ''}>{booking.status}</td>
-                                <td className="col-reason" style={{fontWeight: 'normal'}}>{booking.dispute_status === 'Pending' ? (booking.dispute_reason ? booking.dispute_reason.reason : 'Pending') : booking.dispute_status}</td>
+                                <td className="col-reason" style={{fontWeight: 'normal'}}>
+                                    {booking.dispute_status === 'Pending' ? (booking.dispute_reason ? booking.dispute_reason.reason : 'Pending') : booking.dispute_status}
+                                </td>
                                 <td className="col-action">{renderStudentAction(booking)}</td>
                             </tr>
                         ))}</tbody>
