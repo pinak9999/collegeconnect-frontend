@@ -1,381 +1,191 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast'; 
 
 function AdminEditProfilePage() {
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { userId } = useParams(); 
 
   const [formData, setFormData] = useState({
-    college: '',
-    branch: '',
-    year: '',
-    bio: '',
-    price_per_session: 0,
-    session_duration_minutes: 20,
+    college: '', branch: 'Not Set', year: 'Not Set', bio: '', price_per_session: 0, session_duration_minutes: 20
   });
-
+  
   const [loading, setLoading] = useState(true);
   const [imageFile, setImageFile] = useState(null);
   const [currentAvatar, setCurrentAvatar] = useState('https://via.placeholder.com/100');
   const [idCardFile, setIdCardFile] = useState(null);
   const [currentIdCard, setCurrentIdCard] = useState(null);
-  const [allTags, setAllTags] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [allColleges, setAllColleges] = useState([]);
+  const [allTags, setAllTags] = useState([]); 
+  const [selectedTags, setSelectedTags] = useState([]); 
+  const [allColleges, setAllColleges] = useState([]); 
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          toast.error('No token found.');
-          return;
-        }
+        if (!token) { setLoading(false); toast.error("No token found."); return; }
 
-        const profileRes = await axios.get(
-          `https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`,
-          { headers: { 'x-auth-token': token } }
-        );
-
+        const profileRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`, { headers: { 'x-auth-token': token } });
+        
         setFormData({
-          college: profileRes.data.college ? profileRes.data.college._id : '',
-          branch: profileRes.data.branch || '',
-          year: profileRes.data.year || '',
-          bio: profileRes.data.bio || '',
-          price_per_session: profileRes.data.price_per_session || 0,
-          session_duration_minutes: profileRes.data.session_duration_minutes || 20,
+            college: profileRes.data.college ? profileRes.data.college._id : '',
+            branch: profileRes.data.branch || 'Not Set',
+            year: profileRes.data.year || 'Not Set',
+            bio: profileRes.data.bio || '',
+            price_per_session: profileRes.data.price_per_session || 0,
+            session_duration_minutes: profileRes.data.session_duration_minutes || 20
         });
-
+        
         if (profileRes.data.avatar) setCurrentAvatar(profileRes.data.avatar);
-        if (profileRes.data.tags) setSelectedTags(profileRes.data.tags.map((t) => t._id));
+        if (profileRes.data.tags) setSelectedTags(profileRes.data.tags.map(t => t._id));
         if (profileRes.data.id_card_url) setCurrentIdCard(profileRes.data.id_card_url);
 
-        const tagsRes = await axios.get(
-          'https://collegeconnect-backend-mrkz.onrender.com/api/tags',
-          { headers: { 'x-auth-token': token } }
-        );
+        const tagsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } });
         setAllTags(tagsRes.data);
-
-        const collegesRes = await axios.get(
-          'https://collegeconnect-backend-mrkz.onrender.com/api/colleges',
-          { headers: { 'x-auth-token': token } }
-        );
+        const collegesRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } });
         setAllColleges(collegesRes.data);
-
+        
         setLoading(false);
       } catch (err) {
-        toast.error('Failed to load data.');
+        if (err.response && err.response.status === 404) {
+            toast('This is a new senior. Please fill out their profile.', { icon: 'ℹ️' });
+        } else {
+            toast.error("Failed to load data.");
+        }
+        // (Dropdowns (ड्रॉपडाउन) (ड्रॉप-डाउन) 'को' (to) 'फिर' (still) 'भी' (also) 'लोड' (load) (लोड) 'करें' (do))
+        try {
+            const token = localStorage.getItem('token');
+            const tagsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/tags', { headers: { 'x-auth-token': token } });
+            setAllTags(tagsRes.data);
+            const collegesRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/colleges', { headers: { 'x-auth-token': token } });
+            setAllColleges(collegesRes.data);
+        } catch (subErr) {
+             toast.error("Failed to load colleges/tags.");
+        }
         setLoading(false);
       }
     };
     loadData();
-  }, [userId]);
+  }, [userId]); 
 
-  const onChangeHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-  const onFileChangeHandler = (e) => setImageFile(e.target.files[0]);
-  const onIdCardFileChange = (e) => setIdCardFile(e.target.files[0]);
+  // ('onChange' (ऑनचेंज) 'हैंडलर्स' (handlers) (संभालक) 'वही' (same) 'हैं' (are))
+  const onChangeHandler = (e) => { setFormData({ ...formData, [e.target.name]: e.target.value }); };
+  const onFileChangeHandler = (e) => { setImageFile(e.target.files[0]); };
+  const onIdCardFileChange = (e) => { setIdCardFile(e.target.files[0]); };
   const onTagChangeHandler = (e) => {
-    const tagId = e.target.value;
-    if (e.target.checked) setSelectedTags([...selectedTags, tagId]);
-    else setSelectedTags(selectedTags.filter((id) => id !== tagId));
+      const tagId = e.target.value;
+      if (e.target.checked) setSelectedTags([...selectedTags, tagId]);
+      else setSelectedTags(selectedTags.filter(id => id !== tagId));
   };
 
+  // ('onSubmit' (ऑनसबमिट) 'हैंडलर' (handler) (संभालक) 'वही' (same) 'है' (is))
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     const toastId = toast.loading('Saving profile...');
     const data = new FormData();
-    Object.keys(formData).forEach((key) => data.append(key, formData[key]));
+    data.append('college', formData.college); 
+    data.append('branch', formData.branch);
+    data.append('year', formData.year);
+    data.append('bio', formData.bio);
+    data.append('price_per_session', formData.price_per_session);
+    data.append('session_duration_minutes', formData.session_duration_minutes);
     data.append('tags', selectedTags.join(','));
     if (imageFile) data.append('image', imageFile);
     if (idCardFile) data.append('id_card', idCardFile);
-
     try {
       const token = localStorage.getItem('token');
-      await axios.post(
-        `https://collegeconnect-backend-mrkz.onrender.com/api/profile/admin/${userId}`,
-        data,
-        { headers: { 'x-auth-token': token, 'Content-Type': 'multipart/form-data' } }
-      );
+      await axios.post(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/admin/${userId}`, data, {
+        headers: { 'x-auth-token': token, 'Content-Type': 'multipart/form-data' }
+      });
       toast.dismiss(toastId);
       toast.success('Profile Saved!');
       navigate('/admin-dashboard');
     } catch (err) {
       toast.dismiss(toastId);
-      toast.error('Error saving profile');
+      toast.error('Error saving profile: ' + (err.response ? err.response.data.msg : err.message));
     }
   };
 
-  if (loading)
-    return (
-      <div style={{ textAlign: 'center', padding: '50px', color: '#2563eb' }}>
-        <h2>Loading...</h2>
-      </div>
-    );
+  if (loading) return <div className="container" style={{padding: '40px 0'}}><h2>Loading...</h2></div>;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(145deg,#e0f2ff,#f9faff)',
-        padding: '25px 15px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
-      <form
-        onSubmit={onSubmitHandler}
-        style={{
-          width: '100%',
-          maxWidth: '550px',
-          background: 'white',
-          padding: '25px 20px',
-          borderRadius: '16px',
-          boxShadow: '0 6px 25px rgba(0,0,0,0.08)',
-          animation: 'fadeIn 0.5s ease-in-out',
-        }}
-      >
-        <h2
-          style={{
-            textAlign: 'center',
-            color: '#1e3a8a',
-            marginBottom: '20px',
-          }}
-        >
-          🧑‍💼 Admin: Edit Senior Profile
-        </h2>
+    <div className="form-container">
+      <form onSubmit={onSubmitHandler} encType="multipart/form-data">
+        <h2>Admin: Edit Senior Profile</h2>
+        
+        {/* ('Avatar' (अवतार) (Avatar (अवतार)) 'Upload' (अपलोड) (अपलोड)) */}
+        <div className="form-group" style={{textAlign: 'center'}}>
+            <img src={currentAvatar} alt="Avatar" style={{width: '100px', height: '100px', borderRadius: '50%'}} />
+            <label>Change Profile Photo</label>
+            <input type="file" name="image" onChange={onFileChangeHandler} />
+        </div>
+        
+        {/* ('ID Card' (आईडी कार्ड) (पहचान पत्र) 'Upload' (अपलोड) (अपलोड)) */}
+        <div className="form-group" style={{textAlign: 'center', background: '#f4f7f6', padding: '15px', borderRadius: '5px'}}>
+            <label>Upload Senior's ID Card (for Verification)</label>
+            <input type="file" name="id_card" onChange={onIdCardFileChange} />
+            {currentIdCard && (
+                <a href={currentIdCard} target="_blank" rel="noopener noreferrer" style={{color: '#1abc9c', fontWeight: 'bold'}}>
+                    View College Verified ID Card
+                </a>
+            )}
+        </div>
+        
+        {/* ('College' (कॉलेज) (कॉलेज) 'Dropdown' (ड्रॉपडाउन) (ड्रॉप-डाउन)) */}
+        <div className="form-group">
+            <label htmlFor="college">College Name</label>
+            <select id="college" name="college" value={formData.college || ''} onChange={onChangeHandler}>
+                <option value="" disabled>Select a College</option>
+                {allColleges.map(college => (
+                    <option key={college._id} value={college._id}>{college.name}</option>
+                ))}
+            </select>
+        </div>
+        
+        {/* ('Branch' (ब्रांच) (शाखा) 'Input' (इनपुट) (इनपुट)) */}
+        <div className="form-group"><label>Branch</label><input type="text" name="branch" value={formData.branch || ''} onChange={onChangeHandler} /></div>
+        
+        {/* --- (यह रहा 'नया' (New) 'फिक्स' (Fix) (ठीक) #2: 'Year' (इयर) (वर्ष) 'Dropdown' (ड्रॉपडाउन) (ड्रॉप-डाउन)) --- */}
+        <div className="form-group">
+            <label htmlFor="year">Current Year / Status</label>
+            <select id="year" name="year" value={formData.year || ''} onChange={onChangeHandler}>
+                <option value="Not Set" disabled>Select Status</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="Placed in Company">Placed in Company</option>
+            </select>
+        </div>
+        {/* --- (अपडेट (Update) खत्म) --- */}
 
-        {/* Avatar Upload */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img
-            src={currentAvatar}
-            alt="Avatar"
-            style={{
-              width: '100px',
-              height: '100px',
-              borderRadius: '50%',
-              border: '3px solid #2563eb',
-              marginBottom: '10px',
-            }}
-          />
-          <label style={{ fontWeight: 600, color: '#2563eb' }}>Change Profile Photo</label>
-          <input type="file" onChange={onFileChangeHandler} style={{ display: 'block', margin: '8px auto' }} />
+        <div className="form-group"><label>Bio</label><textarea name="bio" value={formData.bio || ''} onChange={onChangeHandler} rows="4"></textarea></div>
+        
+        {/* ('Tags' (टैग्स) (टैग) 'Checkboxes' (चेकबॉक्स) (चेकबॉक्स)) */}
+        <div className="form-group">
+            <label>Specializations (Tags)</label>
+            <div className="tag-checkbox-container">
+                {allTags.length > 0 ? allTags.map(tag => (
+                    <div className="tag-checkbox" key={tag._id}>
+                        <input type="checkbox" id={tag._id} value={tag._id}
+                            checked={selectedTags.includes(tag._id)}
+                            onChange={onTagChangeHandler}
+                        />
+                        <label htmlFor={tag._id}>{tag.name}</label>
+                    </div>
+                )) : <p>No tags created. Go to "Manage Tags".</p>}
+            </div>
         </div>
 
-        {/* ID Card Upload */}
-        <div
-          style={{
-            textAlign: 'center',
-            background: '#f0f9ff',
-            padding: '15px',
-            borderRadius: '10px',
-            marginBottom: '20px',
-          }}
-        >
-          <label style={{ fontWeight: 600, color: '#1e3a8a' }}>Upload Senior's ID Card</label>
-          <input type="file" onChange={onIdCardFileChange} style={{ display: 'block', margin: '10px auto' }} />
-          {currentIdCard && (
-            <a
-              href={currentIdCard}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#16a34a', textDecoration: 'none', fontWeight: 600 }}
-            >
-              📄 View Uploaded ID Card
-            </a>
-          )}
-        </div>
-
-        {/* College Dropdown */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 600, color: '#1e3a8a' }}>College Name</label>
-          <select
-            name="college"
-            value={formData.college}
-            onChange={onChangeHandler}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              marginTop: '5px',
-            }}
-          >
-            <option value="">Select College</option>
-            {allColleges.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Branch & Year */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 600, color: '#1e3a8a' }}>Branch</label>
-          <input
-            type="text"
-            name="branch"
-            value={formData.branch}
-            onChange={onChangeHandler}
-            placeholder="Enter branch"
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              marginTop: '5px',
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 600, color: '#1e3a8a' }}>Year / Status</label>
-          <select
-            name="year"
-            value={formData.year}
-            onChange={onChangeHandler}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              marginTop: '5px',
-            }}
-          >
-            <option value="">Select Year</option>
-            <option>1st Year</option>
-            <option>2nd Year</option>
-            <option>3rd Year</option>
-            <option>4th Year</option>
-            <option>Placed in Company</option>
-          </select>
-        </div>
-
-        {/* Bio */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 600, color: '#1e3a8a' }}>Bio</label>
-          <textarea
-            name="bio"
-            value={formData.bio}
-            onChange={onChangeHandler}
-            rows="3"
-            placeholder="Write about the senior..."
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              marginTop: '5px',
-            }}
-          ></textarea>
-        </div>
-
-        {/* Tags */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 600, color: '#1e3a8a' }}>Specializations</label>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px',
-              marginTop: '10px',
-            }}
-          >
-            {allTags.map((tag) => (
-              <label
-                key={tag._id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: selectedTags.includes(tag._id) ? '#2563eb' : '#e5e7eb',
-                  color: selectedTags.includes(tag._id) ? '#fff' : '#1e3a8a',
-                  padding: '6px 10px',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  value={tag._id}
-                  checked={selectedTags.includes(tag._id)}
-                  onChange={onTagChangeHandler}
-                  style={{ display: 'none' }}
-                />
-                {tag.name}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Price & Duration */}
-        <h3 style={{ color: '#1e3a8a', marginBottom: '10px' }}>💰 Session Details</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ fontWeight: 600 }}>Price (₹)</label>
-            <input
-              type="number"
-              name="price_per_session"
-              value={formData.price_per_session}
-              onChange={onChangeHandler}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                marginTop: '5px',
-              }}
-            />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={{ fontWeight: 600 }}>Duration (min)</label>
-            <input
-              type="number"
-              name="session_duration_minutes"
-              value={formData.session_duration_minutes}
-              onChange={onChangeHandler}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                border: '1px solid #cbd5e1',
-                marginTop: '5px',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          style={{
-            marginTop: '25px',
-            width: '100%',
-            padding: '12px',
-            background: 'linear-gradient(45deg,#2563eb,#1e40af)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '10px',
-            fontWeight: 700,
-            fontSize: '1rem',
-            cursor: 'pointer',
-            boxShadow: '0 5px 15px rgba(37,99,235,0.3)',
-            transition: 'all 0.3s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-        >
-          💾 Save Profile
-        </button>
+        {/* ('Fees' (फीस) (फीस) 'Section' (सेक्शन) (अनुभाग)) */}
+        <h3>Set Fees (Admin Only)</h3>
+        <div className="form-group"><label>Price (INR ₹)</label><input type="number" name="price_per_session" value={formData.price_per_session || 0} onChange={onChangeHandler} min="0" /></div>
+        <div className="form-group"><label>Duration (minutes)</label><input type="number" name="session_duration_minutes" value={formData.session_duration_minutes || 20} onChange={onChangeHandler} min="1" /></div>
+        
+        <button type="submit" className="btn btn-primary btn-full">Save Profile</button>
       </form>
     </div>
   );
 }
-
 export default AdminEditProfilePage;
