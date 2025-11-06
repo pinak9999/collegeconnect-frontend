@@ -10,7 +10,7 @@ body, html {
 .container {
     max-width: 1100px; margin: 0 auto;
     padding: 0 20px; width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box; /* (यह 'पैडिंग' (padding) (padding) 'को' (to) 'सही' (correctly) 'रखेगा' (will keep)) */
 }
 main { min-height: 70vh; }
 
@@ -122,7 +122,7 @@ main { min-height: 70vh; }
 .tag-checkbox { display: flex; align-items: center; gap: 5px; }
 .tag-checkbox input { width: auto; }
 
-/* --- 8. 'HowItWorks' (यह कैसे काम करता है) + 'Tabs' (टैब) (टैब) + 'Chat' (चैट) (चैट) + 'Stats' (स्टेट्स) (आँकड़े) (वही है) --- */
+/* --- 8. 'HowItWorks' (यह कैसे काम करता है) + 'Tabs' (टैब) (टैब) + 'Chat' (चैट) (चैट) + 'Stats' (स्टेट्स) (आँकड़े) --- */
 .how-it-works { padding: 60px 0; background: #ffffff; text-align: center; }
 .how-it-works h2 { font-size: 32px; margin-bottom: 50px; color: #34495e; }
 .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
@@ -154,6 +154,7 @@ main { min-height: 70vh; }
 .stat-card p { margin: 0; font-size: 2.5rem; font-weight: 700; color: #34495e; }
 .stat-card.earning p { color: #1abc9c; }
 .footer { text-align: center; padding: 30px; background-color: #34495e; color: #ecf0f1; margin-top: 60px; }
+
 
 /* ===============================================
 --- 11. (यह रहा 'नया' (New) 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) 'फिक्स' (Fix) (ठीक)) ---
@@ -206,6 +207,10 @@ main { min-height: 70vh; }
   display: none; /* ('डेस्कटॉप' (Desktop) (डेस्कटॉप) 'पर' (on) 'छिपा' (Hide) 'रहेगा' (will be)) */
   width: 100%;
   margin-bottom: 15px;
+  background-color: #fff;
+  color: #34495e;
+  text-align: center;
+  border: 1px solid #ddd;
 }
 
 /* --- (Media Query (मीडिया क्वेरी) (Media Query (मीडिया क्वेरी)) 'शुरू' (Starts)) --- */
@@ -227,19 +232,19 @@ main { min-height: 70vh; }
     /* ('Form' (फॉर्म) (Form (फॉर्म)) 'फिक्स' (Fix) (ठीक)) */
     .form-container form { padding: 25px; }
     
-    /* --- (यह रहा 'नया' (New) '`TABLET`' (टैबलेट) (Tablet (टैबलेट))/'`MOBILE`' (मोबाइल) (MOBILE (मोबाइल)) 'फिक्स' (Fix) (ठीक)!) --- */
+    /* --- (यह रहा 'नया' (New) '`TABLET`' (टैबलेट) (Tablet (टैबलेट))/'`MOBILE`` (मोबाइल) (MOBILE (मोबाइल)) 'फिक्स' (Fix) (ठीक)!) --- */
     
     /* 1. ('`Tables`' (टेबल्स) (Tables (टेबल)) 'को' (to) '`छिपा`' (Hide) ('छिपा' (Hide) (छिपा)) 'दो' (it)) */
     .desktop-only {
-        display: none;
+        display: none !important;
     }
     .desktop-only.table-container {
-        display: none;
+        display: none !important;
     }
     
     /* 2. ('`Mobile Cards`' (मोबाइल कार्ड्स) (Mobile Cards (मोबाइल कार्ड)) 'को' (to) '`दिखाओ`' (Show) ('दिखाओ' (Show) (दिखाएँ))) */
     .mobile-only {
-        display: block;
+        display: block !important;
     }
     
     /* 3. ('`Filters`' (फिल्टर्स) (Filters (फ़िल्टर)) 'को' (to) '`छिपाओ`' (Hide) ('छिपा' (Hide) (छिपा))) */
