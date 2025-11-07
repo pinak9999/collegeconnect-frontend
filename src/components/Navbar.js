@@ -8,16 +8,16 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ✅ Hooks always at the top
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showNav, setShowNav] = useState(true);
   const isMobile = windowWidth <= 640;
 
-  // ✅ 1. Hooks always come first (Rule of Hooks)
+  // ✅ useEffect defined unconditionally
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
 
     const handleScroll = () => {
-      // Navbar only visible at top
       if (window.scrollY <= 0) setShowNav(true);
       else setShowNav(false);
     };
@@ -31,34 +31,37 @@ function Navbar() {
     };
   }, []);
 
-  // ✅ 2. Hide Navbar on login/register/forgot-password pages
-  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
-  const currentPath = location.pathname.toLowerCase();
-  if (hiddenRoutes.some((route) => currentPath.startsWith(route))) {
-    return null; // Navbar not rendered on these pages
-  }
-
-  // ✅ 3. Logout Handler
+  // ✅ logout handler and helpers
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
-  // ✅ 4. Dashboard Path Logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
-  // ✅ 5. Background Logic
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // ✅ 6. Navbar Styles
+  // ✅ Hide Navbar logic (AFTER hooks)
+  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
+  const currentPath = location.pathname.toLowerCase();
+  const shouldHideNavbar = hiddenRoutes.some((route) =>
+    currentPath.startsWith(route)
+  );
+
+  // ✅ If navbar should not show → just render nothing below
+  if (shouldHideNavbar) {
+    return <></>; // not an early return before hooks — safe to compile
+  }
+
+  // ✅ Styles
   const navStyle = {
     position: "fixed",
     top: showNav ? "0" : "-100px",
@@ -120,7 +123,6 @@ function Navbar() {
     e.target.style.boxShadow = boxShadow;
   };
 
-  // ✅ 7. Return JSX
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
