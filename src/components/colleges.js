@@ -23,7 +23,7 @@ export const colleges = [
     name: "SKIT Jaipur",
     location: "Jaipur, Rajasthan",
     coords: [26.8231 , 75.8666],
-    image: "https://www.pgdm.college/wp-content/uploads/2019/09/skit-jaipur-campus.jpg",
+    image: "https://image-static.collegedunia.com/public/college_data/images/appImage/15381_SKIT_New.jpg",
   },
   {
     name: "JECRC Foundation",
@@ -36,6 +36,6 @@ export const colleges = [
     name: "Poornima College of Engineering - PCE",
     location: "Jaipur, Rajasthan",
     coords: [26.7656, 75.8536],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuZpuqTPNlkgSbBlptTPa3JNAcpi7FfqU_fg&s",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSonwFZ33_U7AkBapDOZRmLi21gtZl_g0UFEt_egVtwtlvEqd4phZRTeCPI_4dkv_KhlE&usqp=CAU",
   },
 ];
