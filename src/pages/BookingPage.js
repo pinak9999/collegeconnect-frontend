@@ -12,22 +12,18 @@ function BookingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-  
-  // 1. Price Breakdown के लिए State
-  const [platformFee, setPlatformFee] = useState(0); 
 
-  // 2. Responsive Layout के लिए State
+  // 1. Price Breakdown (platformFee) state हटा दिया गया है
+  
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const isMobile = windowWidth <= 768;
 
   useEffect(() => {
-    // 3. Responsive होने के लिए स्क्रीन साइज़ सुनें
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
     window.addEventListener("resize", handleResize);
-    
-    // Data load function
+
     const loadPageData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -47,11 +43,9 @@ function BookingPage() {
 
         setProfile(res.data);
         
-        // Price breakdown के लिए fees को save करें
-        const pFee = settingsRes.data.platformFee;
-        const sFee = res.data.price_per_session;
-        setPlatformFee(pFee);
-        setTotalAmount(sFee + pFee);
+        // 2. Sirf Total Amount set kiya gaya hai
+        const fee = res.data.price_per_session + settingsRes.data.platformFee;
+        setTotalAmount(fee);
         
         setLoading(false);
       } catch (err) {
@@ -65,15 +59,11 @@ function BookingPage() {
 
     loadPageData();
     
-    // Cleanup
     return () => window.removeEventListener("resize", handleResize);
   }, [userId]);
 
-  // --- Payment Handler (No changes, yeh perfect hai) ---
+  // --- Payment Handler (No changes) ---
   const displayRazorpay = async () => {
-    // ... (आपका मौजूदा displayRazorpay फ़ंक्शन जैसा है वैसा ही रहेगा) ...
-    // (मैंने इसे छोटा कर दिया है ताकि फ़ाइल बहुत बड़ी न लगे,
-    //  आप अपने ऑरिजिनल कोड से इसे कॉपी कर सकते हैं)
     if (!auth.user) {
       toast.error("You must be logged in to book.");
       navigate("/login");
@@ -141,18 +131,18 @@ function BookingPage() {
     padding: "0 20px",
     fontFamily: "'Poppins', sans-serif",
     display: "flex",
-    flexDirection: isMobile ? "column" : "row", // Mobile: column, Desktop: row
+    flexDirection: isMobile ? "column" : "row",
     gap: "30px",
   };
 
   const mainContentStyle = {
-    flex: isMobile ? "1" : "2", // Desktop पर ज़्यादा जगह लेगा
+    flex: isMobile ? "1" : "2",
   };
 
   const sidebarStyle = {
     flex: "1",
-    position: isMobile ? "relative" : "sticky", // Desktop पर sticky
-    top: isMobile ? "0" : "80px", // Navbar की ऊँचाई के नीचे से sticky
+    position: isMobile ? "relative" : "sticky",
+    top: isMobile ? "0" : "80px",
     height: "fit-content",
   };
 
@@ -192,22 +182,7 @@ function BookingPage() {
     transition: "all 0.3s ease",
   };
 
-  const priceItemStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "1rem",
-    color: "#555",
-    marginBottom: "12px",
-  };
-
-  const totalPriceStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "1.3rem",
-    fontWeight: "600",
-    color: "#000",
-    marginTop: "15px",
-  };
+  // 3. Price Breakdown styles (priceItemStyle, totalPriceStyle) हटा दिए गए हैं
 
   const bookButtonStyle = {
     background: "linear-gradient(135deg, #007BFF, #0056b3)",
@@ -224,7 +199,7 @@ function BookingPage() {
     marginTop: "20px",
   };
 
-  // --- LOADING / ERROR / NOT FOUND STATES (Improved) ---
+  // --- LOADING / ERROR / NOT FOUND STATES ---
 
   if (loading)
     return (
@@ -308,8 +283,9 @@ function BookingPage() {
                alt="College ID Card"
                style={{
                  width: "100%",
-                 maxWidth: "300px", // ID card ko bohot bada hone se rokega
-                 aspectRatio: "86 / 54", // Standard ID Card ratio (Horizontal)
+                 // ⭐ 4. ID Card ko Vertical kar diya gaya hai
+                 maxWidth: "250px", // Vertical card ke liye max-width set ki
+                 aspectRatio: "54 / 86", // Standard Vertical ID Card ratio
                  height: "auto",
                  border: "2px solid #007BFF",
                  borderRadius: "10px",
@@ -335,21 +311,23 @@ function BookingPage() {
             After payment, the senior will contact you within 6 hours to schedule the best time.
           </p>
 
-          <div style={priceItemStyle}>
-            <span>Session Fee ({profile.session_duration_minutes} min)</span>
-            <span style={{fontWeight: 500}}>₹{profile.price_per_session}</span>
-          </div>
-
-          <div style={priceItemStyle}>
-            <span>Platform Fee</span>
-            <span style={{fontWeight: 500}}>₹{platformFee}</span>
-          </div>
-
-          <hr style={{border: "none", borderTop: "1px solid #eee", margin: "15px 0"}} />
-
-          <div style={totalPriceStyle}>
-            <span>Total Payable</span>
-            <span>₹{totalAmount}</span>
+          {/* ⭐ 5. Price Breakdown ko hata kar Total Price dikhaya gaya hai */}
+          <div style={{ 
+              textAlign: "center", 
+              margin: "25px 0", 
+              fontSize: "2.5rem", 
+              color: "#000", 
+              fontWeight: "600" 
+          }}>
+            ₹{totalAmount}
+            <span style={{ 
+                fontSize: "1rem", 
+                color: "#666", 
+                fontWeight: "400", 
+                marginLeft: "8px" 
+            }}>
+              / {profile.session_duration_minutes} min
+            </span>
           </div>
 
           <button
