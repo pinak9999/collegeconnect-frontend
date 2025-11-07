@@ -89,7 +89,7 @@ function HomePage() {
             style={{
               fontSize: "2.8rem",
               fontWeight: "800",
-              marginBottom: "20px",
+              marginBottom: "10px",
               lineHeight: "1.3",
             }}
           >
