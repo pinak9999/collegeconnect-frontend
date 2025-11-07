@@ -10,15 +10,19 @@ function Navbar() {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showNav, setShowNav] = useState(true);
+  const [scrollPos, setScrollPos] = useState(0);
   const isMobile = windowWidth <= 640;
 
-  // 🔹 Handle scroll + resize
+  // ✅ Scroll Hide/Show + Resize Logic
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
 
     const handleScroll = () => {
-      if (window.scrollY === 0) setShowNav(true);
-      else setShowNav(false);
+      const currentScroll = window.scrollY;
+      if (currentScroll <= 0) setShowNav(true);
+      else if (currentScroll > scrollPos) setShowNav(false);
+      else setShowNav(true);
+      setScrollPos(currentScroll);
     };
 
     window.addEventListener("resize", handleResize);
@@ -28,37 +32,42 @@ function Navbar() {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [scrollPos]);
 
+  // ✅ Logout Handler
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
+  // ✅ Dashboard Path Logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
+  // ✅ Background Logic
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // 🎨 Navbar Styles (Fixed + Smooth)
+  // 🎨 --- Navbar Styles ---
   const navStyle = {
     position: "fixed",
-    top: showNav ? "0" : "-80px",
-    transition: "top 0.35s ease-in-out",
+    top: showNav ? "0" : "-100px",
+    opacity: showNav ? "1" : "0",
+    transition: "top 0.5s ease, opacity 0.4s ease",
     width: "100%",
     zIndex: 1000,
     background: navBg,
     color: "#fff",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
+    boxShadow: showNav ? "0 4px 15px rgba(0,0,0,0.25)" : "none",
     padding: "8px 0",
-    backdropFilter: "blur(8px)",
+    backdropFilter: "blur(12px)",
+    transform: showNav ? "translateY(0)" : "translateY(-10px)",
   };
 
   const containerStyle = {
@@ -80,6 +89,7 @@ function Navbar() {
     display: "flex",
     alignItems: "center",
     gap: "6px",
+    transition: "transform 0.3s ease",
   };
 
   const menuStyle = {
@@ -111,15 +121,20 @@ function Navbar() {
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
-        {/* Logo */}
-        <Link to="/" style={logoStyle}>
+        {/* LOGO */}
+        <Link
+          to="/"
+          style={logoStyle}
+          onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
+          onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+        >
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
             College<span style={{ color: "#E0F2FE" }}>Connect</span>
           </span>
         </Link>
 
-        {/* Menu Buttons */}
+        {/* MENU */}
         <div style={menuStyle}>
           {auth.isAuthenticated && auth.user ? (
             <>
