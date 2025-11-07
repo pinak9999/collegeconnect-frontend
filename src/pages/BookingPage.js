@@ -176,7 +176,7 @@ function BookingPage() {
           fontWeight: 500,
         }}
       >
-        (Standard Vertical 54mm × 86mm Size)
+        
       </p>
     </div>
   </div>
