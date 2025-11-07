@@ -10,66 +10,65 @@ function Navbar() {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showNav, setShowNav] = useState(true);
-  const [scrollPos, setScrollPos] = useState(0);
   const isMobile = windowWidth <= 640;
 
-  // ✅ Scroll Hide/Show + Resize Logic
- useEffect(() => {
-  const handleResize = () => setWindowWidth(window.innerWidth);
+  // --- 🧠 Hide Navbar on these routes ---
+  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
+  if (hiddenRoutes.includes(location.pathname)) {
+    return null; // ✅ Navbar not rendered
+  }
 
-  const handleScroll = () => {
-    if (window.scrollY <= 0) {
-      // ✅ Bilkul top par ho tab dikhana
-      setShowNav(true);
-    } else {
-      // ✅ Warna hamesha chhupa rakhna
-      setShowNav(false);
-    }
-  };
+  // --- ✅ Scroll Hide Logic (only show at top) ---
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
 
-  window.addEventListener("resize", handleResize);
-  window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (window.scrollY <= 0) setShowNav(true);
+      else setShowNav(false);
+    };
 
-  return () => {
-    window.removeEventListener("resize", handleResize);
-    window.removeEventListener("scroll", handleScroll);
-  };
-}, []);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll);
 
-  // ✅ Logout Handler
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // --- Logout Handler ---
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
-  // ✅ Dashboard Path Logic
+  // --- Dashboard Logic ---
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
-  // ✅ Background Logic
+  // --- Background ---
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // 🎨 --- Navbar Styles ---
+  // --- Navbar Styles ---
   const navStyle = {
     position: "fixed",
     top: showNav ? "0" : "-100px",
     opacity: showNav ? "1" : "0",
-    transition: "top 0.5s ease, opacity 0.4s ease",
+    transition: "top 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease",
     width: "100%",
     zIndex: 1000,
     background: navBg,
     color: "#fff",
     boxShadow: showNav ? "0 4px 15px rgba(0,0,0,0.25)" : "none",
     padding: "8px 0",
-    backdropFilter: "blur(12px)",
-    transform: showNav ? "translateY(0)" : "translateY(-10px)",
+    backdropFilter: "blur(10px)",
   };
 
   const containerStyle = {
@@ -91,7 +90,6 @@ function Navbar() {
     display: "flex",
     alignItems: "center",
     gap: "6px",
-    transition: "transform 0.3s ease",
   };
 
   const menuStyle = {
@@ -124,12 +122,7 @@ function Navbar() {
     <nav style={navStyle}>
       <div style={containerStyle}>
         {/* LOGO */}
-        <Link
-          to="/"
-          style={logoStyle}
-          onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-          onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
-        >
+        <Link to="/" style={logoStyle}>
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
             College<span style={{ color: "#E0F2FE" }}>Connect</span>
