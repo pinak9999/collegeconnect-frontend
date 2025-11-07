@@ -57,7 +57,7 @@ function Navbar() {
     margin: "0 auto",
     display: "flex",
     alignItems: "center",
-    padding: "0 20px",
+    padding: "4px 56px",
     flexDirection: isMobile ? "column" : "row",
     justifyContent: isMobile ? "center" : "space-between",
     gap: isMobile ? "12px" : "0",

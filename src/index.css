@@ -1,6 +1,6 @@
 /* --- 1. 'बेसिक' (Basic) 'सेटअप' (Setup) --- */
 body, html {
-  margin: 0;
+  margin: -13px;
   padding: 0;
   box-sizing: border-box; /* यह एक अच्छी प्रैक्टिस है */
 }
