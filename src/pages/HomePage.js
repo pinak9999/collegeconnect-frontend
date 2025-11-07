@@ -1,5 +1,3 @@
-// src/pages/HomePage.js
-
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import HowItWorks from "../components/HowItWorks";
@@ -7,9 +5,21 @@ import FeaturedSeniors from "../components/FeaturedSeniors";
 import CollegeMap from "../components/CollegeMap";
 import { colleges } from "../components/colleges";
 
+// Add this global style somewhere at app entry-point (index.css or App.js, or below in style tag)
+const globalStyle = `
+  body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+`;
+
 function HomePage() {
-  // आपका IntersectionObserver (Fade-in-up) इफ़ेक्ट
   useEffect(() => {
+    // Inject global style for margin reset
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = globalStyle;
+    document.head.appendChild(styleTag);
     const fadeElements = document.querySelectorAll(".fade-in-up");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -23,10 +33,12 @@ function HomePage() {
       { threshold: 0.2 }
     );
     fadeElements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      // Clean up global style
+      if (styleTag.parentNode) styleTag.parentNode.removeChild(styleTag);
+    };
   }, []);
-
-  // --- 🎨 इनलाइन स्टाइल्स ---
 
   const collegeSectionStyle = {
     padding: "80px 20px",
@@ -35,7 +47,8 @@ function HomePage() {
     opacity: 0,
     transform: "translateY(40px)",
     transition: "all 1s ease",
-    overflow: "hidden", // ⭐ 1. साइड-शो को रोकने के लिए यहाँ जोड़ा गया
+    overflow: "hidden",
+    margin: 0,
   };
 
   const sectionTitleStyle = {
@@ -43,6 +56,7 @@ function HomePage() {
     fontWeight: "700",
     color: "#007BFF",
     marginBottom: "15px",
+    marginTop: 0,
   };
 
   const sectionDescStyle = {
@@ -99,27 +113,24 @@ function HomePage() {
         fontFamily: "'Poppins', sans-serif",
         backgroundColor: "#f9fbfd",
         color: "#333",
-        // ⭐ 2. 'Easy Scroll' के लिए मुख्य div से overflow हटा दिया गया है
+        margin: 0,
+        padding: 0,
       }}
     >
       {/* 🌟 HERO SECTION */}
-  <section
-  style={{
-    background: "linear-gradient(135deg, #007BFF, #00B4D8)",
-    color: "white",
-    textAlign: "center",
-    
-  padding: "80px 20px 100px",
-    position: "relative",
-    overflow: "hidden",
-    marginTop:"0",
-  }}
->
-
-
-
-        {/* ... (आपका बाकी Hero Section कोड) ... */}
-         <style>
+      <section
+        style={{
+          background: "linear-gradient(135deg, #007BFF, #00B4D8)",
+          color: "white",
+          textAlign: "center",
+          padding: "80px 20px 100px 20px",
+          position: "relative",
+          overflow: "hidden",
+          marginTop: 0,
+          marginBottom: 0,
+        }}
+      >
+        <style>
           {`
             @keyframes floatBlob {
               0%,100% { transform: translateY(0); }
@@ -137,14 +148,14 @@ function HomePage() {
             zIndex: 2,
           }}
         >
-          <h1 style={{ fontSize: "2.8rem", fontWeight: "800", marginBottom: "20px" }}>
+          <h1 style={{ fontSize: "2.8rem", fontWeight: "800", marginBottom: "20px", marginTop: 0 }}>
             🎓 Choose Your Best College in REAP
           </h1>
-          <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.9)", marginBottom: "40px" }}>
+          <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.9)", marginBottom: "40px", marginTop: 0 }}>
             Hostel, Faculty, Placements? <br /> Ask a senior from that college directly.
           </p>
-          <Link 
-            to="/register" 
+          <Link
+            to="/register"
             style={ctaButtonStyle}
             onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
             onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
@@ -154,8 +165,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 🏛️ नया सेक्शन: TOP COLLEGES */}
-      {/* (collegeSectionStyle में overflow: "hidden" पहले ही जोड़ दिया गया है) */}
+      {/* 🏛️ TOP COLLEGES */}
       <section className="fade-in-up" style={collegeSectionStyle}>
         <h2 style={sectionTitleStyle}>🏛️ Explore Top Colleges in Rajasthan</h2>
         <p style={sectionDescStyle}>
@@ -177,9 +187,7 @@ function HomePage() {
             >
               <img src={college.image} alt={college.name} style={cardImageStyle} />
               <div style={cardContentStyle}>
-                <h3 style={{ margin: "0 0 5px 0", color: "#007BFF" }}>
-                  {college.name}
-                </h3>
+                <h3 style={{ margin: "0 0 5px 0", color: "#007BFF" }}>{college.name}</h3>
                 <p style={{ margin: 0, color: "#555" }}>📍 {college.location}</p>
               </div>
             </div>
@@ -187,7 +195,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 🗺️ नया सेक्शन: INTERACTIVE MAP */}
+      {/* 🗺️ INTERACTIVE MAP */}
       <section
         className="fade-in-up"
         style={{
@@ -197,7 +205,8 @@ function HomePage() {
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
-          overflow: "hidden", // ⭐ 3. साइड-शो को रोकने के लिए यहाँ जोड़ा गया
+          overflow: "hidden",
+          margin: 0,
         }}
       >
         <h2 style={sectionTitleStyle}>🗺️ Find Colleges on the Map</h2>
@@ -219,7 +228,8 @@ function HomePage() {
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
-          overflow: "hidden", // ⭐ 4. (सबसे ज़रूरी) 'FeaturedSeniors' को रोकने के लिए
+          overflow: "hidden",
+          margin: 0,
         }}
       >
         <h2 style={sectionTitleStyle}>⭐ Featured Seniors</h2>
@@ -241,7 +251,8 @@ function HomePage() {
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
-          overflow: "hidden", // ⭐ 5. (सबसे ज़रूरी) 'HowItWorks' को रोकने के लिए
+          overflow: "hidden",
+          margin: 0,
         }}
       >
         <h2 style={sectionTitleStyle}>💡 How It Works</h2>
@@ -265,15 +276,15 @@ function HomePage() {
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
-          overflow: "hidden", // ⭐ 6. साइड-शो को रोकने के लिए यहाँ जोड़ा गया
+          overflow: "hidden",
+          margin: 0,
         }}
       >
-        <h2 style={{ fontSize: "1.9rem", fontWeight: "600", marginBottom: "25px" }}>
+        <h2 style={{ fontSize: "1.9rem", fontWeight: "600", marginBottom: "25px", marginTop: 0 }}>
           Your college journey starts with the right guidance 🌟
         </h2>
-        
-        <Link 
-          to="/register" 
+        <Link
+          to="/register"
           style={ctaButtonStyle}
           onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
           onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
