@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import 'leaflet/dist/leaflet.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
+console.log("Google Client ID जो मुझे मिली:", googleClientId);
 // --- (1. बदलाव: 'variable' (वैरिएबल) को पढ़ने का तरीका बदला गया) ---
 // (Create React App 'process.env' का इस्तेमाल करता है)
 const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
