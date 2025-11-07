@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -8,25 +8,26 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isDashboard, setIsDashboard] = useState(false);
 
-  useEffect(() => {
-    // If user is on any dashboard route, hide unnecessary nav clutter
-    const dashboardPaths = ["/admin-dashboard", "/senior-dashboard", "/student-dashboard"];
-    setIsDashboard(dashboardPaths.some((path) => location.pathname.startsWith(path)));
-  }, [location.pathname]);
-
+  // logout
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
+  // Dashboard link logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
+
+  // Transparent Navbar for Home, Solid for Dashboards
+  const isDashboard = location.pathname.includes("dashboard");
+  const navBg = isDashboard
+    ? "linear-gradient(90deg, #0f172a, #1e293b)" // dark blue for dashboard
+    : "linear-gradient(90deg, rgba(0,123,255,0.95), rgba(0,180,216,0.95))";
 
   return (
     <nav
@@ -34,16 +35,14 @@ function Navbar() {
         position: "sticky",
         top: 0,
         zIndex: 1000,
-        background: isDashboard
-          ? "rgba(255, 255, 255, 0.95)"
-          : "linear-gradient(90deg, #007BFF, #004AAD)",
+        background: navBg,
+        color: "#fff",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
         backdropFilter: "blur(10px)",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-        padding: "12px 18px",
-        transition: "all 0.4s ease",
+        transition: "0.3s ease-in-out",
       }}
     >
-      {/* MAIN CONTAINER */}
+      {/* Container */}
       <div
         style={{
           display: "flex",
@@ -51,6 +50,7 @@ function Navbar() {
           alignItems: "center",
           maxWidth: "1200px",
           margin: "0 auto",
+          padding: "10px 20px",
         }}
       >
         {/* LOGO */}
@@ -58,74 +58,93 @@ function Navbar() {
           to="/"
           style={{
             fontSize: "1.6rem",
-            fontWeight: "700",
+            fontWeight: 700,
             textDecoration: "none",
-            color: isDashboard ? "#007BFF" : "#fff",
-            letterSpacing: "0.5px",
+            color: "#fff",
             display: "flex",
             alignItems: "center",
             gap: "5px",
           }}
         >
-          🎓 <span>College</span>
-          <span style={{ color: isDashboard ? "#004AAD" : "#BFDBFE" }}>Connect</span>
+          🎓{" "}
+          <span
+            style={{
+              letterSpacing: "0.5px",
+              transition: "0.3s",
+            }}
+          >
+            College
+            <span style={{ color: "#dbeafe" }}>Connect</span>
+          </span>
         </Link>
 
-        {/* HAMBURGER (mobile only) */}
+        {/* HAMBURGER ICON (Visible only on mobile) */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
             background: "transparent",
             border: "none",
-            color: isDashboard ? "#007BFF" : "#fff",
-            fontSize: "1.8rem",
+            color: "#fff",
+            fontSize: "1.9rem",
             cursor: "pointer",
-            display: "block",
+            display: "none",
           }}
+          className="mobile-toggle"
         >
           {menuOpen ? "✖" : "☰"}
         </button>
-      </div>
 
-      {/* MOBILE NAV */}
-      {menuOpen && (
+        {/* DESKTOP NAV LINKS */}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
-            background: isDashboard ? "#fff" : "rgba(255,255,255,0.95)",
-            borderRadius: "12px",
-            marginTop: "10px",
-            padding: "15px 0",
-            boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-            animation: "fadeIn 0.3s ease",
+            gap: "20px",
           }}
+          className="desktop-links"
         >
-          <style>
-            {`
-              @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-              }
-            `}
-          </style>
-
           {auth.isAuthenticated && auth.user ? (
             <>
               <Link
                 to={getDashboardLink()}
-                onClick={() => setMenuOpen(false)}
-                style={navButton("#007BFF", "Dashboard", "📊")}
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  color: "#fff",
+                  textDecoration: "none",
+                  padding: "10px 18px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "0.3s ease",
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.background = "rgba(255,255,255,0.3)")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background = "rgba(255,255,255,0.15)")
+                }
               >
                 📊 Dashboard
               </Link>
               <button
-                onClick={() => {
-                  logoutHandler();
-                  setMenuOpen(false);
+                onClick={logoutHandler}
+                style={{
+                  background: "linear-gradient(90deg,#ef4444,#dc2626)",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 18px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "0.3s ease",
                 }}
-                style={navButton("#EF4444")}
+                onMouseEnter={(e) =>
+                  (e.target.style.background =
+                    "linear-gradient(90deg,#f87171,#ef4444)")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background =
+                    "linear-gradient(90deg,#ef4444,#dc2626)")
+                }
               >
                 🚪 Logout
               </button>
@@ -134,51 +153,95 @@ function Navbar() {
             <>
               <Link
                 to="/register"
-                onClick={() => setMenuOpen(false)}
-                style={navButton("#4F46E5")}
+                style={{
+                  background: "linear-gradient(90deg,#3b82f6,#2563eb)",
+                  color: "#fff",
+                  textDecoration: "none",
+                  padding: "10px 18px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "0.3s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.background =
+                    "linear-gradient(90deg,#60a5fa,#3b82f6)")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background =
+                    "linear-gradient(90deg,#3b82f6,#2563eb)")
+                }
               >
                 📝 Register
               </Link>
               <Link
                 to="/login"
-                onClick={() => setMenuOpen(false)}
-                style={navButton("#10B981")}
+                style={{
+                  background: "linear-gradient(90deg,#10b981,#059669)",
+                  color: "#fff",
+                  textDecoration: "none",
+                  padding: "10px 18px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "0.3s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.background =
+                    "linear-gradient(90deg,#34d399,#10b981)")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background =
+                    "linear-gradient(90deg,#10b981,#059669)")
+                }
               >
                 🔐 Login
               </Link>
             </>
           )}
         </div>
-      )}
+      </div>
 
-      {/* DESKTOP NAV */}
+      {/* MOBILE MENU (Slide Down) */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "flex-end",
+          display: menuOpen ? "flex" : "none",
+          flexDirection: "column",
           alignItems: "center",
-          gap: "15px",
-          maxWidth: "1200px",
-          margin: "10px auto 0",
+          background: "rgba(255,255,255,0.15)",
+          backdropFilter: "blur(12px)",
+          padding: "20px 0",
+          borderRadius: "0 0 15px 15px",
+          animation: "slideDown 0.4s ease",
         }}
-        className="desktop-nav"
       >
         {auth.isAuthenticated && auth.user ? (
           <>
             <Link
               to={getDashboardLink()}
+              onClick={() => setMenuOpen(false)}
               style={{
-                ...desktopBtn("#007BFF"),
-                display: isDashboard ? "none" : "inline-block",
+                color: "#fff",
+                textDecoration: "none",
+                padding: "12px 30px",
+                fontWeight: 600,
+                borderRadius: "10px",
+                background: "rgba(255,255,255,0.2)",
+                marginBottom: "10px",
               }}
             >
               📊 Dashboard
             </Link>
             <button
-              onClick={logoutHandler}
+              onClick={() => {
+                logoutHandler();
+                setMenuOpen(false);
+              }}
               style={{
-                ...desktopBtn("#EF4444"),
-                background: isDashboard ? "#EF4444" : "linear-gradient(45deg,#EF4444,#DC2626)",
+                background: "linear-gradient(90deg,#ef4444,#dc2626)",
+                color: "#fff",
+                border: "none",
+                padding: "12px 30px",
+                borderRadius: "10px",
+                fontWeight: 600,
               }}
             >
               🚪 Logout
@@ -186,47 +249,57 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/register" style={desktopBtn("#4F46E5")}>
+            <Link
+              to="/register"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                background: "linear-gradient(90deg,#3b82f6,#2563eb)",
+                color: "#fff",
+                textDecoration: "none",
+                padding: "12px 30px",
+                borderRadius: "10px",
+                fontWeight: 600,
+                marginBottom: "10px",
+              }}
+            >
               📝 Register
             </Link>
-            <Link to="/login" style={desktopBtn("#10B981")}>
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                background: "linear-gradient(90deg,#10b981,#059669)",
+                color: "#fff",
+                textDecoration: "none",
+                padding: "12px 30px",
+                borderRadius: "10px",
+                fontWeight: 600,
+              }}
+            >
               🔐 Login
             </Link>
           </>
         )}
       </div>
+
+      {/* Mobile Animation */}
+      <style>
+        {`
+        @keyframes slideDown {
+          from {opacity: 0; transform: translateY(-15px);}
+          to {opacity: 1; transform: translateY(0);}
+        }
+        @media (max-width: 768px) {
+          .desktop-links { display: none; }
+          .mobile-toggle { display: block !important; }
+        }
+        @media (min-width: 769px) {
+          .mobile-toggle { display: none; }
+        }
+      `}
+      </style>
     </nav>
   );
 }
-
-// Reusable styles
-const navButton = (color) => ({
-  background: color,
-  color: "#fff",
-  textDecoration: "none",
-  padding: "10px 20px",
-  borderRadius: "10px",
-  fontWeight: 600,
-  width: "85%",
-  textAlign: "center",
-  marginBottom: "10px",
-  border: "none",
-  cursor: "pointer",
-  boxShadow: `0 4px 12px ${color}40`,
-  transition: "transform 0.2s ease",
-});
-
-const desktopBtn = (color) => ({
-  background: `linear-gradient(45deg,${color},${color}90)`,
-  color: "#fff",
-  textDecoration: "none",
-  padding: "8px 16px",
-  borderRadius: "10px",
-  fontWeight: 600,
-  border: "none",
-  cursor: "pointer",
-  boxShadow: `0 3px 10px ${color}50`,
-  transition: "all 0.3s ease",
-});
 
 export default Navbar;
