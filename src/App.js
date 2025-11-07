@@ -1,11 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// 1. 'useLocation' को 'import' (आयात) करें
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-// --- (बदलाव 1: AuthProvider और Toaster को यहाँ से हटाएँ) ---
-// --- (बदलाव 2: useAuth को इम्पोर्ट करें) ---
-import { useAuth } from './context/AuthContext'; 
-
-// --- (बदलाव 3: Modal को इम्पोर्ट करें) ---
+// 2. 'AuthProvider' और 'Toaster' को यहाँ से हटा दें (वे 'index.js' में हैं)
+import { useAuth } from './context/AuthContext';
 import MobileNumberModal from './components/MobileNumberModal';
 
 import Navbar from './components/Navbar';
@@ -35,194 +33,145 @@ import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 import SeniorEarningsPage from './pages/SeniorEarningsPage';
 
-// --- (मुख्य App Function) ---
+// 3. एक नया 'Internal Layout Component' (आंतरिक लेआउट कॉम्पोनेंट) बनाएँ
+// (यह 'useLocation' का इस्तेमाल कर सकता है क्योंकि यह <Router> के अंदर होगा)
+function AppLayout() {
+  const location = useLocation();
+  const { auth } = useAuth();
+
+  // 4. 'check' (जाँच) करें कि क्या 'Mobile Modal' (मोबाइल मोडल) दिखाना है
+  const showMobileModal = 
+    auth.isAuthenticated &&
+    auth.user &&
+    !auth.user.mobileNumber;
+
+  // 5. 'check' (जाँच) करें कि क्या 'Navbar' (नेवबार) को छिपाना है 
+  // (यह 'logic' (तर्क) 'Navbar.js' से 'match' (मेल) होना चाहिए)
+  const hiddenRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
+  const currentPath = location.pathname.toLowerCase();
+  
+  // 'startsWith' (से शुरू होता है) का इस्तेमाल करें ताकि '/reset-password/:token' (रीसेट-पासवर्ड/:टोकन) भी 'match' (मेल) हो
+  const isNavbarHidden = hiddenRoutes.some((route) => currentPath.startsWith(route));
+
+  return (
+    <div className="App">
+      {/* 'Modal' (मोडल) को सबसे ऊपर दिखाएँ */}
+      {showMobileModal && <MobileNumberModal />}
+
+      {/* 'Navbar' (नेवबार) यहाँ है (यह खुद 'null' (शून्य) 'return' (रिटर्न) कर देगा) */}
+      <Navbar />
+
+      {/* 6. "Smart" (स्मार्ट) <main> 
+         यह 'class' (क्लास) (padding-top) सिर्फ तब 'add' (जोड़) करेगा जब 'Navbar' (नेवबार) छिपा हुआ नहीं है
+         (यह 'Login' (लॉगिन) पेज के 'gap' (गैप) को 'fix' (फिक्स) करेगा)
+      */}
+      <main className={isNavbarHidden ? "" : "content-with-navbar"}>
+        <Routes>
+              {/* ---------------- PUBLIC ROUTES ---------------- */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
+              {/* ---------------- STUDENT ROUTES ---------------- */}
+              <Route
+                path="/student-dashboard/*"
+                element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>}
+              />
+
+              {/* ---------------- SENIOR ROUTES ---------------- */}
+              <Route
+                path="/senior-dashboard/*"
+                element={<ProtectedRoute><SeniorDashboard /></ProtectedRoute>}
+              />
+              <Route
+                path="/senior-availability"
+                element={<ProtectedRoute><SeniorAvailabilityPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/senior-earnings"
+                element={<ProtectedRoute><SeniorEarningsPage /></ProtectedRoute>}
+              />
+
+              {/* ---------------- BOOKING ROUTES ---------------- */}
+              <Route
+                path="/book/:userId"
+                element={<ProtectedRoute><BookingPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/booking-success"
+                element={<ProtectedRoute><BookingSuccessPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/rate-booking/:bookingId"
+                element={<ProtectedRoute><RateBookingPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/raise-dispute/:bookingId"
+                element={<ProtectedRoute><RaiseDisputePage /></ProtectedRoute>}
+              />
+              <Route
+                path="/chat/:bookingId"
+                element={<ProtectedRoute><ChatPage /></ProtectedRoute>}
+              />
+
+              {/* ---------------- ADMIN ROUTES ---------------- */}
+              <Route
+                path="/admin-dashboard"
+                element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}
+              />
+              <Route
+                path="/admin-edit-profile/:userId"
+                element={<ProtectedRoute><AdminEditProfilePage /></ProtectedRoute>}
+              />
+              <Route
+                path="/admin-payouts"
+                element={<ProtectedRoute><AdminPayoutsPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/admin-settings"
+                element={<ProtectedRoute><AdminSettingsPage /></ProtectedRoute>}
+              />
+              <Route
+                path="/admin-manage-tags"
+                element={<ProtectedRoute><AdminManageTags /></ProtectedRoute>}
+              />
+              <Route
+                path="/admin-manage-colleges"
+                element={<ProtectedRoute><AdminManageColleges /></ProtectedRoute>}
+              />
+              <Route
+                path="/admin-manage-dispute-reasons"
+                element={<ProtectedRoute><AdminManageDisputes /></ProtectedRoute>}
+              />
+
+              {/* ---------------- 404 Route ---------------- */}
+              <Route
+                path="*"
+                element={
+                  <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                    <h2>404 - Page Not Found</h2>
+                    <p>The page you are looking for doesn’t exist.</p>
+                  </div>
+                }
+              />
+            </Routes>
+          </main>
+
+        <Footer />
+      </div>
+  );
+}
+
+// 7. 'main' (मुख्य) 'App' (ऐप) 'function' (फ़ंक्शन) अब 'Router' (राउटर) को 'render' (रेंडर) करेगा
 function App() {
-  
-  // --- (बदलाव 4: AuthContext से यूज़र की जानकारी लें) ---
-  const { auth } = useAuth();
-
-  // यह फ़ैसला करेगा कि Modal दिखाना है या नहीं:
-  const showMobileModal = 
-    auth.isAuthenticated &&  // 1. यूज़र Logged in है
-    auth.user &&             // 2. यूज़र का डेटा लोड हो चुका है
-    !auth.user.mobileNumber; // 3. यूज़र का मोबाइल नंबर नहीं है
-
-  return (
-    // --- (बदलाव 5: AuthProvider और Toaster यहाँ से हटा दिए गए हैं) ---
-    <Router>
-      
-      {/* --- (बदलाव 6: अगर showMobileModal 'true' है, तो Modal को दिखाएँ) --- */}
-      {showMobileModal && <MobileNumberModal />}
-      
-      {/* (Modal खुद ही बैकग्राउंड को blur कर देगा, 
-        इसलिए हमें यहाँ 'filter: blur()' लगाने की ज़रूरत नहीं है)
-      */}
-      <div className="App">
-        <Navbar />
-
-        <main>
-          <Routes>
-
-            {/* ---------------- PUBLIC ROUTES ---------------- */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-
-            {/* ---------------- STUDENT ROUTES ---------------- */}
-            <Route
-              path="/student-dashboard/*"
-              element={
-                <ProtectedRoute>
-                  <StudentDashboard />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ---------------- SENIOR ROUTES ---------------- */}
-            <Route
-              path="/senior-dashboard/*"
-              element={
-                <ProtectedRoute>
-                  <SeniorDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/senior-availability"
-              element={
-                <ProtectedRoute>
-                  <SeniorAvailabilityPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/senior-earnings"
-              element={
-                <ProtectedRoute>
-                  <SeniorEarningsPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ---------------- BOOKING ROUTES ---------------- */}
-            <Route
-              path="/book/:userId"
-              element={
-                <ProtectedRoute>
-                  <BookingPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/booking-success"
-              element={
-                <ProtectedRoute>
-                  <BookingSuccessPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/rate-booking/:bookingId"
-              element={
-                <ProtectedRoute>
-                  <RateBookingPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/raise-dispute/:bookingId"
-              element={
-                <ProtectedRoute>
-                  <RaiseDisputePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/chat/:bookingId"
-              element={
-                <ProtectedRoute>
-                  <ChatPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ---------------- ADMIN ROUTES ---------------- */}
-            <Route
-              path="/admin-dashboard"
-              element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin-edit-profile/:userId"
-              element={
-                <ProtectedRoute>
-                  <AdminEditProfilePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin-payouts"
-              element={
-                <ProtectedRoute>
-                  <AdminPayoutsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin-settings"
-              element={
-                <ProtectedRoute>
-                  <AdminSettingsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin-manage-tags"
-              element={
-                <ProtectedRoute>
-                  <AdminManageTags />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin-manage-colleges"
-              element={
-                <ProtectedRoute>
-                  <AdminManageColleges />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin-manage-dispute-reasons"
-              element={
-                <ProtectedRoute>
-                  <AdminManageDisputes />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ---------------- 404 Route ---------------- */}
-            <Route
-              path="*"
-              element={
-                <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                  <h2>404 - Page Not Found</h2>
-                  <p>The page you are looking for doesn’t exist.</p>
-                </div>
-              }
-            />
-          </Routes>
-        </main>
-
-        <Footer />
-      </div>
-    </Router>
-  );
+  return (
+    // (AuthProvider और Toaster 'index.js' में हैं)
+    <Router>
+      <AppLayout />
+    </Router>
+  );
 }
 
 export default App;

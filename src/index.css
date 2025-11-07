@@ -167,7 +167,7 @@ main { min-height: 70vh; }
 
 /* --- (यह 'नया' (New) 'CSS' (सीएसएस) (CSS (सीएसएस)) 'ऐड' (add) (जोड़) 'करें' (Do)) --- */
 .page-container {
-    padding-top: 40px;
+    padding-top: 0px;
     padding-bottom: 40px;
 }
  /* src/index.css */
