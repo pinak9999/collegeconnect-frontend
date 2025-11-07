@@ -46,7 +46,7 @@ function LoginPage() {
       alignItems: 'center',
       justifyContent: 'center',
       height: '100vh',
-      background: 'linear-gradient(135deg, #2563eb, #1e3a8a)',
+      background: 'linear-gradient(135deg, #2563eb, #1e40af)',
       fontFamily: "'Poppins', sans-serif",
       padding: '1rem',
     },
