@@ -123,21 +123,28 @@ function BookingPage() {
                 
                 {/* --- (यह रहा 'नया' (New) '100% Accurate' (सही) 'फिक्स' (Fix) (ठीक)) --- */}
                 {/* ('हम' (We) 'बटन' (button) (बटन) 'की' (of) 'जगह' (place) '`Image`' (इमेज) (Image (छवि)) 'दिखा' (showing) 'रहे' (are) 'हैं' (हैं)) */}
-              {profile.id_card_url && (
+             {profile.id_card_url && (
   <div
     style={{
       margin: '30px auto',
       textAlign: 'center',
       background: '#f8f9fa',
-      padding: '15px 0 25px 0',
+      padding: '20px 0 30px 0',
       borderRadius: '12px',
       boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
       width: 'fit-content',
     }}
   >
-    <h3 style={{borderBottom: '1px solid #ddd', paddingBottom: '10px', margin: '10px 0 20px 0'}}>
+    <h3
+      style={{
+        borderBottom: '1px solid #ddd',
+        paddingBottom: '10px',
+        margin: '10px 0 20px 0',
+      }}
+    >
       🎓 College Verified ID
     </h3>
+
     <div
       style={{
         display: 'flex',
@@ -151,28 +158,30 @@ function BookingPage() {
         alt="College ID Card"
         style={{
           width: '100%',
-          maxWidth: '86mm', // real-world ID width
-          aspectRatio: '86 / 54',
+          maxWidth: '54mm', // narrower width
+          aspectRatio: '54 / 86', // flipped aspect ratio (portrait)
           height: 'auto',
           border: '2px solid #007BFF',
           borderRadius: '10px',
           boxShadow: '0 6px 14px rgba(0,0,0,0.15)',
           objectFit: 'cover',
+          transform: 'rotate(0deg)', // ensure upright orientation
         }}
       />
       <p
         style={{
-          marginTop: '8px',
+          marginTop: '10px',
           fontSize: '0.9rem',
           color: '#555',
           fontWeight: 500,
         }}
       >
-        (Standard 86mm × 54mm Size)
+        (Standard Vertical 54mm × 86mm Size)
       </p>
     </div>
   </div>
 )}
+
 
                 {/* --- (अपडेट (Update) खत्म) --- */}
 
