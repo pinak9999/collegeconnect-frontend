@@ -45,7 +45,7 @@ function Navbar() {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]); // Re-run effect when lastScrollY changes
+  }, [lastScrollY]);
 
   // Logout handler
   const logoutHandler = () => {
@@ -67,8 +67,22 @@ function Navbar() {
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // --- 🎨 STYLE OBJECTS 🎨 ---
+  // --- 🎨 STYLE OBJECTS (Balanced Design) 🎨 ---
 
+  // Main Nav Style
+  const navStyle = {
+    position: "sticky",
+    top: showNav ? "0" : "-100px",
+    transition: "top 0.3s ease",
+    zIndex: 1000,
+    background: navBg,
+    color: "#fff",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
+    padding: "12px 0", // Navbar ko behtar breathing room dene ke liye
+    backdropFilter: "blur(8px)",
+  };
+
+  // Container Style
   const containerStyle = {
     maxWidth: "1150px",
     margin: "0 auto",
@@ -77,26 +91,38 @@ function Navbar() {
     padding: "0 20px",
     flexDirection: isMobile ? "column" : "row",
     justifyContent: isMobile ? "center" : "space-between",
-    gap: isMobile ? "15px" : "0",
+    gap: isMobile ? "12px" : "0", // Mobile par logo aur buttons ke beech ka gap
   };
 
+  // Logo Style
+  const logoStyle = {
+    fontSize: "1.5rem", // Logo text ko thoda bada kiya
+    fontWeight: 700,
+    textDecoration: "none",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+  };
+  
+  // Menu (Buttons Container) Style
   const menuStyle = {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "10px", // Buttons ke beech ka gap thoda kam kiya
     flexWrap: "wrap",
     justifyContent: "center",
     width: isMobile ? "100%" : "auto",
   };
 
-  // 6. बटन स्टाइल्स (छोटे)
+  // Base Button Style
   const btnBaseStyle = {
     color: "#fff",
-    padding: "8px 18px", // छोटा किया
+    padding: "7px 16px", // Buttons ko thoda chhota aur compact kiya
     borderRadius: "50px",
     fontWeight: 600,
     textDecoration: "none",
-    fontSize: "0.9rem", // छोटा किया
+    fontSize: "0.9rem", // Button text size
     transition: "all 0.3s ease",
     border: "none",
     cursor: "pointer",
@@ -109,35 +135,10 @@ function Navbar() {
   };
 
   return (
-    <nav
-      style={{
-        position: "sticky",
-        // --- SCROLL ANIMATION ---
-        top: showNav ? "0" : "-100px", // Hides by moving up
-        transition: "top 0.3s ease", // The animation
-        // -------------------------
-        zIndex: 1000,
-        background: navBg,
-        color: "#fff",
-        boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
-        padding: "8px 0", // पतला किया
-        backdropFilter: "blur(8px)",
-      }}
-    >
+    <nav style={navStyle}>
       <div style={containerStyle}>
         {/* LOGO */}
-        <Link
-          to="/"
-          style={{
-            fontSize: "1.4rem", // छोटा किया
-            fontWeight: 700,
-            textDecoration: "none",
-            color: "#fff",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-          }}
-        >
+        <Link to="/" style={logoStyle}>
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
             College<span style={{ color: "#E0F2FE" }}>Connect</span>
