@@ -1,27 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import HowItWorks from '../components/HowItWorks';
 import FeaturedSeniors from '../components/FeaturedSeniors';
-
-// Scroll animation (simple fade effect)
-const useScrollAnimation = () => {
-  useEffect(() => {
-    const elements = document.querySelectorAll('.fade-in-up');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-};
 
 const Hero = () => {
   return (
@@ -30,25 +10,25 @@ const Hero = () => {
         background: 'linear-gradient(135deg, #007BFF, #00B4D8)',
         color: 'white',
         textAlign: 'center',
-        padding: '100px 20px',
+        padding: '60px 20px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '85vh',
+        minHeight: '90vh',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Floating circles animation */}
+      {/* Floating animation circles */}
       <div
         style={{
           position: 'absolute',
-          top: '10%',
-          left: '5%',
-          width: '150px',
-          height: '150px',
-          background: 'rgba(255,255,255,0.1)',
+          top: '15%',
+          left: '10%',
+          width: '120px',
+          height: '120px',
+          background: 'rgba(255,255,255,0.08)',
           borderRadius: '50%',
           animation: 'float1 6s ease-in-out infinite',
         }}
@@ -56,11 +36,11 @@ const Hero = () => {
       <div
         style={{
           position: 'absolute',
-          bottom: '15%',
+          bottom: '10%',
           right: '10%',
-          width: '200px',
-          height: '200px',
-          background: 'rgba(255,255,255,0.1)',
+          width: '160px',
+          height: '160px',
+          background: 'rgba(255,255,255,0.08)',
           borderRadius: '50%',
           animation: 'float2 8s ease-in-out infinite',
         }}
@@ -68,13 +48,47 @@ const Hero = () => {
 
       <style>
         {`
-          @keyframes float1 { 0% { transform: translateY(0);} 50% {transform: translateY(-30px);} 100% {transform: translateY(0);} }
-          @keyframes float2 { 0% { transform: translateY(0);} 50% {transform: translateY(40px);} 100% {transform: translateY(0);} }
+          @keyframes float1 {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
+            100% { transform: translateY(0); }
+          }
+          @keyframes float2 {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(25px); }
+            100% { transform: translateY(0); }
+          }
+          @media (max-width: 768px) {
+            h1.hero-title {
+              font-size: 1.9rem !important;
+              padding: 0 10px;
+            }
+            p.hero-subtitle {
+              font-size: 1rem !important;
+              line-height: 1.5 !important;
+              margin-bottom: 25px !important;
+            }
+            a.hero-btn {
+              padding: 12px 25px !important;
+              font-size: 1rem !important;
+            }
+          }
         `}
       </style>
 
-      <div className="fade-in-up" style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 1s ease' }}>
+      {/* Main Content */}
+      <div
+        className="fade-in-up"
+        style={{
+          opacity: 0,
+          transform: 'translateY(25px)',
+          transition: 'all 1s ease',
+          maxWidth: '700px',
+          zIndex: 2,
+        }}
+      >
         <h1
+          className="hero-title"
           style={{
             fontSize: '2.8rem',
             fontWeight: '800',
@@ -84,12 +98,17 @@ const Hero = () => {
         >
           Discover Your Dream College in REAP 🎓
         </h1>
+
         <p
+          className="hero-subtitle"
           style={{
             fontSize: '1.2rem',
-            color: 'rgba(255,255,255,0.9)',
-            marginBottom: '40px',
-            lineHeight: '1.5',
+            color: 'rgba(255,255,255,0.92)',
+            marginBottom: '35px',
+            lineHeight: '1.6',
+            maxWidth: '550px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
           }}
         >
           Get authentic reviews from real seniors. <br />
@@ -98,19 +117,27 @@ const Hero = () => {
 
         <Link
           to="/register"
+          className="hero-btn"
           style={{
             background: '#fff',
             color: '#007BFF',
-            padding: '14px 35px',
+            padding: '14px 40px',
             borderRadius: '50px',
             fontWeight: '600',
             fontSize: '1.1rem',
             textDecoration: 'none',
-            boxShadow: '0 6px 15px rgba(0,0,0,0.2)',
-            transition: '0.3s ease',
+            boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
+            transition: 'all 0.3s ease',
+            display: 'inline-block',
           }}
-          onMouseEnter={(e) => (e.target.style.transform = 'scale(1.05)')}
-          onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.08)';
+            e.target.style.boxShadow = '0 8px 18px rgba(0,0,0,0.25)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+            e.target.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
+          }}
         >
           🚀 Get Started
         </Link>
@@ -119,14 +146,14 @@ const Hero = () => {
   );
 };
 
-function HomePage() {
-  useScrollAnimation();
 
+function HomePage() {
   return (
     <div
+      className="homepage"
       style={{
         fontFamily: "'Poppins', sans-serif",
-        backgroundColor: '#f8fbff',
+        backgroundColor: '#f9fbfd',
         color: '#333',
         overflowX: 'hidden',
       }}
@@ -136,28 +163,24 @@ function HomePage() {
 
       {/* Featured Seniors Section */}
       <section
-        className="fade-in-up"
         style={{
-          padding: '80px 20px',
+          padding: '60px 20px',
           textAlign: 'center',
-          background: '#fff',
-          opacity: 0,
-          transform: 'translateY(40px)',
-          transition: 'all 0.8s ease',
+          backgroundColor: '#ffffff',
         }}
       >
         <h2
           style={{
-            fontSize: '2.2rem',
+            fontSize: '2rem',
             fontWeight: '700',
+            marginBottom: '10px',
             color: '#007BFF',
-            marginBottom: '15px',
           }}
         >
-          ⭐ Featured Seniors
+          Featured Seniors
         </h2>
-        <p style={{ color: '#555', marginBottom: '40px', fontSize: '1.05rem' }}>
-          Talk with top students who’ve been where you want to go.
+        <p style={{ color: '#555', marginBottom: '40px' }}>
+          Connect with top seniors from different colleges and get real guidance.
         </p>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <FeaturedSeniors />
@@ -166,37 +189,31 @@ function HomePage() {
 
       {/* How It Works Section */}
       <section
-        className="fade-in-up"
         style={{
-          padding: '80px 20px',
-          background: '#f0f6ff',
+          padding: '60px 20px',
+          backgroundColor: '#f4f7fb',
           textAlign: 'center',
-          opacity: 0,
-          transform: 'translateY(40px)',
-          transition: 'all 0.8s ease',
         }}
       >
         <h2
           style={{
-            fontSize: '2.2rem',
+            fontSize: '2rem',
             fontWeight: '700',
-            color: '#007BFF',
             marginBottom: '20px',
+            color: '#007BFF',
           }}
         >
-          💡 How It Works
+          How It Works
         </h2>
         <p
           style={{
             color: '#555',
             fontSize: '1rem',
             maxWidth: '700px',
-            margin: '0 auto 50px',
-            lineHeight: '1.6',
+            margin: '0 auto 40px',
           }}
         >
-          Just register, pick your preferred senior, and book a call.
-          Real insights. Real guidance. No more confusion!
+          Just register, choose your preferred senior, and book a session to get answers directly from experienced students.
         </p>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <HowItWorks />
@@ -205,19 +222,15 @@ function HomePage() {
 
       {/* Footer CTA */}
       <section
-        className="fade-in-up"
         style={{
-          background: 'linear-gradient(135deg, #007BFF, #00B4D8)',
+          background: '#007BFF',
           color: '#fff',
           textAlign: 'center',
-          padding: '80px 20px',
-          opacity: 0,
-          transform: 'translateY(40px)',
-          transition: 'all 0.8s ease',
+          padding: '60px 20px',
         }}
       >
-        <h2 style={{ fontSize: '1.9rem', fontWeight: '600', marginBottom: '25px' }}>
-          Your future starts with the right guidance 🌟
+        <h2 style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '20px' }}>
+          Start your college journey with real guidance.
         </h2>
         <Link
           to="/register"
@@ -225,15 +238,12 @@ function HomePage() {
             background: '#fff',
             color: '#007BFF',
             fontWeight: '600',
-            padding: '14px 35px',
-            borderRadius: '50px',
+            padding: '12px 30px',
+            borderRadius: '8px',
             fontSize: '1.1rem',
             textDecoration: 'none',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-            transition: '0.3s ease',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
           }}
-          onMouseEnter={(e) => (e.target.style.transform = 'scale(1.05)')}
-          onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
         >
           Join Now
         </Link>
