@@ -12,8 +12,22 @@ function BookingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
+  
+  // 1. Price Breakdown के लिए State
+  const [platformFee, setPlatformFee] = useState(0); 
+
+  // 2. Responsive Layout के लिए State
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const isMobile = windowWidth <= 768;
 
   useEffect(() => {
+    // 3. Responsive होने के लिए स्क्रीन साइज़ सुनें
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    
+    // Data load function
     const loadPageData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -32,8 +46,13 @@ function BookingPage() {
         );
 
         setProfile(res.data);
-        const fee = res.data.price_per_session + settingsRes.data.platformFee;
-        setTotalAmount(fee);
+        
+        // Price breakdown के लिए fees को save करें
+        const pFee = settingsRes.data.platformFee;
+        const sFee = res.data.price_per_session;
+        setPlatformFee(pFee);
+        setTotalAmount(sFee + pFee);
+        
         setLoading(false);
       } catch (err) {
         let errorMsg = err.response
@@ -43,16 +62,23 @@ function BookingPage() {
         setLoading(false);
       }
     };
+
     loadPageData();
+    
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
   }, [userId]);
 
+  // --- Payment Handler (No changes, yeh perfect hai) ---
   const displayRazorpay = async () => {
+    // ... (आपका मौजूदा displayRazorpay फ़ंक्शन जैसा है वैसा ही रहेगा) ...
+    // (मैंने इसे छोटा कर दिया है ताकि फ़ाइल बहुत बड़ी न लगे,
+    //  आप अपने ऑरिजिनल कोड से इसे कॉपी कर सकते हैं)
     if (!auth.user) {
       toast.error("You must be logged in to book.");
       navigate("/login");
       return;
     }
-
     const bookingDetails = {
       senior: profile.user._id,
       profileId: profile._id,
@@ -60,7 +86,6 @@ function BookingPage() {
       duration: profile.session_duration_minutes,
       amount: totalAmount,
     };
-
     const toastId = toast.loading("Creating your order...");
     try {
       const token = localStorage.getItem("token");
@@ -71,7 +96,6 @@ function BookingPage() {
       );
       const order = orderRes.data;
       toast.dismiss(toastId);
-
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF",
         amount: order.amount,
@@ -109,193 +133,240 @@ function BookingPage() {
     }
   };
 
+  // --- 🎨 STYLE OBJECTS (Attractive Inline CSS) 🎨 ---
+
+  const pageStyle = {
+    maxWidth: "1200px",
+    margin: "30px auto",
+    padding: "0 20px",
+    fontFamily: "'Poppins', sans-serif",
+    display: "flex",
+    flexDirection: isMobile ? "column" : "row", // Mobile: column, Desktop: row
+    gap: "30px",
+  };
+
+  const mainContentStyle = {
+    flex: isMobile ? "1" : "2", // Desktop पर ज़्यादा जगह लेगा
+  };
+
+  const sidebarStyle = {
+    flex: "1",
+    position: isMobile ? "relative" : "sticky", // Desktop पर sticky
+    top: isMobile ? "0" : "80px", // Navbar की ऊँचाई के नीचे से sticky
+    height: "fit-content",
+  };
+
+  const cardBaseStyle = {
+    background: "#ffffff",
+    borderRadius: "16px",
+    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.08)",
+    padding: "24px",
+    marginBottom: "24px",
+  };
+
+  const profileHeaderStyle = {
+    ...cardBaseStyle,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+  };
+
+  const avatarStyle = {
+    width: "120px",
+    height: "120px",
+    borderRadius: "50%",
+    border: "4px solid #007BFF",
+    marginBottom: "15px",
+    objectFit: "cover",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+  };
+
+  const tagStyle = {
+    background: "#e9f2ff",
+    color: "#007BFF",
+    padding: "6px 14px",
+    borderRadius: "20px",
+    fontSize: "0.9rem",
+    fontWeight: "500",
+    transition: "all 0.3s ease",
+  };
+
+  const priceItemStyle = {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "1rem",
+    color: "#555",
+    marginBottom: "12px",
+  };
+
+  const totalPriceStyle = {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "1.3rem",
+    fontWeight: "600",
+    color: "#000",
+    marginTop: "15px",
+  };
+
+  const bookButtonStyle = {
+    background: "linear-gradient(135deg, #007BFF, #0056b3)",
+    color: "#fff",
+    fontWeight: "600",
+    padding: "14px 20px",
+    borderRadius: "10px",
+    fontSize: "1.1rem",
+    border: "none",
+    cursor: "pointer",
+    boxShadow: "0 4px 15px rgba(0,123,255,0.3)",
+    transition: "all 0.3s ease",
+    width: "100%",
+    marginTop: "20px",
+  };
+
+  // --- LOADING / ERROR / NOT FOUND STATES (Improved) ---
+
   if (loading)
     return (
-      <div style={{ textAlign: "center", marginTop: "50px", color: "#007BFF" }}>
-        <h2>⏳ Loading Profile...</h2>
+      <div style={{ textAlign: "center", marginTop: "100px", fontSize: "1.5rem", color: "#007BFF" }}>
+        <h2>⏳ Loading Booking Page...</h2>
       </div>
     );
 
   if (error)
     return (
-      <div style={{ textAlign: "center", color: "red", marginTop: "50px" }}>
-        <h2>{error}</h2>
+      <div style={{ textAlign: "center", color: "red", marginTop: "100px" }}>
+        <h2>❌ {error}</h2>
       </div>
     );
 
   if (!profile)
     return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <div style={{ textAlign: "center", marginTop: "100px" }}>
         <h2>Profile not found.</h2>
       </div>
     );
 
+  // --- 🚀 FINAL JSX (New Layout) 🚀 ---
+
   return (
-    <div
-      style={{
-        minHeight: "90vh",
-        maxWidth: "900px",
-        margin: "auto",
-        padding: "20px",
-        fontFamily: "'Poppins', sans-serif",
-      }}
-    >
-      {/* HEADER SECTION */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #007BFF, #0056b3)",
-          color: "#fff",
-          borderRadius: "12px",
-          padding: "25px 20px",
-          textAlign: "center",
-          boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-          transition: "0.3s ease",
-        }}
-      >
-        <img
-          src={profile.avatar || "https://via.placeholder.com/120"}
-          alt={profile.user?.name || "Senior"}
-          style={{
-            width: "100px",
-            height: "100px",
-            borderRadius: "50%",
-            border: "3px solid #fff",
-            marginBottom: "10px",
-            objectFit: "cover",
-          }}
-        />
-        <h2 style={{ fontSize: "1.8rem", fontWeight: "600" }}>
-          {profile.user?.name}
-        </h2>
-        <p style={{ fontSize: "1rem", margin: "5px 0", opacity: 0.9 }}>
-          {profile.college?.name || "N/A"} • {profile.branch} ({profile.year})
-        </p>
-      </div>
-
-      {/* ABOUT ME */}
-      <div style={{ marginTop: "30px" }}>
-        <h3 style={{ color: "#007BFF" }}>About Me</h3>
-        <p style={{ color: "#555", lineHeight: "1.6" }}>{profile.bio}</p>
-      </div>
-
-      {/* TAGS */}
-      <div style={{ marginTop: "20px" }}>
-        <h3 style={{ color: "#007BFF" }}>Specializations</h3>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "10px",
-            marginTop: "10px",
-          }}
-        >
-          {profile.tags?.length ? (
-            profile.tags.map((tag) => (
-              <span
-                key={tag._id}
-                style={{
-                  background: "#e9f2ff",
-                  color: "#007BFF",
-                  padding: "6px 12px",
-                  borderRadius: "20px",
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                  transition: "0.3s",
-                }}
-              >
-                #{tag.name}
-              </span>
-            ))
-          ) : (
-            <p style={{ color: "#555" }}>No tags listed.</p>
-          )}
-        </div>
-      </div>
-
-      {/* VERIFIED ID */}
-      {profile.id_card_url && (
-        <div
-          style={{
-            margin: "40px auto",
-            textAlign: "center",
-            background: "#f8f9fa",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 6px 14px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3 style={{ color: "#007BFF", marginBottom: "15px" }}>
-            🎓 College Verified ID
-          </h3>
+    <div style={pageStyle}>
+      {/* ------------------- 
+          LEFT COLUMN (Info) 
+         ------------------- */}
+      <div style={mainContentStyle}>
+        {/* Profile Header Card */}
+        <div style={profileHeaderStyle}>
           <img
-            src={profile.id_card_url}
-            alt="College ID Card"
-            style={{
-              width: "100%",
-              maxWidth: "54mm",
-              aspectRatio: "54 / 86",
-              height: "auto",
-              border: "2px solid #007BFF",
-              borderRadius: "10px",
-              boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
-              objectFit: "cover",
-              transition: "transform 0.3s ease",
-            }}
-            onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-            onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+            src={profile.avatar || "https://via.placeholder.com/120"}
+            alt={profile.user?.name || "Senior"}
+            style={avatarStyle}
           />
-        </div>
-      )}
-
-      {/* BOOKING DETAILS */}
-      <div
-        style={{
-          marginTop: "30px",
-          textAlign: "center",
-          padding: "20px",
-          background: "#f1f7ff",
-          borderRadius: "12px",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-        }}
-      >
-        <h3 style={{ color: "#007BFF" }}>Booking Details</h3>
-        <p style={{ color: "#555", marginTop: "10px", lineHeight: "1.5" }}>
-          After payment, the senior will contact you within the next 6 hours.
-        </p>
-
-        <div
-          style={{
-            fontSize: "1.6rem",
-            color: "#000",
-            fontWeight: "600",
-            margin: "20px 0",
-          }}
-        >
-          ₹{totalAmount}{" "}
-          <span style={{ fontSize: "1rem", color: "#666" }}>
-            / {profile.session_duration_minutes} min
-          </span>
+          <h2 style={{ fontSize: "2rem", fontWeight: "600", margin: "0 0 5px 0" }}>
+            {profile.user?.name}
+          </h2>
+          <p style={{ fontSize: "1.1rem", margin: "0", color: "#444" }}>
+            {profile.college?.name || "N/A"}
+          </p>
+          <p style={{ fontSize: "1rem", margin: "5px 0 0 0", color: "#666" }}>
+            {profile.branch} ({profile.year})
+          </p>
         </div>
 
-        <button
-          onClick={displayRazorpay}
-          style={{
-            background: "#007BFF",
-            color: "#fff",
-            fontWeight: "600",
-            padding: "12px 35px",
-            borderRadius: "8px",
-            fontSize: "1.1rem",
-            border: "none",
-            cursor: "pointer",
-            boxShadow: "0 4px 10px rgba(0,123,255,0.3)",
-            transition: "0.3s ease",
-          }}
-          onMouseEnter={(e) => (e.target.style.background = "#0056b3")}
-          onMouseLeave={(e) => (e.target.style.background = "#007BFF")}
-        >
-          💳 Pay ₹{totalAmount} & Book Now
-        </button>
+        {/* About Me Card */}
+        <div style={cardBaseStyle}>
+          <h3 style={{ color: "#007BFF", margin: "0 0 15px 0" }}>👤 About Me</h3>
+          <p style={{ color: "#555", lineHeight: "1.7", margin: "0" }}>
+            {profile.bio}
+          </p>
+        </div>
+
+        {/* Specializations Card */}
+        <div style={cardBaseStyle}>
+          <h3 style={{ color: "#007BFF", margin: "0 0 15px 0" }}>🏷️ Specializations</h3>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+            {profile.tags?.length ? (
+              profile.tags.map((tag) => (
+                <span key={tag._id} style={tagStyle}>
+                  #{tag.name}
+                </span>
+              ))
+            ) : (
+              <p style={{ color: "#555", margin: "0" }}>No tags listed.</p>
+            )}
+          </div>
+        </div>
+        
+        {/* Verified ID Card */}
+        {profile.id_card_url && (
+          <div style={cardBaseStyle}>
+             <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", textAlign: "center" }}>
+               🎓 College Verified ID
+             </h3>
+             <img
+               src={profile.id_card_url}
+               alt="College ID Card"
+               style={{
+                 width: "100%",
+                 maxWidth: "300px", // ID card ko bohot bada hone se rokega
+                 aspectRatio: "86 / 54", // Standard ID Card ratio (Horizontal)
+                 height: "auto",
+                 border: "2px solid #007BFF",
+                 borderRadius: "10px",
+                 boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
+                 objectFit: "cover",
+                 display: "block",
+                 margin: "0 auto",
+               }}
+             />
+           </div>
+        )}
+      </div>
+
+      {/* ------------------- 
+          RIGHT COLUMN (Booking) 
+         ------------------- */}
+      <div style={sidebarStyle}>
+        <div style={cardBaseStyle}>
+          <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", fontSize: "1.5rem" }}>
+            Book this Session
+          </h3>
+          <p style={{ fontSize: "0.9rem", color: "#555", lineHeight: "1.5", margin: "0 0 20px 0" }}>
+            After payment, the senior will contact you within 6 hours to schedule the best time.
+          </p>
+
+          <div style={priceItemStyle}>
+            <span>Session Fee ({profile.session_duration_minutes} min)</span>
+            <span style={{fontWeight: 500}}>₹{profile.price_per_session}</span>
+          </div>
+
+          <div style={priceItemStyle}>
+            <span>Platform Fee</span>
+            <span style={{fontWeight: 500}}>₹{platformFee}</span>
+          </div>
+
+          <hr style={{border: "none", borderTop: "1px solid #eee", margin: "15px 0"}} />
+
+          <div style={totalPriceStyle}>
+            <span>Total Payable</span>
+            <span>₹{totalAmount}</span>
+          </div>
+
+          <button
+            onClick={displayRazorpay}
+            style={bookButtonStyle}
+            onMouseEnter={(e) => {
+              e.target.style.background = "#0056b3";
+              e.target.style.transform = "scale(1.02)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "linear-gradient(135deg, #007BFF, #0056b3)";
+              e.target.style.transform = "scale(1)";
+            }}
+          >
+            💳 Pay ₹{totalAmount} & Book
+          </button>
+        </div>
       </div>
     </div>
   );
