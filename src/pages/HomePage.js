@@ -92,16 +92,25 @@ function HomePage() {
     transition: "0.3s ease",
     display: "inline-block",
   };
-
-  return (
-    <div
-      style={{
-        fontFamily: "'Poppins', sans-serif",
-        backgroundColor: "#f9fbfd",
-        color: "#333",
-        overflowX: "hidden",
-      }}
-    >
+return (
+    <div
+      style={{
+        fontFamily: "'Poppins', sans-serif",
+        backgroundColor: "#f9fbfd",
+        color: "#333",
+        // 'overflowX: "hidden"' को यहाँ से हटा दिया गया है
+      }}
+    >
+      {/* 🌟 HERO SECTION */}
+      <section
+        style={{
+          background: "linear-gradient(135deg, #007BFF, #00B4D8)",
+          color: "white",
+          textAlign: "center",
+          padding: "100px 20px",
+          position: "relative",
+          overflow: "hidden", // ⭐ यह सही जगह है
+        }}  ></section>
       {/* 🌟 HERO SECTION */}
       <section
         style={{
