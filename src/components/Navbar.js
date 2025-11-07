@@ -14,25 +14,27 @@ function Navbar() {
   const isMobile = windowWidth <= 640;
 
   // ✅ Scroll Hide/Show + Resize Logic
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
+ useEffect(() => {
+  const handleResize = () => setWindowWidth(window.innerWidth);
 
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      if (currentScroll <= 0) setShowNav(true);
-      else if (currentScroll > scrollPos) setShowNav(false);
-      else setShowNav(true);
-      setScrollPos(currentScroll);
-    };
+  const handleScroll = () => {
+    if (window.scrollY <= 0) {
+      // ✅ Bilkul top par ho tab dikhana
+      setShowNav(true);
+    } else {
+      // ✅ Warna hamesha chhupa rakhna
+      setShowNav(false);
+    }
+  };
 
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll);
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("scroll", handleScroll);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollPos]);
+  return () => {
+    window.removeEventListener("resize", handleResize);
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
 
   // ✅ Logout Handler
   const logoutHandler = () => {
