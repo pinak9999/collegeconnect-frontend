@@ -1,76 +1,70 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
-
-// --- (1. नया इम्पोर्ट) ---
-import { GoogleLogin } from '@react-oauth/google';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import { GoogleLogin } from "@react-oauth/google";
 
 function LoginPage() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
-  const onChangeHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const onChangeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  // --- (2. आपका मौजूदा 'onSubmitHandler' - कोई बदलाव नहीं) ---
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        'https://collegeconnect-backend-mrkz.onrender.com/api/auth/login',
-        formData
-      );
-      login(res.data.token, res.data.user);
-      toast.success('🎉 Login Successful! Welcome back.');
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const toastId = toast.loading("Logging in...");
+    try {
+      const res = await axios.post(
+        "https://collegeconnect-backend-mrkz.onrender.com/api/auth/login",
+        formData
+      );
+      login(res.data.token, res.data.user);
+      toast.dismiss(toastId);
+      toast.success("🎉 Login Successful!");
+      const userRole = res.data.user.role;
+      const isSenior = res.data.user.isSenior;
+      if (userRole === "Admin") navigate("/admin-dashboard");
+      else if (isSenior === true) navigate("/senior-dashboard");
+      else navigate("/student-dashboard");
+    } catch (err) {
+      toast.dismiss(toastId);
+      let errorMsg = err.response
+        ? err.response.data.msg || err.response.data
+        : err.message;
+      toast.error("❌ " + errorMsg);
+    }
+    setLoading(false);
+  };
 
-      const userRole = res.data.user.role;
-      const isSenior = res.data.user.isSenior;
-
-      if (userRole === 'Admin') navigate('/admin-dashboard');
-      else if (isSenior === true) navigate('/senior-dashboard');
-      else navigate('/student-dashboard');
-    } catch (err) {
-      let errorMsg = err.response ? (err.response.data.msg || err.response.data) : err.message;
-      toast.error('❌ ' + errorMsg);
-    }
-    setLoading(false);
-  };
-
-  // --- (3. Google Login के लिए नए फ़ंक्शंस) ---
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     setLoading(true);
     const toastId = toast.loading("Logging in with Google...");
     try {
-      // Backend को Google token भेजें (यह वही एंडपॉइंट है जो हमने बनाया था)
       const res = await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/auth/google",
         { token: credentialResponse.credential }
       );
-      
-      // Backend से मिले token और user से लॉगिन करें (बिलकुल नार्मल लॉगिन की तरह)
       login(res.data.token, res.data.user);
       toast.dismiss(toastId);
-      toast.success('🎉 Google Login Successful! Welcome.');
-
-      // वही रोल-बेस्ड नेविगेशन लॉजिक
+      toast.success("🎉 Google Login Successful!");
       const userRole = res.data.user.role;
       const isSenior = res.data.user.isSenior;
-
-      if (userRole === 'Admin') navigate('/admin-dashboard');
-      else if (isSenior === true) navigate('/senior-dashboard');
-      else navigate('/student-dashboard');
-
+      if (userRole === "Admin") navigate("/admin-dashboard");
+      else if (isSenior === true) navigate("/senior-dashboard");
+      else navigate("/student-dashboard");
     } catch (err) {
       toast.dismiss(toastId);
-      let errorMsg = err.response ? (err.response.data.msg || err.response.data) : err.message;
-      toast.error('❌ ' + errorMsg);
+      let errorMsg = err.response
+        ? err.response.data.msg || err.response.data
+        : err.message;
+      toast.error("❌ " + errorMsg);
     }
     setLoading(false);
   };
@@ -79,161 +73,206 @@ function LoginPage() {
     toast.error("Google login failed. Please try again.");
   };
 
-  // Inline styles
-  const styles = {
-    page: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh', // 'height' की जगह 'minHeight' बेहतर है
-      background: 'linear-gradient(135deg,  #007BFF, #00B4D8)',
-      fontFamily: "'Poppins', sans-serif",
-      padding: '1rem',
-    },
-    card: {
-      background: '#fff',
-      padding: '2.5rem',
-      borderRadius: '1.5rem',
-      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-      maxWidth: '400px',
-      width: '100%',
-      textAlign: 'center',
-      animation: 'slideUp 0.8s ease',
-    },
-    title: {
-      fontSize: '1.8rem',
-      fontWeight: '600',
-      marginBottom: '0.4rem',
-      color: '#1e3a8a',
-    },
-    subtitle: {
-      fontSize: '0.9rem',
-      color: '#666',
-      marginBottom: '1.5rem', // (स्पेसिंग बदली गई)
-    },
-    formGroup: {
-      textAlign: 'left',
-      marginBottom: '1.3rem',
-    },
-    label: {
-      display: 'block',
-      fontSize: '0.9rem',
-      color: '#444',
-      marginBottom: '0.4rem',
-    },
-    input: {
-      width: '100%',
-      padding: '0.75rem',
-      border: '1.8px solid #ddd',
-      borderRadius: '10px',
-      transition: 'all 0.3s ease',
-      fontSize: '0.95rem',
-      outline: 'none',
-      boxSizing: 'border-box', // (यह हमेशा अच्छा होता है)
-    },
-    button: {
-      width: '100%',
-      padding: '0.9rem',
-      background: 'linear-gradient(45deg, #2563eb, #1e40af)',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '12px',
-      fontSize: '1rem',
-      fontWeight: '500',
-      cursor: 'pointer',
-      transition: '0.3s',
-    },
-    extraLinks: {
-      marginTop: '1rem',
-    },
-    link: {
-      color: '#2563eb',
-      fontWeight: '500',
-      textDecoration: 'none',
-    },
-    // --- (4. डिवाइडर के लिए नए स्टाइल्स) ---
+  // ---------------- Inline Styles ----------------
+  const styles = {
+    page: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: "100vh",
+      background:
+        "linear-gradient(135deg, #007BFF 0%, #00B4D8 50%, #48CAE4 100%)",
+      fontFamily: "'Poppins', sans-serif",
+      padding: "1rem",
+      animation: "fadeIn 1s ease-in-out",
+    },
+    card: {
+      background: "rgba(255, 255, 255, 0.9)",
+      backdropFilter: "blur(10px)",
+      padding: "2.5rem",
+      borderRadius: "1.5rem",
+      boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
+      maxWidth: "400px",
+      width: "100%",
+      textAlign: "center",
+      transform: "translateY(0)",
+      animation: "slideUp 0.9s ease",
+      transition: "all 0.3s ease",
+    },
+    title: {
+      fontSize: "1.8rem",
+      fontWeight: "700",
+      marginBottom: "0.3rem",
+      color: "#1e3a8a",
+      textShadow: "0 1px 2px rgba(0,0,0,0.1)",
+    },
+    subtitle: {
+      fontSize: "0.95rem",
+      color: "#555",
+      marginBottom: "1.5rem",
+    },
+    formGroup: {
+      textAlign: "left",
+      marginBottom: "1.2rem",
+    },
+    label: {
+      display: "block",
+      fontSize: "0.9rem",
+      color: "#333",
+      marginBottom: "0.4rem",
+      fontWeight: "500",
+    },
+    input: {
+      width: "100%",
+      padding: "0.8rem",
+      border: "1.8px solid #ddd",
+      borderRadius: "12px",
+      fontSize: "0.95rem",
+      outline: "none",
+      boxSizing: "border-box",
+      transition: "all 0.3s ease",
+    },
+    inputFocus: {
+      borderColor: "#2563eb",
+      boxShadow: "0 0 6px rgba(37, 99, 235, 0.3)",
+    },
+    button: {
+      width: "100%",
+      padding: "0.9rem",
+      background: "linear-gradient(45deg, #2563eb, #1e40af)",
+      color: "#fff",
+      border: "none",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      fontWeight: "600",
+      cursor: "pointer",
+      marginTop: "0.5rem",
+      transition: "transform 0.2s, box-shadow 0.2s",
+    },
+    buttonHover: {
+      transform: "translateY(-2px)",
+      boxShadow: "0 6px 12px rgba(37, 99, 235, 0.3)",
+    },
     divider: {
-      display: 'flex',
-      alignItems: 'center',
-      textAlign: 'center',
-      color: '#888',
-      margin: '1.5rem 0'
+      display: "flex",
+      alignItems: "center",
+      color: "#888",
+      margin: "1.5rem 0",
     },
     dividerLine: {
       flex: 1,
-      borderTop: '1px solid #ddd'
-    }
-  };
+      borderTop: "1px solid #ddd",
+    },
+    dividerText: {
+      padding: "0 10px",
+      fontSize: "0.9rem",
+    },
+    extraLinks: {
+      marginTop: "1.2rem",
+    },
+    link: {
+      color: "#2563eb",
+      fontWeight: "500",
+      textDecoration: "none",
+    },
+  };
 
-  return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Welcome Back 👋</h2>
-        <p style={styles.subtitle}>
-          Sign in to continue your journey with <b>CollegeConnect</b>
-        </p>
+  // To handle hover animations (React inline style trick)
+  const [hover, setHover] = useState(false);
+  const [focusInput, setFocusInput] = useState(null);
 
-        {/* --- (5. Google Login बटन) --- */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+  return (
+    <div style={styles.page}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Welcome Back 👋</h2>
+        <p style={styles.subtitle}>
+          Sign in to continue your journey with <b>CollegeConnect</b>
+        </p>
+
+        {/* Google Login */}
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <GoogleLogin
             onSuccess={handleGoogleLoginSuccess}
             onError={handleGoogleLoginError}
-            theme="outline"
+            theme="filled_black"
             size="large"
-            width="320px" // कार्ड की चौड़ाई के हिसाब से
+            width="320px"
           />
         </div>
 
-        {/* --- (6. "OR" डिवाइडर) --- */}
+        {/* Divider */}
         <div style={styles.divider}>
           <hr style={styles.dividerLine} />
-          <span style={{padding: '0 10px'}}>OR</span>
+          <span style={styles.dividerText}>OR</span>
           <hr style={styles.dividerLine} />
         </div>
 
-        {/* --- (7. आपका मौजूदा फ़ॉर्म) --- */}
-        <form onSubmit={onSubmitHandler}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={onChangeHandler}
-              required
-              style={styles.input}
-            />
-          </div>
+        {/* Form */}
+        <form onSubmit={onSubmitHandler}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Email Address</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={onChangeHandler}
+              required
+              style={{
+                ...styles.input,
+                ...(focusInput === "email" ? styles.inputFocus : {}),
+              }}
+              onFocus={() => setFocusInput("email")}
+              onBlur={() => setFocusInput(null)}
+            />
+          </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={onChangeHandler}
-              required
-              style={styles.input}
-            />
-          </div>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={onChangeHandler}
+              required
+              style={{
+                ...styles.input,
+                ...(focusInput === "password" ? styles.inputFocus : {}),
+              }}
+              onFocus={() => setFocusInput("password")}
+              onBlur={() => setFocusInput(null)}
+            />
+          </div>
 
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            style={{
+              ...styles.button,
+              ...(hover ? styles.buttonHover : {}),
+            }}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
 
-          <div style={styles.extraLinks}>
-            <Link to="/forgot-password" style={styles.link}>Forgot Password?</Link>
-            <p style={{ marginTop: '0.6rem', color: '#555' }}>
-              Don’t have an account?{' '}
-              <Link to="/register" style={styles.link}>Register</Link>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+          <div style={styles.extraLinks}>
+            <Link to="/forgot-password" style={styles.link}>
+              Forgot Password?
+            </Link>
+            <p style={{ marginTop: "0.7rem", color: "#555" }}>
+              Don’t have an account?{" "}
+              <Link to="/register" style={styles.link}>
+                Register
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default LoginPage;
