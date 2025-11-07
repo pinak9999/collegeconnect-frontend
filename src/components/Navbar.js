@@ -14,7 +14,7 @@ function Navbar() {
 
   // --- SCROLL ANIMATION STATE ---
   const [showNav, setShowNav] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  // 'lastScrollY' state ki ab zaroorat nahi hai.
 
   // --- USE EFFECT (Resize and Scroll) ---
   useEffect(() => {
@@ -23,18 +23,15 @@ function Navbar() {
       setWindowWidth(window.innerWidth);
     };
 
-    // 2. Scroll Handler
+    // 2. Scroll Handler (Aapki requirement ke hisab se naya logic)
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling Down
-        setShowNav(false);
-      } else {
-        // Scrolling Up
+      if (window.scrollY === 0) {
+        // Sirf tab dikhao jab page bilkul top par ho
         setShowNav(true);
+      } else {
+        // Jaise hi 1px bhi scroll ho, chhipa do
+        setShowNav(false);
       }
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("resize", handleResize);
@@ -45,7 +42,7 @@ function Navbar() {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]);
+  }, []); // Ab dependency array ki zaroorat nahi, yeh sirf ek baar chalega.
 
   // Logout handler
   const logoutHandler = () => {
@@ -78,7 +75,7 @@ function Navbar() {
     background: navBg,
     color: "#fff",
     boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
-    padding: "12px 0", // Navbar ko behtar breathing room dene ke liye
+    padding: "8px 0", // ⭐ Navbar ko patla kar diya gaya hai
     backdropFilter: "blur(8px)",
   };
 
@@ -91,12 +88,12 @@ function Navbar() {
     padding: "0 20px",
     flexDirection: isMobile ? "column" : "row",
     justifyContent: isMobile ? "center" : "space-between",
-    gap: isMobile ? "12px" : "0", // Mobile par logo aur buttons ke beech ka gap
+    gap: isMobile ? "12px" : "0",
   };
 
   // Logo Style
   const logoStyle = {
-    fontSize: "1.5rem", // Logo text ko thoda bada kiya
+    fontSize: "1.5rem",
     fontWeight: 700,
     textDecoration: "none",
     color: "#fff",
@@ -104,12 +101,12 @@ function Navbar() {
     alignItems: "center",
     gap: "6px",
   };
-  
+
   // Menu (Buttons Container) Style
   const menuStyle = {
     display: "flex",
     alignItems: "center",
-    gap: "10px", // Buttons ke beech ka gap thoda kam kiya
+    gap: "10px",
     flexWrap: "wrap",
     justifyContent: "center",
     width: isMobile ? "100%" : "auto",
@@ -118,11 +115,11 @@ function Navbar() {
   // Base Button Style
   const btnBaseStyle = {
     color: "#fff",
-    padding: "7px 16px", // Buttons ko thoda chhota aur compact kiya
+    padding: "7px 16px",
     borderRadius: "50px",
     fontWeight: 600,
     textDecoration: "none",
-    fontSize: "0.9rem", // Button text size
+    fontSize: "0.9rem",
     transition: "all 0.3s ease",
     border: "none",
     cursor: "pointer",
