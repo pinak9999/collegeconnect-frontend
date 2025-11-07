@@ -4,12 +4,12 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 function ResetPasswordPage() {
-  const { token } = useParams(); // URL से टोकन (यह सही है)
+  const { token } = useParams();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // यह आपका सही backend URL है (जैसा 'forgot-password' में था)
+  // यह आपका सही backend URL है
   const API_URL = 'https://collegeconnect-backend-mrkz.onrender.com/api/auth';
 
   const handleSubmit = async (e) => {
@@ -18,21 +18,17 @@ function ResetPasswordPage() {
     const toastId = toast.loading('Resetting password...');
 
     try {
-      // (1) URL को सही API एड्रेस से बदलें
-      // (2) टोकन को URL (params) में भेजें और पासवर्ड को बॉडी में
       const res = await axios.post(
-        `${API_URL}/reset-password/${token}`, // टोकन URL में
-        { password } // पासवर्ड बॉडी में
+        `${API_URL}/reset-password/${token}`,
+        { password }
       );
 
       toast.dismiss(toastId);
       toast.success(res.data.msg || 'Password reset successful!');
-      navigate('/login'); // सफलता पर लॉगिन पेज पर भेजें
+      navigate('/login');
 
     } catch (err) {
       toast.dismiss(toastId);
-      
-      // बैकएंड से असली एरर मैसेज दिखाएं
       let errorMsg = 'Reset link expired or invalid.';
       if (err.response && err.response.data && err.response.data.msg) {
         errorMsg = err.response.data.msg;
@@ -53,7 +49,9 @@ function ResetPasswordPage() {
             type="password"
             placeholder="Enter new password"
             value={password}
-            onChange={(e) => setPassword(e.g.target.value)}
+            // --- (यहाँ 'e.g' को 'e' से बदल दिया गया है) ---
+            onChange={(e) => setPassword(e.target.value)} // ✅ यह रहा फिक्स
+            // ---
             required
           />
         </div>
