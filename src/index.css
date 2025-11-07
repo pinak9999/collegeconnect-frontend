@@ -1,12 +1,7 @@
 /* --- 1. 'बेसिक' (Basic) 'सेटअप' (Setup) --- */
-body, html {
-  margin: -13px;
-  padding: 0;
-  box-sizing: border-box; /* यह एक अच्छी प्रैक्टिस है */
-}
 html, body {
-  margin: 0;
-  padding: 0;
+  margin: -47px;
+  padding: 23px;
   scroll-behavior: smooth;
   font-family: 'Poppins', sans-serif;
   background-color: #f9fbfd;
