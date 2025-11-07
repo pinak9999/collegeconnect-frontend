@@ -8,18 +8,30 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Hooks always at the top
+  // ✅ States
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [showNav, setShowNav] = useState(true);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const isMobile = windowWidth <= 640;
 
-  // ✅ useEffect defined unconditionally
+  // ✅ Responsive + Scroll Logic
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
 
     const handleScroll = () => {
-      if (window.scrollY <= 0) setShowNav(true);
-      else setShowNav(false);
+      const currentScroll = window.scrollY;
+
+      // --- Scroll down → hide navbar ---
+      if (currentScroll > lastScrollY && currentScroll > 80) {
+        setVisible(false);
+      } 
+      // --- Scroll up → show navbar ---
+      else {
+        setVisible(true);
+      }
+
+      setLastScrollY(currentScroll);
     };
 
     window.addEventListener("resize", handleResize);
@@ -29,50 +41,48 @@ function Navbar() {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [lastScrollY]);
 
-  // ✅ logout handler and helpers
+  // ✅ Logout Handler
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
+  // ✅ Dashboard Link Logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
-  const isDashboard = location.pathname.includes("dashboard");
-  const navBg = isDashboard
-    ? "linear-gradient(90deg, #0f172a, #1e293b)"
-    : "linear-gradient(90deg, #007BFF, #00B4D8)";
-
-  // ✅ Hide Navbar logic (AFTER hooks)
+  // ✅ Hide Navbar on Auth Pages
   const hiddenRoutes = ["/login", "/register", "/forgot-password"];
   const currentPath = location.pathname.toLowerCase();
   const shouldHideNavbar = hiddenRoutes.some((route) =>
     currentPath.startsWith(route)
   );
+  if (shouldHideNavbar) return null;
 
-  // ✅ If navbar should not show → just render nothing below
-  if (shouldHideNavbar) {
-    return <></>; // not an early return before hooks — safe to compile
-  }
+  // ✅ Background Color Logic
+  const isDashboard = location.pathname.includes("dashboard");
+  const navBg = isDashboard
+    ? "linear-gradient(90deg, #0f172a, #1e293b)"
+    : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // ✅ Styles
+  // ✅ Navbar Animation Styles
   const navStyle = {
     position: "fixed",
-    top: showNav ? "0" : "-100px",
-    opacity: showNav ? "1" : "0",
-    transition: "top 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease",
+    top: visible ? "0" : "-90px",
+    opacity: visible ? 1 : 0,
+    transition: "top 0.5s ease, opacity 0.4s ease",
     width: "100%",
     zIndex: 1000,
     background: navBg,
     color: "#fff",
-    boxShadow: showNav ? "0 4px 15px rgba(0,0,0,0.25)" : "none",
-    padding: "8px 0",
+    boxShadow: visible ? "0 4px 15px rgba(0,0,0,0.25)" : "none",
+    padding: "10px 0",
     backdropFilter: "blur(10px)",
   };
 
@@ -95,6 +105,7 @@ function Navbar() {
     display: "flex",
     alignItems: "center",
     gap: "6px",
+    transition: "transform 0.3s ease",
   };
 
   const menuStyle = {
@@ -127,7 +138,12 @@ function Navbar() {
     <nav style={navStyle}>
       <div style={containerStyle}>
         {/* LOGO */}
-        <Link to="/" style={logoStyle}>
+        <Link
+          to="/"
+          style={logoStyle}
+          onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
+          onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+        >
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
             College<span style={{ color: "#E0F2FE" }}>Connect</span>
