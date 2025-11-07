@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // 1. useState और useEffect को इम्पोर्ट करें
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -7,24 +7,45 @@ function Navbar() {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // 2. स्क्रीन की चौड़ाई को स्टोर करने के लिए State बनाएँ
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const isMobile = windowWidth <= 640; // मोबाइल ब्रेकपॉइंट
 
-  // 3. स्क्रीन का साइज़ बदलने पर उसे सुनें (Listen)
+  // --- RESPONSIVE STATE ---
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const isMobile = windowWidth <= 640;
+
+  // --- SCROLL ANIMATION STATE ---
+  const [showNav, setShowNav] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // --- USE EFFECT (Resize and Scroll) ---
   useEffect(() => {
-    // साइज़ बदलने पर state को अपडेट करने वाला फ़ंक्शन
+    // 1. Resize Handler
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    // 'resize' इवेंट पर लिसनर लगाएँ
-    window.addEventListener("resize", handleResize);
+    // 2. Scroll Handler
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
 
-    // कंपोनेंट हटने पर लिसनर को साफ़ करें (Cleanup)
-    return () => window.removeEventListener("resize", handleResize);
-  }, []); // [] का मतलब है कि यह इफ़ेक्ट सिर्फ एक बार (माउंट पर) चलेगा
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling Down
+        setShowNav(false);
+      } else {
+        // Scrolling Up
+        setShowNav(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]); // Re-run effect when lastScrollY changes
 
   // Logout handler
   const logoutHandler = () => {
@@ -46,39 +67,36 @@ function Navbar() {
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // --- 🎨 स्टाइल ऑब्जेक्ट्स 🎨 ---
+  // --- 🎨 STYLE OBJECTS 🎨 ---
 
-  // 4. Responsive Container Style
   const containerStyle = {
     maxWidth: "1150px",
     margin: "0 auto",
     display: "flex",
     alignItems: "center",
     padding: "0 20px",
-    // --- Responsive हिस्सा ---
-    flexDirection: isMobile ? "column" : "row", // मोबाइल पर: कॉलम (ऊपर-नीचे)
-    justifyContent: isMobile ? "center" : "space-between", // मोबाइल पर: बीच में
-    gap: isMobile ? "15px" : "0", // मोबाइल पर: लोगो और बटन के बीच गैप
+    flexDirection: isMobile ? "column" : "row",
+    justifyContent: isMobile ? "center" : "space-between",
+    gap: isMobile ? "15px" : "0",
   };
-  
-  // 5. Responsive Menu Style
+
   const menuStyle = {
     display: "flex",
     alignItems: "center",
     gap: "12px",
     flexWrap: "wrap",
-    justifyContent: "center", // बटन हमेशा बीच में रहेंगे
-    width: isMobile ? "100%" : "auto", // मोबाइल पर: पूरी चौड़ाई लें
+    justifyContent: "center",
+    width: isMobile ? "100%" : "auto",
   };
 
-  // 6. बटन स्टाइल्स को साफ़-सुथरा करना
+  // 6. बटन स्टाइल्स (छोटे)
   const btnBaseStyle = {
     color: "#fff",
-    padding: "10px 20px",
+    padding: "8px 18px", // छोटा किया
     borderRadius: "50px",
     fontWeight: 600,
     textDecoration: "none",
-    fontSize: "0.95rem",
+    fontSize: "0.9rem", // छोटा किया
     transition: "all 0.3s ease",
     border: "none",
     cursor: "pointer",
@@ -94,22 +112,24 @@ function Navbar() {
     <nav
       style={{
         position: "sticky",
-        top: 0,
+        // --- SCROLL ANIMATION ---
+        top: showNav ? "0" : "-100px", // Hides by moving up
+        transition: "top 0.3s ease", // The animation
+        // -------------------------
         zIndex: 1000,
         background: navBg,
         color: "#fff",
         boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
-        padding: "10px 0",
+        padding: "8px 0", // पतला किया
         backdropFilter: "blur(8px)",
       }}
     >
-      {/* 7. Responsive स्टाइल को लागू करें */}
       <div style={containerStyle}>
         {/* LOGO */}
         <Link
           to="/"
           style={{
-            fontSize: "1.6rem",
+            fontSize: "1.4rem", // छोटा किया
             fontWeight: 700,
             textDecoration: "none",
             color: "#fff",
@@ -124,14 +144,14 @@ function Navbar() {
           </span>
         </Link>
 
-        {/* 8. Responsive मेनू स्टाइल को लागू करें */}
+        {/* Menu Buttons */}
         <div style={menuStyle}>
           {auth.isAuthenticated && auth.user ? (
             <>
               <Link
                 to={getDashboardLink()}
                 style={{
-                  ...btnBaseStyle, // Base स्टाइल
+                  ...btnBaseStyle,
                   background: "linear-gradient(135deg,#3b82f6,#2563eb)",
                   boxShadow: "0 3px 10px rgba(37,99,235,0.4)",
                 }}
@@ -156,7 +176,7 @@ function Navbar() {
               <button
                 onClick={logoutHandler}
                 style={{
-                  ...btnBaseStyle, // Base स्टाइल
+                  ...btnBaseStyle,
                   background: "linear-gradient(135deg,#ef4444,#dc2626)",
                   boxShadow: "0 3px 10px rgba(239,68,68,0.4)",
                 }}
@@ -183,7 +203,7 @@ function Navbar() {
               <Link
                 to="/register"
                 style={{
-                  ...btnBaseStyle, // Base स्टाइल
+                  ...btnBaseStyle,
                   background: "linear-gradient(135deg,#60a5fa,#2563eb)",
                   boxShadow: "0 3px 10px rgba(59,130,246,0.4)",
                 }}
@@ -208,7 +228,7 @@ function Navbar() {
               <Link
                 to="/login"
                 style={{
-                  ...btnBaseStyle, // Base स्टाइल
+                  ...btnBaseStyle,
                   background: "linear-gradient(135deg,#34d399,#059669)",
                   boxShadow: "0 3px 10px rgba(5,150,105,0.4)",
                 }}
