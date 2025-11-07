@@ -34,6 +34,7 @@ function BookingPage() {
         loadPageData();
     }, [userId]);
 
+    // (Razorpay (रेजरपे) (Razorpay (रेजरपे)) 'फंक्शन' (function) (Function (फंक्शन)) 'वही' (same) 'है' (is))
     const displayRazorpay = async () => { 
         if (!auth.user) { toast.error('You must be logged in to book.'); navigate('/login'); return; }
         const bookingDetails = {
@@ -54,7 +55,7 @@ function BookingPage() {
             }
             toast.dismiss(toastId);
             const options = {
-                key: 'rzp_test_RbhIpPvOLS2KkF', // (!! ज़रूरी: अपनी Razorpay (रेजरपे) Key (की) ID (आईडी) यहाँ डालें)
+                key: 'rzp_test_RbhIpPvOLS2KkF', // (आपकी (Your) 'Razorpay' (रेजरपे) (Razorpay (रेजरपे)) 'Key' (की) (चाबी))
                 amount: order.amount, 
                 currency: order.currency,
                 name: "CollegeConnect",
@@ -91,36 +92,25 @@ function BookingPage() {
     if (error) return <div className="container" style={{padding: '40px 0'}}><h2 style={{color: 'red'}}>{error}</h2></div>;
     if (!profile) return <div className="container" style={{padding: '40px 0'}}><h2>Profile not found.</h2></div>;
 
+    // ('HTML' (एचटीएमएल) (HTML (एचटीएमएल)) 'Return' (रिटर्न) (return) 'सेक्शन' (section) (अनुभाग))
     return (
-        <div className="container" style={{ padding: '40px 0', minHeight: '80vh', maxWidth: '800px' }}>
-            <div className="senior-card" style={{textAlign: 'left', padding: '40px'}}>
+        <div className="container page-container" style={{ minHeight: '80vh', maxWidth: '800px' }}>
+            <div className="senior-card" style={{textAlign: 'left', padding: '20px 40px 40px 40px'}}>
+                
                 <img src={profile.avatar || 'https://via.placeholder.com/100'} alt={profile.user ? profile.user.name : 'Senior'} style={{float: 'right', marginLeft: '20px', width: '100px', height: '100px', borderRadius: '50%'}} />
                 
                 <h2>{profile.user ? profile.user.name : 'Senior Profile'}</h2>
-                <h4 className="college">
+                <h4 className="college" style={{marginTop: 0}}>
                     {(profile.college ? profile.college.name : 'N/A')}
                     <span style={{display: 'block', color: '#555', fontWeight: 500, fontSize: '1rem'}}>
                         {profile.branch || 'Branch N/A'} ({profile.year || 'Year N/A'})
                     </span>
                 </h4>
                 
-                {/* --- (यह रहा 'नया' (New) 'टेक्स्ट' (Text) (पाठ) 'वाला' (wala) 'फिक्स' (Fix) (ठीक)) --- */}
-                {profile.id_card_url && (
-                    <div className="form-group" style={{margin: '15px 0'}}>
-                        <a href={profile.id_card_url} target="_blank" rel="noopener noreferrer" 
-                           className="btn btn-secondary" 
-                           style={{fontSize: '0.9rem', padding: '8px 15px', background: '#e0f7fa', borderColor: '#b2ebf2'}}>
-                            View College Verified ID Card
-                        </a>
-                    </div>
-                )}
-                {/* --- (अपडेट (Update) खत्म) --- */}
-
                 <hr style={{margin: '20px 0'}} />
                 
                 <h3>About Me:</h3>
                 <p className="bio" style={{minHeight: 'auto'}}>{profile.bio}</p>
-                <hr style={{margin: '20px 0'}} />
                 
                 <h3>Specializations (Tags):</h3>
                 <div className="tags-container" style={{justifyContent: 'flex-start', marginBottom: '20px'}}>
@@ -130,10 +120,31 @@ function BookingPage() {
                         )) : <p>No tags listed.</p>
                     }
                 </div>
+                
+                {/* --- (यह रहा 'नया' (New) '100% Accurate' (सही) 'फिक्स' (Fix) (ठीक)) --- */}
+                {/* ('हम' (We) 'बटन' (button) (बटन) 'की' (of) 'जगह' (place) '`Image`' (इमेज) (Image (छवि)) 'दिखा' (showing) 'रहे' (are) 'हैं' (हैं)) */}
+                {profile.id_card_url && (
+                    <div style={{margin: '30px 0'}}>
+                        <h3 style={{borderTop: '1px solid #eee', paddingTop: '20px'}}>College Verified ID:</h3>
+                        <img 
+                            src={profile.id_card_url} 
+                            alt="Verified ID Card" 
+                            style={{
+                                width: '100%',
+                                maxWidth: '400px', 
+                                borderRadius: '10px', 
+                                border: '1px solid #ddd',
+                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                            }}
+                        />
+                    </div>
+                )}
+                {/* --- (अपडेट (Update) खत्म) --- */}
+
                 <hr style={{margin: '20px 0'}} />
 
                 <h3>Booking Details:</h3>
-                <p>पेमेंट  करने के बाद, 'सीनियर'  आपसे 'अगले 6 घंटों'  के 'भीतर'  'संपर्क'  करेगा।</p>
+                <p>पेमेंट करने के बाद, 'सीनियर' आपसे 'अगले 6 घंटों' के 'भीतर' 'संपर्क' करेगा।</p>
                 <div className="price" style={{fontSize: '1.5rem', textAlign: 'center', marginTop: '30px'}}>
                   Total Price: ₹{totalAmount} 
                   <span style={{fontSize: '1rem', color: '#555'}}> / {profile.session_duration_minutes} min session</span>
