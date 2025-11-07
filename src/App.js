@@ -1,6 +1,6 @@
 import React from 'react';
-// 1. 'useLocation' को 'import' (आयात) करें
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+// 1. 'useLocation' को 'import' (आयात) करने की अब ज़रूरत नहीं है
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // 2. 'AuthProvider' और 'Toaster' को यहाँ से हटा दें (वे 'index.js' में हैं)
 import { useAuth } from './context/AuthContext';
@@ -33,10 +33,8 @@ import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 import SeniorEarningsPage from './pages/SeniorEarningsPage';
 
-// 3. एक नया 'Internal Layout Component' (आंतरिक लेआउट कॉम्पोनेंट) बनाएँ
-// (यह 'useLocation' का इस्तेमाल कर सकता है क्योंकि यह <Router> के अंदर होगा)
+// 3. 'AppLayout' 'function' (फ़ंक्शन) को 'simple' (सरल) कर दिया गया है
 function AppLayout() {
-  const location = useLocation();
   const { auth } = useAuth();
 
   // 4. 'check' (जाँच) करें कि क्या 'Mobile Modal' (मोबाइल मोडल) दिखाना है
@@ -45,27 +43,20 @@ function AppLayout() {
     auth.user &&
     !auth.user.mobileNumber;
 
-  // 5. 'check' (जाँच) करें कि क्या 'Navbar' (नेवबार) को छिपाना है 
-  // (यह 'logic' (तर्क) 'Navbar.js' से 'match' (मेल) होना चाहिए)
-  const hiddenRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
-  const currentPath = location.pathname.toLowerCase();
-  
-  // 'startsWith' (से शुरू होता है) का इस्तेमाल करें ताकि '/reset-password/:token' (रीसेट-पासवर्ड/:टोकन) भी 'match' (मेल) हो
-  const isNavbarHidden = hiddenRoutes.some((route) => currentPath.startsWith(route));
+  // 5. 'Navbar' (नेवबार) को छिपाने का 'logic' (तर्क) यहाँ से हटा दिया गया है 
+  // (क्योंकि वह 'Navbar.js' खुद 'handle' (संभाल) कर रहा है)
+  // (और 'padding-top' 'logic' (तर्क) 'index.css' से हटा दिया गया है)
 
   return (
     <div className="App">
       {/* 'Modal' (मोडल) को सबसे ऊपर दिखाएँ */}
       {showMobileModal && <MobileNumberModal />}
 
-      {/* 'Navbar' (नेवबार) यहाँ है (यह खुद 'null' (शून्य) 'return' (रिटर्न) कर देगा) */}
+      {/* 'Navbar' (नेवबार) यहाँ है (यह 'login' (लॉगिन) पेज पर खुद `null` (शून्य) 'return' (रिटर्न) कर देगा) */}
       <Navbar />
 
-      {/* 6. "Smart" (स्मार्ट) <main> 
-         यह 'class' (क्लास) (padding-top) सिर्फ तब 'add' (जोड़) करेगा जब 'Navbar' (नेवबार) छिपा हुआ नहीं है
-         (यह 'Login' (लॉगिन) पेज के 'gap' (गैप) को 'fix' (फिक्स) करेगा)
-      */}
-      <main className={isNavbarHidden ? "" : "content-with-navbar"}>
+      {/* 6. "Main" (मुख्य) 'content' (सामग्री) (बिना 'extra padding' (अतिरिक्त पैडिंग) 'class' (क्लास) के) */}
+      <main>
         <Routes>
               {/* ---------------- PUBLIC ROUTES ---------------- */}
               <Route path="/" element={<HomePage />} />
@@ -74,13 +65,11 @@ function AppLayout() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-              {/* ---------------- STUDENT ROUTES ---------------- */}
+              {/* ---------------- (बाकी सभी 'Routes' (रूट) वैसे ही रहेंगे) ---------------- */}
               <Route
                 path="/student-dashboard/*"
                 element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>}
               />
-
-              {/* ---------------- SENIOR ROUTES ---------------- */}
               <Route
                 path="/senior-dashboard/*"
                 element={<ProtectedRoute><SeniorDashboard /></ProtectedRoute>}
@@ -93,8 +82,6 @@ function AppLayout() {
                 path="/senior-earnings"
                 element={<ProtectedRoute><SeniorEarningsPage /></ProtectedRoute>}
               />
-
-              {/* ---------------- BOOKING ROUTES ---------------- */}
               <Route
                 path="/book/:userId"
                 element={<ProtectedRoute><BookingPage /></ProtectedRoute>}
@@ -115,8 +102,6 @@ function AppLayout() {
                 path="/chat/:bookingId"
                 element={<ProtectedRoute><ChatPage /></ProtectedRoute>}
               />
-
-              {/* ---------------- ADMIN ROUTES ---------------- */}
               <Route
                 path="/admin-dashboard"
                 element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}
@@ -142,11 +127,9 @@ function AppLayout() {
                 element={<ProtectedRoute><AdminManageColleges /></ProtectedRoute>}
               />
               <Route
-                path="/admin-manage-dispute-reasons"
+M                path="/admin-manage-dispute-reasons"
                 element={<ProtectedRoute><AdminManageDisputes /></ProtectedRoute>}
               />
-
-              {/* ---------------- 404 Route ---------------- */}
               <Route
                 path="*"
                 element={
