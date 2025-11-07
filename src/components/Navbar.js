@@ -13,10 +13,15 @@ function Navbar() {
   const isMobile = windowWidth <= 640;
 
   // --- 🧠 Hide Navbar on these routes ---
-  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
-  if (hiddenRoutes.includes(location.pathname)) {
-    return null; // ✅ Navbar not rendered
-  }
+ // --- 🧠 Hide Navbar on authentication pages ---
+const hiddenRoutes = ["/login", "/register", "/forgot-password"];
+const currentPath = location.pathname.toLowerCase();
+
+// Agar current path inme se kisi bhi page se milta hai to navbar mat dikhana
+if (hiddenRoutes.some((route) => currentPath.startsWith(route))) {
+  return null; // ✅ Navbar bilkul render nahi hoga
+}
+
 
   // --- ✅ Scroll Hide Logic (only show at top) ---
   useEffect(() => {
