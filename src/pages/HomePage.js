@@ -8,7 +8,7 @@ import CollegeMap from "../components/CollegeMap";
 import { colleges } from "../components/colleges";
 
 function HomePage() {
-  // आपका IntersectionObserver (Fade-in-up) इफ़ेक्ट
+  // आपका IntersectionObserver (Fade-in-up) इफ़ेक्ट
   useEffect(() => {
     const fadeElements = document.querySelectorAll(".fade-in-up");
     const observer = new IntersectionObserver(
@@ -35,6 +35,7 @@ function HomePage() {
     opacity: 0,
     transform: "translateY(40px)",
     transition: "all 1s ease",
+    overflow: "hidden", // ⭐ 1. साइड-शो को रोकने के लिए यहाँ जोड़ा गया
   };
 
   const sectionTitleStyle = {
@@ -79,7 +80,6 @@ function HomePage() {
     padding: "20px",
   };
 
-  // ⭐ 1. (एरर फिक्स) दोनों बटनों के लिए स्टाइल ऑब्जेक्ट
   const ctaButtonStyle = {
     background: "#fff",
     color: "#007BFF",
@@ -92,25 +92,16 @@ function HomePage() {
     transition: "0.3s ease",
     display: "inline-block",
   };
-return (
-    <div
-      style={{
-        fontFamily: "'Poppins', sans-serif",
-        backgroundColor: "#f9fbfd",
-        color: "#333",
-        // 'overflowX: "hidden"' को यहाँ से हटा दिया गया है
-      }}
-    >
-      {/* 🌟 HERO SECTION */}
-      <section
-        style={{
-          background: "linear-gradient(135deg, #007BFF, #00B4D8)",
-          color: "white",
-          textAlign: "center",
-          padding: "100px 20px",
-          position: "relative",
-          overflow: "hidden", // ⭐ यह सही जगह है
-        }}  ></section>
+
+  return (
+    <div
+      style={{
+        fontFamily: "'Poppins', sans-serif",
+        backgroundColor: "#f9fbfd",
+        color: "#333",
+        // ⭐ 2. 'Easy Scroll' के लिए मुख्य div से overflow हटा दिया गया है
+      }}
+    >
       {/* 🌟 HERO SECTION */}
       <section
         style={{
@@ -119,13 +110,11 @@ return (
           textAlign: "center",
           padding: "100px 20px",
           position: "relative",
-          overflow: "hidden",
+          overflow: "hidden", // यह 'blobs' को छिपाने के लिए सही है
         }}
       >
-        {/* Background Motion Blobs... */}
-        
-        {/* ⭐ 2. (एरर फिक्स) एनीमेशन को ठीक किया गया */}
-        <style>
+        {/* ... (आपका बाकी Hero Section कोड) ... */}
+         <style>
           {`
             @keyframes floatBlob {
               0%,100% { transform: translateY(0); }
@@ -133,7 +122,6 @@ return (
             }
           `}
         </style>
-
         <div
           className="fade-in-up"
           style={{
@@ -150,8 +138,6 @@ return (
           <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.9)", marginBottom: "40px" }}>
             Hostel, Faculty, Placements? <br /> Ask a senior from that college directly.
           </p>
-          
-          {/* ⭐ 3. (एरर फिक्स) Link पर सही स्टाइल लगाया गया */}
           <Link 
             to="/register" 
             style={ctaButtonStyle}
@@ -164,6 +150,7 @@ return (
       </section>
 
       {/* 🏛️ नया सेक्शन: TOP COLLEGES */}
+      {/* (collegeSectionStyle में overflow: "hidden" पहले ही जोड़ दिया गया है) */}
       <section className="fade-in-up" style={collegeSectionStyle}>
         <h2 style={sectionTitleStyle}>🏛️ Explore Top Colleges in Rajasthan</h2>
         <p style={sectionDescStyle}>
@@ -183,10 +170,6 @@ return (
                 e.currentTarget.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.08)";
               }}
             >
-              {/* !! जरूरी !!
-                नीचे दी गई <img src={college.image}> लाइन तभी काम करेगी 
-                जब आप 'colleges.js' फ़ाइल में असली इमेज URL डालेंगे। 
-              */}
               <img src={college.image} alt={college.name} style={cardImageStyle} />
               <div style={cardContentStyle}>
                 <h3 style={{ margin: "0 0 5px 0", color: "#007BFF" }}>
@@ -209,6 +192,7 @@ return (
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
+          overflow: "hidden", // ⭐ 3. साइड-शो को रोकने के लिए यहाँ जोड़ा गया
         }}
       >
         <h2 style={sectionTitleStyle}>🗺️ Find Colleges on the Map</h2>
@@ -230,6 +214,7 @@ return (
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
+          overflow: "hidden", // ⭐ 4. (सबसे ज़रूरी) 'FeaturedSeniors' को रोकने के लिए
         }}
       >
         <h2 style={sectionTitleStyle}>⭐ Featured Seniors</h2>
@@ -251,6 +236,7 @@ return (
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
+          overflow: "hidden", // ⭐ 5. (सबसे ज़रूरी) 'HowItWorks' को रोकने के लिए
         }}
       >
         <h2 style={sectionTitleStyle}>💡 How It Works</h2>
@@ -274,13 +260,13 @@ return (
           opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
+          overflow: "hidden", // ⭐ 6. साइड-शो को रोकने के लिए यहाँ जोड़ा गया
         }}
       >
         <h2 style={{ fontSize: "1.9rem", fontWeight: "600", marginBottom: "25px" }}>
           Your college journey starts with the right guidance 🌟
         </h2>
         
-        {/* ⭐ 4. (एरर फिक्स) दूसरे Link पर भी सही स्टाइल लगाया गया */}
         <Link 
           to="/register" 
           style={ctaButtonStyle}
