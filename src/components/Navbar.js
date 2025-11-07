@@ -8,82 +8,47 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ States
+  // --- responsive width only (no scroll logic needed) ---
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
   const isMobile = windowWidth <= 640;
 
-  // ✅ Responsive + Scroll Logic
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
-
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-
-      // --- Scroll down → hide navbar ---
-      if (currentScroll > lastScrollY && currentScroll > 80) {
-        setVisible(false);
-      } 
-      // --- Scroll up → show navbar ---
-      else {
-        setVisible(true);
-      }
-
-      setLastScrollY(currentScroll);
-    };
-
     window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [lastScrollY]);
+  // --- hide navbar on auth pages ---
+  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
+  const currentPath = location.pathname.toLowerCase();
+  if (hiddenRoutes.some((r) => currentPath.startsWith(r))) return null;
 
-  // ✅ Logout Handler
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
-  // ✅ Dashboard Link Logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
-  // ✅ Hide Navbar on Auth Pages
-  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
-  const currentPath = location.pathname.toLowerCase();
-  const shouldHideNavbar = hiddenRoutes.some((route) =>
-    currentPath.startsWith(route)
-  );
-  if (shouldHideNavbar) return null;
-
-  // ✅ Background Color Logic
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // ✅ Navbar Animation Styles
+  // ⭐ NORMAL FLOW: no fixed/sticky, no top/opacity transitions
   const navStyle = {
-    position: "fixed",
-    top: visible ? "0" : "-90px",
-    opacity: visible ? 1 : 0,
-    transition: "top 0.5s ease, opacity 0.4s ease",
+    position: "relative",
     width: "100%",
-    zIndex: 1000,
     background: navBg,
     color: "#fff",
-    boxShadow: visible ? "0 4px 15px rgba(0,0,0,0.25)" : "none",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
     padding: "10px 0",
-    backdropFilter: "blur(10px)",
+    zIndex: 1,
   };
 
   const containerStyle = {
@@ -105,7 +70,6 @@ function Navbar() {
     display: "flex",
     alignItems: "center",
     gap: "6px",
-    transition: "transform 0.3s ease",
   };
 
   const menuStyle = {
@@ -124,33 +88,26 @@ function Navbar() {
     fontWeight: 600,
     textDecoration: "none",
     fontSize: "0.9rem",
-    transition: "all 0.3s ease",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
     border: "none",
     cursor: "pointer",
   };
 
   const applyHover = (e, transform, boxShadow) => {
-    e.target.style.transform = transform;
-    e.target.style.boxShadow = boxShadow;
+    e.currentTarget.style.transform = transform;
+    e.currentTarget.style.boxShadow = boxShadow;
   };
 
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
-        {/* LOGO */}
-        <Link
-          to="/"
-          style={logoStyle}
-          onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-          onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
-        >
+        <Link to="/" style={logoStyle}>
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
             College<span style={{ color: "#E0F2FE" }}>Connect</span>
           </span>
         </Link>
 
-        {/* MENU */}
         <div style={menuStyle}>
           {auth.isAuthenticated && auth.user ? (
             <>
@@ -159,13 +116,13 @@ function Navbar() {
                 style={{
                   ...btnBaseStyle,
                   background: "linear-gradient(135deg,#3b82f6,#2563eb)",
-                  boxShadow: "0 3px 10px rgba(37,99,235,0.4)",
+                  boxShadow: "0 3px 10px rgba(37,99,235,0.35)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(37,99,235,0.6)")
+                  applyHover(e, "scale(1.05)", "0 6px 14px rgba(37,99,235,0.5)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(e, "scale(1)", "0 3px 10px rgba(37,99,235,0.4)")
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(37,99,235,0.35)")
                 }
               >
                 📊 Dashboard
@@ -176,13 +133,13 @@ function Navbar() {
                 style={{
                   ...btnBaseStyle,
                   background: "linear-gradient(135deg,#ef4444,#dc2626)",
-                  boxShadow: "0 3px 10px rgba(239,68,68,0.4)",
+                  boxShadow: "0 3px 10px rgba(239,68,68,0.35)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(239,68,68,0.6)")
+                  applyHover(e, "scale(1.05)", "0 6px 14px rgba(239,68,68,0.5)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(e, "scale(1)", "0 3px 10px rgba(239,68,68,0.4)")
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(239,68,68,0.35)")
                 }
               >
                 🚪 Logout
@@ -195,13 +152,13 @@ function Navbar() {
                 style={{
                   ...btnBaseStyle,
                   background: "linear-gradient(135deg,#60a5fa,#2563eb)",
-                  boxShadow: "0 3px 10px rgba(59,130,246,0.4)",
+                  boxShadow: "0 3px 10px rgba(59,130,246,0.35)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(59,130,246,0.6)")
+                  applyHover(e, "scale(1.05)", "0 6px 14px rgba(59,130,246,0.5)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(e, "scale(1)", "0 3px 10px rgba(59,130,246,0.4)")
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(59,130,246,0.35)")
                 }
               >
                 📝 Register
@@ -212,13 +169,13 @@ function Navbar() {
                 style={{
                   ...btnBaseStyle,
                   background: "linear-gradient(135deg,#34d399,#059669)",
-                  boxShadow: "0 3px 10px rgba(5,150,105,0.4)",
+                  boxShadow: "0 3px 10px rgba(5,150,105,0.35)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(5,150,105,0.6)")
+                  applyHover(e, "scale(1.05)", "0 6px 14px rgba(5,150,105,0.5)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(e, "scale(1)", "0 3px 10px rgba(5,150,105,0.4)")
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(5,150,105,0.35)")
                 }
               >
                 🔐 Login
