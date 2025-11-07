@@ -1,53 +1,87 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import toast from 'react-hot-toast'; 
+import toast from 'react-hot-toast';
 
-function ForgotPasswordPage() {
-    const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
+function ResetPasswordPage() {
+  const { token } = useParams();
+  const navigate = useNavigate();
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-   // ...
-    const onSubmitHandler = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const toastId = toast.loading('Sending reset link...');
-        try {
-            const res = await axios.post('https://collegeconnect-backend-mrkz.onrender.com/api/auth/forgot-password', { email });
-            toast.dismiss(toastId);
-            
-            // --- (यह रहा 'नया' (New) 'फिक्स' (Fix) (ठीक)) ---
-            // ('यूज़र' (User) (उपयोगकर्ता) 'को' (to) 'बताएँ' (Tell) 'कि' (that) 'कंसोल' (console) (console) 'चेक' (check) (जाँच) 'करे' (do))
-          toast.success(res.data.msg);
-            // --- (अपडेट (Update) खत्म) ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post(
+        `https://collegeconnect-backend.onrender.com/api/auth/reset-password/${token}`,
+        { password }
+      );
+      toast.success('Password reset successful! You can now login.');
+      setTimeout(() => navigate('/login'), 1500);
+    } catch (err) {
+      toast.error('Reset link expired or invalid. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        } catch (err) {
-            toast.dismiss(toastId);
-            let errorMsg = err.response ? (err.response.data.msg || err.response.data) : err.message;
-            toast.error('Error: ' + errorMsg);
-        }
-        setLoading(false);
-    };
-// ...
-
-    return (
-        <div className="form-container">
-            <form onSubmit={onSubmitHandler}>
-                <h2>Forgot Password</h2>
-                <p>Enter the email address associated with your account, and we'll send you a link to reset your password.</p>
-                <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input 
-                        type="email" id="email" name="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-                    {loading ? 'Sending...' : 'Send Reset Link'}
-                </button>
-            </form>
-        </div>
-    );
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '80vh',
+        background: '#f8f9fa'
+      }}
+    >
+      <div
+        style={{
+          background: '#fff',
+          padding: '30px 40px',
+          borderRadius: '10px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          textAlign: 'center',
+          width: '350px'
+        }}
+      >
+        <h2>Reset Your Password</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            placeholder="Enter new password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              margin: '15px 0',
+              border: '1px solid #ccc',
+              borderRadius: '5px'
+            }}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#007BFF',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            {loading ? 'Resetting...' : 'Reset Password'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
-export default ForgotPasswordPage;
+
+export default ResetPasswordPage;
