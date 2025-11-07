@@ -123,22 +123,57 @@ function BookingPage() {
                 
                 {/* --- (यह रहा 'नया' (New) '100% Accurate' (सही) 'फिक्स' (Fix) (ठीक)) --- */}
                 {/* ('हम' (We) 'बटन' (button) (बटन) 'की' (of) 'जगह' (place) '`Image`' (इमेज) (Image (छवि)) 'दिखा' (showing) 'रहे' (are) 'हैं' (हैं)) */}
-                {profile.id_card_url && (
-                    <div style={{margin: '30px 0'}}>
-                        <h3 style={{borderTop: '1px solid #eee', paddingTop: '20px'}}>College Verified ID:</h3>
-                        <img 
-                            src={profile.id_card_url} 
-                            alt="Verified ID Card" 
-                            style={{
-                                width: '100%',
-                                maxWidth: '400px', 
-                                borderRadius: '10px', 
-                                border: '1px solid #ddd',
-                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                            }}
-                        />
-                    </div>
-                )}
+              {profile.id_card_url && (
+  <div
+    style={{
+      margin: '30px auto',
+      textAlign: 'center',
+      background: '#f8f9fa',
+      padding: '15px 0 25px 0',
+      borderRadius: '12px',
+      boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+      width: 'fit-content',
+    }}
+  >
+    <h3 style={{borderBottom: '1px solid #ddd', paddingBottom: '10px', margin: '10px 0 20px 0'}}>
+      🎓 College Verified ID
+    </h3>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      <img
+        src={profile.id_card_url}
+        alt="College ID Card"
+        style={{
+          width: '100%',
+          maxWidth: '86mm', // real-world ID width
+          aspectRatio: '86 / 54',
+          height: 'auto',
+          border: '2px solid #007BFF',
+          borderRadius: '10px',
+          boxShadow: '0 6px 14px rgba(0,0,0,0.15)',
+          objectFit: 'cover',
+        }}
+      />
+      <p
+        style={{
+          marginTop: '8px',
+          fontSize: '0.9rem',
+          color: '#555',
+          fontWeight: 500,
+        }}
+      >
+        (Standard 86mm × 54mm Size)
+      </p>
+    </div>
+  </div>
+)}
+
                 {/* --- (अपडेट (Update) खत्म) --- */}
 
                 <hr style={{margin: '20px 0'}} />
