@@ -12,12 +12,13 @@ function Navbar() {
   const [showNav, setShowNav] = useState(true);
   const isMobile = windowWidth <= 640;
 
-  // 🔹 Handle scroll + resize
+  // ✅ 1. Hooks always come first (Rule of Hooks)
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
 
     const handleScroll = () => {
-      if (window.scrollY === 0) setShowNav(true);
+      // Navbar only visible at top
+      if (window.scrollY <= 0) setShowNav(true);
       else setShowNav(false);
     };
 
@@ -30,35 +31,46 @@ function Navbar() {
     };
   }, []);
 
+  // ✅ 2. Hide Navbar on login/register/forgot-password pages
+  const hiddenRoutes = ["/login", "/register", "/forgot-password"];
+  const currentPath = location.pathname.toLowerCase();
+  if (hiddenRoutes.some((route) => currentPath.startsWith(route))) {
+    return null; // Navbar not rendered on these pages
+  }
+
+  // ✅ 3. Logout Handler
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
+  // ✅ 4. Dashboard Path Logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
+  // ✅ 5. Background Logic
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // 🎨 Navbar Styles (Fixed + Smooth)
+  // ✅ 6. Navbar Styles
   const navStyle = {
     position: "fixed",
-    top: showNav ? "0" : "-80px",
-    transition: "top 0.35s ease-in-out",
+    top: showNav ? "0" : "-100px",
+    opacity: showNav ? "1" : "0",
+    transition: "top 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease",
     width: "100%",
     zIndex: 1000,
     background: navBg,
     color: "#fff",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
+    boxShadow: showNav ? "0 4px 15px rgba(0,0,0,0.25)" : "none",
     padding: "8px 0",
-    backdropFilter: "blur(8px)",
+    backdropFilter: "blur(10px)",
   };
 
   const containerStyle = {
@@ -108,10 +120,11 @@ function Navbar() {
     e.target.style.boxShadow = boxShadow;
   };
 
+  // ✅ 7. Return JSX
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
-        {/* Logo */}
+        {/* LOGO */}
         <Link to="/" style={logoStyle}>
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
@@ -119,7 +132,7 @@ function Navbar() {
           </span>
         </Link>
 
-        {/* Menu Buttons */}
+        {/* MENU */}
         <div style={menuStyle}>
           {auth.isAuthenticated && auth.user ? (
             <>
