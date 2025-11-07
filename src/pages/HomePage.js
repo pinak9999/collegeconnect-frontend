@@ -33,7 +33,7 @@ function HomePage() {
       {/* 🌟 HERO SECTION */}
       <section
         style={{
-          background: "linear-gradient(135deg, #21e2fcff, #00B4D8)",
+          background: "linear-gradient(135deg, #007BFF, #00B4D8)",
           color: "white",
           textAlign: "center",
           padding: "100px 20px",
