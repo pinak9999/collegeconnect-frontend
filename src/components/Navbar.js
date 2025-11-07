@@ -1,129 +1,184 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function Navbar() {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isDashboard, setIsDashboard] = useState(false);
+
+  useEffect(() => {
+    // If user is on any dashboard route, hide unnecessary nav clutter
+    const dashboardPaths = ["/admin-dashboard", "/senior-dashboard", "/student-dashboard"];
+    setIsDashboard(dashboardPaths.some((path) => location.pathname.startsWith(path)));
+  }, [location.pathname]);
 
   const logoutHandler = () => {
     logout();
-    toast.success('Logged out successfully 🎉');
-    navigate('/');
+    toast.success("Logged out successfully 🎉");
+    navigate("/");
   };
 
   const getDashboardLink = () => {
-    if (auth.user?.role === 'Admin') return '/admin-dashboard';
-    if (auth.user?.isSenior) return '/senior-dashboard';
-    return '/student-dashboard';
+    if (auth.user?.role === "Admin") return "/admin-dashboard";
+    if (auth.user?.isSenior) return "/senior-dashboard";
+    return "/student-dashboard";
   };
 
   return (
     <nav
       style={{
-        position: 'sticky',
+        position: "sticky",
         top: 0,
         zIndex: 1000,
-        background: 'linear-gradient(90deg,#2563eb,#1e40af)',
-        color: '#fff',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-        backdropFilter: 'blur(10px)',
-        padding: '10px 16px',
-        transition: '0.3s ease',
+        background: isDashboard
+          ? "rgba(255, 255, 255, 0.95)"
+          : "linear-gradient(90deg, #007BFF, #004AAD)",
+        backdropFilter: "blur(10px)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+        padding: "12px 18px",
+        transition: "all 0.4s ease",
       }}
     >
-      {/* Container */}
+      {/* MAIN CONTAINER */}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          maxWidth: '1100px',
-          margin: '0 auto',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          maxWidth: "1200px",
+          margin: "0 auto",
         }}
       >
         {/* LOGO */}
         <Link
           to="/"
           style={{
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            textDecoration: 'none',
-            color: '#fff',
-            letterSpacing: '0.5px',
+            fontSize: "1.6rem",
+            fontWeight: "700",
+            textDecoration: "none",
+            color: isDashboard ? "#007BFF" : "#fff",
+            letterSpacing: "0.5px",
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
           }}
         >
-          College<span style={{ color: '#bfdbfe' }}>Connect</span>
+          🎓 <span>College</span>
+          <span style={{ color: isDashboard ? "#004AAD" : "#BFDBFE" }}>Connect</span>
         </Link>
 
-        {/* HAMBURGER ICON (Visible only in mobile) */}
+        {/* HAMBURGER (mobile only) */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#fff',
-            fontSize: '1.8rem',
-            cursor: 'pointer',
-            display: 'block',
+            background: "transparent",
+            border: "none",
+            color: isDashboard ? "#007BFF" : "#fff",
+            fontSize: "1.8rem",
+            cursor: "pointer",
+            display: "block",
           }}
         >
-          {menuOpen ? '✖' : '☰'}
+          {menuOpen ? "✖" : "☰"}
         </button>
       </div>
 
-      {/* NAV LINKS (Below in mobile view) */}
+      {/* MOBILE NAV */}
+      {menuOpen && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            background: isDashboard ? "#fff" : "rgba(255,255,255,0.95)",
+            borderRadius: "12px",
+            marginTop: "10px",
+            padding: "15px 0",
+            boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+            animation: "fadeIn 0.3s ease",
+          }}
+        >
+          <style>
+            {`
+              @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+              }
+            `}
+          </style>
+
+          {auth.isAuthenticated && auth.user ? (
+            <>
+              <Link
+                to={getDashboardLink()}
+                onClick={() => setMenuOpen(false)}
+                style={navButton("#007BFF", "Dashboard", "📊")}
+              >
+                📊 Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  logoutHandler();
+                  setMenuOpen(false);
+                }}
+                style={navButton("#EF4444")}
+              >
+                🚪 Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/register"
+                onClick={() => setMenuOpen(false)}
+                style={navButton("#4F46E5")}
+              >
+                📝 Register
+              </Link>
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                style={navButton("#10B981")}
+              >
+                🔐 Login
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* DESKTOP NAV */}
       <div
         style={{
-          display: menuOpen ? 'flex' : 'none',
-          flexDirection: 'column',
-          alignItems: 'center',
-          background: 'rgba(255,255,255,0.95)',
-          marginTop: '10px',
-          borderRadius: '12px',
-          padding: '15px 0',
-          boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
-          animation: 'fadeIn 0.3s ease',
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "15px",
+          maxWidth: "1200px",
+          margin: "10px auto 0",
         }}
+        className="desktop-nav"
       >
         {auth.isAuthenticated && auth.user ? (
           <>
             <Link
               to={getDashboardLink()}
-              onClick={() => setMenuOpen(false)}
               style={{
-                color: '#fff',
-                background: 'linear-gradient(45deg,#3b82f6,#2563eb)',
-                textDecoration: 'none',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                fontWeight: 600,
-                width: '85%',
-                textAlign: 'center',
-                marginBottom: '10px',
-                boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
+                ...desktopBtn("#007BFF"),
+                display: isDashboard ? "none" : "inline-block",
               }}
             >
               📊 Dashboard
             </Link>
             <button
-              onClick={() => {
-                logoutHandler();
-                setMenuOpen(false);
-              }}
+              onClick={logoutHandler}
               style={{
-                background: 'linear-gradient(45deg,#ef4444,#dc2626)',
-                color: '#fff',
-                border: 'none',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                fontWeight: 600,
-                width: '85%',
-                textAlign: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 3px 10px rgba(239,68,68,0.3)',
+                ...desktopBtn("#EF4444"),
+                background: isDashboard ? "#EF4444" : "linear-gradient(45deg,#EF4444,#DC2626)",
               }}
             >
               🚪 Logout
@@ -131,129 +186,47 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link
-              to="/register"
-              onClick={() => setMenuOpen(false)}
-              style={{
-                background: 'linear-gradient(45deg,#6366f1,#4f46e5)',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                fontWeight: 600,
-                width: '85%',
-                textAlign: 'center',
-                marginBottom: '10px',
-                boxShadow: '0 3px 10px rgba(99,102,241,0.3)',
-              }}
-            >
+            <Link to="/register" style={desktopBtn("#4F46E5")}>
               📝 Register
             </Link>
-
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-              style={{
-                background: 'linear-gradient(45deg,#10b981,#059669)',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                fontWeight: 600,
-                width: '85%',
-                textAlign: 'center',
-                boxShadow: '0 3px 10px rgba(16,185,129,0.3)',
-              }}
-            >
+            <Link to="/login" style={desktopBtn("#10B981")}>
               🔐 Login
             </Link>
-          </>
-        )}
-      </div>
-
-      {/* DESKTOP LINKS (Always visible in large screens) */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          gap: '20px',
-          marginTop: '10px',
-        }}
-        className="desktop-nav"
-      >
-        {!menuOpen && (
-          <>
-            {auth.isAuthenticated && auth.user ? (
-              <>
-                <Link
-                  to={getDashboardLink()}
-                  style={{
-                    background: 'linear-gradient(45deg,#3b82f6,#2563eb)',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    padding: '8px 14px',
-                    borderRadius: '10px',
-                    fontWeight: 600,
-                    boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
-                  }}
-                >
-                  📊 Dashboard
-                </Link>
-                <button
-                  onClick={logoutHandler}
-                  style={{
-                    background: 'linear-gradient(45deg,#ef4444,#dc2626)',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '8px 14px',
-                    borderRadius: '10px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    boxShadow: '0 3px 10px rgba(239,68,68,0.3)',
-                  }}
-                >
-                  🚪 Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/register"
-                  style={{
-                    background: 'linear-gradient(45deg,#6366f1,#4f46e5)',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    padding: '8px 14px',
-                    borderRadius: '10px',
-                    fontWeight: 600,
-                    boxShadow: '0 3px 10px rgba(99,102,241,0.3)',
-                  }}
-                >
-                  📝 Register
-                </Link>
-
-                <Link
-                  to="/login"
-                  style={{
-                    background: 'linear-gradient(45deg,#10b981,#059669)',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    padding: '8px 14px',
-                    borderRadius: '10px',
-                    fontWeight: 600,
-                    boxShadow: '0 3px 10px rgba(16,185,129,0.3)',
-                  }}
-                >
-                  🔐 Login
-                </Link>
-              </>
-            )}
           </>
         )}
       </div>
     </nav>
   );
 }
+
+// Reusable styles
+const navButton = (color) => ({
+  background: color,
+  color: "#fff",
+  textDecoration: "none",
+  padding: "10px 20px",
+  borderRadius: "10px",
+  fontWeight: 600,
+  width: "85%",
+  textAlign: "center",
+  marginBottom: "10px",
+  border: "none",
+  cursor: "pointer",
+  boxShadow: `0 4px 12px ${color}40`,
+  transition: "transform 0.2s ease",
+});
+
+const desktopBtn = (color) => ({
+  background: `linear-gradient(45deg,${color},${color}90)`,
+  color: "#fff",
+  textDecoration: "none",
+  padding: "8px 16px",
+  borderRadius: "10px",
+  fontWeight: 600,
+  border: "none",
+  cursor: "pointer",
+  boxShadow: `0 3px 10px ${color}50`,
+  transition: "all 0.3s ease",
+});
 
 export default Navbar;
