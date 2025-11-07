@@ -129,7 +129,7 @@ function AppLayout() {
               <Route
                 path="/admin-payouts"
                 element={<ProtectedRoute><AdminPayoutsPage /></ProtectedRoute>}
-            । />
+            />
               <Route
                 path="/admin-settings"
                 element={<ProtectedRoute><AdminSettingsPage /></ProtectedRoute>}
