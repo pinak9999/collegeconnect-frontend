@@ -103,16 +103,18 @@ function HomePage() {
       }}
     >
       {/* 🌟 HERO SECTION */}
-      <section
-        style={{
-          background: "linear-gradient(135deg, #007BFF, #00B4D8)",
-          color: "white",
-          textAlign: "center",
-          padding: "100px 20px",
-          position: "relative",
-          overflow: "hidden", // यह 'blobs' को छिपाने के लिए सही है
-        }}
-      >
+     <section
+  style={{
+    background: "linear-gradient(135deg, #007BFF, #00B4D8)",
+    color: "white",
+    textAlign: "center",
+      padding: "140px 20px 100px 20px", // ✅ top padding fixed
+    position: "relative",
+    overflow: "hidden",
+  }}
+> 
+
+
         {/* ... (आपका बाकी Hero Section कोड) ... */}
          <style>
           {`

@@ -8,78 +8,59 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // --- RESPONSIVE STATE ---
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [showNav, setShowNav] = useState(true);
   const isMobile = windowWidth <= 640;
 
-  // --- SCROLL ANIMATION STATE ---
-  const [showNav, setShowNav] = useState(true);
-  // 'lastScrollY' state ki ab zaroorat nahi hai.
-
-  // --- USE EFFECT (Resize and Scroll) ---
+  // 🔹 Handle scroll + resize
   useEffect(() => {
-    // 1. Resize Handler
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
 
-    // 2. Scroll Handler (Aapki requirement ke hisab se naya logic)
     const handleScroll = () => {
-      if (window.scrollY === 0) {
-        // Sirf tab dikhao jab page bilkul top par ho
-        setShowNav(true);
-      } else {
-        // Jaise hi 1px bhi scroll ho, chhipa do
-        setShowNav(false);
-      }
+      if (window.scrollY === 0) setShowNav(true);
+      else setShowNav(false);
     };
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []); // Ab dependency array ki zaroorat nahi, yeh sirf ek baar chalega.
+  }, []);
 
-  // Logout handler
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
-  // Dashboard link logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
-  // Background logic (Dynamic)
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // --- 🎨 STYLE OBJECTS (Balanced Design) 🎨 ---
-
-  // Main Nav Style
+  // 🎨 Navbar Styles (Fixed + Smooth)
   const navStyle = {
-    position: "sticky",
-    top: showNav ? "0" : "-100px",
-    transition: "top 0.3s ease",
+    position: "fixed",
+    top: showNav ? "0" : "-80px",
+    transition: "top 0.35s ease-in-out",
+    width: "100%",
     zIndex: 1000,
     background: navBg,
     color: "#fff",
     boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
-    padding: "8px 0", // ⭐ Navbar ko patla kar diya gaya hai
+    padding: "8px 0",
     backdropFilter: "blur(8px)",
   };
 
-  // Container Style
   const containerStyle = {
     maxWidth: "1150px",
     margin: "0 auto",
@@ -91,7 +72,6 @@ function Navbar() {
     gap: isMobile ? "12px" : "0",
   };
 
-  // Logo Style
   const logoStyle = {
     fontSize: "1.5rem",
     fontWeight: 700,
@@ -102,7 +82,6 @@ function Navbar() {
     gap: "6px",
   };
 
-  // Menu (Buttons Container) Style
   const menuStyle = {
     display: "flex",
     alignItems: "center",
@@ -112,7 +91,6 @@ function Navbar() {
     width: isMobile ? "100%" : "auto",
   };
 
-  // Base Button Style
   const btnBaseStyle = {
     color: "#fff",
     padding: "7px 16px",
@@ -125,7 +103,6 @@ function Navbar() {
     cursor: "pointer",
   };
 
-  // Hover इफ़ेक्ट के लिए फंक्शंस
   const applyHover = (e, transform, boxShadow) => {
     e.target.style.transform = transform;
     e.target.style.boxShadow = boxShadow;
@@ -134,7 +111,7 @@ function Navbar() {
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
-        {/* LOGO */}
+        {/* Logo */}
         <Link to="/" style={logoStyle}>
           🎓{" "}
           <span style={{ letterSpacing: "0.5px" }}>
@@ -154,18 +131,10 @@ function Navbar() {
                   boxShadow: "0 3px 10px rgba(37,99,235,0.4)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1.07)",
-                    "0 5px 15px rgba(37,99,235,0.6)"
-                  )
+                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(37,99,235,0.6)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1)",
-                    "0 3px 10px rgba(37,99,235,0.4)"
-                  )
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(37,99,235,0.4)")
                 }
               >
                 📊 Dashboard
@@ -179,18 +148,10 @@ function Navbar() {
                   boxShadow: "0 3px 10px rgba(239,68,68,0.4)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1.07)",
-                    "0 5px 15px rgba(239,68,68,0.6)"
-                  )
+                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(239,68,68,0.6)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1)",
-                    "0 3px 10px rgba(239,68,68,0.4)"
-                  )
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(239,68,68,0.4)")
                 }
               >
                 🚪 Logout
@@ -206,18 +167,10 @@ function Navbar() {
                   boxShadow: "0 3px 10px rgba(59,130,246,0.4)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1.07)",
-                    "0 5px 15px rgba(59,130,246,0.6)"
-                  )
+                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(59,130,246,0.6)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1)",
-                    "0 3px 10px rgba(59,130,246,0.4)"
-                  )
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(59,130,246,0.4)")
                 }
               >
                 📝 Register
@@ -231,18 +184,10 @@ function Navbar() {
                   boxShadow: "0 3px 10px rgba(5,150,105,0.4)",
                 }}
                 onMouseEnter={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1.07)",
-                    "0 5px 15px rgba(5,150,105,0.6)"
-                  )
+                  applyHover(e, "scale(1.07)", "0 5px 15px rgba(5,150,105,0.6)")
                 }
                 onMouseLeave={(e) =>
-                  applyHover(
-                    e,
-                    "scale(1)",
-                    "0 3px 10px rgba(5,150,105,0.4)"
-                  )
+                  applyHover(e, "scale(1)", "0 3px 10px rgba(5,150,105,0.4)")
                 }
               >
                 🔐 Login
