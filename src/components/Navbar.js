@@ -3,12 +3,16 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
+// Ensure global margin/padding reset for body & html
+// Add this line in your global CSS file (index.css or App.css):
+// body, html { margin: 0; padding: 0; box-sizing: border-box; }
+
 function Navbar() {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // --- responsive width only (no scroll logic needed) ---
+  // Responsive: only width handling
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const isMobile = windowWidth <= 640;
 
@@ -18,51 +22,56 @@ function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // --- hide navbar on auth pages ---
+  // Hide navbar on auth pages
   const hiddenRoutes = ["/login", "/register", "/forgot-password"];
   const currentPath = location.pathname.toLowerCase();
   if (hiddenRoutes.some((r) => currentPath.startsWith(r))) return null;
 
+  // Logout logic
   const logoutHandler = () => {
     logout();
     toast.success("Logged out successfully 🎉");
     navigate("/");
   };
 
+  // Dashboard logic
   const getDashboardLink = () => {
     if (auth.user?.role === "Admin") return "/admin-dashboard";
     if (auth.user?.isSenior) return "/senior-dashboard";
     return "/student-dashboard";
   };
 
+  // Navbar background
   const isDashboard = location.pathname.includes("dashboard");
   const navBg = isDashboard
     ? "linear-gradient(90deg, #0f172a, #1e293b)"
     : "linear-gradient(90deg, #007BFF, #00B4D8)";
 
-  // ⭐ NORMAL FLOW: no fixed/sticky, no top/opacity transitions
+  // Main Navbar style: NO margin, NO padding at top
   const navStyle = {
     position: "relative",
     width: "100%",
     background: navBg,
-    margin:"0",   
+    margin: "0", // prevents unwanted margin above navbar
     color: "#fff",
     boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
     padding: "10px 0",
     zIndex: 1,
   };
 
+  // Container styling
   const containerStyle = {
     maxWidth: "1150px",
     margin: "0 auto",
     display: "flex",
     alignItems: "center",
-    padding: "4px px",
+    padding: "4px 0", // corrected typo from "4px px"
     flexDirection: isMobile ? "column" : "row",
     justifyContent: isMobile ? "center" : "space-between",
     gap: isMobile ? "12px" : "0",
   };
 
+  // Logo styles
   const logoStyle = {
     fontSize: "1.5rem",
     fontWeight: 700,
@@ -73,6 +82,7 @@ function Navbar() {
     gap: "6px",
   };
 
+  // Menu style
   const menuStyle = {
     display: "flex",
     alignItems: "center",
@@ -82,6 +92,7 @@ function Navbar() {
     width: isMobile ? "100%" : "auto",
   };
 
+  // Button style
   const btnBaseStyle = {
     color: "#fff",
     padding: "7px 16px",
@@ -94,6 +105,7 @@ function Navbar() {
     cursor: "pointer",
   };
 
+  // Hover effects
   const applyHover = (e, transform, boxShadow) => {
     e.currentTarget.style.transform = transform;
     e.currentTarget.style.boxShadow = boxShadow;
@@ -128,7 +140,6 @@ function Navbar() {
               >
                 📊 Dashboard
               </Link>
-
               <button
                 onClick={logoutHandler}
                 style={{
@@ -164,7 +175,6 @@ function Navbar() {
               >
                 📝 Register
               </Link>
-
               <Link
                 to="/login"
                 style={{
