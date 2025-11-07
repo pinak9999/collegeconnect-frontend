@@ -158,6 +158,16 @@ main { min-height: 70vh; }
     padding-top: 40px;
     padding-bottom: 40px;
 }
+ /* src/index.css */
+
+/* --- यह कोड ब्राउज़र के डिफ़ॉल्ट मार्जिन को हटा देगा --- */
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* यह एक अच्छी प्रैक्टिस है */
+}
+
+/* (आपका बाकी .css कोड इसके नीचे रहेगा) */
 /* --- (अपडेट (Update) खत्म) --- */
 
 /* --- 2. 'नया' (New) 'एडवांस' (Advance) 'बटन' (Button) 'डिज़ाइन' (Design) --- */
