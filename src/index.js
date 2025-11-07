@@ -2,21 +2,37 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { AuthProvider } from './context/AuthContext'; // 1. 'Logic B' (लॉजिक बी) 'इम्पोर्ट' (import) करें
-import { Toaster } from 'react-hot-toast'; // 2. 'Design A' (डिज़ाइन ए) 'इम्पोर्ट' (import) करें
+import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 import 'leaflet/dist/leaflet.css';
+
+// --- 1. Google Provider को इम्पोर्ट करें ---
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+// --- 2. .env फ़ाइल से Client ID लें ---
+// (यह Vite 'import.meta.env' का उपयोग करता है)
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+// (अगर Client ID नहीं मिली तो डेवलपर को चेतावनी दें)
+if (!googleClientId) {
+  console.error("❌ Google Client ID नहीं मिली। कृपया .env.local फ़ाइल में VITE_GOOGLE_CLIENT_ID सेट करें।");
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <AuthProvider> {/* 3. 'पूरी' (Whole) 'ऐप' (app) को 'Auth' (ऑथ) 'बक्से' (box) से 'रैप' (wrap) (लपेट) करें */}
-      
-      <Toaster  /* 4. 'पूरी' (Whole) 'ऐप' (app) के लिए 'Toast' (टोस्ट) 'नोटिफिकेशन्स' (notifications) (सूचनाएं) 'सेट' (set) करें */
-        position="top-center"
-        reverseOrder={false}
-      />
-      
-      <App />
+  <React.StrictMode>
+    {/* 3. AuthProvider को GoogleProvider से रैप करें */}
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <AuthProvider> 
+        
+        <Toaster 
+          position="top-center"
+          reverseOrder={false}
+        />
+        
+        <App />
 
-    </AuthProvider>
-  </React.StrictMode>
+      </AuthProvider>
+    </GoogleOAuthProvider>
+  </React.StrictMode>
 );

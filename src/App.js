@@ -1,7 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { Toaster } from 'react-hot-toast';
+
+// --- (बदलाव 1: AuthProvider और Toaster को यहाँ से हटाएँ) ---
+// --- (बदलाव 2: useAuth को इम्पोर्ट करें) ---
+import { useAuth } from './context/AuthContext'; 
+
+// --- (बदलाव 3: Modal को इम्पोर्ट करें) ---
+import MobileNumberModal from './components/MobileNumberModal';
+
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -31,180 +37,191 @@ import SeniorEarningsPage from './pages/SeniorEarningsPage';
 
 // --- (मुख्य App Function) ---
 function App() {
+  
+  // --- (बदलाव 4: AuthContext से यूज़र की जानकारी लें) ---
+  const { auth } = useAuth();
+
+  // यह फ़ैसला करेगा कि Modal दिखाना है या नहीं:
+  const showMobileModal = 
+    auth.isAuthenticated &&  // 1. यूज़र Logged in है
+    auth.user &&             // 2. यूज़र का डेटा लोड हो चुका है
+    !auth.user.mobileNumber; // 3. यूज़र का मोबाइल नंबर नहीं है
+
   return (
-    <AuthProvider>
-      <Toaster position="top-center" />
-      <Router>
-        <div className="App">
-          {/* 🔹 Navbar हर पेज पर दिखेगा */}
-          <Navbar />
+    // --- (बदलाव 5: AuthProvider और Toaster यहाँ से हटा दिए गए हैं) ---
+    <Router>
+      
+      {/* --- (बदलाव 6: अगर showMobileModal 'true' है, तो Modal को दिखाएँ) --- */}
+      {showMobileModal && <MobileNumberModal />}
+      
+      {/* (Modal खुद ही बैकग्राउंड को blur कर देगा, 
+        इसलिए हमें यहाँ 'filter: blur()' लगाने की ज़रूरत नहीं है)
+      */}
+      <div className="App">
+        <Navbar />
 
-          <main>
-            <Routes>
+        <main>
+          <Routes>
 
-              {/* ---------------- PUBLIC ROUTES ---------------- */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              
-              {/* ✅ यह सबसे जरूरी Route है (Reset Password के लिए) */}
-              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+            {/* ---------------- PUBLIC ROUTES ---------------- */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-              {/* ---------------- STUDENT ROUTES ---------------- */}
-              <Route
-                path="/student-dashboard/*"
-                element={
-                  <ProtectedRoute>
-                    <StudentDashboard />
-                  </ProtectedRoute>
-                }
-              />
+            {/* ---------------- STUDENT ROUTES ---------------- */}
+            <Route
+              path="/student-dashboard/*"
+              element={
+                <ProtectedRoute>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-              {/* ---------------- SENIOR ROUTES ---------------- */}
-              <Route
-                path="/senior-dashboard/*"
-                element={
-                  <ProtectedRoute>
-                    <SeniorDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/senior-availability"
-                element={
-                  <ProtectedRoute>
-                    <SeniorAvailabilityPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/senior-earnings"
-                element={
-                  <ProtectedRoute>
-                    <SeniorEarningsPage />
-                  </ProtectedRoute>
-                }
-              />
+            {/* ---------------- SENIOR ROUTES ---------------- */}
+            <Route
+              path="/senior-dashboard/*"
+              element={
+                <ProtectedRoute>
+                  <SeniorDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/senior-availability"
+              element={
+                <ProtectedRoute>
+                  <SeniorAvailabilityPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/senior-earnings"
+              element={
+                <ProtectedRoute>
+                  <SeniorEarningsPage />
+                </ProtectedRoute>
+              }
+            />
 
-              {/* ---------------- BOOKING ROUTES ---------------- */}
-              <Route
-                path="/book/:userId"
-                element={
-                  <ProtectedRoute>
-                    <BookingPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/booking-success"
-                element={
-                  <ProtectedRoute>
-                    <BookingSuccessPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/rate-booking/:bookingId"
-                element={
-                  <ProtectedRoute>
-                    <RateBookingPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/raise-dispute/:bookingId"
-                element={
-                  <ProtectedRoute>
-                    <RaiseDisputePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chat/:bookingId"
-                element={
-                  <ProtectedRoute>
-                    <ChatPage />
-                  </ProtectedRoute>
-                }
-              />
+            {/* ---------------- BOOKING ROUTES ---------------- */}
+            <Route
+              path="/book/:userId"
+              element={
+                <ProtectedRoute>
+                  <BookingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/booking-success"
+              element={
+                <ProtectedRoute>
+                  <BookingSuccessPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rate-booking/:bookingId"
+              element={
+                <ProtectedRoute>
+                  <RateBookingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/raise-dispute/:bookingId"
+              element={
+                <ProtectedRoute>
+                  <RaiseDisputePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat/:bookingId"
+              element={
+                <ProtectedRoute>
+                  <ChatPage />
+                </ProtectedRoute>
+              }
+            />
 
-              {/* ---------------- ADMIN ROUTES ---------------- */}
-              <Route
-                path="/admin-dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin-edit-profile/:userId"
-                element={
-                  <ProtectedRoute>
-                    <AdminEditProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin-payouts"
-                element={
-                  <ProtectedRoute>
-                    <AdminPayoutsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin-settings"
-                element={
-                  <ProtectedRoute>
-                    <AdminSettingsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin-manage-tags"
-                element={
-                  <ProtectedRoute>
-                    <AdminManageTags />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin-manage-colleges"
-                element={
-                  <ProtectedRoute>
-                    <AdminManageColleges />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin-manage-dispute-reasons"
-                element={
-                  <ProtectedRoute>
-                    <AdminManageDisputes />
-                  </ProtectedRoute>
-                }
-              />
+            {/* ---------------- ADMIN ROUTES ---------------- */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-edit-profile/:userId"
+              element={
+                <ProtectedRoute>
+                  <AdminEditProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-payouts"
+              element={
+                <ProtectedRoute>
+                  <AdminPayoutsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-settings"
+              element={
+                <ProtectedRoute>
+                  <AdminSettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-manage-tags"
+              element={
+                <ProtectedRoute>
+                  <AdminManageTags />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-manage-colleges"
+              element={
+                <ProtectedRoute>
+                  <AdminManageColleges />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-manage-dispute-reasons"
+              element={
+                <ProtectedRoute>
+                  <AdminManageDisputes />
+                </ProtectedRoute>
+              }
+            />
 
-              {/* 🚨 404 Route (Optional - अगर कोई गलत URL खोले तो) */}
-              <Route
-                path="*"
-                element={
-                  <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                    <h2>404 - Page Not Found</h2>
-                    <p>The page you are looking for doesn’t exist.</p>
-                  </div>
-                }
-              />
-            </Routes>
-          </main>
+            {/* ---------------- 404 Route ---------------- */}
+            <Route
+              path="*"
+              element={
+                <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                  <h2>404 - Page Not Found</h2>
+                  <p>The page you are looking for doesn’t exist.</p>
+                </div>
+              }
+            />
+          </Routes>
+        </main>
 
-          {/* 🔹 Footer हर पेज पर दिखेगा */}
-          <Footer />
-        </div>
-      </Router>
-    </AuthProvider>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
