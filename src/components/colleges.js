@@ -2,10 +2,22 @@
 
 export const colleges = [
   {
-    name: "MNIT Jaipur",
-    location: "Jaipur, Rajasthan",
-    coords: [26.8623, 75.8213], // [latitude, longitude]
-    image: "", // यह टैग इमेज दिखाएगा
+    name: "MBM University",
+    location: "Jodhpur, Rajasthan",
+    coords: [26.2624, 73.0138], // [latitude, longitude]
+    image: "https://www.mbmalumni.org/wp-content/uploads/2024/07/about-mbm.jpg", // यह टैग इमेज दिखाएगा
+  },
+   {
+    name: "RTU Kota",
+    location: "Kota, Rajasthan",
+    coords: [25.1578, 75.8504],
+    image: "https://i.ytimg.com/vi/kH-apsSipWY/maxresdefault.jpg",
+  },
+    {
+    name: "CTAE Udaipur",
+    location: "Udaipur, Rajasthan",
+    coords: [24.6044, 73.7084],
+    image: "https://www.ctae.ac.in/images/slider/large/img9268001.jpg",
   },
   {
     name: "BITS Pilani",
@@ -19,12 +31,7 @@ export const colleges = [
     coords: [26.9363, 75.9238],
     image: "",
   },
-  {
-    name: "RTU Kota",
-    location: "Kota, Rajasthan",
-    coords: [25.1578, 75.8504],
-    image: "",
-  },
+ 
   {
     name: "MBM University",
     location: "Jodhpur, Rajasthan",
