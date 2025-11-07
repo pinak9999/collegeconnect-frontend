@@ -108,10 +108,11 @@ function HomePage() {
     background: "linear-gradient(135deg, #007BFF, #00B4D8)",
     color: "white",
     textAlign: "center",
-
-  padding: "100px 20px",
+    
+  padding: "80px 20px 100px",
     position: "relative",
     overflow: "hidden",
+    marginTop:"0",
   }}
 >
 

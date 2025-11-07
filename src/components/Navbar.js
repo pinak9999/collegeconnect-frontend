@@ -45,6 +45,7 @@ function Navbar() {
     position: "relative",
     width: "100%",
     background: navBg,
+    margin:"0",   
     color: "#fff",
     boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
     padding: "10px 0",
