@@ -137,7 +137,7 @@ function Navbar() {
         {/* LOGO */}
         <Link to="/" style={logoStyle}>
           🎓{" "}
-          <span style={{ letterSpacing: "0.5px" }}>
+          <span style={{ letterSpacing: "3px" }}>
             College<span style={{ color: "#E0F2FE" }}>Connect</span>
           </span>
         </Link>
