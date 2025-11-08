@@ -8,7 +8,7 @@ import { colleges } from "../components/colleges";
 // Add this global style somewhere at app entry-point (index.css or App.js, or below in style tag)
 const globalStyle = `
   body, html {
-    margin: 0;
+    margin: -10;
     padding: 0;
     box-sizing: border-box;
   }
@@ -126,7 +126,7 @@ function HomePage() {
           padding: "80px 20px 100px 20px",
           position: "relative",
           overflow: "hidden",
-          marginTop: 0,
+          marginTop: 1,
           marginBottom: 0,
         }}
       >

@@ -7,7 +7,9 @@ import toast from "react-hot-toast";
 // Add this line in your global CSS file (index.css or App.css):
 // body, html { margin: 0; padding: 0; box-sizing: border-box; }
 
+
 function Navbar() {
+  
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,7 +67,7 @@ function Navbar() {
     margin: "0 auto",
     display: "flex",
     alignItems: "center",
-    padding: "4px 0", // corrected typo from "4px px"
+    padding: "0px 0", // corrected typo from "4px px"
     flexDirection: isMobile ? "column" : "row",
     justifyContent: isMobile ? "center" : "space-between",
     gap: isMobile ? "12px" : "0",

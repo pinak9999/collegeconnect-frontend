@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 
+
 // 🔹 Common Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -30,6 +31,7 @@ import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminManageTags from './pages/AdminManageTags';
 import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
+
 
 // ---------------------------------------------------------
 // 🧩 AppLayout Component — simplified version
