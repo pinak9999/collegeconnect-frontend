@@ -4,58 +4,21 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-// 📦 Bookings Card Component
+// 📦 Booking Cards Component (Modern UI)
 const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
-  const renderActionColumn = (booking) => {
-    const baseBtn = {
-      padding: "8px 14px",
-      borderRadius: "8px",
-      fontSize: "13px",
-      cursor: "pointer",
-      transition: "0.3s",
-      border: "none",
-      fontWeight: 600,
-    };
-    const primary = { ...baseBtn, background: "linear-gradient(45deg,#3b82f6,#2563eb)", color: "#fff" };
-    const secondary = { ...baseBtn, background: "#fff", color: "#2563eb", border: "1px solid #2563eb" };
-
-    if (booking.dispute_status === "Pending") {
-      return (
-        <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
-          <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
-          <button onClick={() => onStartChat(booking._id)} style={secondary}>
-            Chat
-          </button>
-        </div>
-      );
-    }
-
-    if (booking.status === "Completed") {
-      return (
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <span style={{ color: "#10b981", fontWeight: 600 }}>✅ Done</span>
-          <button onClick={() => onStartChat(booking._id)} style={secondary}>
-            Chat History
-          </button>
-        </div>
-      );
-    }
-
-    if (booking.status === "Confirmed") {
-      return (
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <button onClick={() => onStartChat(booking._id)} style={primary}>
-            💬 Start Chat
-          </button>
-          <button onClick={() => onMarkComplete(booking._id)} style={secondary}>
-            ✔ Mark Done
-          </button>
-        </div>
-      );
-    }
-
-    return null;
-  };
+  const actionButton = (text, gradient, action) => ({
+    background: gradient,
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "8px 14px",
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+    fontSize: "13px",
+    ...(action && { onClick: action }),
+  });
 
   if (loading)
     return (
@@ -64,7 +27,7 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
       </p>
     );
 
-  if (bookings.length === 0)
+  if (!bookings.length)
     return (
       <p style={{ textAlign: "center", color: "#9ca3af", fontWeight: 500 }}>
         No bookings found.
@@ -76,10 +39,10 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
       <h3
         style={{
           textAlign: "center",
-          color: "#2563eb",
-          marginBottom: "18px",
+          color: "#1e3a8a",
+          marginBottom: "20px",
           fontWeight: 700,
-          fontSize: "1.2rem",
+          fontSize: "1.3rem",
         }}
       >
         {title}
@@ -88,8 +51,8 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))",
-          gap: "20px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))",
+          gap: "18px",
           padding: "0 10px",
         }}
       >
@@ -97,37 +60,63 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
           <div
             key={b._id}
             style={{
-              background: "rgba(255,255,255,0.9)",
-              borderRadius: "16px",
-              padding: "18px",
-              boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
-              backdropFilter: "blur(10px)",
+              background: "rgba(255,255,255,0.85)",
+              borderRadius: "18px",
+              padding: "20px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+              backdropFilter: "blur(12px)",
               transition: "all 0.3s ease",
+              border: b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+              e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.15)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.1)";
+              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
             }}
           >
             <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
               👨‍🎓 {b.student?.name || "Student"}
             </h4>
-            <p style={{ color: "#6b7280", margin: "4px 0" }}>
+            <p style={{ color: "#6b7280", margin: "5px 0" }}>
               📞 {b.student?.mobileNumber || "N/A"}
             </p>
             <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px" }}>
               Status: {b.status}
             </p>
-            <p style={{ color: "#6b7280", fontSize: "13px" }}>
+
+            <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}>
               {b.dispute_status === "Pending"
-                ? b.dispute_reason?.reason || "Under Review"
-                : b.dispute_status}
+                ? `⚠ ${b.dispute_reason?.reason || "Under Review"}`
+                : b.dispute_status || "No dispute"}
             </p>
-            <div style={{ marginTop: "10px" }}>{renderActionColumn(b)}</div>
+
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+              {b.status === "Confirmed" && (
+                <>
+                  <button
+                    style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
+                    onClick={() => onStartChat(b._id)}
+                  >
+                    💬 Chat
+                  </button>
+                  <button
+                    style={actionButton("✔ Mark Done", "linear-gradient(45deg,#10b981,#059669)")}
+                    onClick={() => onMarkComplete(b._id)}
+                  >
+                    ✔ Done
+                  </button>
+                </>
+              )}
+              {b.status === "Completed" && (
+                <span style={{ color: "#10b981", fontWeight: 600 }}>✅ Completed</span>
+              )}
+              {b.dispute_status === "Pending" && (
+                <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -142,10 +131,6 @@ function SeniorDashboard() {
   const location = useLocation();
   const [myBookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (auth?.user?.name) toast.success(`Welcome ${auth.user.name}! 👋`);
-  }, [auth?.user]);
 
   const loadBookings = useCallback(async () => {
     setLoading(true);
@@ -188,58 +173,53 @@ function SeniorDashboard() {
 
   const handleStartChat = (id) => navigate(`/chat/${id}`);
 
-  const tasks = myBookings.filter(
-    (b) => b.status === "Confirmed" && b.dispute_status !== "Pending"
-  );
+  const tasks = myBookings.filter((b) => b.status === "Confirmed" && b.dispute_status !== "Pending");
   const disputes = myBookings.filter((b) => b.dispute_status === "Pending");
   const history = myBookings.filter(
     (b) => b.status === "Completed" || b.dispute_status === "Resolved"
   );
 
-  // 🩵 Background + Layout
   return (
     <div
       style={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(135deg,#007bff 0%,#00b4d8 50%,#caf0f8 100%)",
-        padding: "20px 15px 50px",
+        background: "linear-gradient(135deg,#1e3a8a,#2563eb,#38bdf8)",
+        padding: "20px 10px 60px",
         fontFamily: "'Poppins', sans-serif",
-        animation: "fadeIn 0.5s ease-in-out",
+        animation: "fadeIn 0.6s ease-in-out",
       }}
     >
       {/* 🧭 Header */}
-      <div style={{ textAlign: "center", paddingBottom: "25px" }}>
+      <div style={{ textAlign: "center", marginBottom: "25px" }}>
         <h2
           style={{
-            background: "linear-gradient(90deg,#2563eb,#1e40af)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            fontSize: "1.8rem",
+            color: "#fff",
+            fontSize: "2rem",
             fontWeight: 700,
+            textShadow: "0 2px 8px rgba(0,0,0,0.2)",
           }}
         >
           Welcome, {auth.user?.name || "Senior"} 👋
         </h2>
-        <p style={{ color: "#475569", fontSize: "0.95rem" }}>
-          Manage your sessions, chat with students, and track your progress.
+        <p style={{ color: "#dbeafe", fontSize: "0.95rem" }}>
+          Manage your sessions, chat with students, and monitor your progress easily.
         </p>
       </div>
 
-      {/* 📍 Tabs */}
+      {/* 🪄 Tabs */}
       <div
         style={{
           display: "flex",
           justifyContent: "center",
           flexWrap: "wrap",
-          gap: "12px",
-          background: "rgba(255,255,255,0.9)",
-          padding: "12px 15px",
+          gap: "10px",
+          background: "rgba(255,255,255,0.15)",
+          padding: "10px 15px",
           borderRadius: "20px",
           width: "95%",
           margin: "0 auto 25px auto",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-          backdropFilter: "blur(10px)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+          backdropFilter: "blur(15px)",
           position: "sticky",
           top: 10,
           zIndex: 10,
@@ -265,12 +245,12 @@ function SeniorDashboard() {
                 fontWeight: 600,
                 background: isActive
                   ? "linear-gradient(45deg,#3b82f6,#2563eb)"
-                  : "#f3f4f6",
-                color: isActive ? "#fff" : "#2563eb",
+                  : "rgba(255,255,255,0.2)",
+                color: isActive ? "#fff" : "#e0f2fe",
                 boxShadow: isActive
-                  ? "0 3px 12px rgba(37,99,235,0.3)"
+                  ? "0 3px 10px rgba(37,99,235,0.4)"
                   : "none",
-                transition: "all 0.3s",
+                transition: "all 0.3s ease",
               }}
             >
               {tab.label} ({tab.count})
@@ -281,13 +261,13 @@ function SeniorDashboard() {
         <Link
           to="/senior-earnings"
           style={{
-            background: "linear-gradient(45deg,#22c55e,#16a34a)",
+            background: "linear-gradient(45deg,#16a34a,#22c55e)",
             color: "#fff",
             textDecoration: "none",
             padding: "8px 16px",
             borderRadius: "25px",
             fontWeight: 600,
-            boxShadow: "0 3px 12px rgba(22,163,74,0.3)",
+            boxShadow: "0 3px 10px rgba(22,163,74,0.4)",
           }}
         >
           💰 My Earnings

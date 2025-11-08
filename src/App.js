@@ -33,8 +33,8 @@ import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 
 <Route path="/student-dashboard/*" element={<StudentDashboard />} />
+// body, html { margin: 0; padding: 0; box-sizing: border-box; }
 
-// ---------------------------------------------------------
 // 🧩 AppLayout Component — simplified version
 // ---------------------------------------------------------
 function AppLayout() {

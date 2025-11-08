@@ -68,6 +68,7 @@ function Navbar() {
 
   // Main Navbar style: NO margin, NO padding at top
   const navStyle = {
+    
     position: "relative",
     width: "100%",
     background: navBg,

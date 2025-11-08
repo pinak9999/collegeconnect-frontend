@@ -6,47 +6,43 @@ import toast from "react-hot-toast";
 function RaiseDisputePage() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
-
   const [reasonId, setReasonId] = useState("");
-  const [allReasons, setAllReasons] = useState([]);
+  const [reasons, setReasons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [hover, setHover] = useState(false);
-  const [focusInput, setFocusInput] = useState(null);
-  const [cardHover, setCardHover] = useState(false);
+  const [focus, setFocus] = useState(false);
 
-  // ✅ Responsive Handling
+  // 🧩 Responsive Check
   useEffect(() => {
-    const checkScreen = () => setIsMobile(window.innerWidth < 600);
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ✅ Fetch Dispute Reasons
+  // 🔹 Fetch Dispute Reasons
   useEffect(() => {
     const fetchReasons = async () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
           "https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons",
-          {
-            headers: { "x-auth-token": token },
-          }
+          { headers: { "x-auth-token": token } }
         );
-        setAllReasons(res.data);
-        setLoading(false);
-      } catch (err) {
-        toast.error("Failed to load reasons.");
+        setReasons(res.data);
+      } catch {
+        toast.error("Failed to load dispute reasons.");
+      } finally {
         setLoading(false);
       }
     };
     fetchReasons();
   }, []);
 
-  const onSubmitHandler = async (e) => {
+  // 🔹 Submit Handler
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!reasonId) return toast.error("Please select a reason for the dispute.");
+    if (!reasonId) return toast.error("Please select a reason.");
 
     const toastId = toast.loading("Submitting dispute...");
     try {
@@ -56,9 +52,8 @@ function RaiseDisputePage() {
         { reasonId },
         { headers: { "x-auth-token": token } }
       );
-
       toast.dismiss(toastId);
-      toast.success("Dispute raised. Admin will review it shortly.");
+      toast.success("Dispute raised successfully!");
       navigate("/student-dashboard");
     } catch (err) {
       toast.dismiss(toastId);
@@ -68,138 +63,114 @@ function RaiseDisputePage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          minHeight: "80vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontFamily: "'Poppins', sans-serif",
-          fontSize: "1.5rem",
-        }}
-      >
-        Loading...
-      </div>
-    );
-  }
-
-  // 🎨 Inline Styles
+  // 💎 Inline Styles (Vercel Safe)
   const styles = {
-    page: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
+    container: {
       minHeight: "100vh",
-      background:
-        "linear-gradient(135deg, #007bff 0%, #00b4d8 50%, #023e8a 100%)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "linear-gradient(135deg, #1a1a1a, #520000, #ff0000)",
+      color: "#fff",
       fontFamily: "'Poppins', sans-serif",
-      padding: isMobile ? "1rem" : "2rem",
-      transition: "all 0.3s ease",
+      padding: "1rem",
     },
     card: {
-      background: "rgba(255, 255, 255, 0.95)",
+      background: "rgba(255,255,255,0.08)",
+      backdropFilter: "blur(10px)",
+      borderRadius: "20px",
       padding: isMobile ? "1.5rem" : "2.5rem",
-      borderRadius: "1.5rem",
       width: isMobile ? "90%" : "420px",
-      boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-      textAlign: "center",
+      boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
       transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      transform: hover ? "scale(1.02)" : "scale(1)",
     },
-    cardHover: {
-      transform: "translateY(-6px)",
-      boxShadow: "0 25px 45px rgba(0,0,0,0.25)",
-    },
-    title: {
+    heading: {
       fontSize: isMobile ? "1.8rem" : "2rem",
-      fontWeight: "700",
-      color: "#1e3a8a",
-      marginBottom: "1.2rem",
-    },
-    formGroup: {
-      textAlign: "left",
+      fontWeight: 700,
+      textAlign: "center",
+      color: "#fff",
+      textShadow: "0 0 8px rgba(255, 50, 50, 0.6)",
       marginBottom: "1.2rem",
     },
     label: {
-      fontSize: "0.95rem",
-      fontWeight: "500",
-      color: "#333",
-      marginBottom: "0.4rem",
+      fontSize: "1rem",
+      fontWeight: 500,
+      color: "#ddd",
+      marginBottom: "0.5rem",
       display: "block",
     },
     select: {
       width: "100%",
-      padding: "0.8rem",
-      border: "1.8px solid #ddd",
+      padding: "0.9rem",
       borderRadius: "12px",
-      fontSize: "0.95rem",
+      border: focus
+        ? "2px solid #ff4d4d"
+        : "2px solid rgba(255,255,255,0.2)",
+      background: "rgba(255,255,255,0.12)",
+      color: "#fff",
+      fontSize: "1rem",
       outline: "none",
       transition: "all 0.3s ease",
-      boxSizing: "border-box",
-    },
-    selectFocus: {
-      borderColor: "#2563eb",
-      boxShadow: "0 0 8px rgba(37,99,235,0.4)",
     },
     button: {
       width: "100%",
+      marginTop: "1.5rem",
       padding: "0.9rem",
-      background: "linear-gradient(45deg, #e74c3c, #c0392b)",
-      color: "#fff",
-      border: "none",
       borderRadius: "12px",
+      border: "none",
       fontSize: "1rem",
-      fontWeight: "600",
+      fontWeight: 600,
       cursor: "pointer",
-      marginTop: "0.8rem",
-      transition: "transform 0.2s, box-shadow 0.2s",
-    },
-    buttonHover: {
-      transform: "translateY(-2px)",
-      boxShadow: "0 8px 15px rgba(231, 76, 60, 0.4)",
+      background: hover
+        ? "linear-gradient(45deg,#ff4d4d,#ff9999)"
+        : "linear-gradient(45deg,#ff1e1e,#c0392b)",
+      color: "#fff",
+      boxShadow: hover
+        ? "0 8px 20px rgba(255,77,77,0.4)"
+        : "0 4px 12px rgba(0,0,0,0.3)",
+      transform: hover ? "translateY(-3px)" : "translateY(0)",
+      transition: "all 0.3s ease",
     },
   };
 
-  return (
-    <div style={styles.page}>
-      <div
-        style={{ ...styles.card, ...(cardHover ? styles.cardHover : {}) }}
-        onMouseEnter={() => setCardHover(true)}
-        onMouseLeave={() => setCardHover(false)}
-      >
-        <h2 style={styles.title}>Raise a Dispute ⚠️</h2>
-        <form onSubmit={onSubmitHandler}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Reason for Dispute</label>
-            <select
-              value={reasonId}
-              onChange={(e) => setReasonId(e.target.value)}
-              required
-              style={{
-                ...styles.select,
-                ...(focusInput === "reason" ? styles.selectFocus : {}),
-              }}
-              onFocus={() => setFocusInput("reason")}
-              onBlur={() => setFocusInput(null)}
-            >
-              <option value="" disabled>
-                Select a Reason
-              </option>
-              {allReasons.map((r) => (
-                <option key={r._id} value={r._id}>
-                  {r.reason}
-                </option>
-              ))}
-            </select>
-          </div>
+  // ⏳ Loader
+  if (loading)
+    return (
+      <div style={styles.container}>
+        <h2>Loading Dispute Reasons...</h2>
+      </div>
+    );
 
-          <button
-            type="submit"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={{ ...styles.button, ...(hover ? styles.buttonHover : {}) }}
+  return (
+    <div style={styles.container}>
+      <div
+        style={styles.card}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <h2 style={styles.heading}>⚠️ Raise a Dispute</h2>
+        <form onSubmit={handleSubmit}>
+          <label style={styles.label}>Select Reason</label>
+          <select
+            value={reasonId}
+            onChange={(e) => setReasonId(e.target.value)}
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
+            style={styles.select}
+            required
           >
+            <option value="" disabled>
+              Choose a Reason
+            </option>
+            {reasons.map((r) => (
+              <option key={r._id} value={r._id}>
+                {r.reason}
+              </option>
+            ))}
+          </select>
+
+          <button type="submit" style={styles.button}>
             Submit Dispute
           </button>
         </form>
