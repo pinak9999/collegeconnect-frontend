@@ -1,24 +1,17 @@
 /* --- 1. 'बेसिक' (Basic) 'सेटअप' (Setup) --- */
 
 
-/* ✅ Reset + Global Style (Final clean version) */
 html, body {
-  margin: 0; /* removes all default browser spacing */
-  padding: px;
-  align-items: center;
+  margin: -12px;
+  padding: 0px;
   scroll-behavior: smooth;
-  width: 100%;
-  min-height: 100vh;
   font-family: 'Poppins', sans-serif;
-  background-color: #f9fbfd; /* light subtle background */
-  color: #333; /* readable text color */
-  box-sizing: border-box;
-  overflow-x: hidden; /* prevents horizontal scrollbars */
+  background-color: #f9fbfd;
+  
 }
-
-body, html { margin: -13px; padding:-0px; text-align: center; font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333; }
+/* body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333; }
 .container { max-width: 1100px; margin: 0 auto; padding: 0 ; width: 100%; box-sizing: border-box; }
-main { min-height: 70vh; }
+main { min-height: 70vh; } */
 
 /* --- 2. 'बटन' (Button) 'डिज़ाइन' (Design) --- */
 .btn { padding: 10px 20px; border: none; border-radius: 8px; text-decoration: none; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }

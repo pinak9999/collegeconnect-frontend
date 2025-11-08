@@ -233,7 +233,7 @@ function AdminDashboard() {
               gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
               gap: '15px',
               marginTop: '20px',
-              // padding: '0 10px',
+              padding: '0 10px',
                 width: "100%",
     maxWidth: "1300px",  // 👈 to center content within a readable width
     margin: "0 auto",    // 👈 centers the entire dashboard horizontally
