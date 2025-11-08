@@ -9,7 +9,7 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
   const [userPageData, setUserPageData] = useState({ currentPage: 1, totalPages: 1 });
   const [bookingPageData, setBookingPageData] = useState({ currentPage: 1, totalPages: 1 });
   const [activeTab, setActiveTab] = useState('users');
