@@ -52,7 +52,7 @@ function Navbar() {
     position: "relative",
     width: "100%",
     background: navBg,
-    marginTop: "-45px", // prevents unwanted margin above navbar
+    margin: "0", // prevents unwanted margin above navbar
     color: "#fff",
     boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
     padding: "10px 0",
@@ -65,7 +65,7 @@ function Navbar() {
     margin: "0 auto",
     display: "flex",
     alignItems: "center",
-    padding: "0px 0", // corrected typo from "4px px"
+    padding: "4px 0", // corrected typo from "4px px"
     flexDirection: isMobile ? "column" : "row",
     justifyContent: isMobile ? "center" : "space-between",
     gap: isMobile ? "12px" : "0",
