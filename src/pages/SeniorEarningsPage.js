@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
+// 📊 StatsGrid Component
 const StatsGrid = ({ stats, loading }) => (
   <div
     style={{
@@ -11,13 +12,13 @@ const StatsGrid = ({ stats, loading }) => (
       gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
       gap: '20px',
       marginTop: '30px',
-      padding: '0 10px'
+      padding: '0 10px',
     }}
   >
     {[
       { title: 'Pending Bookings (New)', value: stats.totalPending, color: '#3B82F6' },
       { title: 'Total Completed Calls', value: stats.totalCompleted, color: '#10B981' },
-      { title: 'Your Next Payout (Unpaid)', value: `₹${stats.unpaidAmount}`, color: '#F59E0B' }
+      { title: 'Your Next Payout (Unpaid)', value: `₹${stats.unpaidAmount}`, color: '#F59E0B' },
     ].map((item, i) => (
       <div
         key={i}
@@ -28,7 +29,7 @@ const StatsGrid = ({ stats, loading }) => (
           padding: '20px',
           textAlign: 'center',
           transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-          backdropFilter: 'blur(10px)'
+          backdropFilter: 'blur(10px)',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-5px)';
@@ -45,7 +46,7 @@ const StatsGrid = ({ stats, loading }) => (
             color: item.color,
             fontSize: '1.8rem',
             fontWeight: 700,
-            letterSpacing: '1px'
+            letterSpacing: '1px',
           }}
         >
           {loading ? '...' : item.value}
@@ -55,36 +56,80 @@ const StatsGrid = ({ stats, loading }) => (
   </div>
 );
 
+// 💰 SeniorEarningsPage Component
 function SeniorEarningsPage() {
-  
+  const { auth } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ totalCompleted: 0, totalPending: 0, unpaidAmount: 0 });
   const [allBookings, setAllBookings] = useState([]);
   const [platformFee, setPlatformFee] = useState(20);
+  const [error, setError] = useState('');
 
+  // ✅ Correct useEffect (Fix for dependency + warning)
   useEffect(() => {
-    const loadData = async () => {
+    const fetchEarnings = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem('token');
+        const token = auth?.token;
+
+        if (!token) {
+          setLoading(false);
+          setError('User not authenticated.');
+          return;
+        }
+
+        const config = { headers: { 'x-auth-token': token } };
+
         const [statsRes, bookingsRes, settingsRes] = await Promise.all([
-          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/stats', { headers: { 'x-auth-token': token } }),
-          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', { headers: { 'x-auth-token': token } }),
-          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings')
+          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/stats', config),
+          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', config),
+          axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings'),
         ]);
+
         setStats(statsRes.data);
         setAllBookings(bookingsRes.data);
         setPlatformFee(settingsRes.data.platformFee);
+
+        toast.success('Earnings data loaded successfully!');
         setLoading(false);
       } catch (err) {
-        toast.error("Failed to load earnings data.");
+        console.error('❌ Error loading earnings data:', err);
+        setError(err.response?.data?.msg || 'Failed to load earnings data.');
+        toast.error('Failed to load earnings data.');
         setLoading(false);
       }
     };
-    loadData();
-  }, []);
+
+    if (auth?.token) {
+      fetchEarnings();
+    }
+  }, [auth?.token]); // ✅ Fix: correct dependency
 
   const earningHistory = allBookings.filter((b) => b.status === 'Completed');
+
+  // --- Error Handling ---
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', color: 'red', padding: '50px' }}>
+        <h2>⚠️ Something went wrong</h2>
+        <p>{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            backgroundColor: '#2563EB',
+            color: 'white',
+            padding: '10px 15px',
+            borderRadius: '8px',
+            border: 'none',
+            marginTop: '15px',
+            cursor: 'pointer',
+          }}
+        >
+          🔄 Reload
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -92,7 +137,7 @@ function SeniorEarningsPage() {
         minHeight: '100vh',
         background: 'linear-gradient(145deg, #EFF6FF, #F9FAFB)',
         padding: '25px 15px 60px',
-        animation: 'fadeIn 0.6s ease-in-out'
+        animation: 'fadeIn 0.6s ease-in-out',
       }}
     >
       {/* 🔙 Back Button */}
@@ -106,7 +151,7 @@ function SeniorEarningsPage() {
           padding: '10px 18px',
           borderRadius: '10px',
           boxShadow: '0 3px 10px rgba(37,99,235,0.3)',
-          marginBottom: '20px'
+          marginBottom: '20px',
         }}
       >
         ← Back to Dashboard
@@ -120,7 +165,7 @@ function SeniorEarningsPage() {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             fontWeight: 700,
-            fontSize: '1.7rem'
+            fontSize: '1.7rem',
           }}
         >
           Earnings & Stats 💰
@@ -148,7 +193,7 @@ function SeniorEarningsPage() {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: '15px',
-              marginTop: '15px'
+              marginTop: '15px',
             }}
           >
             {earningHistory.map((booking) => (
@@ -162,7 +207,7 @@ function SeniorEarningsPage() {
                   borderRadius: '14px',
                   padding: '15px',
                   boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
@@ -183,7 +228,7 @@ function SeniorEarningsPage() {
                   style={{
                     color: booking.payout_status === 'Paid' ? '#10B981' : '#6B7280',
                     fontWeight: '600',
-                    marginBottom: '5px'
+                    marginBottom: '5px',
                   }}
                 >
                   💸 {booking.payout_status}
@@ -192,7 +237,7 @@ function SeniorEarningsPage() {
                   style={{
                     color: '#059669',
                     fontWeight: 700,
-                    fontSize: '15px'
+                    fontSize: '15px',
                   }}
                 >
                   Earnings: ₹{booking.amount_paid - platformFee}

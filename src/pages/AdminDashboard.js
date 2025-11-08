@@ -9,13 +9,15 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState('');
+  const [error, setError] = useState(''); // ✅ properly used below
   const [userPageData, setUserPageData] = useState({ currentPage: 1, totalPages: 1 });
   const [bookingPageData, setBookingPageData] = useState({ currentPage: 1, totalPages: 1 });
   const [activeTab, setActiveTab] = useState('users');
 
+  // 🔹 Load Users
   const loadUsers = async (page = 1) => {
     setLoading(true);
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const res = await axios.get(
@@ -28,14 +30,18 @@ function AdminDashboard() {
         totalPages: res.data.totalPages,
       });
       setLoading(false);
-    } catch {
+    } catch (err) {
+      console.error('Error loading users:', err);
+      setError(err.response?.data?.msg || 'Failed to load users'); // ✅ fixed
       toast.error('Failed to load users');
       setLoading(false);
     }
   };
 
+  // 🔹 Load Bookings
   const loadBookings = async (page = 1) => {
     setLoading(true);
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const res = await axios.get(
@@ -48,7 +54,9 @@ function AdminDashboard() {
         totalPages: res.data.totalPages,
       });
       setLoading(false);
-    } catch {
+    } catch (err) {
+      console.error('Error loading bookings:', err);
+      setError(err.response?.data?.msg || 'Failed to load bookings'); // ✅ fixed
       toast.error('Failed to load bookings');
       setLoading(false);
     }
@@ -59,6 +67,7 @@ function AdminDashboard() {
     else loadBookings(1);
   }, [activeTab]);
 
+  // 🔹 Make Senior
   const makeSeniorHandler = async (userId) => {
     if (!window.confirm('Make this user a Senior?')) return;
     const toastId = toast.loading('Updating...');
@@ -73,12 +82,14 @@ function AdminDashboard() {
       toast.dismiss(toastId);
       toast.success('User updated!');
       navigate(`/admin-edit-profile/${userId}`);
-    } catch {
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Failed to update user'); // ✅ fixed
       toast.dismiss(toastId);
       toast.error('Update failed');
     }
   };
 
+  // 🔹 Delete User
   const deleteUserHandler = async (userId, name) => {
     if (!window.confirm(`Delete ${name}?`)) return;
     const toastId = toast.loading('Deleting...');
@@ -91,12 +102,14 @@ function AdminDashboard() {
       toast.dismiss(toastId);
       toast.success('Deleted successfully');
       loadUsers(userPageData.currentPage);
-    } catch {
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Failed to delete user'); // ✅ fixed
       toast.dismiss(toastId);
       toast.error('Delete failed');
     }
   };
 
+  // 🔹 Resolve Dispute
   const resolveDisputeHandler = async (id) => {
     if (!window.confirm('Mark this dispute resolved?')) return;
     const toastId = toast.loading('Resolving...');
@@ -110,12 +123,14 @@ function AdminDashboard() {
       setBookings((prev) => prev.map((b) => (b._id === id ? res.data.booking : b)));
       toast.dismiss(toastId);
       toast.success('Resolved!');
-    } catch {
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Failed to resolve dispute'); // ✅ fixed
       toast.dismiss(toastId);
       toast.error('Error resolving');
     }
   };
 
+  // 🔹 Small Reusable Button
   const button = (bg, text, action) => (
     <button
       onClick={action}
@@ -134,8 +149,28 @@ function AdminDashboard() {
     </button>
   );
 
+  // 🔹 Error UI
   if (error)
-    return <div style={{ textAlign: 'center', color: 'red', padding: '40px' }}>{error}</div>;
+    return (
+      <div style={{ textAlign: 'center', color: 'red', padding: '40px' }}>
+        <h2>⚠️ Something went wrong</h2>
+        <p>{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            backgroundColor: '#2563eb',
+            color: 'white',
+            border: 'none',
+            padding: '10px 15px',
+            borderRadius: '8px',
+            marginTop: '10px',
+            cursor: 'pointer',
+          }}
+        >
+          🔄 Reload
+        </button>
+      </div>
+    );
 
   return (
     <div
@@ -158,7 +193,7 @@ function AdminDashboard() {
         🛠 Admin Dashboard
       </h2>
 
-      {/* 🔹 Admin Management Links (Top Buttons) */}
+      {/* 🔹 Top Management Buttons */}
       <div
         style={{
           display: 'flex',
@@ -177,27 +212,21 @@ function AdminDashboard() {
 
       {/* Tabs */}
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <button
-          onClick={() => setActiveTab('users')}
-          style={tabStyle(activeTab === 'users')}
-        >
+        <button onClick={() => setActiveTab('users')} style={tabStyle(activeTab === 'users')}>
           👥 Users
         </button>
-        <button
-          onClick={() => setActiveTab('bookings')}
-          style={tabStyle(activeTab === 'bookings')}
-        >
+        <button onClick={() => setActiveTab('bookings')} style={tabStyle(activeTab === 'bookings')}>
           📖 Bookings
         </button>
       </div>
 
+      {/* Main Content */}
       {loading ? (
         <h3 style={{ textAlign: 'center', color: '#2563eb' }}>Loading...</h3>
       ) : activeTab === 'users' ? (
         <>
           <h3 style={{ textAlign: 'center', color: '#1e40af' }}>All Users</h3>
 
-          {/* Responsive User Cards */}
           <div
             style={{
               display: 'grid',
