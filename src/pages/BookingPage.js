@@ -12,70 +12,51 @@ function BookingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-
-  // 1. Price Breakdown (platformFee) state हटा दिया गया है
-  
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const isMobile = windowWidth <= 768;
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
 
-    const loadPageData = async () => {
+    const loadData = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
+          setError("You must be logged in to continue.");
           setLoading(false);
-          setError("Error: You are not logged in.");
           return;
         }
 
-        const res = await axios.get(
-          `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
-          { headers: { "x-auth-token": token } }
-        );
-        const settingsRes = await axios.get(
-          `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
-        );
+        const [res, settingsRes] = await Promise.all([
+          axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, {
+            headers: { "x-auth-token": token },
+          }),
+          axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`),
+        ]);
 
+        const total = res.data.price_per_session + settingsRes.data.platformFee;
         setProfile(res.data);
-        
-        // 2. Sirf Total Amount set kiya gaya hai
-        const fee = res.data.price_per_session + settingsRes.data.platformFee;
-        setTotalAmount(fee);
-        
-        setLoading(false);
+        setTotalAmount(total);
       } catch (err) {
-        let errorMsg = err.response
-          ? err.response.data.msg || err.response.data
-          : err.message;
-        setError("Error: " + errorMsg);
+        const msg = err.response ? err.response.data.msg || err.response.data : err.message;
+        setError("Error: " + msg);
+      } finally {
         setLoading(false);
       }
     };
 
-    loadPageData();
-    
+    loadData();
     return () => window.removeEventListener("resize", handleResize);
   }, [userId]);
 
-  // --- Payment Handler (No changes) ---
   const displayRazorpay = async () => {
     if (!auth.user) {
-      toast.error("You must be logged in to book.");
+      toast.error("Please login to book this session!");
       navigate("/login");
       return;
     }
-    const bookingDetails = {
-      senior: profile.user._id,
-      profileId: profile._id,
-      slot_time: new Date(),
-      duration: profile.session_duration_minutes,
-      amount: totalAmount,
-    };
     const toastId = toast.loading("Creating your order...");
     try {
       const token = localStorage.getItem("token");
@@ -84,263 +65,196 @@ function BookingPage() {
         { seniorId: profile.user._id },
         { headers: { "x-auth-token": token } }
       );
-      const order = orderRes.data;
+
       toast.dismiss(toastId);
+      const order = orderRes.data;
+
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF",
         amount: order.amount,
         currency: order.currency,
         name: "CollegeConnect",
-        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
+        description: `Booking with ${profile.user.name}`,
         order_id: order.id,
-        handler: async function (response) {
-          const verifyToastId = toast.loading("Verifying payment...");
+        handler: async (response) => {
+          const verifyToast = toast.loading("Verifying payment...");
           try {
             await axios.post(
               "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
-              { ...response, bookingDetails },
+              { ...response, bookingDetails: { senior: profile.user._id, amount: totalAmount } },
               { headers: { "x-auth-token": token } }
             );
-            toast.dismiss(verifyToastId);
-            toast.success("Booking Confirmed!");
+            toast.dismiss(verifyToast);
+            toast.success("Booking Confirmed 🎉");
             navigate("/booking-success");
           } catch {
-            toast.dismiss(verifyToastId);
-            toast.error("Payment Verification Failed. Please contact support.");
+            toast.dismiss(verifyToast);
+            toast.error("Payment verification failed!");
           }
         },
         prefill: { name: auth.user.name, email: auth.user.email },
         theme: { color: "#007BFF" },
       };
-      const rzp1 = new window.Razorpay(options);
-      rzp1.open();
+      new window.Razorpay(options).open();
     } catch (err) {
       toast.dismiss(toastId);
-      let errorMsg = err.response
-        ? err.response.data.msg || err.response.data
-        : err.message;
-      toast.error("Error creating order. " + errorMsg);
+      toast.error("Error creating order. " + (err.response?.data?.msg || err.message));
     }
   };
 
-  // --- 🎨 STYLE OBJECTS (Attractive Inline CSS) 🎨 ---
-
-  const pageStyle = {
-    maxWidth: "1200px",
-    margin: "30px auto",
+  // ---------- 🎨 INLINE STYLES (Adaptive) ------------
+  const layout = {
+    maxWidth: 1200,
+    margin: "40px auto",
     padding: "0 20px",
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "Poppins, sans-serif",
     display: "flex",
     flexDirection: isMobile ? "column" : "row",
-    gap: "30px",
+    gap: isMobile ? "20px" : "40px",
   };
-
-  const mainContentStyle = {
-    flex: isMobile ? "1" : "2",
-  };
-
-  const sidebarStyle = {
-    flex: "1",
-    position: isMobile ? "relative" : "sticky",
-    top: isMobile ? "0" : "80px",
-    height: "fit-content",
-  };
-
-  const cardBaseStyle = {
-    background: "#ffffff",
-    borderRadius: "16px",
-    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.08)",
-    padding: "24px",
+  const card = {
+    background: "#fff",
+    borderRadius: 16,
+    boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+    padding: isMobile ? "20px" : "28px",
     marginBottom: "24px",
+    transition: "transform .25s ease, box-shadow .25s ease",
   };
-
-  const profileHeaderStyle = {
-    ...cardBaseStyle,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-  };
-
-  const avatarStyle = {
-    width: "120px",
-    height: "120px",
+  const avatar = {
+    width: isMobile ? 100 : 120,
+    height: isMobile ? 100 : 120,
     borderRadius: "50%",
     border: "4px solid #007BFF",
-    marginBottom: "15px",
+    marginBottom: 15,
     objectFit: "cover",
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
   };
-
-  const tagStyle = {
+  const name = { fontSize: isMobile ? "1.6rem" : "2rem", margin: "0 0 6px 0", fontWeight: 600 };
+  const info = { color: "#555", fontSize: "1rem", margin: "2px 0" };
+  const tag = {
     background: "#e9f2ff",
     color: "#007BFF",
     padding: "6px 14px",
-    borderRadius: "20px",
+    borderRadius: 20,
     fontSize: "0.9rem",
-    fontWeight: "500",
-    transition: "all 0.3s ease",
+    fontWeight: 500,
   };
-
-  // 3. Price Breakdown styles (priceItemStyle, totalPriceStyle) हटा दिए गए हैं
-
-  const bookButtonStyle = {
-    background: "linear-gradient(135deg, #007BFF, #0056b3)",
+  const payBtn = {
+    background: "linear-gradient(135deg,#007BFF,#0056b3)",
     color: "#fff",
-    fontWeight: "600",
-    padding: "14px 20px",
-    borderRadius: "10px",
-    fontSize: "1.1rem",
     border: "none",
-    cursor: "pointer",
-    boxShadow: "0 4px 15px rgba(0,123,255,0.3)",
-    transition: "all 0.3s ease",
+    fontWeight: 600,
+    padding: "14px 20px",
+    borderRadius: 12,
     width: "100%",
-    marginTop: "20px",
+    fontSize: "1.1rem",
+    boxShadow: "0 6px 15px rgba(0,123,255,0.3)",
+    cursor: "pointer",
+    transition: "transform .25s ease, background .25s ease",
   };
 
-  // --- LOADING / ERROR / NOT FOUND STATES ---
-
+  // ---------- 🧭 STATES ----------
   if (loading)
     return (
-      <div style={{ textAlign: "center", marginTop: "100px", fontSize: "1.5rem", color: "#007BFF" }}>
-        <h2>⏳ Loading Booking Page...</h2>
+      <div style={{ textAlign: "center", marginTop: "100px", color: "#007BFF" }}>
+        <h2>⏳ Loading booking details...</h2>
       </div>
     );
 
   if (error)
     return (
       <div style={{ textAlign: "center", color: "red", marginTop: "100px" }}>
-        <h2>❌ {error}</h2>
+        <h3>{error}</h3>
       </div>
     );
 
   if (!profile)
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
-        <h2>Profile not found.</h2>
+        <h3>Profile not found.</h3>
       </div>
     );
 
-  // --- 🚀 FINAL JSX (New Layout) 🚀 ---
-
+  // ---------- 🚀 RENDER ----------
   return (
-    <div style={pageStyle}>
-      {/* ------------------- 
-          LEFT COLUMN (Info) 
-         ------------------- */}
-      <div style={mainContentStyle}>
-        {/* Profile Header Card */}
-        <div style={profileHeaderStyle}>
+    <div style={layout}>
+      {/* LEFT SECTION */}
+      <div style={{ flex: isMobile ? "1" : "2" }}>
+        {/* Profile Card */}
+        <div style={{ ...card, textAlign: "center" }}>
           <img
             src={profile.avatar || "https://via.placeholder.com/120"}
             alt={profile.user?.name || "Senior"}
-            style={avatarStyle}
+            style={avatar}
           />
-          <h2 style={{ fontSize: "2rem", fontWeight: "600", margin: "0 0 5px 0" }}>
-            {profile.user?.name}
-          </h2>
-          <p style={{ fontSize: "1.1rem", margin: "0", color: "#444" }}>
-            {profile.college?.name || "N/A"}
-          </p>
-          <p style={{ fontSize: "1rem", margin: "5px 0 0 0", color: "#666" }}>
+          <h2 style={name}>{profile.user?.name}</h2>
+          <p style={info}>{profile.college?.name || "N/A"}</p>
+          <p style={info}>
             {profile.branch} ({profile.year})
           </p>
         </div>
 
-        {/* About Me Card */}
-        <div style={cardBaseStyle}>
-          <h3 style={{ color: "#007BFF", margin: "0 0 15px 0" }}>👤 About Me</h3>
-          <p style={{ color: "#555", lineHeight: "1.7", margin: "0" }}>
-            {profile.bio}
-          </p>
+        {/* About */}
+        <div style={card}>
+          <h3 style={{ color: "#007BFF", marginBottom: 10 }}>👤 About Me</h3>
+          <p style={{ color: "#555", lineHeight: 1.7 }}>{profile.bio || "No bio provided."}</p>
         </div>
 
-        {/* Specializations Card */}
-        <div style={cardBaseStyle}>
-          <h3 style={{ color: "#007BFF", margin: "0 0 15px 0" }}>🏷️ Specializations</h3>
+        {/* Specializations */}
+        <div style={card}>
+          <h3 style={{ color: "#007BFF", marginBottom: 12 }}>🏷️ Specializations</h3>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
             {profile.tags?.length ? (
-              profile.tags.map((tag) => (
-                <span key={tag._id} style={tagStyle}>
-                  #{tag.name}
+              profile.tags.map((t) => (
+                <span key={t._id} style={tag}>
+                  #{t.name}
                 </span>
               ))
             ) : (
-              <p style={{ color: "#555", margin: "0" }}>No tags listed.</p>
+              <p style={{ color: "#555" }}>No tags listed.</p>
             )}
           </div>
         </div>
-        
-        {/* Verified ID Card */}
+
+        {/* College ID */}
         {profile.id_card_url && (
-          <div style={cardBaseStyle}>
-             <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", textAlign: "center" }}>
-               🎓 College Verified ID
-             </h3>
-             <img
-               src={profile.id_card_url}
-               alt="College ID Card"
-               style={{
-                 width: "100%",
-                 // ⭐ 4. ID Card ko Vertical kar diya gaya hai
-                 maxWidth: "250px", // Vertical card ke liye max-width set ki
-                 aspectRatio: "54 / 86", // Standard Vertical ID Card ratio
-                 height: "auto",
-                 border: "2px solid #007BFF",
-                 borderRadius: "10px",
-                 boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
-                 objectFit: "cover",
-                 display: "block",
-                 margin: "0 auto",
-               }}
-             />
-           </div>
+          <div style={{ ...card, textAlign: "center" }}>
+            <h3 style={{ color: "#007BFF", marginBottom: 14 }}>🎓 College Verified ID</h3>
+            <img
+              src={profile.id_card_url}
+              alt="College ID Card"
+              style={{
+                maxWidth: 250,
+                width: "100%",
+                borderRadius: 12,
+                border: "2px solid #007BFF",
+                boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
+              }}
+            />
+          </div>
         )}
       </div>
 
-      {/* ------------------- 
-          RIGHT COLUMN (Booking) 
-         ------------------- */}
-      <div style={sidebarStyle}>
-        <div style={cardBaseStyle}>
-          <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", fontSize: "1.5rem" }}>
-            Book this Session
+      {/* RIGHT SECTION */}
+      <div style={{ flex: 1, position: isMobile ? "relative" : "sticky", top: isMobile ? 0 : 80 }}>
+        <div style={card}>
+          <h3 style={{ color: "#007BFF", fontSize: "1.5rem", marginBottom: 12 }}>
+            Book This Session
           </h3>
-          <p style={{ fontSize: "0.9rem", color: "#555", lineHeight: "1.5", margin: "0 0 20px 0" }}>
-            After payment, the senior will contact you within 6 hours to schedule the best time.
+          <p style={{ color: "#555", fontSize: "0.95rem", marginBottom: 18 }}>
+            After payment, the senior will contact you within 6 hours to schedule the time.
           </p>
-
-          {/* ⭐ 5. Price Breakdown ko hata kar Total Price dikhaya gaya hai */}
-          <div style={{ 
-              textAlign: "center", 
-              margin: "25px 0", 
-              fontSize: "2.5rem", 
-              color: "#000", 
-              fontWeight: "600" 
-          }}>
-            ₹{totalAmount}
-            <span style={{ 
-                fontSize: "1rem", 
-                color: "#666", 
-                fontWeight: "400", 
-                marginLeft: "8px" 
-            }}>
+          <div style={{ textAlign: "center", margin: "25px 0" }}>
+            <span style={{ fontSize: "2.2rem", fontWeight: 700 }}>₹{totalAmount}</span>
+            <span style={{ color: "#666", fontSize: "1rem", marginLeft: 6 }}>
               / {profile.session_duration_minutes} min
             </span>
           </div>
-
           <button
             onClick={displayRazorpay}
-            style={bookButtonStyle}
-            onMouseEnter={(e) => {
-              e.target.style.background = "#0056b3";
-              e.target.style.transform = "scale(1.02)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = "linear-gradient(135deg, #007BFF, #0056b3)";
-              e.target.style.transform = "scale(1)";
-            }}
+            style={payBtn}
+            onMouseEnter={(e) => (e.target.style.transform = "scale(1.03)")}
+            onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
           >
             💳 Pay ₹{totalAmount} & Book
           </button>

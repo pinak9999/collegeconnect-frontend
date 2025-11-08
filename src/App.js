@@ -32,6 +32,7 @@ import AdminManageTags from './pages/AdminManageTags';
 import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 
+<Route path="/student-dashboard/*" element={<StudentDashboard />} />
 
 // ---------------------------------------------------------
 // 🧩 AppLayout Component — simplified version
