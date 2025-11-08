@@ -1,17 +1,22 @@
 /* --- 1. 'बेसिक' (Basic) 'सेटअप' (Setup) --- */
 
 
+/* ✅ Reset + Global Style (Final clean version) */
 html, body {
-  margin: -12px;
-  padding: 0px;
+  margin: 0; /* removes all default browser spacing */
+  padding: px;
+  align-items: center;
   scroll-behavior: smooth;
+  width: 100%;
+  min-height: 100vh;
   font-family: 'Poppins', sans-serif;
-  background-color: #f9fbfd;
-   margin: 0; padding: 0;
-    font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333;
-  
+  background-color: #f9fbfd; /* light subtle background */
+  color: #333; /* readable text color */
+  box-sizing: border-box;
+  overflow-x: hidden; /* prevents horizontal scrollbars */
 }
-/* body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333; } */
+
+body, html { margin: -13px; padding:-0px; text-align: center; font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333; }
 .container { max-width: 1100px; margin: 0 auto; padding: 0 ; width: 100%; box-sizing: border-box; }
 main { min-height: 70vh; }
 

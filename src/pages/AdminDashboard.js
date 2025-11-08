@@ -233,7 +233,16 @@ function AdminDashboard() {
               gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
               gap: '15px',
               marginTop: '20px',
-              padding: '0 10px',
+              // padding: '0 10px',
+                width: "100%",
+    maxWidth: "1300px",  // 👈 to center content within a readable width
+    margin: "0 auto",    // 👈 centers the entire dashboard horizontally
+    padding: "100px 20px 50px", // 👈 top = navbar space, sides = breathing room
+    boxSizing: "border-box",
+    textAlign: "center",
+    // background: "linear-gradient(135deg, #E3F2FD, #F9FBFD)",
+    // borderRadius: "16px",
+    // boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
             }}
           >
             {users.map((u) => (

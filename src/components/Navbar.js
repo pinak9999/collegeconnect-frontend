@@ -6,6 +6,23 @@ import toast from "react-hot-toast";
 // Ensure global margin/padding reset for body & html
 // Add this line in your global CSS file (index.css or App.css):
 // body, html { margin: 0; padding: 0; box-sizing: border-box; }
+<nav
+  style={{
+    width: "100%",
+    backgroundColor: "#0F172A", // dark navy background
+    padding: "12px 24px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "fixed", // 👈 fix navbar to top
+    top: 0,            // 👈 0px from top
+    left: 0,
+    zIndex: 1000,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+  }}
+>
+  {/* your navbar content */}
+</nav>
 
 
 function Navbar() {
