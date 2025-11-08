@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+
 
 // ('StarIcon' (स्टारआइकन) 'डेफिनिशन' (Definition) (परिभाषा))
 const StarIcon = ({ filled }) => ( <svg fill={filled ? '#f39c12' : '#e0e0e0'} width="20px" height="20px" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg> );

@@ -56,7 +56,7 @@ const StatsGrid = ({ stats, loading }) => (
 );
 
 function SeniorEarningsPage() {
-  const { auth } = useAuth();
+  const {  } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ totalCompleted: 0, totalPending: 0, unpaidAmount: 0 });
   const [allBookings, setAllBookings] = useState([]);
