@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
@@ -11,10 +11,21 @@ function LoginPage() {
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [hover, setHover] = useState(false);
+  const [focusInput, setFocusInput] = useState(null);
+  const [cardHover, setCardHover] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const onChangeHandler = (e) => {
+  // ✅ Handle responsiveness safely
+  useEffect(() => {
+    const checkScreen = () => setIsMobile(window.innerWidth < 600);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  const onChangeHandler = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -28,14 +39,13 @@ function LoginPage() {
       login(res.data.token, res.data.user);
       toast.dismiss(toastId);
       toast.success("🎉 Login Successful!");
-      const userRole = res.data.user.role;
-      const isSenior = res.data.user.isSenior;
-      if (userRole === "Admin") navigate("/admin-dashboard");
-      else if (isSenior === true) navigate("/senior-dashboard");
+      const { role, isSenior } = res.data.user;
+      if (role === "Admin") navigate("/admin-dashboard");
+      else if (isSenior) navigate("/senior-dashboard");
       else navigate("/student-dashboard");
     } catch (err) {
       toast.dismiss(toastId);
-      let errorMsg = err.response
+      const errorMsg = err.response
         ? err.response.data.msg || err.response.data
         : err.message;
       toast.error("❌ " + errorMsg);
@@ -54,14 +64,13 @@ function LoginPage() {
       login(res.data.token, res.data.user);
       toast.dismiss(toastId);
       toast.success("🎉 Google Login Successful!");
-      const userRole = res.data.user.role;
-      const isSenior = res.data.user.isSenior;
-      if (userRole === "Admin") navigate("/admin-dashboard");
-      else if (isSenior === true) navigate("/senior-dashboard");
+      const { role, isSenior } = res.data.user;
+      if (role === "Admin") navigate("/admin-dashboard");
+      else if (isSenior) navigate("/senior-dashboard");
       else navigate("/student-dashboard");
     } catch (err) {
       toast.dismiss(toastId);
-      let errorMsg = err.response
+      const errorMsg = err.response
         ? err.response.data.msg || err.response.data
         : err.message;
       toast.error("❌ " + errorMsg);
@@ -69,11 +78,10 @@ function LoginPage() {
     setLoading(false);
   };
 
-  const handleGoogleLoginError = () => {
+  const handleGoogleLoginError = () =>
     toast.error("Google login failed. Please try again.");
-  };
 
-  // ---------------- Inline Styles ----------------
+  // ✅ Inline styles (Vercel safe)
   const styles = {
     page: {
       display: "flex",
@@ -81,46 +89,46 @@ function LoginPage() {
       justifyContent: "center",
       minHeight: "100vh",
       background:
-        "linear-gradient(135deg, #007BFF 0%, #00B4D8 50%, #48CAE4 100%)",
+        "linear-gradient(135deg, #007bff 0%, #00b4d8 50%, #48cae4 100%)",
       fontFamily: "'Poppins', sans-serif",
-      padding: "1rem",
-      animation: "fadeIn 1s ease-in-out",
-    },
-    card: {
-      background: "rgba(255, 255, 255, 0.9)",
-      backdropFilter: "blur(10px)",
-      padding: "2.5rem",
-      borderRadius: "1.5rem",
-      boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
-      maxWidth: "400px",
-      width: "100%",
-      textAlign: "center",
-      transform: "translateY(0)",
-      animation: "slideUp 0.9s ease",
+      padding: isMobile ? "1rem" : "2rem",
       transition: "all 0.3s ease",
     },
+    card: {
+      background: "rgba(255,255,255,0.95)",
+      padding: isMobile ? "1.5rem" : "2.5rem",
+      borderRadius: "1.5rem",
+      width: isMobile ? "90%" : "400px",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+      textAlign: "center",
+      transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      transform: "translateY(0px)",
+    },
+    cardHover: {
+      transform: "translateY(-6px)",
+      boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+    },
     title: {
-      fontSize: "1.8rem",
+      fontSize: isMobile ? "1.6rem" : "1.9rem",
       fontWeight: "700",
-      marginBottom: "0.3rem",
       color: "#1e3a8a",
-      textShadow: "0 1px 2px rgba(0,0,0,0.1)",
+      marginBottom: "0.5rem",
     },
     subtitle: {
-      fontSize: "0.95rem",
       color: "#555",
-      marginBottom: "1.5rem",
+      fontSize: isMobile ? "0.9rem" : "1rem",
+      marginBottom: "1.8rem",
     },
     formGroup: {
       textAlign: "left",
       marginBottom: "1.2rem",
     },
     label: {
-      display: "block",
       fontSize: "0.9rem",
       color: "#333",
-      marginBottom: "0.4rem",
       fontWeight: "500",
+      marginBottom: "0.4rem",
+      display: "block",
     },
     input: {
       width: "100%",
@@ -129,12 +137,12 @@ function LoginPage() {
       borderRadius: "12px",
       fontSize: "0.95rem",
       outline: "none",
-      boxSizing: "border-box",
       transition: "all 0.3s ease",
+      boxSizing: "border-box",
     },
     inputFocus: {
       borderColor: "#2563eb",
-      boxShadow: "0 0 6px rgba(37, 99, 235, 0.3)",
+      boxShadow: "0 0 8px rgba(37,99,235,0.4)",
     },
     button: {
       width: "100%",
@@ -151,17 +159,17 @@ function LoginPage() {
     },
     buttonHover: {
       transform: "translateY(-2px)",
-      boxShadow: "0 6px 12px rgba(37, 99, 235, 0.3)",
+      boxShadow: "0 8px 15px rgba(37,99,235,0.4)",
     },
     divider: {
       display: "flex",
       alignItems: "center",
-      color: "#888",
       margin: "1.5rem 0",
+      color: "#777",
     },
     dividerLine: {
       flex: 1,
-      borderTop: "1px solid #ddd",
+      borderTop: "1px solid #ccc",
     },
     dividerText: {
       padding: "0 10px",
@@ -169,6 +177,8 @@ function LoginPage() {
     },
     extraLinks: {
       marginTop: "1.2rem",
+      fontSize: "0.9rem",
+      color: "#555",
     },
     link: {
       color: "#2563eb",
@@ -177,37 +187,33 @@ function LoginPage() {
     },
   };
 
-  // To handle hover animations (React inline style trick)
-  const [hover, setHover] = useState(false);
-  const [focusInput, setFocusInput] = useState(null);
-
   return (
     <div style={styles.page}>
-      <div style={styles.card}>
+      <div
+        style={{ ...styles.card, ...(cardHover ? styles.cardHover : {}) }}
+        onMouseEnter={() => setCardHover(true)}
+        onMouseLeave={() => setCardHover(false)}
+      >
         <h2 style={styles.title}>Welcome Back 👋</h2>
         <p style={styles.subtitle}>
           Sign in to continue your journey with <b>CollegeConnect</b>
         </p>
 
-        {/* Google Login */}
         <div style={{ display: "flex", justifyContent: "center" }}>
           <GoogleLogin
             onSuccess={handleGoogleLoginSuccess}
             onError={handleGoogleLoginError}
             theme="filled_black"
             size="large"
-            width="320px"
           />
         </div>
 
-        {/* Divider */}
         <div style={styles.divider}>
           <hr style={styles.dividerLine} />
           <span style={styles.dividerText}>OR</span>
           <hr style={styles.dividerLine} />
         </div>
 
-        {/* Form */}
         <form onSubmit={onSubmitHandler}>
           <div style={styles.formGroup}>
             <label style={styles.label}>Email Address</label>
@@ -250,10 +256,7 @@ function LoginPage() {
             disabled={loading}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
-            style={{
-              ...styles.button,
-              ...(hover ? styles.buttonHover : {}),
-            }}
+            style={{ ...styles.button, ...(hover ? styles.buttonHover : {}) }}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -262,7 +265,7 @@ function LoginPage() {
             <Link to="/forgot-password" style={styles.link}>
               Forgot Password?
             </Link>
-            <p style={{ marginTop: "0.7rem", color: "#555" }}>
+            <p style={{ marginTop: "0.7rem" }}>
               Don’t have an account?{" "}
               <Link to="/register" style={styles.link}>
                 Register
