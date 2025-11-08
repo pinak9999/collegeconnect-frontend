@@ -14,8 +14,10 @@ function AdminDashboard() {
   const [bookingPageData, setBookingPageData] = useState({ currentPage: 1, totalPages: 1 });
   const [activeTab, setActiveTab] = useState('users');
 
+  // 🔹 Load all users
   const loadUsers = async (page = 1) => {
     setLoading(true);
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const res = await axios.get(
@@ -27,15 +29,18 @@ function AdminDashboard() {
         currentPage: res.data.currentPage,
         totalPages: res.data.totalPages,
       });
-      setLoading(false);
-    } catch {
+    } catch (err) {
+      setError('Failed to load users');
       toast.error('Failed to load users');
+    } finally {
       setLoading(false);
     }
   };
 
+  // 🔹 Load all bookings
   const loadBookings = async (page = 1) => {
     setLoading(true);
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const res = await axios.get(
@@ -47,9 +52,10 @@ function AdminDashboard() {
         currentPage: res.data.currentPage,
         totalPages: res.data.totalPages,
       });
-      setLoading(false);
-    } catch {
+    } catch (err) {
+      setError('Failed to load bookings');
       toast.error('Failed to load bookings');
+    } finally {
       setLoading(false);
     }
   };
@@ -59,6 +65,7 @@ function AdminDashboard() {
     else loadBookings(1);
   }, [activeTab]);
 
+  // 🔹 Make user a senior
   const makeSeniorHandler = async (userId) => {
     if (!window.confirm('Make this user a Senior?')) return;
     const toastId = toast.loading('Updating...');
@@ -70,15 +77,17 @@ function AdminDashboard() {
         { headers: { 'x-auth-token': token } }
       );
       setUsers((prev) => prev.map((u) => (u._id === userId ? res.data : u)));
-      toast.dismiss(toastId);
       toast.success('User updated!');
       navigate(`/admin-edit-profile/${userId}`);
-    } catch {
-      toast.dismiss(toastId);
+    } catch (err) {
+      setError('Failed to update user');
       toast.error('Update failed');
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
+  // 🔹 Delete user
   const deleteUserHandler = async (userId, name) => {
     if (!window.confirm(`Delete ${name}?`)) return;
     const toastId = toast.loading('Deleting...');
@@ -88,15 +97,17 @@ function AdminDashboard() {
         `https://collegeconnect-backend-mrkz.onrender.com/api/users/${userId}`,
         { headers: { 'x-auth-token': token } }
       );
-      toast.dismiss(toastId);
       toast.success('Deleted successfully');
       loadUsers(userPageData.currentPage);
-    } catch {
-      toast.dismiss(toastId);
+    } catch (err) {
+      setError('Failed to delete user');
       toast.error('Delete failed');
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
+  // 🔹 Resolve booking dispute
   const resolveDisputeHandler = async (id) => {
     if (!window.confirm('Mark this dispute resolved?')) return;
     const toastId = toast.loading('Resolving...');
@@ -108,14 +119,16 @@ function AdminDashboard() {
         { headers: { 'x-auth-token': token } }
       );
       setBookings((prev) => prev.map((b) => (b._id === id ? res.data.booking : b)));
-      toast.dismiss(toastId);
       toast.success('Resolved!');
-    } catch {
-      toast.dismiss(toastId);
+    } catch (err) {
+      setError('Error resolving dispute');
       toast.error('Error resolving');
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
+  // 🔹 Reusable button
   const button = (bg, text, action) => (
     <button
       onClick={action}
@@ -134,9 +147,11 @@ function AdminDashboard() {
     </button>
   );
 
+  // 🔹 Error UI
   if (error)
     return <div style={{ textAlign: 'center', color: 'red', padding: '40px' }}>{error}</div>;
 
+  // 🔹 Dashboard UI
   return (
     <div
       style={{
@@ -158,7 +173,7 @@ function AdminDashboard() {
         🛠 Admin Dashboard
       </h2>
 
-      {/* 🔹 Admin Management Links (Top Buttons) */}
+      {/* 🔹 Admin Management Links */}
       <div
         style={{
           display: 'flex',
@@ -175,18 +190,12 @@ function AdminDashboard() {
         <Link to="/admin-manage-dispute-reasons" style={adminBtn('#f97316')}>⚠️ Manage Dispute Reasons</Link>
       </div>
 
-      {/* Tabs */}
+      {/* 🔹 Tabs */}
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <button
-          onClick={() => setActiveTab('users')}
-          style={tabStyle(activeTab === 'users')}
-        >
+        <button onClick={() => setActiveTab('users')} style={tabStyle(activeTab === 'users')}>
           👥 Users
         </button>
-        <button
-          onClick={() => setActiveTab('bookings')}
-          style={tabStyle(activeTab === 'bookings')}
-        >
+        <button onClick={() => setActiveTab('bookings')} style={tabStyle(activeTab === 'bookings')}>
           📖 Bookings
         </button>
       </div>
@@ -197,7 +206,6 @@ function AdminDashboard() {
         <>
           <h3 style={{ textAlign: 'center', color: '#1e40af' }}>All Users</h3>
 
-          {/* Responsive User Cards */}
           <div
             style={{
               display: 'grid',
