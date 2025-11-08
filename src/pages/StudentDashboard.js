@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast'; // <-- 'यह' (This) 'लाइन' (line) (पंक्ति) 'हटा' (Removed) 'दी' (did) 'गई' (was) 'है' (है)
 
 // ('StarIcon' (स्टारआइकन) 'डेफिनिशन' (Definition) (परिभाषा))
 const StarIcon = ({ filled }) => ( <svg fill={filled ? '#f39c12' : '#e0e0e0'} width="20px" height="20px" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg> );
@@ -16,10 +16,7 @@ const FindSenior = () => {
     const [platformFee, setPlatformFee] = useState(20); 
     const [colleges, setColleges] = useState([]);
     const [tags, setTags] = useState([]);
-    
-    // --- (1. 'यह' (This) 'रहा' (is) 'नया' (new) 'Filter' (फ़िल्टर) (Filter (फ़िल्टर)) 'Toggle' (टॉगल) (टॉगल) 'State' (स्टेट) (स्थिति)) ---
     const [showFilters, setShowFilters] = useState(false);
-    
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCollege, setSelectedCollege] = useState('');
     const [selectedTag, setSelectedTag] = useState('');
@@ -30,7 +27,6 @@ const FindSenior = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                // ('Live' (लाइव) (लाइव) 'URL' (यूआरएल) (URL (यूआरएल)) 'का' (of) 'इस्तेमाल' (Use) 'करें' (do))
                 const API_URL = 'https://collegeconnect-backend-mrkz.onrender.com';
                 
                 const [seniorsRes, collegesRes, tagsRes, settingsRes] = await Promise.all([
@@ -52,7 +48,6 @@ const FindSenior = () => {
         loadData();
     }, []);
 
-    // ('Filter/Sort' (फ़िल्टर/सॉर्ट) (Filter/Sort (फ़िल्टर/क्रमबद्ध)) 'लॉजिक' (logic) (तर्क))
     const filteredAndSortedSeniors = seniors
         .filter(senior => { 
             const query = searchQuery.toLowerCase();
@@ -80,7 +75,6 @@ const FindSenior = () => {
                   value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
             
-            {/* --- (2. 'Filter' (फ़िल्टर) (Filter (फ़िल्टर)) 'Toggle' (टॉगल) (टॉगल) 'बटन' (Button) (बटन)) --- */}
             <button 
                 className="btn btn-secondary filter-toggle-btn"
                 onClick={() => setShowFilters(!showFilters)}
@@ -88,7 +82,6 @@ const FindSenior = () => {
                 {showFilters ? 'Hide Filters' : 'Show Filters & Sort'}
             </button>
             
-            {/* ('Filters' (फिल्टर्स) (Filters (फ़िल्टर)) 'कंटेनर' (Container) (कंटेनर)) */}
             <div 
                 className="filters-container" 
                 style={{display: showFilters ? 'grid' : ''}} 
@@ -98,7 +91,6 @@ const FindSenior = () => {
                 <div className="form-group"><label>Sort By</label><select value={sortBy} onChange={(e) => setSortBy(e.target.value)}><option value="rating">Rating: High to Low</option><option value="price_asc">Price: Low to High</option><option value="price_desc">Price: High to Low</option></select></div>
             </div>
             
-            {/* ('Senior' (सीनियर) 'Cards' (कार्ड्स) (Cards (कार्ड))) */}
             <div className="container senior-grid-container">
                 {filteredAndSortedSeniors.length > 0 ? (
                     <div className="senior-grid">
@@ -194,7 +186,7 @@ const MyBookings = () => {
 
     return (
         <div>
-            {/* --- 3. 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) '`Card`' (कार्ड) (Card (कार्ड)) 'UI' (यूआई) (UI (यूआई)) --- */}
+            {/* --- 'MOBILE' (मोबाइल) (MOBILE (मोबाइल)) '`Card`' (कार्ड) (Card (कार्ड)) 'UI' (यूआई) (UI (यूआई)) --- */}
             <div className="mobile-only">
                 <h2>My Upcoming Bookings</h2>
                 {upcomingBookings.length > 0 ? (
@@ -235,7 +227,7 @@ const MyBookings = () => {
                 ) : ( <p>You have no completed bookings.</p> )}
             </div>
             
-            {/* --- 4. 'DESKTOP' (डेस्कटॉप) (DESKTOP (डेस्कटॉप)) '`Table`' (टेबल) (Table (टेबल)) UI (यूआई) (UI (यूआई)) --- */}
+            {/* --- 'DESKTOP' (डेस्कटॉप) (DESKTOP (डेस्कटॉप)) '`Table`' (टेबल) (Table (टेबल)) UI (यूआई) (UI (यूआई)) --- */}
             <div className="desktop-only">
                 <h2>My Upcoming Bookings</h2>
                 {upcomingBookings.length > 0 ? (
@@ -284,7 +276,7 @@ function StudentDashboard() {
     const location = useLocation(); 
     const onBookingsTab = location.pathname.includes('/bookings');
 
-   return (
+    return (
         <div className="container page-container" style={{ minHeight: '60vh' }}>
             {/* ('Tab' (टैब) (Tab (टैब)) 'Navigation' (नेविगेशन)) */}
             <div className="dashboard-nav">
