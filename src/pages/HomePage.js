@@ -126,7 +126,7 @@ function HomePage() {
           padding: "80px 20px 100px 20px",
           position: "relative",
           overflow: "hidden",
-          marginTop: -45,
+          marginTop: 0,
           marginBottom: 0,
         }}
       >
