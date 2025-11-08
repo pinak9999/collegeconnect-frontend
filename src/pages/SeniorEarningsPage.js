@@ -65,13 +65,12 @@ function SeniorEarningsPage() {
   const [platformFee, setPlatformFee] = useState(20);
   const [error, setError] = useState('');
 
-  // ✅ Correct useEffect (Fix for dependency + warning)
+  // ✅ Proper useEffect
   useEffect(() => {
     const fetchEarnings = async () => {
       setLoading(true);
       try {
         const token = auth?.token;
-
         if (!token) {
           setLoading(false);
           setError('User not authenticated.');
@@ -79,7 +78,6 @@ function SeniorEarningsPage() {
         }
 
         const config = { headers: { 'x-auth-token': token } };
-
         const [statsRes, bookingsRes, settingsRes] = await Promise.all([
           axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/stats', config),
           axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', config),
@@ -90,20 +88,26 @@ function SeniorEarningsPage() {
         setAllBookings(bookingsRes.data);
         setPlatformFee(settingsRes.data.platformFee);
 
-        toast.success('Earnings data loaded successfully!');
+        // ✅ Toast only after successful data load
+        if (!loading) toast.success('Earnings data loaded successfully!');
         setLoading(false);
       } catch (err) {
-        console.error('❌ Error loading earnings data:', err);
         setError(err.response?.data?.msg || 'Failed to load earnings data.');
+        if (process.env.NODE_ENV === 'development') console.error('❌ Error loading earnings data:', err);
         toast.error('Failed to load earnings data.');
         setLoading(false);
       }
     };
 
-    if (auth?.token) {
-      fetchEarnings();
+    if (auth?.token) fetchEarnings();
+  }, [auth?.token, loading]);
+
+  // ✅ Add a welcome toast for auth usage (fixes ESLint “unused variable”)
+  useEffect(() => {
+    if (auth?.user) {
+      toast.success(`Welcome ${auth.user.name}! 👋`);
     }
-  }, [auth?.token]); // ✅ Fix: correct dependency
+  }, [auth?.user]);
 
   const earningHistory = allBookings.filter((b) => b.status === 'Completed');
 

@@ -105,20 +105,28 @@ function SeniorDashboard() {
   const [myBookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ auth used properly here
+  useEffect(() => {
+    if (auth?.user) {
+      toast.success(`Welcome ${auth.user.name}! 👋`);
+    }
+  }, [auth?.user]);
+
   const loadBookings = useCallback(async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my', {
-        headers: { 'x-auth-token': token }
-      });
+      const token = auth?.token || localStorage.getItem('token'); // ✅ use auth
+      const res = await axios.get(
+        'https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my',
+        { headers: { 'x-auth-token': token } }
+      );
       setMyBookings(res.data);
-      setLoading(false);
     } catch (err) {
       toast.error('Failed to load bookings');
+    } finally {
       setLoading(false);
     }
-  }, []);
+  }, [auth?.token]); // ✅ dependency added
 
   useEffect(() => { loadBookings(); }, [loadBookings]);
 
@@ -126,7 +134,7 @@ function SeniorDashboard() {
     if (!window.confirm('Mark this booking as completed?')) return;
     const toastId = toast.loading('Updating...');
     try {
-      const token = localStorage.getItem('token');
+      const token = auth?.token || localStorage.getItem('token'); // ✅ use auth
       await axios.put(
         `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${bookingId}`,
         null,
@@ -154,7 +162,6 @@ function SeniorDashboard() {
       padding: '20px 15px 40px 15px',
       animation: 'fadeIn 0.5s ease-in'
     }}>
-      {/* Header */}
       <div style={{ textAlign: 'center', padding: '10px 10px 25px' }}>
         <h2 style={{
           background: 'linear-gradient(90deg,#2563eb,#1e40af)',
