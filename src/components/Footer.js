@@ -12,37 +12,6 @@ function Footer({ loading }) {
 
   if (loading) return null;
 
-  // 🚀 FIX: Links के लिए एक मैप बनाया गया ताकि उन्हें सही href दिया जा सके
-  const linksMap = {
-    "Get to Know Us": [
-      { name: "About Us", href: "/about" },
-      { name: "Careers", href: "/careers" },
-      { name: "Press Release", href: "/press" },
-      { name: "Blog", href: "/blog" },
-    ],
-    "Let Us Help You": [
-      { name: "Help Center", href: "/help" },
-      { name: "Your Account", href: "/account" },
-      { name: "Report Issue", href: "/report-issue" },
-      { name: "Contact Us", href: "/contact" },
-    ],
-    "For Students": [
-      { name: "Find Mentors", href: "/find-mentors" }, // मान लीजिए यह मुख्य पेज या खास पेज पर जाता है
-      { name: "Book a Session", href: "/book-session" }, // यह भी
-      { name: "REAP Guide", href: "/reap-guide" },
-      { name: "Learning Hub", href: "/learning" },
-    ],
-  };
-
-  // 🚀 FIX: सोशल लिंक्स के लिए भी href जोड़ा गया
-  const socialLinks = [
-    { icon: "🌐", href: "https://yourwebsite.com", name: "Website" },
-    { icon: "📸", href: "https://instagram.com/yourprofile", name: "Instagram" },
-    { icon: "🐦", href: "https://twitter.com/yourprofile", name: "Twitter" },
-    { icon: "💼", href: "https://linkedin.com/company/yourprofile", name: "LinkedIn" },
-  ];
-
-
   const styles = {
     footer: {
       width: "100%",
@@ -50,7 +19,7 @@ function Footer({ loading }) {
       color: "#ddd",
       marginBottom:"-22px",
       fontFamily: "'Poppins', sans-serif",
-      padding: isMobile ? "2rem 1rem" : "2.5rem 0 2rem 0", // 🚀 थोड़ा पैडिंग एडजस्ट किया
+      padding: isMobile ? "-1rem 1rem" : "2.5rem 0 2rem 0",
       borderTop: "1px solid rgba(255,255,255,0.1)",
       marginTop: "1px",
     },
@@ -101,7 +70,6 @@ function Footer({ loading }) {
       cursor: "pointer",
       fontSize: "1.1rem",
       transition: "all 0.3s ease",
-      textDecoration: "none", // 🚀 जोड़ा गया
     },
     brandSection: {
       textAlign: "center",
@@ -119,19 +87,18 @@ function Footer({ loading }) {
         {/* Column 1 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Get to Know Us</h4>
-          {linksMap["Get to Know Us"].map((item) => (
+          {["About Us", "Careers", "Press Release", "Blog"].map((item, i) => (
             <a
-              key={item.name}
-              // 🚀 FIX: href को मैप से लिया गया
-              href={item.href}
+              key={i}
+              href="#"
               style={{
                 ...styles.link,
-                ...(hovered === item.name ? styles.linkHover : {}),
+                ...(hovered === item ? styles.linkHover : {}),
               }}
-              onMouseEnter={() => setHovered(item.name)}
+              onMouseEnter={() => setHovered(item)}
               onMouseLeave={() => setHovered("")}
             >
-              {item.name}
+              {item}
             </a>
           ))}
         </div>
@@ -139,20 +106,19 @@ function Footer({ loading }) {
         {/* Column 2 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Let Us Help You</h4>
-          {linksMap["Let Us Help You"].map(
-            (item) => (
+          {["Help Center", "Your Account", "Report Issue", "Contact Us"].map(
+            (item, i) => (
               <a
-                key={item.name}
-                // 🚀 FIX: href को मैप से लिया गया
-                href={item.href}
+                key={i}
+                href="#"
                 style={{
                   ...styles.link,
-                  ...(hovered === item.name ? styles.linkHover : {}),
+                  ...(hovered === item ? styles.linkHover : {}),
                 }}
-                onMouseEnter={() => setHovered(item.name)}
+                onMouseEnter={() => setHovered(item)}
                 onMouseLeave={() => setHovered("")}
               >
-                {item.name}
+                {item}
               </a>
             )
           )}
@@ -161,20 +127,19 @@ function Footer({ loading }) {
         {/* Column 3 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>For Students</h4>
-          {linksMap["For Students"].map(
-            (item) => (
+          {["Find Mentors", "Book a Session", "REAP Guide", "Learning Hub"].map(
+            (item, i) => (
               <a
-                key={item.name}
-                // 🚀 FIX: href को मैप से लिया गया
-                href={item.href}
+                key={i}
+                href="#"
                 style={{
                   ...styles.link,
-                  ...(hovered === item.name ? styles.linkHover : {}),
+                  ...(hovered === item ? styles.linkHover : {}),
                 }}
-                onMouseEnter={() => setHovered(item.name)}
+                onMouseEnter={() => setHovered(item)}
                 onMouseLeave={() => setHovered("")}
               >
-                {item.name}
+                {item}
               </a>
             )
           )}
@@ -184,27 +149,22 @@ function Footer({ loading }) {
         <div style={styles.column}>
           <h4 style={styles.heading}>Connect With Us</h4>
           <div style={styles.socialRow}>
-            {/* 🚀 FIX: इन्हें <a> टैग में बदल दिया गया */}
-            {socialLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                target="_blank" // ताकि नई टैब में खुले
-                rel="noopener noreferrer" // सुरक्षा के लिए
+            {["🌐", "📸", "🐦", "💼"].map((icon, i) => (
+              <div
+                key={i}
                 style={{
                   ...styles.socialIcon,
                   background:
-                    hovered === link.name
+                    hovered === icon
                       ? "linear-gradient(45deg,#00a8e1,#2563eb)"
                       : "#232f3e",
-                  transform: hovered === link.name ? "scale(1.1)" : "scale(1)",
+                  transform: hovered === icon ? "scale(1.1)" : "scale(1)",
                 }}
-                onMouseEnter={() => setHovered(link.name)}
+                onMouseEnter={() => setHovered(icon)}
                 onMouseLeave={() => setHovered("")}
-                aria-label={link.name} // एक्सेसिबिलिटी के लिए
               >
-                {link.icon}
-              </a>
+                {icon}
+              </div>
             ))}
           </div>
         </div>
