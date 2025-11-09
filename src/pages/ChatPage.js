@@ -19,17 +19,14 @@ function ChatPage() {
   const [loading, setLoading] = useState(true);
   const chatBodyRef = useRef(null);
 
+  // 🔹 Load chat + connect socket
   useEffect(() => {
     socket.emit("join_room", bookingId);
+    socket.on("receive_message", (msg) => setMessages((prev) => [...prev, msg]));
 
-    socket.on("receive_message", (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    const loadChatHistory = async () => {
+    const loadData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const res = await axios.get(`${API_URL}/api/chat/${bookingId}`, {
           headers: { "x-auth-token": token },
         });
@@ -43,18 +40,17 @@ function ChatPage() {
           headers: { "x-auth-token": token },
         });
 
-        const foundBooking = bookingRes.data.find((b) => b._id === bookingId);
-        if (foundBooking) setBookingInfo(foundBooking);
+        const found = bookingRes.data.find((b) => b._id === bookingId);
+        if (found) setBookingInfo(found);
         else toast.error("Could not find booking info.");
-
-        setLoading(false);
       } catch {
-        toast.error("Failed to load chat history.");
+        toast.error("Failed to load chat.");
+      } finally {
         setLoading(false);
       }
     };
 
-    loadChatHistory();
+    loadData();
     return () => socket.off("receive_message");
   }, [bookingId, auth.user.isSenior]);
 
@@ -63,7 +59,7 @@ function ChatPage() {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
   }, [messages]);
 
-  const handleSendMessage = (e) => {
+  const handleSend = (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !bookingInfo) return;
 
@@ -80,81 +76,99 @@ function ChatPage() {
     };
 
     socket.emit("send_message", msgData);
-    setMessages((prev) => [...prev, { ...msgData, sender: { id: auth.user.id, name: auth.user.name } }]);
+    setMessages((prev) => [
+      ...prev,
+      { ...msgData, sender: { id: auth.user.id, name: auth.user.name } },
+    ]);
     setNewMessage("");
   };
 
   if (loading)
     return (
-      <div style={{ textAlign: "center", padding: "50px", color: "#2563eb" }}>
-        <h2>Loading Chat...</h2>
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(135deg,#0f172a,#1e293b,#020617)",
+          color: "#60a5fa",
+          fontFamily: "Poppins,sans-serif",
+          fontSize: "1.2rem",
+        }}
+      >
+        💬 Connecting to chat...
       </div>
     );
 
-  const getChatHeader = () => {
+  const getHeader = () => {
     if (!bookingInfo) return "Chat Room";
     if (auth.user.id === (bookingInfo.student._id || bookingInfo.student))
       return `Chat with ${bookingInfo.senior.name}`;
     return `Chat with ${bookingInfo.student.name}`;
   };
 
-  // 💫 Inline Styles
+  // 🎨 Premium Multi-Color Styles
   const styles = {
     container: {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
       height: "100vh",
-      background: "linear-gradient(135deg, #3b82f6, #1e3a8a, #0f172a)",
+      background:
+        "linear-gradient(135deg,#020617,#111827 40%,#1e293b 70%,#334155)",
       fontFamily: "'Poppins', sans-serif",
       padding: "10px",
     },
     chatWindow: {
       width: "100%",
-      maxWidth: "750px",
-      height: "85vh",
-      background: "rgba(255,255,255,0.15)",
-      borderRadius: "20px",
-      backdropFilter: "blur(15px)",
-      boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+      maxWidth: "820px",
+      height: "88vh",
+      background: "rgba(255,255,255,0.08)",
+      borderRadius: "22px",
+      backdropFilter: "blur(18px)",
+      boxShadow: "0 10px 40px rgba(0,0,0,0.35)",
       display: "flex",
       flexDirection: "column",
       overflow: "hidden",
       color: "#fff",
-      animation: "fadeIn 0.6s ease",
     },
     header: {
-      background: "linear-gradient(90deg, #2563eb, #1e40af)",
-      padding: "18px 20px",
+      background:
+        "linear-gradient(90deg, #7c3aed, #2563eb, #06b6d4)",
+      padding: "18px",
       fontSize: "1.2rem",
       fontWeight: 600,
-      color: "#fff",
       textAlign: "center",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+      letterSpacing: "0.5px",
+      boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
     },
     chatBody: {
       flex: 1,
       overflowY: "auto",
-      padding: "20px",
+      padding: "18px",
       display: "flex",
       flexDirection: "column",
       gap: "10px",
+      scrollbarWidth: "thin",
     },
     message: (isSent) => ({
       alignSelf: isSent ? "flex-end" : "flex-start",
       background: isSent
-        ? "linear-gradient(135deg, #2563eb, #1e40af)"
-        : "rgba(255,255,255,0.1)",
-      padding: "10px 14px",
+        ? "linear-gradient(135deg,#0ea5e9,#06b6d4,#14b8a6)"
+        : "linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,192,203,0.15))",
+      padding: "12px 16px",
       borderRadius: isSent
-        ? "15px 15px 0 15px"
-        : "15px 15px 15px 0",
+        ? "18px 18px 0 18px"
+        : "18px 18px 18px 0",
       maxWidth: "70%",
       wordWrap: "break-word",
       fontSize: "0.95rem",
-      color: "#fff",
-      boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
-      transition: "0.3s",
+      color: "#f1f5f9",
+      boxShadow: isSent
+        ? "0 4px 10px rgba(14,165,233,0.4)"
+        : "0 3px 10px rgba(255,192,203,0.2)",
+      transition: "transform 0.25s ease",
     }),
     senderName: {
       fontSize: "0.75rem",
@@ -164,53 +178,65 @@ function ChatPage() {
     },
     footer: {
       padding: "15px",
-      background: "rgba(255,255,255,0.1)",
+      background: "rgba(255,255,255,0.07)",
       display: "flex",
       alignItems: "center",
       gap: "10px",
-      borderTop: "1px solid rgba(255,255,255,0.2)",
+      borderTop: "1px solid rgba(255,255,255,0.15)",
     },
     input: {
       flex: 1,
-      background: "rgba(255,255,255,0.2)",
-      border: "none",
-      borderRadius: "10px",
+      background: "rgba(255, 255, 254, 0.97)",
+      border: "1px solid rgba(241, 241, 241, 0.2)",
+      borderRadius: "12px",
       padding: "10px 14px",
       fontSize: "1rem",
       color: "#fff",
       outline: "none",
-      transition: "0.3s",
     },
     sendButton: {
-      background: "linear-gradient(135deg, #22c55e, #16a34a)",
+      background:
+        "linear-gradient(135deg,#22c55e,#16a34a,#059669)",
       color: "#fff",
       border: "none",
       borderRadius: "10px",
       padding: "10px 18px",
       cursor: "pointer",
       fontWeight: 600,
-      fontSize: "1rem",
-      transition: "0.3s",
-      boxShadow: "0 4px 10px rgba(22,163,74,0.3)",
+      fontSize: "1.1rem",
+      transition: "0.3s ease",
+      boxShadow: "0 5px 14px rgba(34,197,94,0.4)",
     },
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.chatWindow}>
-        <div style={styles.header}>{getChatHeader()}</div>
+        <div style={styles.header}>{getHeader()}</div>
+
         <div style={styles.chatBody} ref={chatBodyRef}>
           {messages.map((msg, index) => {
-            const isSent = msg.sender._id === auth.user.id || msg.sender.id === auth.user.id;
+            const isSent =
+              msg.sender._id === auth.user.id || msg.sender.id === auth.user.id;
             return (
-              <div key={index} style={styles.message(isSent)}>
+              <div
+                key={index}
+                style={styles.message(isSent)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.03)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
+              >
                 {!isSent && <div style={styles.senderName}>{msg.sender.name}</div>}
                 {msg.text}
               </div>
             );
           })}
         </div>
-        <form style={styles.footer} onSubmit={handleSendMessage}>
+
+        <form style={styles.footer} onSubmit={handleSend}>
           <input
             type="text"
             placeholder="Type a message..."
@@ -222,12 +248,14 @@ function ChatPage() {
             type="submit"
             style={styles.sendButton}
             onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 6px 15px rgba(22,163,74,0.4)";
+              e.target.style.transform = "scale(1.1)";
+              e.target.style.boxShadow =
+                "0 6px 18px rgba(34,197,94,0.55)";
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 4px 10px rgba(22,163,74,0.3)";
+              e.target.style.boxShadow =
+                "0 5px 14px rgba(34,197,94,0.4)";
             }}
           >
             ➤

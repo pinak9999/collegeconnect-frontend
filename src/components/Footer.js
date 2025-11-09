@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-function Footer() {
+function Footer({ loading }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [hover, setHover] = useState(false);
+  const [hovered, setHovered] = useState("");
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -10,89 +10,174 @@ function Footer() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  if (loading) return null;
+
   const styles = {
     footer: {
       width: "100%",
-      background: "linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb)",
-      color: "#fff",
-      padding: isMobile ? "1.8rem 1rem" : "2.2rem 0",
-      textAlign: "center",
+      background: "#131A22",
+      color: "#ddd",
+      marginBottom:"-22px",
       fontFamily: "'Poppins', sans-serif",
-      position: "relative",
-      overflow: "hidden",
-      marginTop: "40px",
-    },
-    glow: {
-      position: "absolute",
-      top: "-60px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      width: "300px",
-      height: "300px",
-      background: "radial-gradient(circle, rgba(59,130,246,0.25), transparent 70%)",
-      filter: "blur(60px)",
-      zIndex: 0,
+      padding: isMobile ? "-1rem 1rem" : "2.5rem 0 2rem 0",
+      borderTop: "1px solid rgba(255,255,255,0.1)",
+      marginTop: "1px",
     },
     container: {
-      position: "relative",
-      zIndex: 1,
-      maxWidth: "900px",
+      maxWidth: "1200px",
       margin: "0 auto",
+      padding: isMobile ? "0 10px" : "0 20px",
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)",
+      gap: isMobile ? "20px" : "40px",
+      textAlign: isMobile ? "center" : "left",
     },
-    text: {
-      fontSize: isMobile ? "0.9rem" : "1rem",
-      color: "rgba(255,255,255,0.85)",
-      fontWeight: 400,
-      transition: "color 0.3s ease",
+    column: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "6px",
     },
-    brand: {
-      color: hover ? "#60a5fa" : "#93c5fd",
-      fontWeight: 700,
-      letterSpacing: "0.5px",
-      transition: "color 0.3s ease",
+    heading: {
+      color: "#fff",
+      fontWeight: 600,
+      fontSize: "1rem",
+      marginBottom: "6px",
     },
-    socialLinks: {
+    link: {
+      color: "#ccc",
+      textDecoration: "none",
+      fontSize: "0.9rem",
+      transition: "color 0.2s ease",
+    },
+    linkHover: {
+      color: "#00a8e1",
+    },
+    socialRow: {
+      display: "flex",
+      justifyContent: isMobile ? "center" : "flex-start",
+      gap: "12px",
+      marginTop: "8px",
+    },
+    socialIcon: {
+      width: "34px",
+      height: "34px",
+      borderRadius: "50%",
+      background: "#232f3e",
+      color: "#fff",
       display: "flex",
       justifyContent: "center",
-      gap: "20px",
-      marginTop: "1rem",
-    },
-    icon: {
-      fontSize: "1.4rem",
-      color: hover ? "#60a5fa" : "#ffffff",
-      transition: "all 0.3s ease",
+      alignItems: "center",
       cursor: "pointer",
+      fontSize: "1.1rem",
+      transition: "all 0.3s ease",
     },
+    brandSection: {
+      textAlign: "center",
+      borderTop: "1px solid rgba(255,255,255,0.15)",
+      paddingTop: "1.5rem",
+      marginTop: "1.5rem",
+    },
+    brandName: { color: "#00a8e1", fontWeight: 700 },
+    bottomText: { fontSize: "0.85rem", color: "#aaa", marginTop: "4px" },
   };
 
   return (
     <footer style={styles.footer}>
-      <div style={styles.glow}></div>
-
       <div style={styles.container}>
-        <p style={styles.text}>
-          © 2025 <span
-            style={styles.brand}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-          >
-            College Connect
-          </span>{" "}
-          — All Rights Reserved.
-        </p>
-
-        {/* 🌐 Social Media Icons (optional) */}
-        <div style={styles.socialLinks}>
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" style={styles.icon}>
-            🌐
-          </a>
-          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" style={styles.icon}>
-            📸
-          </a>
-          <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" style={styles.icon}>
-            🐦
-          </a>
+        {/* Column 1 */}
+        <div style={styles.column}>
+          <h4 style={styles.heading}>Get to Know Us</h4>
+          {["About Us", "Careers", "Press Release", "Blog"].map((item, i) => (
+            <a
+              key={i}
+              href="#"
+              style={{
+                ...styles.link,
+                ...(hovered === item ? styles.linkHover : {}),
+              }}
+              onMouseEnter={() => setHovered(item)}
+              onMouseLeave={() => setHovered("")}
+            >
+              {item}
+            </a>
+          ))}
         </div>
+
+        {/* Column 2 */}
+        <div style={styles.column}>
+          <h4 style={styles.heading}>Let Us Help You</h4>
+          {["Help Center", "Your Account", "Report Issue", "Contact Us"].map(
+            (item, i) => (
+              <a
+                key={i}
+                href="#"
+                style={{
+                  ...styles.link,
+                  ...(hovered === item ? styles.linkHover : {}),
+                }}
+                onMouseEnter={() => setHovered(item)}
+                onMouseLeave={() => setHovered("")}
+              >
+                {item}
+              </a>
+            )
+          )}
+        </div>
+
+        {/* Column 3 */}
+        <div style={styles.column}>
+          <h4 style={styles.heading}>For Students</h4>
+          {["Find Mentors", "Book a Session", "REAP Guide", "Learning Hub"].map(
+            (item, i) => (
+              <a
+                key={i}
+                href="#"
+                style={{
+                  ...styles.link,
+                  ...(hovered === item ? styles.linkHover : {}),
+                }}
+                onMouseEnter={() => setHovered(item)}
+                onMouseLeave={() => setHovered("")}
+              >
+                {item}
+              </a>
+            )
+          )}
+        </div>
+
+        {/* Column 4 */}
+        <div style={styles.column}>
+          <h4 style={styles.heading}>Connect With Us</h4>
+          <div style={styles.socialRow}>
+            {["🌐", "📸", "🐦", "💼"].map((icon, i) => (
+              <div
+                key={i}
+                style={{
+                  ...styles.socialIcon,
+                  background:
+                    hovered === icon
+                      ? "linear-gradient(45deg,#00a8e1,#2563eb)"
+                      : "#232f3e",
+                  transform: hovered === icon ? "scale(1.1)" : "scale(1)",
+                }}
+                onMouseEnter={() => setHovered(icon)}
+                onMouseLeave={() => setHovered("")}
+              >
+                {icon}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Brand Footer */}
+      <div style={styles.brandSection}>
+        <h3>
+          <span style={styles.brandName}>College Connect</span> — Guiding Students to Success.
+        </h3>
+        <p style={styles.bottomText}>
+          © 2025 College Connect. Made with ❤️ for Indian Students.
+        </p>
       </div>
     </footer>
   );

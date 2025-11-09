@@ -33,20 +33,48 @@ function BookingPage() {
           return;
         }
 
-        const res = await axios.get(
-          `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
-          { headers: { "x-auth-token": token } }
-        );
-        const settingsRes = await axios.get(
-          `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
-        );
+        // ⭐ --- ID CARD FIX START ---
+        // हम दोनों API को कॉल करेंगे:
+        // 1. /api/profile/senior/${userId} - (यह पेज का मुख्य डेटा लाता है)
+        // 2. /api/profile/all - (यह MyBookings/FindSenior वाला डेटा लाता है, जिसमें ID कार्ड हो सकता है)
 
-        setProfile(res.data);
+        const [res, settingsRes, allProfilesRes] = await Promise.all([
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
+            { headers: { "x-auth-token": token } }
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`,
+            { headers: { "x-auth-token": token } }
+          )
+        ]);
+
+        const singleProfileData = res.data;
+        const allProfilesData = allProfilesRes.data;
+
+        // '/all' वाले डेटा में से सही सीनियर को ढूंढें
+        const matchingProfileFromAll = allProfilesData.find(p => p.user?._id === userId);
+
+        // दोनों प्रोफाइल्स को मर्ज करें।
+        // इससे अगर 'matchingProfileFromAll' में id_card_url है, तो वह 'singleProfileData' में जुड़ जाएगा।
+        const combinedProfile = {
+          ...singleProfileData, // पहले मुख्य डेटा
+          ...matchingProfileFromAll, // फिर '/all' वाला डेटा (यह id_card_url को ओवरराइट कर देगा)
+          user: singleProfileData.user || matchingProfileFromAll.user, // सुनिश्चित करें कि user ऑब्जेक्ट सही रहे
+          college: singleProfileData.college || matchingProfileFromAll.college // सुनिश्चित करें कि college ऑब्जेक्ट सही रहे
+        };
+        
+        setProfile(combinedProfile); // मर्ज किया हुआ प्रोफाइल सेट करें
         
         // 2. Sirf Total Amount set kiya gaya hai
-        const fee = res.data.price_per_session + settingsRes.data.platformFee;
+        const fee = combinedProfile.price_per_session + settingsRes.data.platformFee;
         setTotalAmount(fee);
         
+        // ⭐ --- ID CARD FIX END ---
+
         setLoading(false);
       } catch (err) {
         let errorMsg = err.response
@@ -228,7 +256,7 @@ function BookingPage() {
     <div style={pageStyle}>
       {/* ------------------- 
           LEFT COLUMN (Info) 
-         ------------------- */}
+           ------------------- */}
       <div style={mainContentStyle}>
         {/* Profile Header Card */}
         <div style={profileHeaderStyle}>
@@ -272,36 +300,36 @@ function BookingPage() {
           </div>
         </div>
         
-        {/* Verified ID Card */}
+        {/* Verified ID Card - यह कोड अब काम करना चाहिए */}
         {profile.id_card_url && (
           <div style={cardBaseStyle}>
-             <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", textAlign: "center" }}>
-               🎓 College Verified ID
-             </h3>
-             <img
-               src={profile.id_card_url}
-               alt="College ID Card"
-               style={{
-                 width: "100%",
-                 // ⭐ 4. ID Card ko Vertical kar diya gaya hai
-                 maxWidth: "250px", // Vertical card ke liye max-width set ki
-                 aspectRatio: "54 / 86", // Standard Vertical ID Card ratio
-                 height: "auto",
-                 border: "2px solid #007BFF",
-                 borderRadius: "10px",
-                 boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
-                 objectFit: "cover",
-                 display: "block",
-                 margin: "0 auto",
-               }}
-             />
-           </div>
+              <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", textAlign: "center" }}>
+                🎓 College Verified ID
+              </h3>
+              <img
+                src={profile.id_card_url}
+                alt="College ID Card"
+                style={{
+                  width: "100%",
+                  // ⭐ 4. ID Card ko Vertical kar diya gaya hai
+                  maxWidth: "250px", // Vertical card ke liye max-width set ki
+                  aspectRatio: "54 / 86", // Standard Vertical ID Card ratio
+                  height: "auto",
+                  border: "2px solid #007BFF",
+                  borderRadius: "10px",
+                  boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
+                  objectFit: "cover",
+                  display: "block",
+                  margin: "0 auto",
+                }}
+              />
+            </div>
         )}
       </div>
 
       {/* ------------------- 
           RIGHT COLUMN (Booking) 
-         ------------------- */}
+           ------------------- */}
       <div style={sidebarStyle}>
         <div style={cardBaseStyle}>
           <h3 style={{ color: "#007BFF", margin: "0 0 15px 0", fontSize: "1.5rem" }}>
@@ -313,18 +341,18 @@ function BookingPage() {
 
           {/* ⭐ 5. Price Breakdown ko hata kar Total Price dikhaya gaya hai */}
           <div style={{ 
-              textAlign: "center", 
-              margin: "25px 0", 
-              fontSize: "2.5rem", 
-              color: "#000", 
-              fontWeight: "600" 
+            textAlign: "center", 
+            margin: "25px 0", 
+            fontSize: "2.5rem", 
+            color: "#000", 
+            fontWeight: "600" 
           }}>
             ₹{totalAmount}
             <span style={{ 
-                fontSize: "1rem", 
-                color: "#666", 
-                fontWeight: "400", 
-                marginLeft: "8px" 
+              fontSize: "1rem", 
+              color: "#666", 
+              fontWeight: "400", 
+              marginLeft: "8px" 
             }}>
               / {profile.session_duration_minutes} min
             </span>
