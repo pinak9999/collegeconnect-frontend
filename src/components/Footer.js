@@ -12,6 +12,37 @@ function Footer({ loading }) {
 
   if (loading) return null;
 
+  // 🚀 FIX 1: Links के लिए एक मैप बनाया गया ताकि उन्हें सही href दिया जा सके
+  const linksMap = {
+    "Get to Know Us": [
+      { name: "About Us", href: "/about" },
+      { name: "Careers", href: "/careers" },
+      { name: "Press Release", href: "/press" },
+      { name: "Blog", href: "/blog" },
+    ],
+    "Let Us Help You": [
+      { name: "Help Center", href: "/help" },
+      { name: "Your Account", href: "/account" },
+      { name: "Report Issue", href: "/report-issue" },
+      { name: "Contact Us", href: "/contact" },
+    ],
+    "For Students": [
+      { name: "Find Mentors", href: "/find-mentors" },
+      { name: "Book a Session", href: "/book-session" },
+      { name: "REAP Guide", href: "/reap-guide" },
+      { name: "Learning Hub", href: "/learning" },
+    ],
+  };
+
+  // 🚀 FIX 2: सोशल लिंक्स के लिए भी href जोड़ा गया
+  const socialLinks = [
+    { icon: "🌐", href: "https://yourwebsite.com", name: "Website" },
+    { icon: "📸", href: "https://instagram.com/yourprofile", name: "Instagram" },
+    { icon: "🐦", href: "https://twitter.com/yourprofile", name: "Twitter" },
+    { icon: "💼", href: "https://linkedin.com/company/yourprofile", name: "LinkedIn" },
+  ];
+
+
   const styles = {
     footer: {
       width: "100%",
@@ -19,7 +50,7 @@ function Footer({ loading }) {
       color: "#ddd",
       marginBottom:"-22px",
       fontFamily: "'Poppins', sans-serif",
-      padding: isMobile ? "-1rem 1rem" : "2.5rem 0 2rem 0",
+      padding: isMobile ? "2rem 1rem" : "2.5rem 0 2rem 0", // 🚀 पैडिंग ठीक की
       borderTop: "1px solid rgba(255,255,255,0.1)",
       marginTop: "1px",
     },
@@ -70,6 +101,7 @@ function Footer({ loading }) {
       cursor: "pointer",
       fontSize: "1.1rem",
       transition: "all 0.3s ease",
+      textDecoration: "none", // 🚀 जोड़ा गया
     },
     brandSection: {
       textAlign: "center",
@@ -77,8 +109,14 @@ function Footer({ loading }) {
       paddingTop: "1.5rem",
       marginTop: "1.5rem",
     },
-    brandName: { color: "#00a8e1", fontWeight: 700 },
+    brandName: { color: "#00a8e1", fontWeight: 700, fontSize: "1.2rem" }, // 🚀 थोड़ा बड़ा किया
     bottomText: { fontSize: "0.85rem", color: "#aaa", marginTop: "4px" },
+    tagline: { // 🚀 नई टैगलाइन के लिए स्टाइल
+      fontSize: "1rem", 
+      color: "#ddd", 
+      margin: "0 0 8px 0",
+      fontWeight: 300,
+    },
   };
 
   return (
@@ -87,18 +125,19 @@ function Footer({ loading }) {
         {/* Column 1 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Get to Know Us</h4>
-          {["About Us", "Careers", "Press Release", "Blog"].map((item, i) => (
+          {linksMap["Get to Know Us"].map((item) => (
             <a
-              key={i}
-              href="#"
+              key={item.name}
+              // 🚀 FIX 3: href को मैप से लिया गया
+              href={item.href}
               style={{
                 ...styles.link,
-                ...(hovered === item ? styles.linkHover : {}),
+                ...(hovered === item.name ? styles.linkHover : {}),
               }}
-              onMouseEnter={() => setHovered(item)}
+              onMouseEnter={() => setHovered(item.name)}
               onMouseLeave={() => setHovered("")}
             >
-              {item}
+              {item.name}
             </a>
           ))}
         </div>
@@ -106,19 +145,20 @@ function Footer({ loading }) {
         {/* Column 2 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Let Us Help You</h4>
-          {["Help Center", "Your Account", "Report Issue", "Contact Us"].map(
-            (item, i) => (
+          {linksMap["Let Us Help You"].map(
+            (item) => (
               <a
-                key={i}
-                href="#"
+                key={item.name}
+                // 🚀 FIX 4: href को मैप से लिया गया
+                href={item.href}
                 style={{
                   ...styles.link,
-                  ...(hovered === item ? styles.linkHover : {}),
+                  ...(hovered === item.name ? styles.linkHover : {}),
                 }}
-                onMouseEnter={() => setHovered(item)}
+                onMouseEnter={() => setHovered(item.name)}
                 onMouseLeave={() => setHovered("")}
               >
-                {item}
+                {item.name}
               </a>
             )
           )}
@@ -127,19 +167,20 @@ function Footer({ loading }) {
         {/* Column 3 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>For Students</h4>
-          {["Find Mentors", "Book a Session", "REAP Guide", "Learning Hub"].map(
-            (item, i) => (
+          {linksMap["For Students"].map(
+            (item) => (
               <a
-                key={i}
-                href="#"
+                key={item.name}
+                // 🚀 FIX 5: href को मैप से लिया गया
+                href={item.href}
                 style={{
                   ...styles.link,
-                  ...(hovered === item ? styles.linkHover : {}),
+                  ...(hovered === item.name ? styles.linkHover : {}),
                 }}
-                onMouseEnter={() => setHovered(item)}
+                onMouseEnter={() => setHovered(item.name)}
                 onMouseLeave={() => setHovered("")}
               >
-                {item}
+                {item.name}
               </a>
             )
           )}
@@ -149,22 +190,27 @@ function Footer({ loading }) {
         <div style={styles.column}>
           <h4 style={styles.heading}>Connect With Us</h4>
           <div style={styles.socialRow}>
-            {["🌐", "📸", "🐦", "💼"].map((icon, i) => (
-              <div
-                key={i}
+            {/* 🚀 FIX 6: इन्हें <a> टैग में बदल दिया गया */}
+            {socialLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank" // ताकि नई टैब में खुले
+                rel="noopener noreferrer" // सुरक्षा के लिए
                 style={{
                   ...styles.socialIcon,
                   background:
-                    hovered === icon
+                    hovered === link.name
                       ? "linear-gradient(45deg,#00a8e1,#2563eb)"
                       : "#232f3e",
-                  transform: hovered === icon ? "scale(1.1)" : "scale(1)",
+                  transform: hovered === link.name ? "scale(1.1)" : "scale(1)",
                 }}
-                onMouseEnter={() => setHovered(icon)}
+                onMouseEnter={() => setHovered(link.name)}
                 onMouseLeave={() => setHovered("")}
+                aria-label={link.name} // एक्सेसिबिलिटी के लिए
               >
-                {icon}
-              </div>
+                {link.icon}
+              </a>
             ))}
           </div>
         </div>
@@ -172,11 +218,17 @@ function Footer({ loading }) {
 
       {/* Brand Footer */}
       <div style={styles.brandSection}>
+        {/* 🚀 NAME CHANGED (नाम बदल दिया गया) */}
         <h3>
-          <span style={styles.brandName}>College Connect</span> — Guiding Students to Success.
+          <span style={styles.brandName}>Reapify by Pinak</span>
         </h3>
+        {/* 🚀 TAGLINE CHANGED (टैगलाइन बदल दी गई) */}
+        <p style={styles.tagline}>
+          Simplifying engineering admission & beyond
+        </p>
         <p style={styles.bottomText}>
-          © 2025 College Connect. Made with ❤️ for Indian Students.
+          {/* 🚀 Copyright भी अपडेट किया गया */}
+          © 2025 Reapify by Pinak. Made with ❤️ for Indian Students.
         </p>
       </div>
     </footer>

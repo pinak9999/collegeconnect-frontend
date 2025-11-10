@@ -121,8 +121,9 @@ const globalStyles = `
   width:100%;
   transition:.25s border-color, .25s box-shadow, .25s transform;
   font-family: "Poppins", sans-serif;
-  font-size: 1rem;
+  font-size: auto;
 }
+  
 .cc-input:focus, .cc-select:focus {
   border-color: #7dd3fc;
   box-shadow: 0 0 0 4px rgba(125,211,252,.15);

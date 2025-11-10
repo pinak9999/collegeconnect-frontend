@@ -32,6 +32,14 @@ html, body {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
 
 .btn-primary {
   background: linear-gradient(45deg, #2563eb, #1e40af);
