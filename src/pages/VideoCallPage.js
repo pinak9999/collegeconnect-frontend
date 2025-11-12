@@ -93,20 +93,23 @@ function VideoCallPage() {
           myVideoRef.current.srcObject = stream;
         }
 
+        console.log("[FINAL_TEST] Got user media (camera/mic)");
+
         // 2. PeerJS सर्वर से कनेक्ट करें
-      const peer = new Peer(undefined, {
-    host: "0.peerjs.com", // (ऑफिशियल सर्वर)
-    port: 443,
-    secure: true,
-    path: "/" // ❗❗ (यह "/" होना चाहिए) ❗❗
-});
+        const peer = new Peer(undefined, {
+          host: "0.peerjs.com", // (ऑफिशियल सर्वर)
+          port: 443,
+          secure: true,
+          path: "/", // ❗❗ (यह "/" होना चाहिए) ❗❗
+        });
         peerInstance.current = peer;
 
         // 3. जब हम Peer सर्वर से कनेक्ट हो जाएँ (हमें अपनी ID मिल जाए)
         peer.on("open", (myPeerId) => {
-          
+          console.log("[FINAL_TEST] PEERJS: Open! My Peer ID is:", myPeerId);
+
           // 4. ❗ नया लॉजिक: सीधे "join_video_room" भेजें
-          // यह बैकएंड पर रूम जॉइन करेगा और दूसरे यूज़र को सिग्नल भी भेजेगा
+          console.log("[FINAL_TEST] SOCKET: Sending 'join_video_room'...");
           socket.emit("join_video_room", {
             room: sessionId,
             peerId: myPeerId,
@@ -117,6 +120,7 @@ function VideoCallPage() {
 
         // 5. जब कोई *हमें* कॉल करे (हम कॉल रिसीव कर रहे हैं)
         peer.on("call", (call) => {
+          console.log("[FINAL_TEST] PEERJS: Receiving a call...");
           // कॉल के साथ भेजा गया नाम (metadata) पढ़ें
           const remoteUserName = call.metadata?.name || "Peer";
           setPeerName(remoteUserName);
@@ -127,6 +131,7 @@ function VideoCallPage() {
 
           // जब *उनकी* वीडियो स्ट्रीम आए
           call.on("stream", (remoteStream) => {
+            console.log("[FINAL_TEST] PEERJS: Received remote stream.");
             toast.success(`${remoteUserName} connected!`);
             setPeerStream(remoteStream);
             if (peerVideoRef.current) {
@@ -137,6 +142,7 @@ function VideoCallPage() {
 
         // 6. ❗ नया लॉजिक: जब *दूसरा यूज़र* रूम में आए
         socket.on("other_user_for_video", (data) => {
+          console.log("[FINAL_TEST] SOCKET: Received 'other_user_for_video'");
           // data = { peerId: "...", name: "..." }
           const remotePeerId = data.peerId;
           const remoteUserName = data.name;
@@ -146,12 +152,14 @@ function VideoCallPage() {
 
           // दूसरे यूज़र को उनकी Peer ID से कॉल करें
           // हम अपनी स्ट्रीम और अपना नाम (metadata) भी भेज रहे हैं
+          console.log(`[FINAL_TEST] PEERJS: Calling user ${remoteUserName} at ${remotePeerId}`);
           const call = peer.call(remotePeerId, stream, {
             metadata: { name: auth.user.name },
           });
 
           // जब *उनकी* वीडियो स्ट्रीम आए
           call.on("stream", (remoteStream) => {
+            console.log("[FINAL_TEST] PEERJS: Connected and received stream from call.");
             toast.success(`${remoteUserName} connected!`);
             setPeerStream(remoteStream);
             if (peerVideoRef.current) {
@@ -162,12 +170,13 @@ function VideoCallPage() {
 
       })
       .catch((err) => {
-        console.error("Failed to get local stream", err);
+        console.error("[FINAL_TEST] Failed to get local stream", err);
         toast.error("Could not access camera/mic.");
       });
 
     // 7. क्लीनअप: जब कंपोनेंट बंद हो
     return () => {
+      console.log("[FINAL_TEST] Cleaning up VideoCallPage...");
       socket.disconnect();
       if (peerInstance.current) {
         peerInstance.current.destroy();
