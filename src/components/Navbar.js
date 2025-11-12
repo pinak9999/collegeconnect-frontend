@@ -277,7 +277,7 @@ function Navbar() {
         <div
           style={{
             display: "inline-block",
-            animation: "scrollText 20s linear infinite",
+            animation: "scrollText 12s linear infinite",
           }}
         >
           🌟"Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
