@@ -94,13 +94,12 @@ function VideoCallPage() {
         }
 
         // 2. PeerJS सर्वर से कनेक्ट करें
-        const peer = new Peer(undefined, {
-          host: "collegeconnect-peer-server.onrender.com",
-          port: 443,
-          secure: true,
-          path: "/",
-        });
-
+       const peer = new Peer(undefined, {
+    host: "0.peerjs.com", // ❗ (बदला हुआ) यह ऑफिशियल PeerJS सर्वर है
+    port: 443,
+    secure: true,
+    path: "/peerjs" // ❗ (बदला हुआ) यह ऑफिशियल पाथ है
+});
         peerInstance.current = peer;
 
         // 3. जब हम Peer सर्वर से कनेक्ट हो जाएँ (हमें अपनी ID मिल जाए)
