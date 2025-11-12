@@ -31,6 +31,9 @@ import AdminManageTags from './pages/AdminManageTags';
 import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 
+// 🔹 ❗ सिर्फ VideoCallPage (Analytics हटा दिया गया है)
+import VideoCallPage from './pages/VideoCallPage';
+
 // 🧩 Layout Component
 function AppLayout() {
   const { auth } = useAuth();
@@ -224,6 +227,16 @@ function AppLayout() {
             element={
               <ProtectedRoute>
                 <AdminManageDisputes />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ❗ सिर्फ Video Call Route (Analytics हटा दिया गया है) */}
+          <Route
+            path="/session/:sessionId"
+            element={
+              <ProtectedRoute>
+                <VideoCallPage />
               </ProtectedRoute>
             }
           />

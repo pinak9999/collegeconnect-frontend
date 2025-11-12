@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useParams, Link } from "react-router-dom"; // ❗ Link import किया गया
+import { useAuth } from "../context/AuthContext"; // ❗ आपका सही path
 import io from "socket.io-client";
 import toast from "react-hot-toast";
 
@@ -139,10 +139,29 @@ function ChatPage() {
       padding: "18px",
       fontSize: "1.2rem",
       fontWeight: 600,
-      textAlign: "center",
       letterSpacing: "0.5px",
       boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+      // --- ❗ बदलाव ---
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      // --- ❗ एंड ---
     },
+    // --- ❗ नया स्टाइल ---
+    joinButton: {
+      background: "linear-gradient(135deg,#10b981,#059669)",
+      color: "#fff",
+      border: "none",
+      borderRadius: "10px",
+      padding: "8px 14px",
+      cursor: "pointer",
+      fontWeight: 600,
+      fontSize: "0.9rem",
+      textDecoration: "none",
+      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+      boxShadow: "0 4px 10px rgba(16,185,129,0.4)",
+    },
+    // --- ❗ एंड ---
     chatBody: {
       flex: 1,
       overflowY: "auto",
@@ -212,7 +231,25 @@ function ChatPage() {
   return (
     <div style={styles.container}>
       <div style={styles.chatWindow}>
-        <div style={styles.header}>{getHeader()}</div>
+        {/* --- ❗ बदलाव --- */}
+        <div style={styles.header}>
+          <span>{getHeader()}</span>
+          <Link
+            to={`/session/${bookingId}`}
+            style={styles.joinButton}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.05)";
+              e.target.style.boxShadow = "0 6px 14px rgba(16,185,129,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)";
+              e.target.style.boxShadow = "0 4px 10px rgba(16,185,129,0.4)";
+            }}
+          >
+            📞 Join Call
+          </Link>
+        </div>
+        {/* --- ❗ एंड --- */}
 
         <div style={styles.chatBody} ref={chatBodyRef}>
           {messages.map((msg, index) => {
