@@ -94,11 +94,11 @@ function VideoCallPage() {
         }
 
         // 2. PeerJS सर्वर से कनेक्ट करें
-       const peer = new Peer(undefined, {
-    host: "0.peerjs.com", // ❗ (बदला हुआ) यह ऑफिशियल PeerJS सर्वर है
+      const peer = new Peer(undefined, {
+    host: "0.peerjs.com", // (ऑफिशियल सर्वर)
     port: 443,
     secure: true,
-    path: "/peerjs" // ❗ (बदला हुआ) यह ऑफिशियल पाथ है
+    path: "/" // ❗❗ (यह "/" होना चाहिए) ❗❗
 });
         peerInstance.current = peer;
 
