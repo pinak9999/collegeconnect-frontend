@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // ❗ 100% सही पाथ
+import { useAuth } from "../context/AuthContext"; // ❗ सही पाथ
 import io from "socket.io-client";
 import Peer from "peerjs";
 import toast from "react-hot-toast";
@@ -18,7 +18,7 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    background: "#0f172a",
+    background: "#0f172a", // डार्क बैकग्राउंड
     color: "white",
     fontFamily: "'Poppins', sans-serif",
   },
@@ -75,23 +75,19 @@ const styles = {
 function VideoCallPage() {
   const { sessionId } = useParams(); // यह App.js से bookingId है
   const { auth } = useAuth();
+  const [peerName, setPeerName] = useState("Connecting..."); // दूसरे यूज़र का नाम स्टोर करने के लिए
   const [myStream, setMyStream] = useState(null);
   const [peerStream, setPeerStream] = useState(null);
-  const [peerName, setPeerName] = useState("Connecting...");
 
   const myVideoRef = useRef(null);
   const peerVideoRef = useRef(null);
-  const peerInstance = useRef(null);
+  const peerInstance = useRef(null); // PeerJS ऑब्जेक्ट को स्टोर करने के लिए
 
   useEffect(() => {
-    if (!auth.user.name) return; // सुनिश्चित करें कि auth लोड हो गया है
-
-    let localStream; // स्ट्रीम को स्टोर करने के लिए
     // 1. यूज़र से कैमरा और माइक का एक्सेस माँगें
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        localStream = stream; // स्ट्रीम को सहेजें
         setMyStream(stream);
         if (myVideoRef.current) {
           myVideoRef.current.srcObject = stream;
@@ -107,29 +103,32 @@ function VideoCallPage() {
 
         peerInstance.current = peer;
 
-        // 3. जब हम Peer सर्वर से कनेक्ट हो जाएँ
+        // 3. जब हम Peer सर्वर से कनेक्ट हो जाएँ (हमें अपनी ID मिल जाए)
         peer.on("open", (myPeerId) => {
-          // 4. अपनी Peer ID और नाम को Socket.io रूम में भेजें
-          toast.success("Connected! Waiting for other user...");
-          socket.emit("join_room", sessionId);
-          socket.emit("i_am_here_for_video", {
+          
+          // 4. ❗ नया लॉजिक: सीधे "join_video_room" भेजें
+          // यह बैकएंड पर रूम जॉइन करेगा और दूसरे यूज़र को सिग्नल भी भेजेगा
+          socket.emit("join_video_room", {
             room: sessionId,
             peerId: myPeerId,
-            name: auth.user.name, // ❗ अपना नाम भेजें
+            name: auth.user.name, // हम अपना नाम भी भेज रहे हैं
           });
+          toast.success("Connected! Waiting for other user...");
         });
 
         // 5. जब कोई *हमें* कॉल करे (हम कॉल रिसीव कर रहे हैं)
         peer.on("call", (call) => {
-          // कॉल के साथ भेजा गया नाम (metadata) प्राप्त करें
-          setPeerName(call.metadata.name);
-          toast(`Call from ${call.metadata.name}!`);
+          // कॉल के साथ भेजा गया नाम (metadata) पढ़ें
+          const remoteUserName = call.metadata?.name || "Peer";
+          setPeerName(remoteUserName);
+          toast(`Call from ${remoteUserName}!`, { icon: "📞" });
 
           // कॉल का जवाब अपनी वीडियो स्ट्रीम के साथ दें
           call.answer(stream);
 
           // जब *उनकी* वीडियो स्ट्रीम आए
           call.on("stream", (remoteStream) => {
+            toast.success(`${remoteUserName} connected!`);
             setPeerStream(remoteStream);
             if (peerVideoRef.current) {
               peerVideoRef.current.srcObject = remoteStream;
@@ -137,27 +136,31 @@ function VideoCallPage() {
           });
         });
 
-        // 6. जब *दूसरा यूज़र* रूम में आए (हम कॉल शुरू कर रहे हैं)
+        // 6. ❗ नया लॉजिक: जब *दूसरा यूज़र* रूम में आए
         socket.on("other_user_for_video", (data) => {
           // data = { peerId: "...", name: "..." }
-          setPeerName(data.name);
-          toast(`User ${data.name} found! Connecting...`, { icon: "🤝" });
+          const remotePeerId = data.peerId;
+          const remoteUserName = data.name;
+
+          setPeerName(remoteUserName);
+          toast(`User ${remoteUserName} found! Connecting...`, { icon: "🤝" });
 
           // दूसरे यूज़र को उनकी Peer ID से कॉल करें
-          const call = peer.call(data.peerId, stream, {
-            // ❗ कॉल करते समय अपना नाम भेजें
+          // हम अपनी स्ट्रीम और अपना नाम (metadata) भी भेज रहे हैं
+          const call = peer.call(remotePeerId, stream, {
             metadata: { name: auth.user.name },
           });
 
           // जब *उनकी* वीडियो स्ट्रीम आए
           call.on("stream", (remoteStream) => {
-            toast.success(`Connected to ${data.name}!`);
+            toast.success(`${remoteUserName} connected!`);
             setPeerStream(remoteStream);
             if (peerVideoRef.current) {
               peerVideoRef.current.srcObject = remoteStream;
             }
           });
         });
+
       })
       .catch((err) => {
         console.error("Failed to get local stream", err);
@@ -166,20 +169,18 @@ function VideoCallPage() {
 
     // 7. क्लीनअप: जब कंपोनेंट बंद हो
     return () => {
-      // Socket और Peer कनेक्शन बंद करें
       socket.disconnect();
       if (peerInstance.current) {
         peerInstance.current.destroy();
       }
-      // कैमरा बंद करें
-      if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop());
+      if (myStream) {
+        myStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [sessionId, auth.user.name]); // auth.user.name को dependency में जोड़ा
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId]); // myStream को हटा दिया ताकि लूप न हो
 
   const handleEndCall = () => {
-    // बस पेज को रीलोड या नेविगेट कर दें
     window.location.href = "/"; // या /student-dashboard
   };
 
@@ -223,7 +224,9 @@ function VideoCallPage() {
               Waiting for other user...
             </div>
           )}
-          <div style={styles.nameTag}>{peerName}</div>
+          <div style={styles.nameTag}>
+            {peerStream ? peerName : "Connecting..."}
+          </div>
         </div>
       </div>
       <div style={styles.controls}>
