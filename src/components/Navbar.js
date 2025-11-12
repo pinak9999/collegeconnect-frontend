@@ -261,7 +261,7 @@ function Navbar() {
       </nav>
 
       {/* 🌀 Moving Tagline */}
-      <div
+         <div
         style={{
           background: "linear-gradient(90deg, #ff0000b9, #b10cfdbb)",
           color: "white",
@@ -277,13 +277,19 @@ function Navbar() {
         <div
           style={{
             display: "inline-block",
-            animation: "scrollText 12s linear infinite",
+            paddingLeft: "100%", // ✅ start offset ताकि text instantly दिखे
+            animation: "scrollText 18s linear infinite",
+            animationDelay: "0.3s", // ✅ browser को time दो width calculate करने का
+            willChange: "transform", // ✅ GPU optimization
+            transform: "translate3d(5%, 0, 0)", // ✅ pre-offset से instant motion
+            backfaceVisibility: "hidden", // ✅ mobile flicker fix
           }}
         >
-          🌟"Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
-          असली सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो
-          छात्रों को सही जानकारी और सही दिशा देता है 🚀|| 24*7 Support Available
+          🌟 "Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि असली
+          सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो छात्रों
+          को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
         </div>
+
       </div>
     </>
   );
