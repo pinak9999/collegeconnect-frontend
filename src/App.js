@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import MobileNumberModal from './components/MobileNumberModal';
 import ProtectedRoute from './components/ProtectedRoute';
+import AiChatbot from "./components/AiChatbot";
 
 // 🔹 Pages
 import HomePage from './pages/HomePage';
@@ -273,6 +274,7 @@ function App() {
   return (
     <Router>
       <AppLayout />
+       <AiChatbot /> 
     </Router>
   );
 }
