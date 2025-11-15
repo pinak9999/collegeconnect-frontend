@@ -3,7 +3,7 @@ import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom"
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
-import io from "socket.io-client"; // 🚀 NAYA (STEP 5)
+import io from "socket.io-client";
 
 // 📦 Booking Cards Component (Modern UI)
 const BookingsTable = ({
@@ -12,22 +12,23 @@ const BookingsTable = ({
   loading,
   onMarkComplete,
   onStartChat,
-  // onScheduleCall, // 🚀 PURANA (delete)
-  onAcceptTime, // 🚀 NAYA (STEP 3)
-  onRejectTime, // 🚀 NAYA (STEP 3)
+  onAcceptTime,
+  onRejectTime,
+  actionLoading, // 🚀 NAYA: Loading state prop
 }) => {
-  const actionButton = (text, gradient, action) => ({
+  const actionButton = (text, gradient, action, disabled = false) => ({ // 🚀 NAYA: disabled prop
     background: gradient,
     color: "#fff",
     border: "none",
     borderRadius: "10px",
     padding: "8px 14px",
     fontWeight: 600,
-    cursor: "pointer",
+    cursor: disabled ? "not-allowed" : "pointer", // 🚀 NAYA: cursor change
     transition: "all 0.3s ease",
     boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
     fontSize: "13px",
-    ...(action && { onClick: action }),
+    opacity: disabled ? 0.6 : 1, // 🚀 NAYA: opacity change
+    ...(action && !disabled && { onClick: action }), // 🚀 NAYA: action sirf tab jab disabled na ho
   });
 
   if (loading)
@@ -66,131 +67,140 @@ const BookingsTable = ({
           padding: "0 10px",
         }}
       >
-        {bookings.map((b) => (
-          <div
-            key={b._id}
-            style={{
-              background: "rgba(255,255,255,0.85)",
-              borderRadius: "18px",
-              padding: "20px",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-              backdropFilter: "blur(12px)",
-              transition: "all 0.3s ease",
-              border:
-                b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
-            }}
-          >
-            <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
-              👨‍🎓 {b.student?.name || "Student"}
-            </h4>
-            <p style={{ color: "#6b7280", margin: "5px 0" }}>
-              📞 {b.student?.mobileNumber || "N/A"}
-            </p>
-            <p
-              style={{
-                color: "#2563eb",
-                fontWeight: 600,
-                marginBottom: "4px",
-              }}
-            >
-              Status: {b.status}
-            </p>
-
-            <p
-              style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}
-            >
-              {b.dispute_status === "Pending"
-                ? `⚠ ${b.dispute_reason?.reason || "Under Review"}`
-                : b.dispute_status || "No dispute"}
-            </p>
-
-            {/* 🚀 NAYA Time Status UI (STEP 3) */}
-            <p style={{ color: "#1e3a8a", fontWeight: 600, fontSize: "14px", margin: "10px 0", borderTop: '1px solid #e5e7eb', paddingTop: '10px' }}>
-              🕒 Call Time:
-              {b.status_timing === "not_set" && " ⏳ Waiting for student..."}
-              {b.status_timing === "student_proposed" && ` 🙋‍♂️ Proposed: ${new Date(b.proposed_time.student_time).toLocaleString()}`}
-              {b.status_timing === "confirmed_time" && ` ✅ Confirmed: ${new Date(b.final_time).toLocaleString()}`}
-            </p>
-            {/* 🚀 END NAYA UI */}
-
-
+        {bookings.map((b) => {
+          // 🚀 NAYA: Check karo ki is specific card par action ho raha hai
+          const isLoading = actionLoading === b._id; 
+          
+          return (
             <div
+              key={b._id}
               style={{
-                display: "flex",
-                gap: "8px",
-                flexWrap: "wrap",
-                justifyContent: "center",
+                background: "rgba(255,255,255,0.85)",
+                borderRadius: "18px",
+                padding: "20px",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                backdropFilter: "blur(12px)",
+                transition: "all 0.3s ease",
+                border:
+                  b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
               }}
             >
-              {b.status === "Confirmed" && (
-                <>
-                  {/* 🚀 PURA NAYA BUTTON LOGIC (STEP 3) */}
-                  
-                  {/* Case 1: Student ne time propose kiya hai */}
-                  {b.status_timing === "student_proposed" && (
-                    <>
-                      <button
-                        style={actionButton("✅ Accept", "linear-gradient(45deg,#10b981,#059669)")}
-                        onClick={() => onAcceptTime(b._id)}
-                      >
-                        ✅ Accept
-                      </button>
-                      <button
-                        style={actionButton("❌ Reject", "linear-gradient(45deg,#ef4444,#b91c1c)")}
-                        onClick={() => onRejectTime(b._id)}
-                      >
-                        ❌ Reject
-                      </button>
-                    </>
-                  )}
+              <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
+                👨‍🎓 {b.student?.name || "Student"}
+              </h4>
+              <p style={{ color: "#6b7280", margin: "5px 0" }}>
+                📞 {b.student?.mobileNumber || "N/A"}
+              </p>
+              <p
+                style={{
+                  color: "#2563eb",
+                  fontWeight: 600,
+                  marginBottom: "4px",
+                }}
+              >
+                Status: {b.status}
+              </p>
 
-                  {/* Case 2: Time confirm ho gaya hai */}
-                  {b.status_timing === "confirmed_time" && (
-                    <Link
-                      to={`/session/${b._id}`}
-                      style={actionButton("📞 Join Call", "linear-gradient(45deg,#7c3aed,#4f46e5)")}
+              <p
+                style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}
+              >
+                {b.dispute_status === "Pending"
+                  ? `⚠ ${b.dispute_reason?.reason || "Under Review"}`
+                  : b.dispute_status || "No dispute"}
+              </p>
+
+              {/* 🚀 NAYA Time Status UI (STEP 3) */}
+              <p style={{ color: "#1e3a8a", fontWeight: 600, fontSize: "14px", margin: "10px 0", borderTop: '1px solid #e5e7eb', paddingTop: '10px' }}>
+                🕒 Call Time:
+                {b.status_timing === "not_set" && " ⏳ Waiting for student..."}
+                {b.status_timing === "student_proposed" && ` 🙋‍♂️ Proposed: ${new Date(b.proposed_time.student_time).toLocaleString()}`}
+                {b.status_timing === "confirmed_time" && ` ✅ Confirmed: ${new Date(b.final_time).toLocaleString()}`}
+              </p>
+              {/* 🚀 END NAYA UI */}
+
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
+              >
+                {b.status === "Confirmed" && (
+                  <>
+                    {/* 🚀 PURA NAYA BUTTON LOGIC (STEP 3) */}
+                    
+                    {/* Case 1: Student ne time propose kiya hai */}
+                    {b.status_timing === "student_proposed" && (
+                      <>
+                        <button
+                          style={actionButton("✅ Accept", "linear-gradient(45deg,#10b981,#059669)", null, isLoading)} // 🚀 NAYA: disabled
+                          onClick={() => onAcceptTime(b._id)}
+                          disabled={isLoading} // 🚀 NAYA: disabled
+                        >
+                          {isLoading ? "Accepting..." : "✅ Accept"}
+                        </button>
+                        <button
+                          style={actionButton("❌ Reject", "linear-gradient(45deg,#ef4444,#b91c1c)", null, isLoading)} // 🚀 NAYA: disabled
+                          onClick={() => onRejectTime(b._id)}
+                          disabled={isLoading} // 🚀 NAYA: disabled
+                        >
+                          {isLoading ? "Rejecting..." : "❌ Reject"}
+                        </button>
+                      </>
+                    )}
+
+                    {/* Case 2: Time confirm ho gaya hai */}
+                    {b.status_timing === "confirmed_time" && (
+                      <Link
+                        to={`/session/${b._id}`}
+                        style={actionButton("📞 Join Call", "linear-gradient(45deg,#7c3aed,#4f46e5)")}
+                      >
+                        📞 Join Call
+                      </Link>
+                    )}
+                    
+                    {/* Common Buttons */}
+                    <button
+                      style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)", null, isLoading)}
+                      onClick={() => onStartChat(b._id)}
+                      disabled={isLoading} // 🚀 NAYA: disabled
                     >
-                      📞 Join Call
-                    </Link>
-                  )}
-                  
-                  {/* Common Buttons */}
-                  <button
-                    style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
-                    onClick={() => onStartChat(b._id)}
-                  >
-                    💬 Chat
-                  </button>
-                  <button
-                    style={actionButton("✔ Mark Done", "linear-gradient(45deg,#f59e0b,#b45309)")}
-                    onClick={() => onMarkComplete(b._id)}
-                  >
-                    ✔ Done
-                  </button>
-                  {/* 🚀 END NAYA BUTTON LOGIC */}
-                </>
-              )}
-              {b.status === "Completed" && (
-                <span style={{ color: "#10b981", fontWeight: 600 }}>
-                  ✅ Completed
-                </span>
-              )}
-              {b.dispute_status === "Pending" && (
-                <span style={{ color: "#f59e0b", fontWeight: 600 }}>
-                  ⚠ Under Review
-                </span>
-              )}
+                      💬 Chat
+                    </button>
+                    <button
+                      style={actionButton("✔ Mark Done", "linear-gradient(45deg,#f59e0b,#b45309)", null, isLoading)}
+                      onClick={() => onMarkComplete(b._id)}
+                      disabled={isLoading} // 🚀 NAYA: disabled
+                    >
+                      ✔ Done
+                    </button>
+                    {/* 🚀 END NAYA BUTTON LOGIC */}
+                  </>
+                )}
+                {b.status === "Completed" && (
+                  <span style={{ color: "#10b981", fontWeight: 600 }}>
+                    ✅ Completed
+                  </span>
+                )}
+                {b.dispute_status === "Pending" && (
+                  <span style={{ color: "#f59e0b", fontWeight: 600 }}>
+                    ⚠ Under Review
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   );
@@ -201,8 +211,9 @@ function SeniorDashboard() {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [myBookings, setMyBookings] = useState([]); // 🚀 setMyBookINGS -> setMyBookings kiya
+  const [myBookings, setMyBookings] = useState([]); 
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null); // 🚀 NAYA: Loading state
 
   // API URL (Aapke code se liya gaya)
   const API_URL = "https://collegeconnect-backend-mrkz.onrender.com";
@@ -217,13 +228,13 @@ function SeniorDashboard() {
         `${API_URL}/api/bookings/senior/my`,
         { headers: { "x-auth-token": token } }
       );
-      setMyBookings(res.data); // 🚀 setMyBookINGS -> setMyBookings kiya
+      setMyBookings(res.data); 
     } catch {
       toast.error("Failed to load bookings");
     } finally {
       setLoading(false);
     }
-  }, [auth?.token]); // 🚀 API_URL dependency se hataya kyonki constant hai
+  }, [auth?.token]); 
 
   useEffect(() => {
     loadBookings();
@@ -248,10 +259,15 @@ function SeniorDashboard() {
       }
     };
     
-  }, [loadBookings, auth.user?.id]); // 🚀 Dependencies update karein
+  }, [loadBookings, auth.user?.id]); 
 
   const markAsCompletedHandler = async (id) => {
-    if (!window.confirm("Mark this booking as completed?")) return;
+    if (actionLoading) return; // 🚀 NAYA: Agar action loading hai to return
+    setActionLoading(id); // 🚀 NAYA
+    if (!window.confirm("Mark this booking as completed?")) {
+      setActionLoading(null); // 🚀 NAYA
+      return;
+    }
     const toastId = toast.loading("Updating...");
     try {
       const token = auth?.token || localStorage.getItem("token");
@@ -268,15 +284,16 @@ function SeniorDashboard() {
       toast.error(
         "Error: " + (err.response ? err.response.data.msg : err.message)
       );
+    } finally {
+      setActionLoading(null); // 🚀 NAYA
     }
   };
 
-  // 🚀 PURANA FUNCTION (delete)
-  // const scheduleCall = async (id) => { ... };
-
   // 🚀 NAYA FUNCTION (Accept) (STEP 3)
   const acceptTime = async (id) => {
+    if (actionLoading) return; // 🚀 NAYA
     if (!window.confirm("Accept this time and confirm the call?")) return;
+    setActionLoading(id); // 🚀 NAYA
     try {
       const token = auth?.token || localStorage.getItem("token");
       const res = await axios.post(
@@ -288,12 +305,16 @@ function SeniorDashboard() {
       loadBookings(); // Reload list
     } catch (e) {
       toast.error(e.response?.data?.msg || "Error accepting time");
+    } finally {
+      setActionLoading(null); // 🚀 NAYA
     }
   };
 
   // 🚀 NAYA FUNCTION (Reject) (STEP 3)
   const rejectTime = async (id) => {
+    if (actionLoading) return; // 🚀 NAYA
     if (!window.confirm("Reject this time? The student will be notified.")) return;
+    setActionLoading(id); // 🚀 NAYA
     try {
       const token = auth?.token || localStorage.getItem("token");
       const res = await axios.post(
@@ -305,6 +326,8 @@ function SeniorDashboard() {
       loadBookings(); // Reload list
     } catch (e) {
       toast.error(e.response?.data?.msg || "Error rejecting time");
+    } finally {
+      setActionLoading(null); // 🚀 NAYA
     }
   };
 
@@ -434,9 +457,9 @@ function SeniorDashboard() {
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
               onStartChat={handleStartChat}
-              // onScheduleCall={scheduleCall} // 🚀 PURANA (delete)
-              onAcceptTime={acceptTime} // 🚀 NAYA (STEP 3)
-              onRejectTime={rejectTime} // 🚀 NAYA (STEP 3)
+              onAcceptTime={acceptTime}
+              onRejectTime={rejectTime}
+              actionLoading={actionLoading} // 🚀 NAYA: Prop pass karein
             />
           }
         />
@@ -449,9 +472,9 @@ function SeniorDashboard() {
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
               onStartChat={handleStartChat}
-              // onScheduleCall={scheduleCall} // 🚀 PURANA (delete)
-              onAcceptTime={acceptTime} // 🚀 NAYA (STEP 3)
-              onRejectTime={rejectTime} // 🚀 NAYA (STEP 3)
+              onAcceptTime={acceptTime}
+              onRejectTime={rejectTime}
+              actionLoading={actionLoading} // 🚀 NAYA: Prop pass karein
             />
           }
         />
@@ -464,9 +487,9 @@ function SeniorDashboard() {
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
               onStartChat={handleStartChat}
-              // onScheduleCall={scheduleCall} // 🚀 PURANA (delete)
-              onAcceptTime={acceptTime} // 🚀 NAYA (STEP 3)
-              onRejectTime={rejectTime} // 🚀 NAYA (STEP 3)
+              onAcceptTime={acceptTime}
+              onRejectTime={rejectTime}
+              actionLoading={actionLoading} // 🚀 NAYA: Prop pass karein
             />
           }
         />
