@@ -4,10 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import io from "socket.io-client";
 import Peer from "peerjs";
 import toast from "react-hot-toast";
-import axios from "axios"; // 🚀 NAYA ADD KIYA GAYA
 
-// 🚀 NAYA ADD KIYA GAYA
-const API_URL = "https://collegeconnect-backend-mrkz.onrender.com";
 // ⚠️ Global socket: इसे disconnect मत करना cleanup में
 const SOCKET_URL = "https://collegeconnect-backend-mrkz.onrender.com";
 const socket = io(SOCKET_URL, { transports: ["websocket"] });
@@ -75,9 +72,9 @@ export default function VideoCallPage() {
   const myVideoRef = useRef(null);
   const peerVideoRef = useRef(null);
 
-  const myStreamRef = useRef(null); // local MediaStream
-  const peerRef = useRef(null); // Peer instance
-  const activeCallRef = useRef(null); // current PeerJS call
+  const myStreamRef = useRef(null);     // local MediaStream
+  const peerRef = useRef(null);         // Peer instance
+  const activeCallRef = useRef(null);   // current PeerJS call
 
   // attach local video when ready
   useEffect(() => {
@@ -106,35 +103,8 @@ export default function VideoCallPage() {
 
     (async () => {
       try {
-        // --- 🚀 NAYA PLAN (STEP 1) - YAHAN BADLA HAI ---
-        // Pehle check karo ki call time confirmed hai ya nahi
-        try {
-          const token = localStorage.getItem("token");
-          const res = await axios.get(
-            `${API_URL}/api/bookings/single/${sessionId}`,
-            { headers: { "x-auth-token": token } }
-          );
-
-          // 🚀 YEH LINE BADLI GAYI HAI
-          if (res.data.status_timing !== "confirmed_time") {
-            // 🚀 YEH MESSAGE BADLA GAYA HAI
-            toast.error("Call time has not been confirmed yet!");
-            window.location.href = `/chat/${sessionId}`;
-            return; // Yahaan se function ruk jayega
-          }
-          // Agar confirmed hai, toh code aage badhega...
-        } catch (e) {
-          toast.error("Invalid session");
-          window.location.href = "/student-dashboard/bookings";
-          return; // Yahaan se function ruk jayega
-        }
-        // --- 🚀 END BADLAAV ---
-
         // 1) Get local media (always before calling/answering)
-        const local = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
+        const local = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         if (cleaned) return;
         myStreamRef.current = local;
         if (myVideoRef.current) {
@@ -142,10 +112,7 @@ export default function VideoCallPage() {
           myVideoRef.current.play().catch(() => {});
         }
         toast.success("Camera/Mic ready ✅");
-        console.log(
-          "[VIDEO] got local media",
-          local.getTracks().map((t) => `${t.kind}:${t.enabled}`)
-        );
+        console.log("[VIDEO] got local media", local.getTracks().map(t => `${t.kind}:${t.enabled}`));
 
         // 2) PeerJS (with STUN+TURN for strict NATs)
         const peer = new Peer(undefined, {
@@ -156,11 +123,7 @@ export default function VideoCallPage() {
             iceServers: [
               { urls: "stun:stun.l.google.com:19302" },
               // 🔁 TURN – PRODUCTION में अपने creds दें
-              {
-                urls: "turn:relay1.expressturn.com:3478",
-                username: "expressturn",
-                credential: "password",
-              },
+              { urls: "turn:relay1.expressturn.com:3478", username: "expressturn", credential: "password" },
             ],
           },
         });
@@ -245,15 +208,9 @@ export default function VideoCallPage() {
         VideoCallPage._cleanup = () => {
           socket.off("other_user_for_video", onOther);
           socket.off("peer_left", onPeerLeft);
-          try {
-            activeCallRef.current?.close?.();
-          } catch {}
-          try {
-            peerRef.current?.destroy?.();
-          } catch {}
-          try {
-            myStreamRef.current?.getTracks()?.forEach((t) => t.stop());
-          } catch {}
+          try { activeCallRef.current?.close?.(); } catch {}
+          try { peerRef.current?.destroy?.(); } catch {}
+          try { myStreamRef.current?.getTracks()?.forEach(t => t.stop()); } catch {}
         };
       } catch (e) {
         console.error(e);
@@ -301,8 +258,7 @@ export default function VideoCallPage() {
             style={{ ...styles.video, ...styles.myMirror }}
           />
           <div style={styles.tag}>
-            {auth?.user?.name || "You"} (You) {micOn ? "🎙️" : "🔇"}{" "}
-            {camOn ? "📷" : "🚫"}
+            {(auth?.user?.name || "You")} (You) {micOn ? "🎙️" : "🔇"} {camOn ? "📷" : "🚫"}
           </div>
         </div>
 
@@ -315,9 +271,7 @@ export default function VideoCallPage() {
             muted={remoteMuted}
             style={styles.video}
           />
-          <div style={styles.tag}>
-            {peerStream ? peerName || "Peer" : "Connecting..."}
-          </div>
+          <div style={styles.tag}>{peerStream ? (peerName || "Peer") : "Connecting..."}</div>
         </div>
       </div>
 
@@ -329,17 +283,11 @@ export default function VideoCallPage() {
           {camOn ? "🚫 Camera Off" : "📷 Camera On"}
         </button>
         {remoteMuted && (
-          <button
-            onClick={() => setRemoteMuted(false)}
-            style={styles.btn("#10b981")}
-          >
+          <button onClick={() => setRemoteMuted(false)} style={styles.btn("#10b981")}>
             🔊 Hear Other
           </button>
         )}
-        <button
-          onClick={() => (window.location.href = "/")}
-          style={styles.btn("#ef4444")}
-        >
+        <button onClick={() => (window.location.href = "/")} style={styles.btn("#ef4444")}>
           📞 End Call
         </button>
       </div>
