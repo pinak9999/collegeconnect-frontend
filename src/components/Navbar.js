@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // ❗ Path को ठीक कर दिया है
+import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 function Navbar() {
@@ -106,8 +106,7 @@ function Navbar() {
             <span style={{ letterSpacing: "0.5px" }}>
               <span
                 style={{
-                  background:
-                    "linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8)",
+                  background: "linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8)",
                   WebkitBackgroundClip: "text",
                   color: "#ffffffff",
                   fontWeight: 700,
@@ -125,6 +124,7 @@ function Navbar() {
           <div style={menuStyle}>
             {auth.isAuthenticated && auth.user ? (
               <>
+                {/* Dashboard */}
                 <Link
                   to={getDashboardLink()}
                   style={{
@@ -150,35 +150,33 @@ function Navbar() {
                   📊 Dashboard
                 </Link>
 
-                {/* --- ✨ NAYA ANALYTICS LINK --- */}
-                {(auth.user?.role === "Admin" || !auth.user?.isSenior) && (
-                  <Link
-                    to="/analytics"
-                    style={{
-                      ...btnBaseStyle,
-                      background: "linear-gradient(135deg,#a855f7,#7c3aed)",
-                      boxShadow: "0 3px 10px rgba(168,85,247,0.35)",
-                    }}
-                    onMouseEnter={(e) =>
-                      applyHover(
-                        e,
-                        "scale(1.05)",
-                        "0 6px 14px rgba(168,85,247,0.5)"
-                      )
-                    }
-                    onMouseLeave={(e) =>
-                      applyHover(
-                        e,
-                        "scale(1)",
-                        "0 3px 10px rgba(168,85,247,0.35)"
-                      )
-                    }
-                  >
-                    📈 Analytics
-                  </Link>
-                )}
-                {/* --- ✨ END --- */}
+                {/* My Appointments */}
+                <Link
+                  to="/my-appointments"
+                  style={{
+                    ...btnBaseStyle,
+                    background: "linear-gradient(135deg,#34d399,#059669)",
+                    boxShadow: "0 3px 10px rgba(5,150,105,0.35)",
+                  }}
+                  onMouseEnter={(e) =>
+                    applyHover(
+                      e,
+                      "scale(1.05)",
+                      "0 6px 14px rgba(5,150,105,0.5)"
+                    )
+                  }
+                  onMouseLeave={(e) =>
+                    applyHover(
+                      e,
+                      "scale(1)",
+                      "0 3px 10px rgba(5,150,105,0.35)"
+                    )
+                  }
+                >
+                  📅 My Appointments
+                </Link>
 
+                {/* Logout */}
                 <button
                   onClick={logoutHandler}
                   style={{
@@ -206,6 +204,7 @@ function Navbar() {
               </>
             ) : (
               <>
+                {/* Register */}
                 <Link
                   to="/register"
                   style={{
@@ -230,6 +229,8 @@ function Navbar() {
                 >
                   📝 Register
                 </Link>
+
+                {/* Login */}
                 <Link
                   to="/login"
                   style={{
@@ -261,7 +262,7 @@ function Navbar() {
       </nav>
 
       {/* 🌀 Moving Tagline */}
-         <div
+      <div
         style={{
           background: "linear-gradient(90deg, #ff0000b9, #b10cfdbb)",
           color: "white",
@@ -277,19 +278,18 @@ function Navbar() {
         <div
           style={{
             display: "inline-block",
-            paddingLeft: "100%", // ✅ start offset ताकि text instantly दिखे
+            paddingLeft: "100%",
             animation: "scrollText 18s linear infinite",
-            animationDelay: "0.3s", // ✅ browser को time दो width calculate करने का
-            willChange: "transform", // ✅ GPU optimization
-            transform: "translate3d(5%, 0, 0)", // ✅ pre-offset से instant motion
-            backfaceVisibility: "hidden", // ✅ mobile flicker fix
+            animationDelay: "0.3s",
+            willChange: "transform",
+            transform: "translate3d(5%, 0, 0)",
+            backfaceVisibility: "hidden",
           }}
         >
-          🌟 "Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि असली
-          सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो छात्रों
-          को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
+          🌟 "Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
+          असली सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो
+          छात्रों को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
         </div>
-
       </div>
     </>
   );
