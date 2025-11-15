@@ -32,19 +32,21 @@ function ChatPage() {
         });
         setMessages(res.data);
 
-        const bookingUrl = auth.user.isSenior
-          ? `${API_URL}/api/bookings/senior/my`
-          : `${API_URL}/api/bookings/student/my`;
-
-        const bookingRes = await axios.get(bookingUrl, {
-          headers: { "x-auth-token": token },
-        });
-
-        const found = bookingRes.data.find((b) => b._id === bookingId);
-        if (found) setBookingInfo(found);
-        else toast.error("Could not find booking info.");
+        // 🚀 BUGFIX: Yahaan 'single' endpoint ka istemaal karein, 'my' ka nahi
+        // 'my' wale endpoint me booking nahi milegi agar user senior hai
+        const bookingRes = await axios.get(
+          `${API_URL}/api/bookings/single/${bookingId}`,
+          { headers: { "x-auth-token": token } }
+        );
+        
+        if (bookingRes.data) {
+          setBookingInfo(bookingRes.data); // Seedha data set karein
+        } else {
+          toast.error("Could not find booking info.");
+        }
+        
       } catch {
-        toast.error("Failed to load chat.");
+        toast.error("Failed to load chat data.");
       } finally {
         setLoading(false);
       }
@@ -52,7 +54,7 @@ function ChatPage() {
 
     loadData();
     return () => socket.off("receive_message");
-  }, [bookingId, auth.user.isSenior]);
+  }, [bookingId, auth.user.isSenior]); // auth.user.isSenior dependency rakhein
 
   useEffect(() => {
     if (chatBodyRef.current)
@@ -103,7 +105,8 @@ function ChatPage() {
 
   const getHeader = () => {
     if (!bookingInfo) return "Chat Room";
-    if (auth.user.id === (bookingInfo.student._id || bookingInfo.student))
+    // Yahaan ID check karein (bookingInfo.student ab object hai)
+    if (auth.user.id === bookingInfo.student._id)
       return `Chat with ${bookingInfo.senior.name}`;
     return `Chat with ${bookingInfo.student.name}`;
   };
@@ -134,8 +137,7 @@ function ChatPage() {
       color: "#fff",
     },
     header: {
-      background:
-        "linear-gradient(90deg, #7c3aed, #2563eb, #06b6d4)",
+      background: "linear-gradient(90deg, #7c3aed, #2563eb, #06b6d4)",
       padding: "18px",
       fontSize: "1.2rem",
       fontWeight: 600,
@@ -177,9 +179,7 @@ function ChatPage() {
         ? "linear-gradient(135deg,#0ea5e9,#06b6d4,#14b8a6)"
         : "linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,192,203,0.15))",
       padding: "12px 16px",
-      borderRadius: isSent
-        ? "18px 18px 0 18px"
-        : "18px 18px 18px 0",
+      borderRadius: isSent ? "18px 18px 0 18px" : "18px 18px 18px 0",
       maxWidth: "70%",
       wordWrap: "break-word",
       fontSize: "0.95rem",
@@ -214,8 +214,7 @@ function ChatPage() {
       outline: "none",
     },
     sendButton: {
-      background:
-        "linear-gradient(135deg,#22c55e,#16a34a,#059669)",
+      background: "linear-gradient(135deg,#22c55e,#16a34a,#059669)",
       color: "#fff",
       border: "none",
       borderRadius: "10px",
@@ -234,20 +233,38 @@ function ChatPage() {
         {/* --- ❗ बदलाव --- */}
         <div style={styles.header}>
           <span>{getHeader()}</span>
-          <Link
-            to={`/session/${bookingId}`}
-            style={styles.joinButton}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 6px 14px rgba(16,185,129,0.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 4px 10px rgba(16,185,129,0.4)";
-            }}
-          >
-            📞 Join Call
-          </Link>
+
+          {/* --- 🚀 NAYA PLAN (STEP 2) - YAHAN BADLA HAI --- */}
+          {/* 🚀 YEH LINE BADLI GAYI HAI */}
+          {bookingInfo?.status_timing === "confirmed_time" ? (
+            <Link
+              to={`/session/${bookingId}`}
+              style={styles.joinButton}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.05)";
+                e.target.style.boxShadow = "0 6px 14px rgba(16,185,129,0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+                e.target.style.boxShadow = "0 4px 10px rgba(16,185,129,0.4)";
+              }}
+            >
+              📞 Join Call
+            </Link>
+          ) : (
+            <button
+              style={{
+                ...styles.joinButton,
+                opacity: 0.4,
+                cursor: "not-allowed",
+              }}
+              disabled
+            >
+              {/* 🚀 YEH MESSAGE BADLA GAYA HAI */}
+              ⏳ Time not confirmed
+            </button>
+          )}
+          {/* --- 🚀 END BADLAAV --- */}
         </div>
         {/* --- ❗ एंड --- */}
 
@@ -266,7 +283,9 @@ function ChatPage() {
                   (e.currentTarget.style.transform = "scale(1)")
                 }
               >
-                {!isSent && <div style={styles.senderName}>{msg.sender.name}</div>}
+                {!isSent && (
+                  <div style={styles.senderName}>{msg.sender.name}</div>
+                )}
                 {msg.text}
               </div>
             );
@@ -286,13 +305,11 @@ function ChatPage() {
             style={styles.sendButton}
             onMouseEnter={(e) => {
               e.target.style.transform = "scale(1.1)";
-              e.target.style.boxShadow =
-                "0 6px 18px rgba(34,197,94,0.55)";
+              e.target.style.boxShadow = "0 6px 18px rgba(34,197,94,0.55)";
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow =
-                "0 5px 14px rgba(34,197,94,0.4)";
+              e.target.style.boxShadow = "0 5px 14px rgba(34,197,94,0.4)";
             }}
           >
             ➤

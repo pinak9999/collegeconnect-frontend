@@ -3,9 +3,19 @@ import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom"
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import io from "socket.io-client"; // 🚀 NAYA (STEP 5)
 
 // 📦 Booking Cards Component (Modern UI)
-const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
+const BookingsTable = ({
+  title,
+  bookings,
+  loading,
+  onMarkComplete,
+  onStartChat,
+  // onScheduleCall, // 🚀 PURANA (delete)
+  onAcceptTime, // 🚀 NAYA (STEP 3)
+  onRejectTime, // 🚀 NAYA (STEP 3)
+}) => {
   const actionButton = (text, gradient, action) => ({
     background: gradient,
     color: "#fff",
@@ -66,7 +76,8 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
               boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
               backdropFilter: "blur(12px)",
               transition: "all 0.3s ease",
-              border: b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
+              border:
+                b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-5px)";
@@ -83,19 +94,75 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
             <p style={{ color: "#6b7280", margin: "5px 0" }}>
               📞 {b.student?.mobileNumber || "N/A"}
             </p>
-            <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px" }}>
+            <p
+              style={{
+                color: "#2563eb",
+                fontWeight: 600,
+                marginBottom: "4px",
+              }}
+            >
               Status: {b.status}
             </p>
 
-            <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}>
+            <p
+              style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}
+            >
               {b.dispute_status === "Pending"
                 ? `⚠ ${b.dispute_reason?.reason || "Under Review"}`
                 : b.dispute_status || "No dispute"}
             </p>
 
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+            {/* 🚀 NAYA Time Status UI (STEP 3) */}
+            <p style={{ color: "#1e3a8a", fontWeight: 600, fontSize: "14px", margin: "10px 0", borderTop: '1px solid #e5e7eb', paddingTop: '10px' }}>
+              🕒 Call Time:
+              {b.status_timing === "not_set" && " ⏳ Waiting for student..."}
+              {b.status_timing === "student_proposed" && ` 🙋‍♂️ Proposed: ${new Date(b.proposed_time.student_time).toLocaleString()}`}
+              {b.status_timing === "confirmed_time" && ` ✅ Confirmed: ${new Date(b.final_time).toLocaleString()}`}
+            </p>
+            {/* 🚀 END NAYA UI */}
+
+
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
               {b.status === "Confirmed" && (
                 <>
+                  {/* 🚀 PURA NAYA BUTTON LOGIC (STEP 3) */}
+                  
+                  {/* Case 1: Student ne time propose kiya hai */}
+                  {b.status_timing === "student_proposed" && (
+                    <>
+                      <button
+                        style={actionButton("✅ Accept", "linear-gradient(45deg,#10b981,#059669)")}
+                        onClick={() => onAcceptTime(b._id)}
+                      >
+                        ✅ Accept
+                      </button>
+                      <button
+                        style={actionButton("❌ Reject", "linear-gradient(45deg,#ef4444,#b91c1c)")}
+                        onClick={() => onRejectTime(b._id)}
+                      >
+                        ❌ Reject
+                      </button>
+                    </>
+                  )}
+
+                  {/* Case 2: Time confirm ho gaya hai */}
+                  {b.status_timing === "confirmed_time" && (
+                    <Link
+                      to={`/session/${b._id}`}
+                      style={actionButton("📞 Join Call", "linear-gradient(45deg,#7c3aed,#4f46e5)")}
+                    >
+                      📞 Join Call
+                    </Link>
+                  )}
+                  
+                  {/* Common Buttons */}
                   <button
                     style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
                     onClick={() => onStartChat(b._id)}
@@ -103,18 +170,23 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
                     💬 Chat
                   </button>
                   <button
-                    style={actionButton("✔ Mark Done", "linear-gradient(45deg,#10b981,#059669)")}
+                    style={actionButton("✔ Mark Done", "linear-gradient(45deg,#f59e0b,#b45309)")}
                     onClick={() => onMarkComplete(b._id)}
                   >
                     ✔ Done
                   </button>
+                  {/* 🚀 END NAYA BUTTON LOGIC */}
                 </>
               )}
               {b.status === "Completed" && (
-                <span style={{ color: "#10b981", fontWeight: 600 }}>✅ Completed</span>
+                <span style={{ color: "#10b981", fontWeight: 600 }}>
+                  ✅ Completed
+                </span>
               )}
               {b.dispute_status === "Pending" && (
-                <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
+                <span style={{ color: "#f59e0b", fontWeight: 600 }}>
+                  ⚠ Under Review
+                </span>
               )}
             </div>
           </div>
@@ -129,28 +201,54 @@ function SeniorDashboard() {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [myBookings, setMyBookings] = useState([]);
+  const [myBookings, setMyBookings] = useState([]); // 🚀 setMyBookINGS -> setMyBookings kiya
   const [loading, setLoading] = useState(true);
+
+  // API URL (Aapke code se liya gaya)
+  const API_URL = "https://collegeconnect-backend-mrkz.onrender.com";
+  // 🚀 NAYA (STEP 5)
+  const socket = io(API_URL);
 
   const loadBookings = useCallback(async () => {
     setLoading(true);
     try {
       const token = auth?.token || localStorage.getItem("token");
       const res = await axios.get(
-        "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my",
+        `${API_URL}/api/bookings/senior/my`,
         { headers: { "x-auth-token": token } }
       );
-      setMyBookings(res.data);
+      setMyBookings(res.data); // 🚀 setMyBookINGS -> setMyBookings kiya
     } catch {
       toast.error("Failed to load bookings");
     } finally {
       setLoading(false);
     }
-  }, [auth?.token]);
+  }, [auth?.token]); // 🚀 API_URL dependency se hataya kyonki constant hai
 
   useEffect(() => {
     loadBookings();
-  }, [loadBookings]);
+
+    // 🚀 NAYA SOCKET.IO LOGIC (STEP 5)
+    // Auth se senior ID lein
+    const seniorId = auth.user?.id; 
+    if (seniorId) {
+      socket.emit("join_room", seniorId); // Apni personal room join karein
+    }
+
+    socket.on("student_time_proposed", (booking) => {
+      toast.success(`🙋‍♂️ Student proposed a new time!`);
+      loadBookings(); // List refresh karein
+    });
+    
+    // Cleanup
+    return () => {
+      socket.off("student_time_proposed");
+      if (seniorId) {
+         // socket.emit("leave_room", seniorId); // Optional
+      }
+    };
+    
+  }, [loadBookings, auth.user?.id]); // 🚀 Dependencies update karein
 
   const markAsCompletedHandler = async (id) => {
     if (!window.confirm("Mark this booking as completed?")) return;
@@ -158,7 +256,7 @@ function SeniorDashboard() {
     try {
       const token = auth?.token || localStorage.getItem("token");
       await axios.put(
-        `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${id}`,
+        `${API_URL}/api/bookings/mark-complete/${id}`,
         null,
         { headers: { "x-auth-token": token } }
       );
@@ -167,13 +265,54 @@ function SeniorDashboard() {
       loadBookings();
     } catch (err) {
       toast.dismiss(toastId);
-      toast.error("Error: " + (err.response ? err.response.data.msg : err.message));
+      toast.error(
+        "Error: " + (err.response ? err.response.data.msg : err.message)
+      );
+    }
+  };
+
+  // 🚀 PURANA FUNCTION (delete)
+  // const scheduleCall = async (id) => { ... };
+
+  // 🚀 NAYA FUNCTION (Accept) (STEP 3)
+  const acceptTime = async (id) => {
+    if (!window.confirm("Accept this time and confirm the call?")) return;
+    try {
+      const token = auth?.token || localStorage.getItem("token");
+      const res = await axios.post(
+        `${API_URL}/api/bookings/accept-time/${id}`,
+        {}, // No body needed
+        { headers: { "x-auth-token": token } }
+      );
+      toast.success("Time confirmed! Student notified.");
+      loadBookings(); // Reload list
+    } catch (e) {
+      toast.error(e.response?.data?.msg || "Error accepting time");
+    }
+  };
+
+  // 🚀 NAYA FUNCTION (Reject) (STEP 3)
+  const rejectTime = async (id) => {
+    if (!window.confirm("Reject this time? The student will be notified.")) return;
+    try {
+      const token = auth?.token || localStorage.getItem("token");
+      const res = await axios.post(
+        `${API_URL}/api/bookings/reject-time/${id}`,
+        {}, // No body needed
+        { headers: { "x-auth-token": token } }
+      );
+      toast.warn("Time rejected. Student notified.");
+      loadBookings(); // Reload list
+    } catch (e) {
+      toast.error(e.response?.data?.msg || "Error rejecting time");
     }
   };
 
   const handleStartChat = (id) => navigate(`/chat/${id}`);
 
-  const tasks = myBookings.filter((b) => b.status === "Confirmed" && b.dispute_status !== "Pending");
+  const tasks = myBookings.filter(
+    (b) => b.status === "Confirmed" && b.dispute_status !== "Pending"
+  );
   const disputes = myBookings.filter((b) => b.dispute_status === "Pending");
   const history = myBookings.filter(
     (b) => b.status === "Completed" || b.dispute_status === "Resolved"
@@ -202,7 +341,8 @@ function SeniorDashboard() {
           Welcome, {auth.user?.name || "Senior"} 👋
         </h2>
         <p style={{ color: "#dbeafe", fontSize: "0.95rem" }}>
-          Manage your sessions, chat with students, and monitor your progress easily.
+          Manage your sessions, chat with students, and monitor your progress
+          easily.
         </p>
       </div>
 
@@ -227,11 +367,20 @@ function SeniorDashboard() {
       >
         {[
           { path: "/senior-dashboard", label: "🆕 New", count: tasks.length },
-          { path: "/senior-dashboard/disputes", label: "⚠️ Disputes", count: disputes.length },
-          { path: "/senior-dashboard/history", label: "✅ History", count: history.length },
+          {
+            path: "/senior-dashboard/disputes",
+            label: "⚠️ Disputes",
+            count: disputes.length,
+          },
+          {
+            path: "/senior-dashboard/history",
+            label: "✅ History",
+            count: history.length,
+          },
         ].map((tab) => {
           const isActive =
-            (tab.path === "/senior-dashboard" && location.pathname === "/senior-dashboard") ||
+            (tab.path === "/senior-dashboard" &&
+              location.pathname === "/senior-dashboard") ||
             (tab.path !== "/senior-dashboard" &&
               location.pathname.startsWith(tab.path));
           return (
@@ -285,6 +434,9 @@ function SeniorDashboard() {
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
               onStartChat={handleStartChat}
+              // onScheduleCall={scheduleCall} // 🚀 PURANA (delete)
+              onAcceptTime={acceptTime} // 🚀 NAYA (STEP 3)
+              onRejectTime={rejectTime} // 🚀 NAYA (STEP 3)
             />
           }
         />
@@ -297,6 +449,9 @@ function SeniorDashboard() {
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
               onStartChat={handleStartChat}
+              // onScheduleCall={scheduleCall} // 🚀 PURANA (delete)
+              onAcceptTime={acceptTime} // 🚀 NAYA (STEP 3)
+              onRejectTime={rejectTime} // 🚀 NAYA (STEP 3)
             />
           }
         />
@@ -309,6 +464,9 @@ function SeniorDashboard() {
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
               onStartChat={handleStartChat}
+              // onScheduleCall={scheduleCall} // 🚀 PURANA (delete)
+              onAcceptTime={acceptTime} // 🚀 NAYA (STEP 3)
+              onRejectTime={rejectTime} // 🚀 NAYA (STEP 3)
             />
           }
         />
