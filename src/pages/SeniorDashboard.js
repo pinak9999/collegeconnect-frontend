@@ -248,7 +248,7 @@ function SeniorDashboard() {
                   : "rgba(255,255,255,0.2)",
                 color: isActive ? "#fff" : "#e0f2fe",
                 boxShadow: isActive
-                  ? "0 3px 10px rgba(37,99,235,0.4)"
+                  ? "0 3px 10px rgba(37, 116, 235, 0.4)"
                   : "none",
                 transition: "all 0.3s ease",
               }}

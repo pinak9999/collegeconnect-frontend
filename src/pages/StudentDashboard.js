@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 // ===============================
 // 🔮 Global CSS (Light + Dark Themes)
@@ -23,8 +23,8 @@ const globalStyles = `
   --stroke: #e5e7eb;              /* Light borders */
   --txt: #1f2937;                /* Dark primary text */
   --muted: #6b7280;              /* Dark secondary text */
-  --brand1: #7c3aed;              /* Violet (same as dark) */
-  --brand2: #06b6d4;              /* Cyan (same as dark) */
+  --brand1: #7c3aed;              /* Violet */
+  --brand2: #06b6d4;              /* Cyan */
   --ok: #16a34a;                  /* Success */
   --warn: #f59e0b;                /* Warning */
   --danger: #ef4444;              /* Danger */
@@ -64,7 +64,7 @@ const globalStyles = `
   --panel-bg: #101827cc;
   --input-bg: linear-gradient(180deg, #0b1220 0%, #0b1220 60%, #0d1628 100%);
   --tab-bg: linear-gradient(180deg,#0e1628,#0b1323);
-  --tab-hover-bg: linear-gradient(180deg,#0e1628,#0b1323); /* No change on hover for dark tabs */
+  --tab-hover-bg: linear-gradient(180deg,#0e1628,#0b1323); 
   --info-bg: linear-gradient(180deg, #0e1b31, #0b1426);
   --info-color: #c7d2fe;
   --rating-bg: linear-gradient(180deg, #0e1628, #0b1323);
@@ -87,7 +87,8 @@ const globalStyles = `
     radial-gradient(800px 350px at 110% 0%, rgba(6,182,212,.22), transparent 60%),
     var(--bg-gradient);
   background-color: var(--bg); /* Fallback */
-  font-family: "Poppins", sans-serif; /* 🚀 BOLD: Font set globally */
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 .main-container {
   max-width: 1180px;
@@ -97,6 +98,7 @@ const globalStyles = `
 .page-wrapper {
   padding: 8px;
   color: var(--txt);
+  animation: fadeIn 0.4s ease-out;
 }
 .small-muted {
   color: var(--muted);
@@ -121,7 +123,7 @@ const globalStyles = `
   width:100%;
   transition:.25s border-color, .25s box-shadow, .25s transform;
   font-family: "Poppins", sans-serif;
-  font-size: auto;
+  font-size: 1rem;
 }
   
 .cc-input:focus, .cc-select:focus {
@@ -144,7 +146,8 @@ const globalStyles = `
 .cc-tab.active {
   background: linear-gradient(90deg, var(--brand1), var(--brand2));
   box-shadow: 0 8px 22px rgba(6,182,212,.25);
-  color: white; /* 🚀 BOLD: Ensure text is white */
+  color: white;
+  border-color: transparent;
 }
 .cc-tab:not(.active):hover { 
   transform: translateY(-2px); 
@@ -165,10 +168,14 @@ const globalStyles = `
   background: linear-gradient(120deg, #fb7185, var(--danger));
   box-shadow: 0 8px 22px rgba(239,68,68,.25);
 }
+.cc-btn.success {
+  background: linear-gradient(120deg, #10b981, #059669);
+  box-shadow: 0 8px 22px rgba(16,185,129,.25);
+}
 .cc-chip {
   border:1px solid var(--stroke);
   color:var(--muted);
-  background: var(--tab-bg); /* Use tab background */
+  background: var(--tab-bg);
   border-radius:999px;
   padding:8px 12px;
   font-weight:600;
@@ -219,14 +226,14 @@ const globalStyles = `
   gap: 12px;
   padding: 10px;
   border-radius: 16px;
-  background: var(--panel-bg); /* 🚀 BOLD: Use panel background */
+  background: var(--panel-bg);
   border: 1px solid var(--stroke);
   margin-bottom: 18px;
   position: sticky;
   top: 12px;
   z-index: 5;
   backdrop-filter: blur(10px);
-  align-items: center; /* 🚀 BOLD: To center toggle button */
+  align-items: center;
 }
 .dark .tab-bar {
   box-shadow: 0 20px 40px rgba(2,6,23,.35);
@@ -235,7 +242,6 @@ const globalStyles = `
   background: #ffffff99;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-/* 🚀 BOLD: New Theme Toggle Button */
 .theme-toggle-btn {
   height: 40px;
   width: 40px;
@@ -247,8 +253,11 @@ const globalStyles = `
   color: var(--txt);
   font-size: 1.25rem;
   cursor: pointer;
-  margin-left: auto; /* 🚀 BOLD: Pushes to the right */
+  margin-left: auto;
   transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .theme-toggle-btn:hover {
   transform: translateY(-2px);
@@ -280,7 +289,7 @@ const globalStyles = `
 }
 
 /* =================================
-  6. FindSenior Component (Theme-Aware)
+  6. FindSenior Component Styles
 ================================= */
 .panel-wrap {
   border: 1px solid var(--stroke);
@@ -315,6 +324,8 @@ const globalStyles = `
 .senior-card {
   padding: 18px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 .senior-card .image-wrapper {
   display: flex;
@@ -352,6 +363,7 @@ const globalStyles = `
   font-size: .92rem;
   margin: 6px 0 12px;
   min-height: 40px;
+  flex-grow: 1;
 }
 .light .senior-card .bio-style {
   color: var(--muted);
@@ -393,7 +405,7 @@ const globalStyles = `
 }
 
 /* =================================
-  7. MyBookings Component (Theme-Aware)
+  7. MyBookings Component Styles
 ================================= */
 .grid-style-bookings {
   display: grid;
@@ -456,7 +468,7 @@ const globalStyles = `
   font-weight: 800;
   font-size: .78rem;
   text-transform: capitalize;
-  border: 1px solid transparent; /* 🚀 BOLD: Removed border for light */
+  border: 1px solid transparent;
 }
 .dark .booking-card .status-tag {
   border: 1px solid var(--stroke);
@@ -610,7 +622,7 @@ const globalStyles = `
 }
 .modal-body strong {
   color: var(--brand1);
-  font-weight: 700; /* 🚀 BOLD: Added */
+  font-weight: 700;
 }
 .modal-footer {
   display: flex;
@@ -681,7 +693,6 @@ const globalStyles = `
 // 🌟 Star Icon (Gradient + Smooth)
 const StarIcon = ({ filled, size = 24, isClickable = false }) => (
   <svg
-    // 🚀 BOLD: Fill ko CSS variable se control karein (ya default)
     fill={filled ? "url(#grad)" : "var(--stroke, #d1d5db)"}
     width={size}
     height={size}
@@ -694,7 +705,6 @@ const StarIcon = ({ filled, size = 24, isClickable = false }) => (
   >
     <defs>
       <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        {/* 🚀 BOLD: Gradient ko brand colors se match karein */}
         <stop offset="0%" style={{ stopColor: "#06b6d4" }} />
         <stop offset="100%" style={{ stopColor: "#7c3aed" }} />
       </linearGradient>
@@ -725,6 +735,45 @@ const SkeletonCard = () => (
     <div className="skeleton" style={{ width: "70%", height: 36, margin: "16px auto", borderRadius: 12 }} />
   </div>
 );
+
+// ===============================
+// 🚀 Custom Modal Component
+// ===============================
+const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="modal-backdrop"
+      onClick={onClose}
+    >
+      <div 
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header">
+          <h3 className="modal-title">{title}</h3>
+          <button onClick={onClose} className="modal-close-btn">&times;</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+        <div className="modal-footer">
+          <button 
+            onClick={onClose} 
+            className="cc-btn" 
+            style={{background: 'var(--stroke)', color: 'var(--muted)'}}
+          >
+            Cancel
+          </button>
+          <button onClick={onConfirm} className="cc-btn danger">
+            Yes, Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // ===============================
 // 🎓 FindSenior (revamped UI)
@@ -803,7 +852,7 @@ const FindSenior = ({ seniors, loading, colleges, tags }) => {
                     src={p.avatar || "https://via.placeholder.com/100"}
                     alt={p.user?.name}
                     className="avatar"
-                    loading="lazy" /* 🚀 BOLD: Added lazy loading */
+                    loading="lazy"
                   />
                 </div>
 
@@ -851,6 +900,10 @@ const MyBookings = ({ seniors }) => {
   const [hoverRating, setHoverRating] = useState({ bookingId: null, value: 0 });
   const navigate = useNavigate();
 
+  // Modal State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [ratingData, setRatingData] = useState({ bookingId: null, seniorId: null, value: 0 });
+
   useEffect(() => {
     const loadBookings = async () => {
       try {
@@ -871,9 +924,6 @@ const MyBookings = ({ seniors }) => {
 
   const handleDispute = (id) => navigate(`/raise-dispute/${id}`);
   const handleChat = (id) => navigate(`/chat/${id}`);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [ratingData, setRatingData] = useState({ bookingId: null, seniorId: null, value: 0 });
 
   const openRatingModal = (bookingId, seniorId, value) => {
     setRatingData({ bookingId, seniorId, value });
@@ -961,7 +1011,7 @@ const MyBookings = ({ seniors }) => {
             src={correctAvatar || b.profile?.avatar || "https://via.placeholder.com/60"}
             alt={b.senior?.name}
             className="booking-avatar"
-            loading="lazy" /* 🚀 BOLD: Added lazy loading */
+            loading="lazy"
           />
         </div>
 
@@ -976,7 +1026,6 @@ const MyBookings = ({ seniors }) => {
           </p>
         )}
 
-        {/* 🚀 BOLD: Yahaan logic fix kar diya hai */}
         {status === "completed" && !b.rated && (
           <div className="rating-section">
             <p className="rating-prompt">Rate this session:</p>
@@ -999,7 +1048,6 @@ const MyBookings = ({ seniors }) => {
           </div>
         )}
         
-        {/* 🚀 BOLD: Yeh tabhi dikhega jab b.rated === true hoga */}
         {b.rated && (
           <div className="rated-section">
             <span>You rated:</span>
@@ -1013,7 +1061,11 @@ const MyBookings = ({ seniors }) => {
 
         <div className="button-row">
           {status === "confirmed" && (
-            <button className="cc-btn primary btn-compact" onClick={() => handleChat(b._id)}>💬 Chat</button>
+            <>
+              <button className="cc-btn primary btn-compact" onClick={() => handleChat(b._id)}>💬 Chat</button>
+              {/* 🚀 New Join Call Button added here */}
+              <Link to={`/session/${b._id}`} className="cc-btn success btn-compact" style={{textDecoration:'none'}}>📹 Join Call</Link>
+            </>
           )}
           {dispute === "none" && !b.rated && (
             <button className="cc-btn danger btn-compact" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
@@ -1084,46 +1136,6 @@ const MyBookings = ({ seniors }) => {
 };
 
 // ===============================
-// 🚀 BOLD: Custom Modal Component
-// ===============================
-const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div 
-      className="modal-backdrop"
-      onClick={onClose}
-    >
-      <div 
-        className="modal-content"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-header">
-          <h3 className="modal-title">{title}</h3>
-          <button onClick={onClose} className="modal-close-btn">&times;</button>
-        </div>
-        <div className="modal-body">
-          {children}
-        </div>
-        <div className="modal-footer">
-          <button 
-            onClick={onClose} 
-            className="cc-btn" 
-            style={{background: 'var(--stroke)', color: 'var(--muted)'}}
-          >
-            Cancel
-          </button>
-          <button onClick={onConfirm} className="cc-btn danger">
-            Yes, Continue
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-// ===============================
 // 🌈 Main Dashboard Shell
 // ===============================
 const StudentDashboard = () => {
@@ -1141,7 +1153,6 @@ const StudentDashboard = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
   
-  // 🚀 BOLD: Add Poppins font from Google Fonts
   useEffect(() => {
     const link = document.createElement('link');
     link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap';
@@ -1174,6 +1185,7 @@ const StudentDashboard = () => {
   return (
     <div className={`page-bg ${theme}`}>
       <style>{globalStyles}</style>
+      <Toaster position="top-center" reverseOrder={false} />
 
       <div className="main-container">
         <div className="tab-bar">
