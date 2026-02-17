@@ -32,8 +32,6 @@ function BookingPage() {
         const token = localStorage.getItem("token");
         if (!token) {
           setLoading(false);
-          // Agar login nahi hai to login par bhejo (Optional)
-          // navigate("/login"); 
           return;
         }
 
@@ -102,7 +100,6 @@ function BookingPage() {
       profileId: profile._id,
       date: selectedDate,  // "2025-02-18"
       time: selectedTime,  // "14:00"
-      slot_time: new Date(`${selectedDate}T${selectedTime}`), // Backup ke liye
       duration: profile.session_duration_minutes,
       amount: totalAmount,
     };
@@ -111,7 +108,7 @@ function BookingPage() {
     try {
       const orderRes = await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
-        { seniorId: profile.user._id },
+        { amount: totalAmount }, // Fixed: sending amount properly
         { headers: { "x-auth-token": token } }
       );
       const order = orderRes.data;
@@ -201,21 +198,21 @@ function BookingPage() {
             
             {/* 🚀 NEW INPUTS: DATE & TIME */}
             <div style={{ margin: "15px 0" }}>
-              <label style={{display:"block", fontWeight:"bold", marginBottom:"5px"}}>Select Date:</label>
+              <label style={{display:"block", fontWeight:"bold", marginBottom:"5px", color: "#333"}}>Select Date:</label>
               <input 
                 type="date" 
-                className="w-full border p-2 rounded"
-                style={{ width: "100%", padding: "8px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+                className="cc-input"
+                style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "8px", border: "1px solid #ccc" }}
                 min={new Date().toISOString().split("T")[0]} // Disable past dates
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
               />
 
-              <label style={{display:"block", fontWeight:"bold", marginBottom:"5px"}}>Select Time:</label>
+              <label style={{display:"block", fontWeight:"bold", marginBottom:"5px", color: "#333"}}>Select Time:</label>
               <input 
                 type="time" 
-                className="w-full border p-2 rounded"
-                style={{ width: "100%", padding: "8px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ccc" }}
+                className="cc-input"
+                style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "8px", border: "1px solid #ccc" }}
                 value={selectedTime}
                 onChange={(e) => setSelectedTime(e.target.value)}
               />
@@ -230,8 +227,8 @@ function BookingPage() {
               🔒 Pay ₹{totalAmount} & Book
             </button>
             
-            <p className="note" style={{marginTop:"10px", fontSize:"12px", color:"#666"}}>
-              *Session link will activate at your selected time.
+            <p style={{marginTop:"15px", fontSize:"13px", color:"#666", textAlign: 'center'}}>
+              *Session link will activate 5 mins before your selected time.
             </p>
           </div>
         </div>
