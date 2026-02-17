@@ -7,232 +7,107 @@ import "./BookingPage.css";
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-
-  // Auth Context (Mock or Real)
-  const authUser = JSON.parse(localStorage.getItem("user")) || { name: "Guest", email: "guest@example.com" };
-
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   
-  // 🚀 NEW STATE: Date aur Time ke liye
+  // 📅 Date & Time Inputs
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
 
-  const isMobile = windowWidth <= 768;
+  const isMobile = window.innerWidth <= 768;
 
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-
-    const loadPageData = async () => {
+    const loadData = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const [res, settingsRes, allProfilesRes] = await Promise.all([
-          axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
-            { headers: { "x-auth-token": token } }
-          ),
-          axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
-          ),
-          axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`,
-            { headers: { "x-auth-token": token } }
-          ),
-        ]);
-
-        const singleProfileData = res.data;
-        const allProfilesData = allProfilesRes.data;
-
-        const matchingProfileFromAll = allProfilesData.find(
-          (p) => p.user?._id === userId
-        );
-
-        const combinedProfile = {
-          ...singleProfileData,
-          ...matchingProfileFromAll,
-          user: singleProfileData.user || matchingProfileFromAll.user,
-          college: singleProfileData.college || matchingProfileFromAll.college,
-        };
-
-        setProfile(combinedProfile);
-        const fee = combinedProfile.price_per_session + settingsRes.data.platformFee;
-        setTotalAmount(fee);
+        const res = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } });
+        const settings = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
+        
+        setProfile(res.data);
+        setTotalAmount((res.data.price_per_session || 0) + (settings.data.platformFee || 0));
         setLoading(false);
-      } catch (err) {
-        let errorMsg = err.response
-          ? err.response.data.msg || err.response.data
-          : err.message;
-        setError("Error: " + errorMsg);
-        setLoading(false);
-      }
+      } catch (err) { setLoading(false); }
     };
-
-    loadPageData();
-    return () => window.removeEventListener("resize", handleResize);
+    loadData();
   }, [userId]);
 
-  const displayRazorpay = async () => {
+  const handlePayment = async () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("You must be logged in to book.");
-      navigate("/login");
-      return;
-    }
+    if (!token) { toast.error("Login required!"); navigate("/login"); return; }
+    if (!selectedDate || !selectedTime) { toast.error("Please pick Date & Time!"); return; }
 
-    // 🚀 VALIDATION: Date aur Time check karo
-    if (!selectedDate || !selectedTime) {
-      toast.error("Please select a Date and Time for the session!");
-      return;
-    }
-
-    // 🚀 UPDATED: Ab hum Date aur Time bhej rahe hain
-    const bookingDetails = {
+    const bookingPayload = {
       senior: profile.user._id,
-      profileId: profile._id,
-      date: selectedDate,  // "2025-02-18"
-      time: selectedTime,  // "14:00"
-      duration: profile.session_duration_minutes,
-      amount: totalAmount,
+      date: selectedDate,
+      time: selectedTime,
+      amount: totalAmount
     };
 
-    const toastId = toast.loading("Creating your order...");
     try {
       const orderRes = await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
-        { amount: totalAmount }, // Fixed: sending amount properly
+        { amount: totalAmount },
         { headers: { "x-auth-token": token } }
       );
-      const order = orderRes.data;
-      toast.dismiss(toastId);
 
       const options = {
-        key: "rzp_test_RbhIpPvOLS2KkF", // Apna key verify karein
-        amount: order.amount,
-        currency: order.currency,
+        key: "rzp_test_RbhIpPvOLS2KkF",
+        amount: orderRes.data.amount,
+        currency: "INR",
         name: "CollegeConnect",
-        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
-        order_id: order.id,
+        order_id: orderRes.data.id,
         handler: async function (response) {
-          const verifyToastId = toast.loading("Verifying payment...");
+          const toastId = toast.loading("Confirming...");
           try {
             await axios.post(
               "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
-              { ...response, bookingDetails }, // Yahan 'bookingDetails' backend jayega
+              { ...response, bookingDetails: bookingPayload },
               { headers: { "x-auth-token": token } }
             );
-            toast.dismiss(verifyToastId);
-            toast.success("Booking Confirmed! Check 'My Bookings'.");
-            navigate("/student/bookings"); // ✅ Correct Redirect
+            toast.dismiss(toastId);
+            toast.success("Booking Confirmed!");
+            
+            // 🚀 SUCCESS REDIRECT (Ye My Bookings tab pe le jayega)
+            navigate("/student-dashboard/bookings"); 
+            
           } catch (error) {
-            console.error(error);
-            toast.dismiss(verifyToastId);
-            toast.error("Payment Verification Failed.");
+            toast.dismiss(toastId);
+            toast.error("Verification Failed");
           }
         },
-        prefill: { name: authUser.name, email: authUser.email },
-        theme: { color: "#10B981" },
+        theme: { color: "#10B981" }
       };
-
-      const rzp1 = new window.Razorpay(options);
-      rzp1.open();
-    } catch (err) {
-      toast.dismiss(toastId);
-      let errorMsg = err.response
-        ? err.response.data.msg || err.response.data
-        : err.message;
-      toast.error("Error creating order. " + errorMsg);
-    }
+      new window.Razorpay(options).open();
+    } catch (err) { toast.error("Payment Error"); }
   };
 
-  if (loading) return <div className="booking-page center"><h2 className="loading-text">⏳ Loading...</h2></div>;
-  if (error) return <div className="booking-page center"><h2 className="error-text">❌ {error}</h2></div>;
-  if (!profile) return <div className="booking-page center"><h2>Profile not found.</h2></div>;
+  if (loading) return <div className="center">Loading...</div>;
+  if (!profile) return <div className="center">Profile not found</div>;
 
   return (
     <div className="booking-page">
       <div className={`layout ${isMobile ? "mobile" : ""}`}>
-        
-        {/* LEFT SIDE: PROFILE INFO */}
         <div className="main-content">
           <div className="profile-card">
-            <img
-              src={profile.avatar || "https://via.placeholder.com/120"}
-              alt={profile.user?.name}
-              className="avatar"
-            />
-            <h2 className="profile-name">{profile.user?.name}</h2>
-            <p className="college">{profile.college?.name || "N/A"}</p>
-            <p className="branch">{profile.branch} ({profile.year})</p>
-          </div>
-
-          <div className="card">
-            <h3 className="heading">👤 About Me</h3>
-            <p className="bio">{profile.bio || "No bio added."}</p>
-          </div>
-
-          <div className="card">
-            <h3 className="heading">🏷️ Specializations</h3>
-            <div className="tags">
-              {profile.tags?.length ? (
-                profile.tags.map((tag) => <span key={tag._id} className="tag">{tag.name}</span>)
-              ) : (
-                <p className="no-tags">No tags listed.</p>
-              )}
-            </div>
+            <img src={profile.avatar || "https://via.placeholder.com/100"} alt="Senior" className="avatar"/>
+            <h2>{profile.user?.name}</h2>
+            <p>{profile.college?.name}</p>
           </div>
         </div>
 
-        {/* RIGHT SIDE: BOOKING BOX */}
         <div className="sidebar">
           <div className="card booking-box">
-            <h3 className="heading center">Schedule Session</h3>
+            <h3>Select Slot</h3>
+            <input type="date" className="cc-input" min={new Date().toISOString().split("T")[0]} onChange={(e) => setSelectedDate(e.target.value)} style={{marginBottom:10, width:'100%', padding:10}} />
+            <input type="time" className="cc-input" onChange={(e) => setSelectedTime(e.target.value)} style={{marginBottom:15, width:'100%', padding:10}} />
             
-            {/* 🚀 NEW INPUTS: DATE & TIME */}
-            <div style={{ margin: "15px 0" }}>
-              <label style={{display:"block", fontWeight:"bold", marginBottom:"5px", color: "#333"}}>Select Date:</label>
-              <input 
-                type="date" 
-                className="cc-input"
-                style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "8px", border: "1px solid #ccc" }}
-                min={new Date().toISOString().split("T")[0]} // Disable past dates
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-
-              <label style={{display:"block", fontWeight:"bold", marginBottom:"5px", color: "#333"}}>Select Time:</label>
-              <input 
-                type="time" 
-                className="cc-input"
-                style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "8px", border: "1px solid #ccc" }}
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-              />
-            </div>
-
             <div className="price-box">
-              <span className="price">₹{totalAmount}</span>
-              <span className="chat-free">+ Chat Free</span>
+              <span className="price">Total: ₹{totalAmount}</span>
             </div>
-
-            <button className="book-btn" onClick={displayRazorpay}>
-              🔒 Pay ₹{totalAmount} & Book
-            </button>
-            
-            <p style={{marginTop:"15px", fontSize:"13px", color:"#666", textAlign: 'center'}}>
-              *Session link will activate 5 mins before your selected time.
-            </p>
+            <button className="book-btn" onClick={handlePayment}>Pay & Book</button>
           </div>
         </div>
-
       </div>
     </div>
   );
