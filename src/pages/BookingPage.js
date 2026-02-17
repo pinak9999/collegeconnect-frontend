@@ -2,237 +2,169 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import "./BookingPage.css"; // ✅ Linked CSS file
+import "./BookingPage.css"; 
 
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-
-  const { auth } = {
-    auth: { user: { name: "Mock User", email: "mock.user@example.com" } },
-  };
-
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const isMobile = windowWidth <= 768;
+  
+  // 📅 Date & Time State
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+
+  const isMobile = window.innerWidth <= 768;
 
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-
     const loadPageData = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          setLoading(false);
-          setError("Error: You are not logged in.");
-          return;
-        }
-
-        const [res, settingsRes, allProfilesRes] = await Promise.all([
-          axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
-            { headers: { "x-auth-token": token } }
-          ),
-          axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
-          ),
-          axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`,
-            { headers: { "x-auth-token": token } }
-          ),
-        ]);
-
-        const singleProfileData = res.data;
-        const allProfilesData = allProfilesRes.data;
-
-        const matchingProfileFromAll = allProfilesData.find(
-          (p) => p.user?._id === userId
-        );
-
-        const combinedProfile = {
-          ...singleProfileData,
-          ...matchingProfileFromAll,
-          user: singleProfileData.user || matchingProfileFromAll.user,
-          college: singleProfileData.college || matchingProfileFromAll.college,
-        };
-
-        setProfile(combinedProfile);
-        const fee =
-          combinedProfile.price_per_session + settingsRes.data.platformFee;
+        // API Calls - (Profile + Settings)
+        const res = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } });
+        const settingsRes = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
+        
+        setProfile(res.data);
+        const fee = (res.data.price_per_session || 0) + (settingsRes.data.platformFee || 0);
         setTotalAmount(fee);
         setLoading(false);
       } catch (err) {
-        let errorMsg = err.response
-          ? err.response.data.msg || err.response.data
-          : err.message;
-        setError("Error: " + errorMsg);
         setLoading(false);
+        // Error handling but keep simple
       }
     };
-
     loadPageData();
-    return () => window.removeEventListener("resize", handleResize);
   }, [userId]);
 
   const displayRazorpay = async () => {
-    if (!auth.user) {
-      toast.error("You must be logged in to book.");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to book.");
       navigate("/login");
       return;
     }
 
+    if (!selectedDate || !selectedTime) {
+      toast.error("Please select Date and Time!");
+      return;
+    }
+
+    // Booking Details Object
     const bookingDetails = {
       senior: profile.user._id,
-      profileId: profile._id,
-      slot_time: new Date(),
-      duration: profile.session_duration_minutes,
+      date: selectedDate,
+      time: selectedTime,
       amount: totalAmount,
     };
 
-    const toastId = toast.loading("Creating your order...");
     try {
-      const token = localStorage.getItem("token");
+      // 1. Create Order
       const orderRes = await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
-        { seniorId: profile.user._id },
+        { amount: totalAmount },
         { headers: { "x-auth-token": token } }
       );
-      const order = orderRes.data;
-      toast.dismiss(toastId);
 
+      // 2. Open Razorpay
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF",
-        amount: order.amount,
-        currency: order.currency,
+        amount: orderRes.data.amount,
+        currency: "INR",
         name: "CollegeConnect",
-        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
-        order_id: order.id,
+        description: `Session with ${profile.user.name}`,
+        order_id: orderRes.data.id,
         handler: async function (response) {
-          const verifyToastId = toast.loading("Verifying payment...");
+          const toastId = toast.loading("Verifying Payment...");
           try {
+            // 3. Verify & Save
             await axios.post(
               "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
               { ...response, bookingDetails },
               { headers: { "x-auth-token": token } }
             );
-            toast.dismiss(verifyToastId);
-            toast.success("Booking Confirmed!");
-            navigate("/booking-success");
-          } catch {
-            toast.dismiss(verifyToastId);
-            toast.error("Payment Verification Failed. Please contact support.");
+            toast.dismiss(toastId);
+            toast.success("Booking Successful!");
+            
+            // 🚀 REDIRECT TO MY BOOKINGS (Corrected Path)
+            navigate("/student-dashboard/bookings"); 
+            
+          } catch (error) {
+            toast.dismiss(toastId);
+            toast.error("Payment Verification Failed.");
           }
         },
-        prefill: { name: auth.user.name, email: auth.user.email },
         theme: { color: "#10B981" },
+        prefill: { name: "Student", email: "student@example.com" }
       };
 
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } catch (err) {
-      toast.dismiss(toastId);
-      let errorMsg = err.response
-        ? err.response.data.msg || err.response.data
-        : err.message;
-      toast.error("Error creating order. " + errorMsg);
+      toast.error("Could not initiate payment.");
     }
   };
 
-  if (loading)
-    return (
-      <div className="booking-page center">
-        <h2 className="loading-text">⏳ Loading Booking Page...</h2>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="booking-page center">
-        <h2 className="error-text">❌ {error}</h2>
-      </div>
-    );
-
-  if (!profile)
-    return (
-      <div className="booking-page center">
-        <h2>Profile not found.</h2>
-      </div>
-    );
+  if (loading) return <div className="center">Loading Profile...</div>;
+  if (!profile) return <div className="center">Profile not found.</div>;
 
   return (
-    <div className="booking-page">
-      <div className={`layout ${isMobile ? "mobile" : ""}`}>
-        <div className="main-content">
-          <div className="profile-card">
-            <img
-              src={profile.avatar || "https://via.placeholder.com/120"}
-              alt={profile.user?.name || "Senior"}
-              className="avatar"
+    <div className="booking-page" style={{padding: '20px'}}>
+      <div className={`layout ${isMobile ? "mobile" : ""}`} style={{maxWidth:'1000px', margin:'0 auto', display:'flex', gap:'20px'}}>
+        
+        {/* Left: Profile Details */}
+        <div style={{flex:2}}>
+          <div className="profile-card" style={{textAlign:'center', marginBottom:'20px'}}>
+            <img src={profile.avatar || "https://via.placeholder.com/100"} alt="Avatar" style={{width:'100px', borderRadius:'50%'}} />
+            <h2>{profile.user?.name}</h2>
+            <p>{profile.college?.name}</p>
+            <p>{profile.branch} ({profile.year})</p>
+          </div>
+          <div className="card">
+            <h3>About</h3>
+            <p>{profile.bio}</p>
+          </div>
+        </div>
+
+        {/* Right: Booking Form */}
+        <div style={{flex:1}}>
+          <div className="card booking-box" style={{border:'1px solid #ddd', padding:'20px', borderRadius:'12px'}}>
+            <h3 style={{textAlign:'center'}}>Schedule Session</h3>
+            
+            <label style={{display:'block', marginTop:'10px'}}>Select Date:</label>
+            <input 
+              type="date" 
+              className="cc-input"
+              min={new Date().toISOString().split("T")[0]}
+              style={{width:'100%', padding:'10px', marginBottom:'10px', borderRadius:'8px', border:'1px solid #ccc'}}
+              onChange={(e) => setSelectedDate(e.target.value)}
             />
-            <h2 className="profile-name">{profile.user?.name}</h2>
-            <p className="college">{profile.college?.name || "N/A"}</p>
-            <p className="branch">
-              {profile.branch} ({profile.year})
-            </p>
-          </div>
 
-          <div className="card">
-            <h3 className="heading">👤 About Me</h3>
-            <p className="bio">{profile.bio}</p>
-          </div>
+            <label style={{display:'block'}}>Select Time:</label>
+            <input 
+              type="time" 
+              className="cc-input"
+              style={{width:'100%', padding:'10px', marginBottom:'15px', borderRadius:'8px', border:'1px solid #ccc'}}
+              onChange={(e) => setSelectedTime(e.target.value)}
+            />
 
-          <div className="card">
-            <h3 className="heading">🏷️ Specializations</h3>
-            <div className="tags">
-              {profile.tags?.length ? (
-                profile.tags.map((tag) => (
-                  <span key={tag._id} className="tag">
-                    {tag.name}
-                  </span>
-                ))
-              ) : (
-                <p className="no-tags">No tags listed.</p>
-              )}
-            </div>
-          </div>
-
-          {profile.id_card_url && (
-            <div className="card verified">
-              <h3 className="heading center">🎓 College Verified ID ✓</h3>
-              <img
-                src={profile.id_card_url}
-                alt="College ID Card"
-                className="id-card"
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="sidebar">
-          <div className="card booking-box">
-            <h3 className="heading center">Book this Session</h3>
-            <p className="note">
-              After payment, the senior will contact you within 6 hours to
-              schedule the best time.
-            </p>
-
-            <div className="price-box">
-              <span className="price">₹{totalAmount}</span>
-              <span className="chat-free">+ Chat Free</span>
+            <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', fontWeight:'bold'}}>
+              <span>Total Fee:</span>
+              <span style={{color:'green'}}>₹{totalAmount}</span>
             </div>
 
-            <button
-              className="book-btn"
+            <button 
               onClick={displayRazorpay}
+              style={{width:'100%', padding:'12px', background:'#2563eb', color:'white', border:'none', borderRadius:'8px', fontWeight:'bold', cursor:'pointer'}}
             >
-              🔒 Pay ₹{totalAmount} & Book
+              Pay & Book
             </button>
+            <p style={{fontSize:'12px', color:'#666', marginTop:'10px', textAlign:'center'}}>
+              Secure payment via Razorpay
+            </p>
           </div>
         </div>
+
       </div>
     </div>
   );
