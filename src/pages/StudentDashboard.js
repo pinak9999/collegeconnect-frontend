@@ -944,6 +944,7 @@ const MyBookings = ({ seniors }) => {
           "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my",
           { headers: { "x-auth-token": token } }
         );
+        console.log("🔥 BOOKINGS FROM BACKEND:", res.data);
         setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       } catch {
         toast.error("⚠️ Unable to load bookings");
