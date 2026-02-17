@@ -7,7 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import MobileNumberModal from './components/MobileNumberModal';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import StudentBookings from './pages/StudentBookings';
 // 🔹 Pages
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
