@@ -111,9 +111,10 @@ function BookingPage() {
         
         // 🟢 MAIN FIX IS HERE (Handler Function)
         handler: async function (response) {
+          console.log("🔥 Payment Success! Response:", response);
           const verifyToastId = toast.loading("Verifying & Saving Booking...");
+          
           try {
-            
             // ✅ FIX: Data object yahan banaya hai (Pehle ye missing tha)
             const verificationData = {
                 razorpay_order_id: response.razorpay_order_id,
@@ -124,19 +125,23 @@ function BookingPage() {
                 topic: "Mentorship Session"
             };
 
+            console.log("📤 Sending data to Backend:", verificationData);
+
             // 3. Verify Payment & Save to DB
-            await axios.post(
+            const res = await axios.post(
               `${API_BASE_URL}/api/payment/verify`,
               verificationData, // ✅ Correct Data Variable passed
               { headers: { "x-auth-token": token } }
             );
+
+            console.log("✅ Booking Saved:", res.data);
 
             toast.dismiss(verifyToastId);
             toast.success("Booking Confirmed! 🎉");
             navigate("/student-dashboard/bookings");
             
           } catch (err) {
-            console.error(err);
+            console.error("❌ Save Error:", err);
             toast.dismiss(verifyToastId);
             toast.error("Payment successful but booking save failed.");
           }
