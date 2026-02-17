@@ -2,42 +2,823 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+// import './StudentDashboard.css'; // ⭐ CSS import ko hata diya gaya hai
+
+// ======================================
+// 🔮 Global CSS (Light + Dark Themes)
+// Saare CSS styles ab yahin hain
+// ======================================
+const globalStyles = `
+@keyframes floatUp { 0%{transform:translateY(0)} 50%{transform:translateY(-4px)} 100%{transform:translateY(0)} }
+@keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+@keyframes subtleGlow { 0%{box-shadow:0 0 0 rgba(99,102,241,0)} 100%{box-shadow:0 8px 28px rgba(99,102,241,.18)} }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =================================
+  1. DEFAULT (LIGHT/COLORFUL) THEME
+================================= */
+:root{
+  --bg: #f4fcf6ff;              /* Light page background */
+  --card: #ffffff;              /* White card */
+  --panel: #ffffffcc;             /* Translucent panel */
+  --stroke: #e5e7eb;              /* Light borders */
+  --txt: #1f2937;              /* Dark primary text */
+  --muted: #6b7280;              /* Dark secondary text */
+  --brand1: #7c3aed;              /* Violet (same as dark) */
+  --brand2: #06b6d4;              /* Cyan (same as dark) */
+  --ok: #16a34a;              /* Success */
+  --warn: #f59e0b;              /* Warning */
+  --danger: #ef4444;              /* Danger */
+  
+  --bg-gradient: linear-gradient(180deg, #f4f7fc 0%, #f4f7fc 100%);
+  --panel-bg: #ffffffcc;
+  --input-bg: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  --tab-bg: #f3f4f6;
+  --tab-hover-bg: #e5e7eb;
+  --info-bg: #eff6ff;
+  --info-color: #3b82f6;
+  --rating-bg: #f9fafb;
+  --rating-prompt-color: var(--brand1);
+  --rated-bg: #f0fdf4;
+  --rated-color: #166534;
+  --dispute-color: #fca5a5;
+  --modal-bg: #ffffff;
+}
+
+/* =================================
+  2. DARK THEME VARIABLES
+================================= */
+.dark {
+  --bg: #0b1220;
+  --card: #0f172a99;
+  --panel: #101827cc;
+  --stroke: #27324a;
+  --txt: #e5e7eb;
+  --muted: #9aa3b2;
+  --brand1: #7c3aed;
+  --brand2: #06b6d4;
+  --ok: #16a34a;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+
+  --bg-gradient: linear-gradient(180deg, #050816 0%, #0b1220 100%);
+  --panel-bg: #101827cc;
+  --input-bg: linear-gradient(180deg, #0b1220 0%, #0b1220 60%, #0d1628 100%);
+  --tab-bg: linear-gradient(180deg,#0e1628,#0b1323);
+  --tab-hover-bg: linear-gradient(180deg,#0e1628,#0b1323); /* No change on hover for dark tabs */
+  --info-bg: linear-gradient(180deg, #0e1b31, #0b1426);
+  --info-color: #c7d2fe;
+  --rating-bg: linear-gradient(180deg, #0e1628, #0b1323);
+  --rating-prompt-color: #c7d2fe;
+  --rated-bg: linear-gradient(180deg, #0d1a2f, #0a1324);
+  --rated-color: #86efac;
+  --dispute-color: #fca5a5;
+  --modal-bg: linear-gradient(145deg, #0f172a, #0b1220);
+}
+
+* { outline: none; box-sizing: border-box; }
+
+/* =================================
+  3. Page Layout (Theme-Aware)
+================================= */
+.page-bg {
+  min-height: 100vh;
+  background:
+    radial-gradient(1000px 400px at -10% -10%, rgba(124,58,237,.25), transparent 60%),
+    radial-gradient(800px 350px at 110% 0%, rgba(6,182,212,.22), transparent 60%),
+    var(--bg-gradient);
+  background-color: var(--bg); /* Fallback */
+  font-family: "Poppins", sans-serif; /* 🚀 BOLD: Font set globally */
+}
+.main-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+.page-wrapper {
+  padding: 8px;
+  color: var(--txt);
+}
+.small-muted {
+  color: var(--muted);
+  font-size: .9rem;
+}
+.rating-row svg {
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
+}
+.light .rating-row svg {
+  filter: none;
+}
+
+/* =================================
+  4. Reusable Components (Theme-Aware)
+================================= */
+.cc-input, .cc-select {
+  border:1px solid var(--stroke);
+  background: var(--input-bg);
+  color:var(--txt);
+  border-radius:14px;
+  padding:12px 16px;
+  width:100%;
+  transition:.25s border-color, .25s box-shadow, .25s transform;
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+}
+.cc-input:focus, .cc-select:focus {
+  border-color: #7dd3fc;
+  box-shadow: 0 0 0 4px rgba(125,211,252,.15);
+  transform: translateY(-1px);
+}
+.cc-tab {
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:10px 16px;
+  font-weight:700;
+  text-decoration:none;
+  color:var(--txt);
+  background: var(--tab-bg);
+  transition:.25s transform,.25s box-shadow,.25s background;
+  will-change: transform;
+  white-space: nowrap;
+}
+.cc-tab.active {
+  background: linear-gradient(90deg, var(--brand1), var(--brand2));
+  box-shadow: 0 8px 22px rgba(6,182,212,.25);
+  color: white; /* 🚀 BOLD: Ensure text is white */
+}
+.cc-tab:not(.active):hover { 
+  transform: translateY(-2px); 
+  background: var(--tab-hover-bg);
+}
+.cc-btn {
+  border:none; cursor:pointer; border-radius:12px; padding:10px 16px; font-weight:700;
+  color:white; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  justify-content: center;
+}
+.cc-btn:active { transform: translateY(1px) scale(.99) }
+.cc-btn.primary {
+  background: linear-gradient(120deg, var(--brand2), var(--brand1));
+  box-shadow: 0 8px 22px rgba(124,58,237,.25);
+}
+.cc-btn.danger {
+  background: linear-gradient(120deg, #fb7185, var(--danger));
+  box-shadow: 0 8px 22px rgba(239,68,68,.25);
+}
+.cc-chip {
+  border:1px solid var(--stroke);
+  color:var(--muted);
+  background: var(--tab-bg); /* Use tab background */
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s transform,.2s box-shadow,.2s color,.2s background,.2s border-color;
+  margin: 4px;
+}
+.cc-chip:hover { transform: translateY(-1px) }
+.cc-chip.active {
+  color:white;
+  border-color: transparent;
+  background: linear-gradient(90deg, var(--brand1), var(--brand2));
+  box-shadow: 0 8px 22px rgba(124,58,237,.25);
+}
+.card {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  border:1px solid var(--stroke);
+  border-radius:18px;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.dark .card {
+  box-shadow: 0 30px 60px rgba(2,6,23,.35);
+}
+.light .card {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+.card:hover { transform: translateY(-2px); border-color:#334155; }
+.dark .card:hover { border-color:#334155; }
+.light .card:hover { border-color:var(--brand2); }
+
+.skeleton {
+  background: linear-gradient(90deg, #0d1526 25%, #111b31 50%, #0d1526 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 10px;
+}
+.light .skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+}
+
+/* =================================
+  5. Tabs & Headings (Theme-Aware)
+================================= */
+.tab-bar {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background: var(--panel-bg); /* 🚀 BOLD: Use panel background */
+  border: 1px solid var(--stroke);
+  margin-bottom: 18px;
+  position: sticky;
+  top: 12px;
+  z-index: 5;
+  backdrop-filter: blur(10px);
+  align-items: center; /* 🚀 BOLD: To center toggle button */
+}
+.dark .tab-bar {
+  box-shadow: 0 20px 40px rgba(2,6,23,.35);
+}
+.light .tab-bar {
+  background: #ffffff99;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+/* 🚀 BOLD: New Theme Toggle Button */
+.theme-toggle-btn {
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--tab-bg);
+  color: var(--txt);
+  font-size: 1.25rem;
+  cursor: pointer;
+  margin-left: auto; /* 🚀 BOLD: Pushes to the right */
+  transition: all 0.25s ease;
+}
+.theme-toggle-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand2);
+  color: var(--brand2);
+}
+
+.title-style {
+  text-align: left;
+  color: var(--txt);
+  margin-bottom: 16px;
+  font-weight: 900;
+  letter-spacing: .3px;
+  font-size: 1.4rem;
+}
+.dark .title-style {
+  text-shadow: 0 1px 0 rgba(0,0,0,.4);
+}
+.light .title-style {
+  text-shadow: none;
+}
+.section-title-style {
+  color: var(--txt);
+  font-weight: 800;
+  font-size: 1.15rem;
+  margin: 10px 0 10px 2px;
+  border-left: 3px solid var(--brand1);
+  padding-left: 10px;
+}
+
+/* =================================
+  6. FindSenior Component (Theme-Aware)
+================================= */
+.panel-wrap {
+  border: 1px solid var(--stroke);
+  background: var(--panel-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.dark .panel-wrap {
+  box-shadow: 0 20px 40px rgba(2,6,23,.35);
+}
+.light .panel-wrap {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.filter-row {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+.tag-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.grid-style-seniors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.senior-card {
+  padding: 18px;
+  text-align: center;
+}
+.senior-card .image-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+.senior-card .avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(124,58,237,.55);
+  box-shadow: 0 10px 24px rgba(124,58,237,.25);
+}
+.light .senior-card .avatar {
+  border-color: var(--brand1);
+}
+
+.senior-card .name-style {
+  color: var(--txt);
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin: 10px 0 6px;
+}
+.light .senior-card .name-style {
+  color: var(--brand1);
+}
+.senior-card .college-style {
+  color: var(--muted);
+  font-size: .92rem;
+  margin: 0 0 6px;
+}
+.senior-card .bio-style {
+  color: var(--txt);
+  font-size: .92rem;
+  margin: 6px 0 12px;
+  min-height: 40px;
+}
+.light .senior-card .bio-style {
+  color: var(--muted);
+}
+.senior-card .rating-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+.senior-card .rating-count {
+  margin-left: 8px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.senior-card .price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.senior-card .small-chip {
+  border: 1px solid var(--stroke);
+  color: var(--txt);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: .8rem;
+}
+.senior-card .price-text {
+  color: #86efac;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.light .senior-card .price-text {
+  color: var(--ok);
+}
+
+/* =================================
+  7. MyBookings Component (Theme-Aware)
+================================= */
+.grid-style-bookings {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.booking-card {
+  padding: 18px;
+}
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--stroke);
+  padding-bottom: 12px;
+  gap: 12px;
+}
+.booking-card .booking-name {
+  color: var(--txt);
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin: 0;
+}
+.light .booking-card .booking-name {
+  color: var(--brand1);
+}
+.booking-card .booking-college {
+  color: var(--muted);
+  font-size: .92rem;
+  margin: 6px 0 0 0;
+}
+.booking-card .booking-year-style {
+  color: #a5b4fc;
+  font-size: .9rem;
+  font-weight: 700;
+  margin: 6px 0 0 0;
+}
+.light .booking-card .booking-year-style {
+  color: var(--brand1);
+}
+.booking-card .booking-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(124,58,237,.45);
+  box-shadow: 0 8px 18px rgba(124,58,237,.25);
+  flex-shrink: 0;
+}
+.booking-card .status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+.booking-card .status-tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .78rem;
+  text-transform: capitalize;
+  border: 1px solid transparent; /* 🚀 BOLD: Removed border for light */
+}
+.dark .booking-card .status-tag {
+  border: 1px solid var(--stroke);
+}
+
+/* Status Tag Colors */
+.status-tag.status-confirmed { background: rgba(99,102,241,.15); color: #a5b4fc; }
+.status-tag.status-completed { background: rgba(34,197,94,.15); color: #86efac; }
+.status-tag.status-pending { background: rgba(245,158,11,.15); color: #fde68a; }
+.status-tag.status-cancelled { background: rgba(239,68,68,.15); color: #fca5a5; }
+.light .status-tag.status-confirmed { background: #e0e7ff; color: #4f46e5; }
+.light .status-tag.status-completed { background: #dcfce7; color: #166534; }
+.light .status-tag.status-pending { background: #fef9c3; color: #a16207; }
+.light .status-tag.status-cancelled { background: #fee2e2; color: #b91c1c; }
+
+.booking-card .info-message {
+  background: var(--info-bg);
+  color: var(--info-color);
+  padding: 12px;
+  border-radius: 10px;
+  font-size: .95rem;
+  font-weight: 600;
+  text-align: left;
+  line-height: 1.5;
+  border: 1px solid var(--stroke);
+  margin-top: 10px;
+}
+.booking-card .rating-section {
+  background: var(--rating-bg);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+  border: 1px solid var(--stroke);
+  margin-top: 8px;
+}
+.booking-card .rating-prompt {
+  font-weight: 800;
+  color: var(--rating-prompt-color);
+  margin: 0 0 10px 0;
+  font-size: .95rem;
+}
+.booking-card .rating-stars-container {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.booking-card .rated-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--rated-bg);
+  border-radius: 10px;
+  color: var(--rated-color);
+  font-weight: 800;
+  border: 1px solid var(--stroke);
+  margin-top: 6px;
+}
+.light .booking-card .rated-section {
+  border-color: #bbf7d0;
+}
+.booking-card .rated-stars {
+  display: flex;
+  gap: 2px;
+}
+.booking-card .button-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--stroke);
+}
+.booking-card .btn-compact {
+  font-size: .9rem;
+  padding: 8px 14px;
+}
+.booking-card .dispute-not-allowed {
+  color: var(--dispute-color);
+  font-weight: 700;
+  font-size: .86rem;
+  padding: 8px 0;
+}
+
+/* =================================
+  8. Modal (Theme-Aware)
+================================= */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+.modal-content {
+  background: var(--modal-bg);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 450px;
+  animation: slideIn 0.3s ease;
+  overflow: hidden;
+}
+.dark .modal-content {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.light .modal-content {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--stroke);
+}
+.modal-title {
+  color: var(--brand1);
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+.modal-close-btn:hover {
+  color: var(--txt);
+}
+.modal-body {
+  padding: 20px;
+  color: var(--txt);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.modal-body strong {
+  color: var(--brand1);
+  font-weight: 700; /* 🚀 BOLD: Added */
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid var(--stroke);
+}
+.light .modal-footer {
+  background: #f9fafb;
+}
+
+/* =================================
+  9. MOBILE RESPONSIVE FIXES
+================================= */
+@media (max-width: 640px) {
+  .main-container {
+    padding: 8px 8px 40px;
+  }
+  
+  .tab-bar {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 8px;
+    gap: 8px;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-bar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  .cc-tab {
+    padding: 8px 12px;
+  }
+  .theme-toggle-btn {
+    height: 38px;
+    width: 38px;
+    min-width: 38px;
+  }
+
+  .panel-wrap {
+    padding: 10px;
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .booking-header {
+     flex-direction: column-reverse;
+     align-items: center;
+     text-align: center;
+     gap: 12px;
+  }
+  
+  .booking-card .booking-avatar {
+     width: 70px;
+     height: 70px;
+  }
+  
+  .title-style, .section-title-style {
+    font-size: 1.1rem;
+    padding-left: 8px;
+  }
+}
+
+/* =================================
+  10. NEWLY ADDED CLASSES (from inline styles)
+================================= */
+
+/* SkeletonCard */
+.skeleton-card-padding {
+  padding: 18px;
+}
+.skeleton-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 999px;
+  margin: 8px auto;
+}
+.skeleton-line-1 {
+  width: 60%;
+  height: 14px;
+  margin: 14px auto;
+}
+.skeleton-line-2 {
+  width: 40%;
+  height: 12px;
+  margin: 8px auto;
+}
+.skeleton-line-3 {
+  width: 80%;
+  height: 10px;
+  margin: 16px auto;
+}
+.skeleton-line-4 {
+  width: 50%;
+  height: 12px;
+  margin: 16px auto;
+}
+.skeleton-button {
+  width: 70%;
+  height: 36px;
+  margin: 16px auto;
+  border-radius: 12px;
+}
+
+/* FindSenior */
+.filter-grid-inner {
+  display: grid;
+  gap: 10px;
+}
+.no-seniors-card {
+  padding: 24px;
+  grid-column: 1 / -1;
+  text-align: center;
+}
+.no-seniors-title {
+  font-size: 18px;
+  color: var(--txt);
+  font-weight: 700;
+}
+.no-seniors-subtitle {
+  margin-top: 6px;
+}
+
+/* MyBookings */
+.past-bookings-title {
+  margin-top: 28px;
+}
+.no-bookings-card {
+  padding: 26px;
+  text-align: center;
+}
+.no-bookings-title {
+  color: var(--txt);
+  font-weight: 700;
+}
+.no-bookings-subtitle {
+  margin-top: 6px;
+}
+
+/* ConfirmModal */
+.btn-cancel {
+  background: var(--stroke);
+  color: var(--muted);
+}
+.btn-cancel:hover {
+    background: var(--tab-hover-bg);
+    color: var(--txt);
+}
+`;
 
 // 🌟 Star Icon (Gradient + Smooth)
 const StarIcon = ({ filled, size = 24, isClickable = false }) => (
   <svg
-    fill={filled ? "url(#grad)" : "#d1d5db"}
+    fill={filled ? "url(#grad)" : "var(--stroke, #d1d5db)"}
     width={size}
     height={size}
     viewBox="0 0 24 24"
-    style={{
-      transition: "0.3s",
+    style={{ // यह स्टाइल डायनामिक है, इसलिए इसे यहीं रहने दिया
+      transition: "0.25s",
       cursor: isClickable ? "pointer" : "default",
-      transform: isClickable ? "scale(1.1)" : "scale(1)",
+      transform: isClickable ? "scale(1.02)" : "scale(1)",
     }}
   >
     <defs>
       <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style={{ stopColor: "#fbbf24" }} />
-        <stop offset="100%" style={{ stopColor: "#f59e0b" }} />
+        <stop offset="0%" style={{ stopColor: "#06b6d4" }} />
+        <stop offset="100%" style={{ stopColor: "#7c3aed" }} />
       </linearGradient>
     </defs>
     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
   </svg>
 );
 
-//
-// ---------------------------------------------------------
-// 🎓 FindSenior Component
-// ---------------------------------------------------------
-// 🚀 Props से seniors, loading, colleges, और tags प्राप्त करें
+// ======================================
+// 🎛️ Small UI atoms
+// ======================================
+const Chip = ({ active, onClick, children }) => (
+  <button className={`cc-chip ${active ? "active" : ""}`} onClick={onClick}>
+    {children}
+  </button>
+);
+
+// ===============================
+// ✨ Skeletons
+// ===============================
+const SkeletonCard = () => (
+  <div className="card skeleton-card-padding">
+    <div className="skeleton skeleton-avatar" />
+    <div className="skeleton skeleton-line-1" />
+    <div className="skeleton skeleton-line-2" />
+    <div className="skeleton skeleton-line-3" />
+    <div className="skeleton skeleton-line-4" />
+    <div className="skeleton skeleton-button" />
+  </div>
+);
+
+// ===============================
+// 🎓 FindSenior (revamped UI)
+// ===============================
 const FindSenior = ({ seniors, loading, colleges, tags }) => {
   const [search, setSearch] = useState("");
   const [selectedCollege, setSelectedCollege] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [sortBy, setSortBy] = useState("rating");
-
-  // 🚀 state और useEffect हटा दिया गया है, क्योंकि data props से आ रहा है
 
   const filtered = seniors
     .filter(
@@ -48,97 +829,108 @@ const FindSenior = ({ seniors, loading, colleges, tags }) => {
           x.college?.name?.toLowerCase().includes(search.toLowerCase()))
     )
     .sort((a, b) => {
-      if (sortBy === "price_asc") return a.price_per_session - b.price_per_session;
-      if (sortBy === "price_desc") return b.price_per_session - a.price_per_session;
+      if (sortBy === "price_asc") return (a.price_per_session ?? 0) - (b.price_per_session ?? 0);
+      if (sortBy === "price_desc") return (b.price_per_session ?? 0) - (a.price_per_session ?? 0);
       return (b.average_rating || 0) - (a.average_rating || 0);
     });
 
-  if (loading)
-    return (
-      <div style={{ textAlign: "center", color: "#3b82f6", marginTop: "60px" }}>
-        <h3>✨ Finding Top Seniors...</h3>
-      </div>
-    );
-
   return (
-    <div style={pageWrapper}>
-      {/* 🔍 Search & Filters */}
-      <div style={searchSection}>
-        <input
-          type="text"
-          placeholder="🔍 Search by name, college or branch..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={inputStyle}
-        />
-        <div style={filterRow}>
-          <select value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)} style={selectStyle}>
-            <option value="">🎓 All Colleges</option>
-            {/* 🚀 colleges prop का प्रयोग करें */}
-            {colleges.map((c) => (
-              <option key={c._id} value={c._id}>{c.name}</option>
+    <div className="page-wrapper">
+      <div className="panel-wrap">
+        <div className="filter-grid-inner">
+          <input
+            className="cc-input"
+            type="text"
+            placeholder="🔎 Search by name, college or branch..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="filter-row">
+            <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
+              <option value="">🎓 All Colleges</option>
+              {colleges.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <select className="cc-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="rating">⭐ Top Rated</option>
+              <option value="price_asc">💰 Low Price</option>
+              <option value="price_desc">💸 High Price</option>
+            </select>
+          </div>
+
+          <div className="tag-chips-container">
+            <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>
+              🏷️ All Tags
+            </Chip>
+            {tags.slice(0, 10).map((t) => (
+              <Chip key={t._id} active={selectedTag === t._id} onClick={() => setSelectedTag(t._id)}>
+                {t.name}
+              </Chip>
             ))}
-          </select>
-          <select value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)} style={selectStyle}>
-            <option value="">🏷️ All Tags</option>
-            {/* 🚀 tags prop का प्रयोग करें */}
-            {tags.map((t) => (
-              <option key={t._id} value={t._id}>{t.name}</option>
-            ))}
-          </select>
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={selectStyle}>
-            <option value="rating">⭐ Top Rated</option>
-            <option value="price_asc">💰 Low Price</option>
-            <option value="price_desc">💸 High Price</option>
-          </select>
+          </div>
         </div>
       </div>
 
-      {/* 👨‍🏫 Senior Cards */}
-      <div style={gridStyle}>
-        {filtered.length ? (
-          filtered.map((p) => (
-            <div
-              key={p._id}
-              style={seniorCard}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-            >
-              <div style={imageWrapper}>
-                <img
-                  src={p.avatar || "https://via.placeholder.com/100"}
-                  alt={p.user?.name}
-                  style={avatar}
-                />
+      <div className="grid-style-seniors">
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          : filtered.length > 0
+          ? filtered.map((p) => (
+              <div
+                key={p._id}
+                className="card senior-card"
+              >
+                <div className="image-wrapper">
+                  <img
+                    src={p.avatar || "https://via.placeholder.com/100"}
+                    alt={p.user?.name}
+                    className="avatar"
+                    loading="lazy"
+                  />
+                </div>
+
+                <h3 className="name-style">{p.user?.name}</h3>
+
+                <div className="rating-row rating-container">
+                  {[...Array(5)].map((_, i) => (
+                    <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} />
+                  ))}
+                  <span className="rating-count">
+                    {p.average_rating?.toFixed?.(1) ?? "0.0"} • {p.total_ratings || 0}
+                  </span>
+                </div>
+
+                <p className="college-style">{p.college?.name}</p>
+                <p className="bio-style">{(p.bio || "—").substring(0, 90)}{(p.bio?.length ?? 0) > 90 ? "…" : ""}</p>
+
+                <div className="price-row">
+                  <span className="price-text">₹{p.price_per_session || 0}</span>
+                  <span className="small-chip">{p.session_duration_minutes || 20} min</span>
+                </div>
+
+                <Link to={`/book/${p.user._id}`} className="cc-btn primary">
+                  🚀 Book Session
+                </Link>
               </div>
-              <h3 style={nameStyle}>{p.user?.name}</h3>
-              <div style={ratingContainer}>
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} filled={i < Math.round(p.average_rating)} />
-                ))}
-                <span style={{ marginLeft: "6px", color: "#666" }}>({p.total_ratings || 0})</span>
-              </div>
-              <p style={collegeStyle}>{p.college?.name}</p>
-              <p style={bioStyle}>{p.bio?.substring(0, 80)}...</p>
-              <p style={priceText}>₹{p.price_per_session || 0} / {p.session_duration_minutes || 20} min</p>
-              <Link to={`/book/${p.user._id}`} style={btnPrimary}>
-                🚀 Book Session
-              </Link>
+            ))
+          : (
+            <div className="card no-seniors-card">
+              <div className="no-seniors-title">No seniors found</div>
+              <div className="small-muted no-seniors-subtitle">Try adjusting filters or search keywords.</div>
             </div>
-          ))
-        ) : (
-          <p style={{ textAlign: "center", color: "#999", gridColumn: "1 / -1" }}>No seniors found.</p>
-        )}
+          )}
       </div>
     </div>
   );
 };
 
-//
-// ---------------------------------------------------------
-// 📘 MyBookings Component (⭐ CSS Revamped)
-// ---------------------------------------------------------
-const MyBookings = ({ seniors }) => { // 🚀 seniors prop प्राप्त करें
+// ===============================
+// 📘 MyBookings (revamped UI)
+// ===============================
+const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoverRating, setHoverRating] = useState({ bookingId: null, value: 0 });
@@ -152,7 +944,7 @@ const MyBookings = ({ seniors }) => { // 🚀 seniors prop प्राप्त
           "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my",
           { headers: { "x-auth-token": token } }
         );
-        setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); // Sort by most recent
+        setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       } catch {
         toast.error("⚠️ Unable to load bookings");
       } finally {
@@ -165,14 +957,22 @@ const MyBookings = ({ seniors }) => { // 🚀 seniors prop प्राप्त
   const handleDispute = (id) => navigate(`/raise-dispute/${id}`);
   const handleChat = (id) => navigate(`/chat/${id}`);
 
-  // ⭐ Rating Logic
-  const handleRating = async (bookingId, seniorId, value) => {
-    // Note: window.confirm is bad practice as it's blocking.
-    // In a real app, use a custom modal. For this fix, we'll keep it.
-    const confirmRating = window.confirm(
-      "⚠️ Once you rate this senior, you cannot raise a dispute.\nDo you want to continue?"
-    );
-    if (!confirmRating) return toast("Rating cancelled ❌");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [ratingData, setRatingData] = useState({ bookingId: null, seniorId: null, value: 0 });
+
+  const openRatingModal = (bookingId, seniorId, value) => {
+    setRatingData({ bookingId, seniorId, value });
+    setModalOpen(true);
+  }
+
+  const handleRating = async () => {
+    const { bookingId, seniorId, value } = ratingData;
+    if (!bookingId) {
+      setModalOpen(false);
+      return;
+    }
+    
+    setModalOpen(false); 
 
     try {
       const token = localStorage.getItem("token");
@@ -192,117 +992,89 @@ const MyBookings = ({ seniors }) => { // 🚀 seniors prop प्राप्त
 
       toast.success(`⭐ You rated ${value} stars!`);
     } catch (err) {
-      // 🚀 BOLD: बेहतर एरर हैंडलिंग जोड़ी गई
       console.error("Rating submission error:", err.response || err.message || err);
-      // सर्वर से आने वाले खास एरर मैसेज को दिखाने की कोशिश करें
       const errorMsg = err.response?.data?.msg || "Failed to submit rating!";
       toast.error(`⚠️ ${errorMsg}`);
     }
   };
-  
-    // Helper to get status tag style
-  const getStatusTag = (status) => {
-    switch (status?.toLowerCase()) {
-      case "confirmed":
-        return { ...statusTag, ...statusConfirmed };
-      case "completed":
-        return { ...statusTag, ...statusCompleted };
-      case "pending":
-        return { ...statusTag, ...statusPending };
-      case "cancelled":
-        return { ...statusTag, ...statusCancelled };
-      default:
-        return { ...statusTag };
+
+  const getStatusTagClass = (status) => {
+    const base = "status-tag";
+    switch ((status || "").toLowerCase()) {
+      case "confirmed": return `${base} status-confirmed`;
+      case "completed": return `${base} status-completed`;
+      case "pending":   return `${base} status-pending`;
+      case "cancelled": return `${base} status-cancelled`;
+      default:          return base;
     }
   };
 
-  // Helper to get dispute tag style
-  const getDisputeTag = (dispute) => {
-      switch (dispute?.toLowerCase()) {
-      case "pending":
-        return pendingTag;
-      case "resolved":
-        return resolvedTag;
-      default:
-        return null; // Don't show a tag if "none" or "not_allowed"
-    }
-  }
+  const getDisputeTagClass = (dispute) => {
+    const d = (dispute || "").toLowerCase();
+    if (d === "pending")  return "status-tag status-pending";
+    if (d === "resolved") return "status-tag status-completed";
+    return null;
+  };
 
-  // 🚀 NEW HELPER FUNCTION (नया हेल्पर फ़ंक्शन)
-  // यह 'year' को "1st Year", "2nd Year" आदि में बदल देगा।
   const getYearSuffix = (year) => {
-    if (!year) return null; // अगर साल नहीं है तो कुछ न दिखाएं
+    if (!year) return null;
     const num = parseInt(year, 10);
-    if (isNaN(num)) return year; // अगर यह पहले से "Final Year" जैसा कुछ है
+    if (isNaN(num)) return year;
     if (num === 1) return "1st Year";
     if (num === 2) return "2nd Year";
     if (num === 3) return "3rd Year";
-    if (num >= 4) return `${num}th Year`;
-    return `${num}th Year`; // डिफ़ॉल्ट
+    return `${num}th Year`;
   };
 
-
-  // ⭐ --- BINDING FUNCTION (Render Booking Card) ---
-  // Ek function bana diya taaki code repeat na ho
   const renderBookingCard = (b) => {
     const dispute = b.dispute_status?.toLowerCase() || "none";
     const status = b.status?.toLowerCase();
-    const disputeTagStyle = getDisputeTag(dispute);
-
-    // 🚀 LOGIC FIX: seniors prop से सही प्रोफाइल ढूंढें
-    const seniorProfile = seniors.find(s => s.user?._id === b.senior?._id);
+    const disputeTagClass = getDisputeTagClass(dispute);
+    const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
     const correctAvatar = seniorProfile ? seniorProfile.avatar : null;
-
-    // 🚀 GET YEAR TEXT (साल का टेक्स्ट यहाँ प्राप्त करें)
-    // हम b.profile.year का उपयोग कर रहे हैं, यह मानते हुए कि API से यह डेटा आ रहा है
     const yearText = getYearSuffix(b.profile?.year);
 
     return (
-      <div key={b._id} style={bookingCard}>
-        {/* Card Header */}
-        <div style={bookingHeader}>
+      <div key={b._id} className="card booking-card">
+        <div className="booking-header">
           <div>
-            <h3 style={bookingName}>{b.senior?.name}</h3>
-            <p style={bookingCollege}>{b.profile?.college?.name}</p>
-            {/* 🚀 YEAR ADDED HERE (साल यहाँ जोड़ा गया) */}
-            {yearText && <p style={bookingYearStyle}>{yearText}</p>}
+            <h3 className="booking-name">{b.senior?.name}</h3>
+            <p className="booking-college">{b.profile?.college?.name}</p>
+            {yearText && <p className="booking-year-style">{yearText}</p>}
           </div>
-          <img 
-            // 🚀 पहले correctAvatar का, फिर b.profile.avatar का, और अंत में प्लेसहोल्डर का प्रयोग करें
-            src={correctAvatar || b.profile?.avatar || "https://via.placeholder.com/60"} 
-            alt={b.senior?.name} 
-            style={bookingAvatar} 
+          <img
+            src={correctAvatar || b.profile?.avatar || "https://via.placeholder.com/60"}
+            alt={b.senior?.name}
+            className="booking-avatar"
+            loading="lazy"
           />
         </div>
 
-        {/* Status Section */}
-        <div style={statusRow}>
-          <span style={getStatusTag(status)}>{b.status}</span>
-          {disputeTagStyle && <span style={disputeTagStyle}>{b.dispute_status}</span>}
+        <div className="status-row">
+          <span className={getStatusTagClass(status)}>{b.status}</span>
+          {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
         </div>
 
-        {/* NEW: Info Message */}
         {status === "confirmed" && (
-          <p style={infoMessage}>
-            ℹ️ सीनियर 6 घंटे के अंदर तुम्हारे मोबाइल नंबर पर कांटेक्ट करेगा।
+          <p className="info-message">
+            ℹ️ The senior will contact you on your phone within 6 hours.
           </p>
         )}
 
-        {/* Rating Section */}
         {status === "completed" && !b.rated && (
-          <div style={ratingSection}>
-            <p style={ratingPrompt}>Rate this session:</p>
-            <div style={ratingStarsContainer}>
+          <div className="rating-section">
+            <p className="rating-prompt">Rate this session:</p>
+            <div className="rating-stars-container">
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
                   onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })}
                   onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })}
-                  onClick={() => handleRating(b._id, b.senior?._id, star)}
+                  onClick={() => openRatingModal(b._id, b.senior?._id, star)}
                 >
                   <StarIcon
                     filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)}
-                    size={32}
+                    size={30}
                     isClickable={true}
                   />
                 </span>
@@ -310,105 +1082,153 @@ const MyBookings = ({ seniors }) => { // 🚀 seniors prop प्राप्त
             </div>
           </div>
         )}
-
-        {/* Already Rated */}
+        
         {b.rated && (
-          <div style={ratedSection}>
+          <div className="rated-section">
             <span>You rated:</span>
-            <div style={ratedStars}>
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} filled={i < b.rating} size={20} />
-                ))}
+            <div className="rated-stars">
+              {[...Array(5)].map((_, i) => (
+                <StarIcon key={i} filled={i < b.rating} size={20} />
+              ))}
             </div>
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div style={buttonRow}>
+        <div className="button-row">
           {status === "confirmed" && (
-            <button style={btnBlue} onClick={() => handleChat(b._id)}>💬 Chat</button>
+            <button className="cc-btn primary btn-compact" onClick={() => handleChat(b._id)}>💬 Chat</button>
           )}
           {dispute === "none" && !b.rated && (
-            <button style={btnRed} onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
+            <button className="cc-btn danger btn-compact" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
           )}
-          
-          {/* Dispute Status Message */}
-          {(dispute === "not_allowed" || b.rated) && dispute !== 'pending' && dispute !== 'resolved' && (
-            <span style={disputeNotAllowed}>
-              🚫 Dispute not allowed after rating.
-            </span>
+          {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
+            <span className="dispute-not-allowed">🚫 Dispute not allowed after rating.</span>
           )}
         </div>
       </div>
     );
   };
-  // ⭐ --- END BINDING FUNCTION ---
 
-
-  if (loading)
+  if (loading) {
     return (
-      <h3 style={{ textAlign: "center", color: "#2563eb", marginTop: "40px" }}>
-        ⏳ Loading your bookings...
-      </h3>
+      <div className="grid-style-bookings">
+        {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+      </div>
     );
+  }
 
-  // ⭐ NEW: Splitting the bookings array
   const activeBookings = bookings.filter(
-    b => b.status?.toLowerCase() !== 'completed' && b.status?.toLowerCase() !== 'cancelled'
+    (b) => b.status?.toLowerCase() !== "completed" && b.status?.toLowerCase() !== "cancelled"
   );
-  
   const pastBookings = bookings.filter(
-    b => b.status?.toLowerCase() === 'completed' || b.status?.toLowerCase() === 'cancelled'
+    (b) => b.status?.toLowerCase() === "completed" || b.status?.toLowerCase() === "cancelled"
   );
-
 
   return (
-    <div style={pageWrapper}>
-      <h2 style={titleStyle}>📘 My Bookings</h2>
-      
-      {bookings.length === 0 && !loading && (
-        <p style={{ textAlign: "center", color: "#555", fontSize: "1.1rem", marginTop: "30px" }}>
-          You haven't booked any sessions yet.
+    <div className="page-wrapper">
+      <ConfirmModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={handleRating}
+        title="⚠️ Confirm Rating"
+      >
+        <p>
+          Once you rate this senior, you cannot raise a dispute.
+          <br />
+          Are you sure you want to give a rating of 
+          <strong> {ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
         </p>
+      </ConfirmModal>
+    
+      <h2 className="title-style">📘 My Bookings</h2>
+
+      {bookings.length === 0 && (
+        <div className="card no-bookings-card">
+          <div className="no-bookings-title">You haven't booked any sessions yet.</div>
+          <div className="small-muted no-bookings-subtitle">Find a senior and schedule your first session.</div>
+        </div>
       )}
 
-      {/* --- ⭐ Section 1: Active Bookings --- */}
       {activeBookings.length > 0 && (
         <>
-          <h3 style={sectionTitleStyle}>Ongoing & Active Bookings</h3>
-          <div style={gridStyle}>
-            {activeBookings.map(renderBookingCard)}
-          </div>
+          <h3 className="section-title-style">Ongoing & Active</h3>
+          <div className="grid-style-bookings">{activeBookings.map(renderBookingCard)}</div>
         </>
       )}
 
-      {/* --- ⭐ Section 2: Past Bookings --- */}
       {pastBookings.length > 0 && (
-          <>
-          <h3 style={{...sectionTitleStyle, marginTop: '40px'}}>Completed & Past Bookings</h3>
-          <div style={gridStyle}>
-            {pastBookings.map(renderBookingCard)}
-          </div>
+        <>
+          <h3 className="section-title-style past-bookings-title">Completed & Past</h3>
+          <div className="grid-style-bookings">{pastBookings.map(renderBookingCard)}</div>
         </>
       )}
-      
     </div>
   );
 };
 
-//
-// ---------------------------------------------------------
-// 🌈 Main Dashboard
-// ---------------------------------------------------------
+// ===============================
+// 🚀 BOLD: Custom Modal Component
+// ===============================
+const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="modal-backdrop"
+      onClick={onClose}
+    >
+      <div 
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header">
+          <h3 className="modal-title">{title}</h3>
+          <button onClick={onClose} className="modal-close-btn">&times;</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+        <div className="modal-footer">
+          <button 
+            onClick={onClose} 
+            className="cc-btn btn-cancel" 
+          >
+            Cancel
+          </button>
+          <button onClick={onConfirm} className="cc-btn danger">
+            Yes, Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// ===============================
+// 🌈 Main Dashboard Shell
+// ===============================
 const StudentDashboard = () => {
   const location = useLocation();
   const onBookingsTab = location.pathname.includes("/bookings");
 
-  // 🚀 LIFTED STATE: seniors, colleges, और tags को यहाँ fetch करें
+  const [theme, setTheme] = useState('light'); // Default to light
+
   const [seniors, setSeniors] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+  
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }, []);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -430,304 +1250,40 @@ const StudentDashboard = () => {
       }
     };
     fetchAll();
-  }, []); // यह StudentDashboard माउंट होने पर एक बार चलेगा
+  }, []);
 
   return (
-    <div style={mainContainer}>
-      <div style={tabBar}>
-        <Link to="/student-dashboard" style={!onBookingsTab ? tabActive : tabInactive}>🎓 Find Seniors</Link>
-        <Link to="/student-dashboard/bookings" style={onBookingsTab ? tabActive : tabInactive}>📘 My Bookings</Link>
-      </div>
+    <div className={`page-bg ${theme}`}>
+      {/* ⭐ Saara CSS <style> tag ke zariye yahan inject kiya gaya hai */}
+      <style>{globalStyles}</style>
 
-      <Routes>
-        <Route 
-          path="/" 
-          element={<FindSenior 
-            seniors={seniors} 
-            loading={loading} 
-            colleges={colleges} 
-            tags={tags} 
-          />} 
-        />
-        <Route 
-          path="/bookings" 
-          element={<MyBookings 
-            seniors={seniors} 
-          />} 
-        />
-      </Routes>
+      <div className="main-container">
+        <div className="tab-bar">
+          <Link to="/student-dashboard" className={`cc-tab ${!onBookingsTab ? "active" : ""}`}>🎓 Find Seniors</Link>
+          <Link to="/student-dashboard/bookings" className={`cc-tab ${onBookingsTab ? "active" : ""}`}>📘 My Bookings</Link>
+          
+          <button onClick={toggleTheme} className="theme-toggle-btn" title="Toggle Theme">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+        </div>
+
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <FindSenior
+                seniors={seniors}
+                loading={loading}
+                colleges={colleges}
+                tags={tags}
+              />
+            }
+          />
+          <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
+        </Routes>
+      </div>
     </div>
   );
-};
-
-//
-// ---------------------------------------------------------
-// ✨ Styles (Responsive + Modern)
-// ---------------------------------------------------------
-const mainContainer = {
-  maxWidth: "1200px",
-  margin: "auto",
-  padding: "16px",
-  fontFamily: "Inter, sans-serif", // Changed to Inter
-  background: "#f8f9fa", // Lighter background
-  minHeight: "100vh",
-};
-const pageWrapper = { padding: "10px" };
-const searchSection = { textAlign: "center", marginBottom: "20px" }; // Increased margin
-const inputStyle = {
-  padding: "12px 16px",
-  borderRadius: "14px",
-  border: "1px solid #ced4da", // Lighter border
-  width: "92%",
-  maxWidth: "400px",
-  fontSize: "15px",
-  outline: "none",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-  transition: "border-color 0.3s, box-shadow 0.3s",
-};
-// Add focus style (can't do with inline, but good practice)
-// inputStyle[":focus"] = { borderColor: "#2563eb", boxShadow: "0 0 0 3px rgba(37, 99, 235, 0.2)" };
-
-const filterRow = {
-  display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px", marginTop: "12px", // Increased margin
-};
-const selectStyle = {
-  padding: "8px 12px",
-  borderRadius: "10px",
-  border: "1px solid #ced4da",
-  background: "#fff",
-  fontWeight: "500",
-  cursor: "pointer",
-  fontSize: "0.9rem", // Added
-};
-const gridStyle = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", // Slightly wider min
-  gap: "20px",
-};
-const seniorCard = {
-  background: "#fff",
-  borderRadius: "16px",
-  boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-  padding: "18px",
-  textAlign: "center",
-  transition: "transform 0.3s ease, boxShadow 0.3s ease", // Added boxShadow transition
-};
-// Add hover style (can't do with inline)
-// seniorCard[":hover"] = { transform: "scale(1.02)", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" };
-
-const imageWrapper = { display: "flex", justifyContent: "center" };
-const avatar = {
-  width: "90px",
-  height: "90px",
-  borderRadius: "50%",
-  objectFit: "cover",
-  border: "3px solid #2563eb",
-};
-const nameStyle = { color: "#1e40af", fontWeight: "600", fontSize: "1.1rem", margin: "8px 0 4px 0" }; // Adjusted margin
-const collegeStyle = { color: "#555", fontSize: "0.9rem", margin: "0 0 4px 0" };
-const bioStyle = { color: "#666", fontSize: "0.85rem", margin: "4px 0" };
-const ratingContainer = { display: "flex", justifyContent: "center", alignItems: "center", gap: "2px", marginBottom: "8px" }; // Added margin
-const priceText = { color: "#16a34a", fontWeight: "600", fontSize: "1rem", margin: "10px 0" };
-const btnPrimary = {
-  display: "inline-block",
-  background: "linear-gradient(45deg,#2563eb,#3b82f6)",
-  color: "#fff",
-  padding: "10px 16px", // Increased padding
-  borderRadius: "10px",
-  textDecoration: "none",
-  fontWeight: "600",
-  transition: "0.3s",
-  border: "none", // Added
-  cursor: "pointer", // Added
-};
-
-// --- 📘 MyBookings Revamped Styles ---
-
-const bookingCard = {
-  background: "#ffffff",
-  borderRadius: "12px",
-  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.07)",
-  padding: "20px",
-  border: "1px solid #e5e7eb",
-  display: "flex",
-  flexDirection: "column",
-  gap: "16px", // Space between sections
-  transition: "0.3s ease",
-};
-// bookingCard[":hover"] = { boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)" };
-
-const bookingHeader = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-  borderBottom: "1px solid #f3f4f6",
-  paddingBottom: "12px",
-};
-const bookingName = {
-  color: "#1e40af",
-  fontWeight: "600",
-  fontSize: "1.2rem",
-  margin: 0,
-};
-const bookingCollege = {
-  color: "#555",
-  fontSize: "0.9rem",
-  margin: "4px 0 0 0",
-};
-// 🚀 NEW STYLE FOR YEAR (साल के लिए नई स्टाइल)
-const bookingYearStyle = {
-  color: "#1d4ed8", // थीम से मिलता-जुलता नीला रंग
-  fontSize: "0.9rem",
-  fontWeight: "500",
-  margin: "4px 0 0 0",
-};
-const bookingAvatar = {
-  width: "60px",
-  height: "60px",
-  borderRadius: "50%",
-  objectFit: "cover",
-  border: "3px solid #dee2e6",
-};
-
-const statusRow = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "8px",
-  alignItems: "center",
-};
-const statusTag = {
-  padding: "4px 12px",
-  borderRadius: "99px",
-  fontWeight: "600",
-  fontSize: "0.8rem",
-  textTransform: "capitalize",
-};
-const statusConfirmed = { background: "#dbeafe", color: "#1d4ed8" };
-const statusCompleted = { background: "#dcfce7", color: "#166534" };
-const statusPending = { background: "#fef9c3", color: "#854d0e" };
-const statusCancelled = { background: "#fee2e2", color: "#991b1b" };
-
-const infoMessage = {
-  background: "#e0f2fe", // Light blue
-  color: "#0c4a6e", // Dark blue text
-  padding: "12px",
-  borderRadius: "8px",
-  fontSize: "0.9rem",
-  fontWeight: "500",
-  textAlign: "left",
-  lineHeight: "1.5",
-};
-
-const ratingSection = {
-  background: "#f9fafb",
-  borderRadius: "8px",
-  padding: "14px",
-  textAlign: "center",
-};
-const ratingPrompt = {
-  fontWeight: "600",
-  color: "#2563eb",
-  margin: "0 0 10px 0",
-  fontSize: "0.95rem",
-};
-const ratingStarsContainer = {
-  display: "flex",
-  justifyContent: "center",
-  gap: "5px",
-  flexWrap: "wrap",
-};
-
-const ratedSection = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '10px',
-  padding: '10px',
-  background: '#f0fdf4',
-  borderRadius: '8px',
-  color: '#166534',
-  fontWeight: '600',
-};
-const ratedStars = {
-  display: 'flex',
-  gap: '2px',
-};
-
-
-const buttonRow = {
-  display: "flex",
-  gap: "10px",
-  justifyContent: "flex-start", // Align buttons left
-  flexWrap: "wrap",
-  marginTop: "10px", // Add margin for separation
-  paddingTop: "16px",
-  borderTop: "1px solid #f3f4f6",
-};
-const btnBlue = { ...btnPrimary, background: "linear-gradient(45deg,#3b82f6,#2563eb)", fontSize: "0.9rem", padding: "8px 14px" };
-const btnRed = { ...btnPrimary, background: "linear-gradient(45deg,#ef4444,#dc2626)", fontSize: "0.9rem", padding: "8px 14px" };
-
-const pendingTag = { 
-  ...statusTag, 
-  background: "#fef9c3", 
-  color: "#854d0e",
-};
-const resolvedTag = { 
-  ...statusTag, 
-  background: "#dcfce7", 
-  color: "#166534",
-};
-const disputeNotAllowed = {
-  color: "#b91c1c",
-  fontWeight: "500",
-  fontSize: "0.85rem",
-  padding: "8px 0",
-};
-
-// --- 🌈 Tab & Title Styles ---
-const tabBar = {
-  display: "flex",
-  justifyContent: "center",
-  gap: "15px",
-  padding: "10px",
-  background: "rgba(255,255,255,0.9)",
-  borderRadius: "12px",
-  marginBottom: "20px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-};
-const tabActive = {
-  background: "linear-gradient(45deg, #2563eb, #6366f1)",
-  color: "white",
-  padding: "10px 20px",
-  borderRadius: "10px",
-  textDecoration: "none",
-  fontWeight: "600",
-  transition: "0.3s",
-};
-const tabInactive = {
-  background: "#f3f4f6",
-  color: "#2563eb", // मैंने इसे नीले रंग में बदल दिया ताकि यह एक्टिव टैब से मेल खाए
-  padding: "10px 20px",
-  borderRadius: "10px",
-  textDecoration: "none",
-  fontWeight: "600",
-  transition: "0.3s",
-};
-const titleStyle = { 
-  textAlign: "center", 
-  color: "#1e3a8a", 
-  marginBottom: "20px", 
-  fontWeight: "700" 
-};
-
-// ⭐ NEW: Style for section headings
-const sectionTitleStyle = {
-  color: "#1e40af",
-  fontWeight: "600",
-  fontSize: "1.5rem",
-  margin: "20px 0 15px 0",
-  borderBottom: "2px solid #dbeafe",
-  paddingBottom: "8px",
 };
 
 export default StudentDashboard;

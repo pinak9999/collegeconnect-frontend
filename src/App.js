@@ -15,7 +15,7 @@ import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import StudentDashboard from './pages/StudentDashboard';
-import StudentBookings from './pages/StudentBookings'; // ✅ Imported
+
 import SeniorDashboard from './pages/SeniorDashboard';
 import SeniorAvailabilityPage from './pages/SeniorAvailabilityPage';
 import SeniorEarningsPage from './pages/SeniorEarningsPage';
@@ -32,7 +32,7 @@ import AdminManageTags from './pages/AdminManageTags';
 import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 
-// 🔹 ❗ VideoCallPage
+// 🔹 Video Call
 import VideoCallPage from './pages/VideoCallPage';
 
 // 🧩 Layout Component
@@ -80,13 +80,10 @@ function AppLayout() {
 
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* 🧩 Mobile number modal */}
       {showMobileModal && <MobileNumberModal />}
 
-      {/* 🧩 Navbar (hidden on auth pages) */}
       {!hideLayout && <Navbar />}
 
-      {/* 🧩 Page Content */}
       <main style={{ flex: 1 }}>
         <Routes>
           {/* PUBLIC ROUTES */}
@@ -97,6 +94,7 @@ function AppLayout() {
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
           {/* STUDENT ROUTES */}
+          {/* NOTE: Humne StudentDashboard ke andar hi sub-routes (Find Seniors & My Bookings) handle kiye hain */}
           <Route
             path="/student-dashboard/*"
             element={
@@ -106,15 +104,7 @@ function AppLayout() {
             }
           />
           
-          {/* ✅ NEW ROUTE ADDED HERE: Student Bookings */}
-          <Route
-            path="/student/bookings"
-            element={
-              <ProtectedRoute>
-                <StudentBookings />
-              </ProtectedRoute>
-            }
-          />
+          {/* ❌ Removed "StudentBookings" route because it was causing error and logic is now inside StudentDashboard */}
 
           {/* SENIOR ROUTES */}
           <Route
@@ -243,7 +233,6 @@ function AppLayout() {
           />
 
           {/* VIDEO CALL ROUTE */}
-          {/* video-call/:roomId bhi add kar sakte hain agar direct link ho */}
           <Route
             path="/video-call/:roomId"
             element={
@@ -252,7 +241,6 @@ function AppLayout() {
               </ProtectedRoute>
             }
           />
-          {/* Ye purana wala session route */}
           <Route
             path="/session/:sessionId"
             element={
@@ -266,13 +254,7 @@ function AppLayout() {
           <Route
             path="*"
             element={
-              <div
-                style={{
-                  textAlign: 'center',
-                  marginTop: '50px',
-                  fontFamily: 'Poppins, sans-serif',
-                }}
-              >
+              <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'Poppins, sans-serif' }}>
                 <h2>404 - Page Not Found</h2>
                 <p>The page you are looking for doesn’t exist.</p>
               </div>
@@ -281,15 +263,11 @@ function AppLayout() {
         </Routes>
       </main>
 
-      {/* 🧩 Footer */}
       {!hideLayout && <Footer loading={loading} />}
     </div>
   );
 }
 
-// ---------------------------------------------------------
-// 🧩 Main App Wrapper
-// ---------------------------------------------------------
 function App() {
   return (
     <Router>
