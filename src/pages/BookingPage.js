@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import "./BookingPage.css"; // CSS फाइल नीचे दी गई है
+import "./BookingPage.css"; 
 
 const BookingPage = () => {
-  const { userId } = useParams(); // URL से सीनियर की ID (userId)
+  const { userId } = useParams(); // URL se Senior (Mentor) ki ID
   const navigate = useNavigate();
   const { auth } = useAuth();
 
@@ -16,7 +16,7 @@ const BookingPage = () => {
   const [note, setNote] = useState("");
   const [processing, setProcessing] = useState(false);
 
-  // 🔹 1. सीनियर की डिटेल्स लोड करें (API Call)
+  // 🔹 1. Senior Details Fetch Karen
   useEffect(() => {
     const fetchSenior = async () => {
       try {
@@ -33,7 +33,21 @@ const BookingPage = () => {
     fetchSenior();
   }, [userId]);
 
-  // 🔹 2. रेज़रपे (Razorpay) लोड करने का फंक्शन
+  // 🔹 2. Time Convert Function (12h -> 24h)
+  // Backend ko "16:00" chahiye, "04:00 PM" nahi
+  const convertTo24Hour = (time12h) => {
+    if (!time12h) return "";
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
+    if (hours === "12") {
+      hours = modifier === "PM" ? "12" : "00";
+    } else if (modifier === "PM") {
+      hours = parseInt(hours, 10) + 12;
+    }
+    return `${hours}:${minutes}`;
+  };
+
+  // 🔹 3. Load Razorpay Script
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -44,7 +58,7 @@ const BookingPage = () => {
     });
   };
 
-  // 🔹 3. बुकिंग हैंडलर (पेमेंट + बुकिंग)
+  // 🔹 4. Handle Booking & Payment
   const handleBookSession = async () => {
     if (!auth.isAuthenticated) {
       alert("Please login to book a session.");
@@ -66,9 +80,9 @@ const BookingPage = () => {
         return;
       }
 
-      // A. ऑर्डर क्रिएट करें (Backend API)
+      // A. Create Order
       const orderUrl = "https://collegeconnect-backend-mrkz.onrender.com/api/payment/create-order";
-      const amount = senior.pricePerSession || 100; // अगर प्राइस नहीं है तो 100 डिफ़ॉल्ट
+      const amount = senior.pricePerSession || 100;
 
       const { data: orderData } = await axios.post(
         orderUrl,
@@ -76,28 +90,32 @@ const BookingPage = () => {
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
 
-      // B. रेज़रपे का ऑप्शन सेट करें
+      // B. Open Razorpay Options
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_test_YOUR_KEY_HERE", // अपनी Test Key यहाँ डालें
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_test_YOUR_KEY_HERE", // Apni Key Check karein
         amount: orderData.order.amount,
         currency: "INR",
         name: "CollegeConnect",
         description: `Session with ${senior.name}`,
         image: "https://via.placeholder.com/150",
         order_id: orderData.order.id,
+        
         handler: async function (response) {
-          // C. पेमेंट सफल होने पर बुकिंग सेव करें (Backend API)
           try {
+            // C. Verify & Save Booking
             const verifyUrl = "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify-payment";
+            
+            // 🔥 FIXED: Data names match Backend Schema
             const bookingData = {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              seniorId: userId,
+              
+              mentorId: userId,                // ✅ 'seniorId' -> 'mentorId'
               studentId: auth.user._id,
               date: selectedDate,
-              timeSlot: selectedSlot,
-              note: note,
+              time: convertTo24Hour(selectedSlot), // ✅ '04:00 PM' -> '16:00'
+              topic: note,                     // ✅ 'note' -> 'topic'
               amount: amount,
             };
 
@@ -106,7 +124,6 @@ const BookingPage = () => {
             });
 
             if (verifyRes.data.success) {
-              // सफलता पेज पर भेजें
               navigate("/booking-success", { state: { booking: verifyRes.data.booking } });
             } else {
               alert("Payment verification failed!");

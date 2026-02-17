@@ -891,8 +891,8 @@ const FindSenior = ({ seniors, loading, colleges, tags }) => {
   );
 };
 
-// ===============================
-// 📘 MyBookings (revamped UI)
+/// ===============================
+// 📘 MyBookings (FIXED for New Backend)
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -912,7 +912,7 @@ const MyBookings = ({ seniors }) => {
           "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my",
           { headers: { "x-auth-token": token } }
         );
-        setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        setBookings(res.data.sort((a, b) => new Date(b.scheduledDate) - new Date(a.scheduledDate)));
       } catch {
         toast.error("⚠️ Unable to load bookings");
       } finally {
@@ -958,8 +958,7 @@ const MyBookings = ({ seniors }) => {
       toast.success(`⭐ You rated ${value} stars!`);
     } catch (err) {
       console.error("Rating submission error:", err.response || err.message || err);
-      const errorMsg = err.response?.data?.msg || "Failed to submit rating!";
-      toast.error(`⚠️ ${errorMsg}`);
+      toast.error("Failed to submit rating!");
     }
   };
 
@@ -974,13 +973,6 @@ const MyBookings = ({ seniors }) => {
     }
   };
 
-  const getDisputeTagClass = (dispute) => {
-    const d = (dispute || "").toLowerCase();
-    if (d === "pending")  return "status-tag status-pending";
-    if (d === "resolved") return "status-tag status-completed";
-    return null;
-  };
-
   const getYearSuffix = (year) => {
     if (!year) return null;
     const num = parseInt(year, 10);
@@ -991,55 +983,72 @@ const MyBookings = ({ seniors }) => {
     return `${num}th Year`;
   };
 
+  // 🛠️ Helper: Date aur Time string ko jodkar JS Date object banana
+  const getBookingDateTime = (dateStr, timeStr) => {
+      if (!dateStr || !timeStr) return null;
+      const date = new Date(dateStr);
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+  };
+
   const renderBookingCard = (b) => {
     const dispute = b.dispute_status?.toLowerCase() || "none";
     const status = b.status?.toLowerCase();
-    const disputeTagClass = getDisputeTagClass(dispute);
-    const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
-    const correctAvatar = seniorProfile ? seniorProfile.avatar : null;
-    const yearText = getYearSuffix(b.profile?.year);
+    
+    // 🟢 FIX 1: 'senior' ki jagah 'mentor' use karein (Backend se 'mentor' aa raha hai)
+    const mentor = b.mentor || {}; 
+    const mentorProfile = seniors.find((s) => s.user?._id === mentor._id);
+    
+    // 🟢 FIX 2: Correct Avatar logic
+    const correctAvatar = mentorProfile?.avatar || mentor.profileImage || "https://via.placeholder.com/60";
+    const yearText = getYearSuffix(b.profile?.year); // Note: Ye shayad student ka profile hai, check karna padega
+
+    // 🟢 FIX 3: Date Object Banayein (ScheduledDate + StartTime)
+    const sessionDate = getBookingDateTime(b.scheduledDate, b.startTime);
 
     return (
       <div key={b._id} className="card booking-card">
         <div className="booking-header">
           <div>
-            <h3 className="booking-name">{b.senior?.name}</h3>
-            <p className="booking-college">{b.profile?.college?.name}</p>
-            {yearText && <p className="booking-year-style">{yearText}</p>}
+            {/* 🟢 Name Fix */}
+            <h3 className="booking-name">{mentor.name || "Unknown Mentor"}</h3> 
+            <p className="booking-college">{mentor.email}</p> 
+            <p className="booking-year-style">
+                {/* Agar Mentor ke pass college info populate nahi hui to handle karein */}
+                {mentorProfile?.college?.name || "College info loading..."}
+            </p>
           </div>
           <img
-            src={correctAvatar || b.profile?.avatar || "https://via.placeholder.com/60"}
-            alt={b.senior?.name}
+            src={correctAvatar}
+            alt={mentor.name}
             className="booking-avatar"
             loading="lazy"
           />
         </div>
 
         <div className="status-row">
-          {/* 🟢 Handle PENDING_APPROVAL explicitly for Student */}
-          <span className={status === 'pending_approval' ? 'status-tag status-pending' : getStatusTagClass(status)}>
+          <span className={getStatusTagClass(status)}>
              {status === 'pending_approval' ? 'Request Sent' : b.status}
           </span>
-          {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+          {dispute !== "none" && <span className="status-tag status-cancelled">{b.dispute_status}</span>}
         </div>
 
         {/* ==========================
             UPDATED MESSAGE LOGIC
            ========================== */}
-        {/* WAITING FOR SENIOR */}
-        {(status === "pending_approval" || status === "pending") && (
+        {(status === "pending") && (
             <p className="info-message" style={{background: '#fff7ed', color: '#c2410c', border: '1px solid #ffedd5'}}>
               ⏳ <strong>Request Sent!</strong><br/>
-              Waiting for senior to accept & schedule a time.<br/>
-              You will be notified here once confirmed.
+              Waiting for mentor confirmation.
             </p>
         )}
 
-        {/* TIME FIXED BY SENIOR */}
-        {status === "confirmed" && b.slot_time && (
+        {/* 🟢 FIX 4: Date Display */}
+        {status === "confirmed" && sessionDate && (
             <p className="info-message" style={{background: '#eff6ff', color: '#1e40af', border: '1px solid #dbeafe'}}>
-            📅 Your session is scheduled on: <br/>
-            <strong> {new Date(b.slot_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</strong>
+            📅 Scheduled on: <br/>
+            <strong> {sessionDate.toDateString()} at {b.startTime}</strong>
             </p>
         )}
 
@@ -1052,7 +1061,7 @@ const MyBookings = ({ seniors }) => {
                   key={star}
                   onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })}
                   onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })}
-                  onClick={() => openRatingModal(b._id, b.senior?._id, star)}
+                  onClick={() => openRatingModal(b._id, mentor._id, star)}
                 >
                   <StarIcon
                     filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)}
@@ -1084,44 +1093,35 @@ const MyBookings = ({ seniors }) => {
               </button>
               
               {/* ==================================
-                  UPDATED JOIN CALL LOGIC (5 MINS)
+                  JOIN CALL LOGIC (Updated for Date+Time)
                  ================================== */}
               {(() => {
-                if (!b.slot_time) {
-                    return (
-                    <button className="cc-btn btn-compact" disabled style={{opacity:0.5, cursor: "not-allowed"}}>
-                        ⏳ Waiting for time...
-                    </button>
-                    );
-                }
+                if (!sessionDate) return null;
 
                 const now = new Date();
-                const callTime = new Date(b.slot_time);
-                // 🔒 EXACT 5 MINUTE RULE
-                const enableTime = new Date(callTime.getTime() - 5 * 60 * 1000); 
-
+                // 🔒 5 Minute Rule
+                const enableTime = new Date(sessionDate.getTime() - 5 * 60 * 1000); 
                 const canJoin = now >= enableTime;
+                
+                // Agar meeting ka time 1 ghanta pehle beet chuka hai
+                const isExpired = now > new Date(sessionDate.getTime() + 60 * 60 * 1000);
 
-                // Show disable message if more than 24 hours away
-                const isFarFuture = (callTime - now) > (24 * 60 * 60 * 1000);
+                if (isExpired) return <span className="small-muted">Session Ended</span>;
 
                 return (
                     <button
                     className="cc-btn success btn-compact"
                     disabled={!canJoin}
-                    onClick={() => navigate(`/session/${b._id}`)}
+                    onClick={() => window.open(b.meetingLink || `/session/${b._id}`, '_blank')}
                     style={{
                         opacity: canJoin ? 1 : 0.6,
                         cursor: canJoin ? "pointer" : "not-allowed",
                         background: canJoin ? "linear-gradient(120deg, #10b981, #059669)" : "#9ca3af"
                     }}
-                    title={canJoin ? "Join now" : `Link enables at ${enableTime.toLocaleTimeString()}`}
                     >
                     {canJoin 
                         ? "📹 Join Call" 
-                        : isFarFuture 
-                            ? `📅 Scheduled` 
-                            : `⏳ Join at ${enableTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
+                        : `Link active at ${enableTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
                     }
                     </button>
                 );
@@ -1129,11 +1129,8 @@ const MyBookings = ({ seniors }) => {
             </>
           )}
           
-          {dispute === "none" && !b.rated && (
+          {dispute === "none" && !b.rated && status === 'completed' && (
             <button className="cc-btn danger btn-compact" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
-          )}
-          {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
-            <span className="dispute-not-allowed">🚫 Dispute not allowed after rating.</span>
           )}
         </div>
       </div>
@@ -1164,10 +1161,8 @@ const MyBookings = ({ seniors }) => {
         title="⚠️ Confirm Rating"
       >
         <p>
-          Once you rate this senior, you cannot raise a dispute.
-          <br />
           Are you sure you want to give a rating of 
-          <strong> {ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
+          <strong> {ratingData.value} stars</strong>?
         </p>
       </ConfirmModal>
     
@@ -1176,7 +1171,6 @@ const MyBookings = ({ seniors }) => {
       {bookings.length === 0 && (
         <div className="card" style={{ padding: 26, textAlign: "center" }}>
           <div style={{ color: "var(--txt)", fontWeight: 700 }}>You haven't booked any sessions yet.</div>
-          <div className="small-muted" style={{ marginTop: 6 }}>Find a senior and schedule your first session.</div>
         </div>
       )}
 
