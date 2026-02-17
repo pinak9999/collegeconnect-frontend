@@ -7,97 +7,242 @@ import "./BookingPage.css";
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const isMobile = windowWidth <= 768;
 
+  // 1. Data Load Karna
   useEffect(() => {
-    const loadData = async () => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    const loadPageData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } });
-        const settings = await axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`);
         
-        setProfile(res.data);
-        setTotalAmount((res.data.price_per_session || 0) + (settings.data.platformFee || 0));
+        // Agar login nahi hai to error mat dikhao, bas loading band kar do (redirect payment pe hoga)
+        if (!token) {
+           // Optional: You can redirect here if you want strict protection
+        }
+
+        const [res, settingsRes, allProfilesRes] = await Promise.all([
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
+            { headers: { "x-auth-token": token } }
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`,
+            { headers: { "x-auth-token": token } }
+          ),
+        ]);
+
+        const singleProfileData = res.data;
+        const allProfilesData = allProfilesRes.data;
+
+        const matchingProfileFromAll = allProfilesData.find(
+          (p) => p.user?._id === userId
+        );
+
+        const combinedProfile = {
+          ...singleProfileData,
+          ...matchingProfileFromAll,
+          user: singleProfileData.user || matchingProfileFromAll.user,
+          college: singleProfileData.college || matchingProfileFromAll.college,
+        };
+
+        setProfile(combinedProfile);
+        const fee = combinedProfile.price_per_session + settingsRes.data.platformFee;
+        setTotalAmount(fee);
         setLoading(false);
-      } catch (err) { setLoading(false); }
+      } catch (err) {
+        let errorMsg = err.response
+          ? err.response.data.msg || err.response.data
+          : err.message;
+        setError("Unable to load profile. Please try again.");
+        setLoading(false);
+      }
     };
-    loadData();
+
+    loadPageData();
+    return () => window.removeEventListener("resize", handleResize);
   }, [userId]);
 
-  const handlePayment = async () => {
+  // 2. Payment Handle Karna
+  const displayRazorpay = async () => {
     const token = localStorage.getItem("token");
-    if (!token) { toast.error("Login required!"); navigate("/login"); return; }
+    const user = JSON.parse(localStorage.getItem("user"));
+    
+    if (!token) {
+      toast.error("You must be logged in to book.");
+      navigate("/login");
+      return;
+    }
 
-    // 🚀 AUTO-GENERATE DATE & TIME (No Input Needed)
-    const now = new Date();
-    const currentDate = now.toISOString().split('T')[0]; // "2023-10-25"
-    const currentTime = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`; // "14:30"
-
-    const bookingPayload = {
+    // 🚀 Time Logic Removed: Current time bhej rahe hain
+    const bookingDetails = {
       senior: profile.user._id,
-      date: currentDate, // Auto-filled
-      time: currentTime, // Auto-filled
-      amount: totalAmount
+      profileId: profile._id,
+      slot_time: new Date(), // Abhi ka time
+      duration: profile.session_duration_minutes,
+      amount: totalAmount,
     };
 
+    const toastId = toast.loading("Creating your order...");
     try {
+      // Step A: Order Create
       const orderRes = await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
-        { amount: totalAmount },
+        { seniorId: profile.user._id, amount: totalAmount }, 
         { headers: { "x-auth-token": token } }
       );
+      const order = orderRes.data;
+      toast.dismiss(toastId);
 
+      // Step B: Razorpay Options
       const options = {
-        key: "rzp_test_RbhIpPvOLS2KkF",
-        amount: orderRes.data.amount,
-        currency: "INR",
+        key: "rzp_test_RbhIpPvOLS2KkF", // Apni Live Key yahan daal sakte hain
+        amount: order.amount,
+        currency: order.currency,
         name: "CollegeConnect",
-        order_id: orderRes.data.id,
+        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
+        order_id: order.id,
+        
+        // Step C: Payment Success Handler
         handler: async function (response) {
-          const toastId = toast.loading("Confirming...");
+          const verifyToastId = toast.loading("Verifying payment...");
           try {
             await axios.post(
               "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
-              { ...response, bookingDetails: bookingPayload },
+              { ...response, bookingDetails },
               { headers: { "x-auth-token": token } }
             );
-            toast.dismiss(toastId);
+            toast.dismiss(verifyToastId);
             toast.success("Booking Confirmed!");
+            
+            // 🚀 REDIRECT TO MY BOOKINGS
             navigate("/student-dashboard/bookings"); 
-          } catch (error) {
-            toast.dismiss(toastId);
-            toast.error("Verification Failed");
+            
+          } catch {
+            toast.dismiss(verifyToastId);
+            toast.error("Payment Verification Failed. Please contact support.");
           }
         },
-        theme: { color: "#10B981" }
+        prefill: { name: user?.name || "User", email: user?.email || "user@example.com" },
+        theme: { color: "#10B981" },
       };
-      new window.Razorpay(options).open();
-    } catch (err) { toast.error("Payment Error"); }
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (err) {
+      toast.dismiss(toastId);
+      let errorMsg = err.response
+        ? err.response.data.msg || err.response.data
+        : err.message;
+      toast.error("Error creating order. " + errorMsg);
+    }
   };
 
-  if (loading) return <div className="center">Loading...</div>;
-  if (!profile) return <div className="center">Profile not found</div>;
+  if (loading)
+    return (
+      <div className="booking-page center">
+        <h2 className="loading-text">⏳ Loading Booking Page...</h2>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="booking-page center">
+        <h2 className="error-text">❌ {error}</h2>
+      </div>
+    );
+
+  if (!profile)
+    return (
+      <div className="booking-page center">
+        <h2>Profile not found.</h2>
+      </div>
+    );
 
   return (
-    <div className="booking-page" style={{padding:20, maxWidth:600, margin:'0 auto'}}>
-      <div className="card" style={{padding:20, border:'1px solid #ddd', borderRadius:10, textAlign:'center'}}>
-        <img src={profile.avatar || "https://via.placeholder.com/100"} alt="Avatar" style={{width:100, height:100, borderRadius:'50%', objectFit:'cover'}}/>
-        <h2>{profile.user?.name}</h2>
-        <p style={{color:'#666'}}>{profile.college?.name}</p>
+    <div className="booking-page">
+      <div className={`layout ${isMobile ? "mobile" : ""}`}>
         
-        <div style={{margin:'20px 0', padding:'15px', background:'#f0fdf4', borderRadius:8}}>
-          <h3>Total Fee: ₹{totalAmount}</h3>
-          <p style={{fontSize:'0.9rem', color:'#166534'}}>Instant Booking • Join Immediately</p>
+        {/* Left Side: Senior Profile */}
+        <div className="main-content">
+          <div className="profile-card">
+            <img
+              src={profile.avatar || "https://via.placeholder.com/120"}
+              alt={profile.user?.name || "Senior"}
+              className="avatar"
+            />
+            <h2 className="profile-name">{profile.user?.name}</h2>
+            <p className="college">{profile.college?.name || "N/A"}</p>
+            <p className="branch">
+              {profile.branch} ({profile.year})
+            </p>
+          </div>
+
+          <div className="card">
+            <h3 className="heading">👤 About Me</h3>
+            <p className="bio">{profile.bio}</p>
+          </div>
+
+          <div className="card">
+            <h3 className="heading">🏷️ Specializations</h3>
+            <div className="tags">
+              {profile.tags?.length ? (
+                profile.tags.map((tag) => (
+                  <span key={tag._id} className="tag">
+                    {tag.name}
+                  </span>
+                ))
+              ) : (
+                <p className="no-tags">No tags listed.</p>
+              )}
+            </div>
+          </div>
+
+          {profile.id_card_url && (
+            <div className="card verified">
+              <h3 className="heading center">🎓 College Verified ID ✓</h3>
+              <img
+                src={profile.id_card_url}
+                alt="College ID Card"
+                className="id-card"
+              />
+            </div>
+          )}
         </div>
 
-        <button 
-          onClick={handlePayment}
-          style={{width:'100%', padding:12, background:'#2563eb', color:'white', border:'none', borderRadius:8, fontSize:'1rem', cursor:'pointer'}}
-        >
-          Pay & Start Session
-        </button>
+        {/* Right Side: Payment Box */}
+        <div className="sidebar">
+          <div className="card booking-box">
+            <h3 className="heading center">Book this Session</h3>
+            <p className="note">
+              After payment, the senior will contact you within 6 hours to
+              schedule the best time.
+            </p>
+
+            <div className="price-box">
+              <span className="price">₹{totalAmount}</span>
+              <span className="chat-free">+ Chat Free</span>
+            </div>
+
+            <button
+              className="book-btn"
+              onClick={displayRazorpay}
+            >
+              🔒 Pay ₹{totalAmount} & Book
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
