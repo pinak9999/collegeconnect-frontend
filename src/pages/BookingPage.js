@@ -5,9 +5,10 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import './BookingPage.css';
 
-// 🌐 Production Backend URL (Render Link)
+// 🌐 Production Backend URL
 const API_BASE_URL = "https://collegeconnect-backend-mrkz.onrender.com";
 
+// --- Footer Component ---
 function Footer() {
   const companyLinks = [{ name: "About Us", href: "#" }, { name: "Careers", href: "#" }, { name: "Press Release", href: "#" }, { name: "Blog", href: "#" }];
   const supportLinks = [{ name: "Let Us Help You", href: "#" }, { name: "Help Center", href: "#" }, { name: "Your Account", href: "#" }, { name: "Report Issue", href: "#" }, { name: "Contact Us", href: "#" }];
@@ -38,8 +39,9 @@ function Footer() {
   );
 }
 
+// --- Main Booking Page ---
 function BookingPage() {
-  const { userId } = useParams();
+  const { userId } = useParams(); // This is the Mentor ID
   const navigate = useNavigate();
   const { auth } = useAuth(); 
 
@@ -48,8 +50,7 @@ function BookingPage() {
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
 
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedSlot, setSelectedSlot] = useState("");
+  // 🟢 Simple Mode: Date/Time state ki zaroorat nahi hai
 
   useEffect(() => {
     const loadPageData = async () => {
@@ -78,23 +79,10 @@ function BookingPage() {
     loadPageData();
   }, [userId]);
 
-  const convertTo24Hour = (time12h) => {
-    if(!time12h) return "10:00";
-    const [time, modifier] = time12h.split(" ");
-    let [hours, minutes] = time.split(":");
-    if (hours === "12") hours = modifier === "PM" ? "12" : "00";
-    else if (modifier === "PM") hours = parseInt(hours, 10) + 12;
-    return `${hours}:${minutes}`;
-  };
-
   const displayRazorpay = async () => {
     if (!auth.isAuthenticated) {
       toast.error("Please login to book.");
       navigate("/login");
-      return;
-    }
-    if (!selectedDate || !selectedSlot) {
-      toast.error("Please select a Date and Time Slot.");
       return;
     }
 
@@ -102,6 +90,7 @@ function BookingPage() {
     try {
       const token = localStorage.getItem("token");
       
+      // 1. Order Create karein
       const orderRes = await axios.post(
         `${API_BASE_URL}/api/payment/order`,
         { amount: totalAmount },
@@ -111,6 +100,7 @@ function BookingPage() {
       const order = orderRes.data;
       toast.dismiss(toastId);
 
+      // 2. Razorpay Options
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF", 
         amount: order.amount,
@@ -118,23 +108,37 @@ function BookingPage() {
         name: "CollegeConnect",
         description: `Booking with ${profile.user?.name}`,
         order_id: order.id,
+        
+        // 🟢 MAIN FIX IS HERE (Handler Function)
         handler: async function (response) {
-          const verifyToastId = toast.loading("Verifying payment...");
+          const verifyToastId = toast.loading("Verifying & Saving Booking...");
           try {
-           
+            
+            // ✅ FIX: Data object yahan banaya hai (Pehle ye missing tha)
+            const verificationData = {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                mentorId: userId,  // Senior ID
+                amount: totalAmount,
+                topic: "Mentorship Session"
+            };
 
+            // 3. Verify Payment & Save to DB
             await axios.post(
               `${API_BASE_URL}/api/payment/verify`,
-              bookingData,
+              verificationData, // ✅ Correct Data Variable passed
               { headers: { "x-auth-token": token } }
             );
 
             toast.dismiss(verifyToastId);
-            toast.success("Booking Confirmed!");
+            toast.success("Booking Confirmed! 🎉");
             navigate("/student-dashboard/bookings");
+            
           } catch (err) {
+            console.error(err);
             toast.dismiss(verifyToastId);
-            toast.error("Verification failed. Please contact support.");
+            toast.error("Payment successful but booking save failed.");
           }
         },
         prefill: { name: auth.user.name, email: auth.user.email },
@@ -145,6 +149,7 @@ function BookingPage() {
       rzp1.open();
     } catch (err) {
       toast.dismiss(toastId);
+      console.error(err);
       toast.error("Error creating order.");
     }
   };
@@ -156,6 +161,8 @@ function BookingPage() {
     <div className="page-container">
       <div className="layout-container">
         <div className="main-content">
+          
+          {/* Profile Header */}
           <div className="card profile-header">
             <img src={profile.avatar || "https://via.placeholder.com/120"} alt="avatar" className="avatar" />
             <h2 className="profile-name">{profile.user?.name}</h2>
@@ -163,32 +170,15 @@ function BookingPage() {
             <p className="profile-branch">{profile.branch} ({profile.year})</p>
           </div>
 
+          {/* 🟢 Simple Mode: Date/Time removed, direct info shown */}
           <div className="card">
-            <h3 className="card-heading">📅 Select Schedule</h3>
-            <div className="input-group">
-              <label>Pick a Date</label>
-              <input 
-                type="date" 
-                className="cc-input" 
-                min={new Date().toISOString().split("T")[0]} 
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-            </div>
-            <div className="input-group" style={{marginTop: "15px"}}>
-              <label>Pick a Time Slot (30 Mins)</label>
-              <div className="slots-grid" style={{display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px"}}>
-                {["10:00 AM", "12:00 PM", "04:00 PM", "06:00 PM", "08:00 PM"].map(slot => (
-                  <button 
-                    key={slot} 
-                    className={`cc-chip ${selectedSlot === slot ? 'active' : ''}`}
-                    onClick={() => setSelectedSlot(slot)}
-                    type="button"
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
+            <h3 className="card-heading">📅 Session Details</h3>
+            <p style={{color: 'var(--muted)', fontSize: '1rem'}}>
+               This is a <strong>Direct Booking</strong>. 
+               Once payment is done, you can chat with the senior to decide a mutual time.
+            </p>
+            <div className="cc-chip active" style={{marginTop: '10px', display: 'inline-block'}}>
+               ✅ Flexible Timing
             </div>
           </div>
 
@@ -198,6 +188,7 @@ function BookingPage() {
           </div>
         </div>
 
+        {/* Payment Sidebar */}
         <div className="sidebar">
           <div className="card booking-card">
             <h3>Booking Summary</h3>
