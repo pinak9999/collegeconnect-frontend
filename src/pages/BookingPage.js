@@ -1,60 +1,173 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+// import { useAuth } from "../context/AuthContext"; // Asal code mein ise uncomment karein
 import toast from "react-hot-toast";
+import './BookingPage.css'; // ⭐ CSS फाइल को यहाँ इम्पोर्ट किया गया है
 
+// --- फूटर कंपोनेंट ---
+function Footer() {
+  const companyLinks = [
+    { name: "About Us", href: "#" },
+    { name: "Careers", href: "#" },
+    { name: "Press Release", href: "#" },
+    { name: "Blog", href: "#" },
+  ];
+
+  const supportLinks = [
+    { name: "Let Us Help You", href: "#" },
+    { name: "Help Center", href: "#" },
+    { name: "Your Account", href: "#" },
+    { name: "Report Issue", href: "#" },
+    { name: "Contact Us", href: "#" },
+  ];
+
+  const studentLinks = [
+    { name: "Find Mentors", href: "#" },
+    { name: "Book a Session", href: "#" },
+    { name: "REAP Guide", href: "#" },
+    { name: "Learning Hub", href: "#" },
+  ];
+
+  return (
+    <footer className="footer-container">
+      <div className="footer-grid">
+        <div className="footer-column">
+          <h3 className="footer-logo">CollegeConnect</h3>
+          <p className="footer-tagline">
+            Connecting students with amazing mentors.
+          </p>
+        </div>
+        <div className="footer-column">
+          <h4 className="footer-heading">Company</h4>
+          {companyLinks.map((link) => (
+            <a key={link.name} href={link.href} className="footer-link">
+              {link.name}
+            </a>
+          ))}
+        </div>
+        <div className="footer-column">
+          <h4 className="footer-heading">Support</h4>
+          {supportLinks.map((link) => (
+            <a key={link.name} href={link.href} className="footer-link">
+              {link.name}
+            </a>
+          ))}
+        </div>
+        <div className="footer-column">
+          <h4 className="footer-heading">For Students</h4>
+          {studentLinks.map((link) => (
+            <a key={link.name} href={link.href} className="footer-link">
+              {link.name}
+            </a>
+          ))}
+        </div>
+      </div>
+      <div className="footer-copyright">
+        © {new Date().getFullYear()} CollegeConnect. All Rights Reserved.
+      </div>
+    </footer>
+  );
+}
+
+// --- मुख्य बुकिंग पेज कंपोनेंट ---
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { auth } = useAuth();
+
+  // ⭐ Mock AuthContext (Compile error se bachne ke liye)
+  const { auth } = {
+    auth: {
+      user: {
+        name: "Mock User",
+        email: "mock.user@example.com",
+      },
+    },
+  };
+  // const { auth } = useAuth(); // Asal app mein ise uncomment karein
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const isMobile = windowWidth <= 768;
 
-  // 🧩 Handle Resize & Load Profile
+  // ⭐ isMobile state ki ab style ke liye zaroorat nahi hai.
+  // CSS media queries ise handle kar rahe hain.
+
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-
+    // window resize listener ki ab zaroorat nahi hai.
     const loadPageData = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return setError("⚠️ Please log in to continue.");
+        if (!token) {
+          setLoading(false);
+          setError("Error: You are not logged in.");
+          return;
+        }
 
-        const [profileRes, settingsRes] = await Promise.all([
+        // --- ID CARD FIX (Aapka original logic) ---
+        const [res, settingsRes, allProfilesRes] = await Promise.all([
           axios.get(
             `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
             { headers: { "x-auth-token": token } }
           ),
-          axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`,
+            { headers: { "x-auth-token": token } }
+          ),
         ]);
 
-        setProfile(profileRes.data);
-        setTotalAmount(
-          profileRes.data.price_per_session + settingsRes.data.platformFee
+        const singleProfileData = res.data;
+        const allProfilesData = allProfilesRes.data;
+
+        const matchingProfileFromAll = allProfilesData.find(
+          (p) => p.user?._id === userId
         );
+
+        const combinedProfile = {
+          ...singleProfileData,
+          ...matchingProfileFromAll,
+          user: singleProfileData.user || matchingProfileFromAll.user,
+          college: singleProfileData.college || matchingProfileFromAll.college,
+        };
+
+        setProfile(combinedProfile);
+
+        const fee =
+          combinedProfile.price_per_session + settingsRes.data.platformFee;
+        setTotalAmount(fee);
+
+        setLoading(false);
       } catch (err) {
-        setError("❌ " + (err.response?.data?.msg || err.message));
-      } finally {
+        let errorMsg = err.response
+          ? err.response.data.msg || err.response.data
+          : err.message;
+        setError("Error: " + errorMsg);
         setLoading(false);
       }
     };
+
     loadPageData();
-    return () => window.removeEventListener("resize", handleResize);
+    // useEffect se resize listener hata diya gaya hai
   }, [userId]);
 
-  // 💳 Payment Function
+  // --- Payment Handler (Aapka original logic) ---
   const displayRazorpay = async () => {
     if (!auth.user) {
-      toast.error("You must be logged in to book!");
+      toast.error("You must be logged in to book.");
       navigate("/login");
       return;
     }
+    const bookingDetails = {
+      senior: profile.user._id,
+      profileId: profile._id,
+      slot_time: new Date(),
+      duration: profile.session_duration_minutes,
+      amount: totalAmount,
+    };
     const toastId = toast.loading("Creating your order...");
     try {
       const token = localStorage.getItem("token");
@@ -63,253 +176,171 @@ function BookingPage() {
         { seniorId: profile.user._id },
         { headers: { "x-auth-token": token } }
       );
-      toast.dismiss(toastId);
       const order = orderRes.data;
-
+      toast.dismiss(toastId);
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF",
         amount: order.amount,
         currency: order.currency,
         name: "CollegeConnect",
-        description: `Booking with ${profile.user?.name || "Senior"}`,
+        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
         order_id: order.id,
-        theme: { color: "#2563eb" },
-        handler: async (response) => {
-          const verifyToast = toast.loading("Verifying payment...");
+        handler: async function (response) {
+          const verifyToastId = toast.loading("Verifying payment...");
           try {
             await axios.post(
               "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
-              { ...response, bookingDetails: { amount: totalAmount } },
+              { ...response, bookingDetails },
               { headers: { "x-auth-token": token } }
             );
-            toast.dismiss(verifyToast);
-            toast.success("✅ Booking Confirmed!");
+            toast.dismiss(verifyToastId);
+            toast.success("Booking Confirmed!");
             navigate("/booking-success");
           } catch {
-            toast.dismiss(verifyToast);
-            toast.error("Verification Failed. Try again!");
+            toast.dismiss(verifyToastId);
+            toast.error("Payment Verification Failed. Please contact support.");
           }
         },
+        prefill: { name: auth.user.name, email: auth.user.email },
+        theme: { color: "#10B981" }, // Mint theme color
       };
-      new window.Razorpay(options).open();
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
     } catch (err) {
       toast.dismiss(toastId);
-      toast.error("❌ Error creating order");
+      let errorMsg = err.response
+        ? err.response.data.msg || err.response.data
+        : err.message;
+      toast.error("Error creating order. " + errorMsg);
     }
   };
 
-  // 🌀 Loading and Error States
+  // --- LOADING / ERROR / NOT FOUND STATES ---
+
   if (loading)
     return (
-      <div style={centerBox}>
-        <h2 style={{ color: "#2563eb" }}>⏳ Loading your booking...</h2>
+      <div className="page-container loading-container">
+        <h2>⏳ Loading Booking Page...</h2>
       </div>
     );
 
   if (error)
     return (
-      <div style={centerBox}>
-        <h2 style={{ color: "red" }}>{error}</h2>
+      <div className="page-container loading-container">
+        <h2 className="error-text">❌ {error}</h2>
       </div>
     );
 
   if (!profile)
     return (
-      <div style={centerBox}>
-        <h2>No profile found.</h2>
+      <div className="page-container loading-container">
+        <h2>Profile not found.</h2>
       </div>
     );
 
-  // 🧠 UI Style Objects
-  const container = {
-    maxWidth: "1200px",
-    margin: "auto",
-    padding: "30px 20px",
-    display: "flex",
-    flexDirection: isMobile ? "column" : "row",
-    gap: "25px",
-    fontFamily: "Poppins, sans-serif",
-  };
+  // --- FINAL JSX (Ab yahan classNames ka istemal hai) ---
 
-  const leftColumn = {
-    flex: "2",
-    animation: "fadeIn 0.7s ease",
-  };
-
-  const rightColumn = {
-    flex: "1",
-    position: isMobile ? "relative" : "sticky",
-    top: "100px",
-    height: "fit-content",
-    animation: "fadeIn 1s ease",
-  };
-
-  const card = {
-    background: "rgba(255,255,255,0.95)",
-    borderRadius: "18px",
-    padding: "25px",
-    marginBottom: "20px",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-    backdropFilter: "blur(10px)",
-    transition: "all 0.3s ease",
-  };
-
-  const avatar = {
-    width: "120px",
-    height: "120px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    border: "4px solid #2563eb",
-    boxShadow: "0 6px 15px rgba(37,99,235,0.3)",
-    marginBottom: "15px",
-  };
-
-  const nameStyle = {
-    fontSize: "1.8rem",
-    color: "#1e3a8a",
-    fontWeight: "700",
-  };
-
-  const tag = {
-    background: "#eff6ff",
-    color: "#2563eb",
-    padding: "6px 14px",
-    borderRadius: "20px",
-    fontSize: "0.85rem",
-    fontWeight: "500",
-  };
-
-  const priceBox = {
-    textAlign: "center",
-    marginTop: "15px",
-    fontSize: "2.2rem",
-    color: "#111827",
-    fontWeight: "700",
-  };
-
-  const payButton = {
-    background: "linear-gradient(45deg,#2563eb,#1d4ed8)",
-    color: "#fff",
-    fontSize: "1.1rem",
-    fontWeight: "600",
-    padding: "14px 20px",
-    border: "none",
-    borderRadius: "12px",
-    width: "100%",
-    cursor: "pointer",
-    boxShadow: "0 8px 20px rgba(37,99,235,0.4)",
-    transition: "0.3s ease",
-    marginTop: "20px",
-  };
-
-  const idCardImg = {
-    width: "100%",
-    maxWidth: "260px",
-    borderRadius: "10px",
-    border: "2px solid #2563eb",
-    boxShadow: "0 6px 15px rgba(0,0,0,0.1)",
-    display: "block",
-    margin: "auto",
-  };
-
-  const centerBox = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "80vh",
-    flexDirection: "column",
-    fontFamily: "Poppins, sans-serif",
-  };
-
-  // ✨ Animation Style (inserted dynamically)
-  const style = document.createElement("style");
-  style.innerHTML = `
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  `;
-  document.head.appendChild(style);
-
-  // ✅ Return Final UI
   return (
-    <div style={container}>
-      {/* LEFT SIDE */}
-      <div style={leftColumn}>
-        <div style={{ ...card, textAlign: "center" }}>
-          <img
-            src={profile.avatar || "https://via.placeholder.com/120"}
-            alt={profile.user?.name}
-            style={avatar}
-          />
-          <h2 style={nameStyle}>{profile.user?.name}</h2>
-          <p style={{ color: "#555" }}>{profile.college?.name}</p>
-          <p style={{ color: "#666" }}>
-            {profile.branch} ({profile.year})
-          </p>
-        </div>
-
-        <div style={card}>
-          <h3 style={{ color: "#2563eb", marginBottom: "10px" }}>👤 About Me</h3>
-          <p style={{ color: "#444", lineHeight: "1.7" }}>
-            {profile.bio || "No bio available."}
-          </p>
-        </div>
-
-        <div style={card}>
-          <h3 style={{ color: "#2563eb", marginBottom: "10px" }}>
-            🏷️ Specializations
-          </h3>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {profile.tags?.length ? (
-              profile.tags.map((t) => (
-                <span key={t._id} style={tag}>
-                  #{t.name}
-                </span>
-              ))
-            ) : (
-              <p style={{ color: "#666" }}>No tags listed.</p>
-            )}
+    <div className="page-container">
+      <div className="layout-container">
+        {/* ------------------- 
+            LEFT COLUMN (Info) 
+             ------------------- */}
+        <div className="main-content">
+          {/* Profile Header Card */}
+          <div className="card profile-header">
+            <img
+              src={profile.avatar || "https://via.placeholder.com/120"}
+              alt={profile.user?.name || "Senior"}
+              className="avatar"
+            />
+            <h2 className="profile-name">
+              {profile.user?.name}
+            </h2>
+            <p className="profile-college">
+              {profile.college?.name || "N/A"}
+            </p>
+            <p className="profile-branch">
+              {profile.branch} ({profile.year})
+            </p>
           </div>
-        </div>
 
-        {profile.id_card_url && (
-          <div style={card}>
-            <h3
-              style={{ color: "#2563eb", textAlign: "center", marginBottom: "10px" }}
-            >
-              🎓 Verified College ID
+          {/* About Me Card */}
+          <div className="card">
+            <h3 className="card-heading">
+              <span className="heading-icon">👤</span> About Me
             </h3>
-            <img src={profile.id_card_url} alt="ID" style={idCardImg} />
+            <p className="card-bio">
+              {profile.bio}
+            </p>
           </div>
-        )}
-      </div>
 
-      {/* RIGHT SIDE */}
-      <div style={rightColumn}>
-        <div style={card}>
-          <h3 style={{ color: "#2563eb", marginBottom: "10px" }}>💬 Book a Session</h3>
-          <p style={{ color: "#555", lineHeight: "1.6" }}>
-            Once booked, the senior will reach out within <b>6 hours</b> to
-            confirm the meeting.
-          </p>
-          <div style={priceBox}>
-            ₹{totalAmount}
-            <span style={{ fontSize: "1rem", color: "#555", fontWeight: "400" }}>
-              {" "}
-              / {profile.session_duration_minutes} min
-            </span>
+          {/* Specializations Card */}
+          <div className="card">
+            <h3 className="card-heading">
+              <span className="heading-icon">🏷️</span> Specializations
+            </h3>
+            <div className="tags-container">
+              {profile.tags?.length ? (
+                profile.tags.map((tag) => (
+                  <span key={tag._id} className="tag">
+                    {tag.name}
+                  </span>
+                ))
+              ) : (
+                <p className="no-tags-text">
+                  No tags listed.
+                </p>
+              )}
+            </div>
           </div>
-          <button
-            onClick={displayRazorpay}
-            style={payButton}
-            onMouseEnter={(e) => (e.target.style.transform = "scale(1.04)")}
-            onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
-          >
-            💳 Pay ₹{totalAmount} & Book Now
-          </button>
+
+          {/* Verified ID Card */}
+          {profile.id_card_url && (
+            <div className="card">
+              <h3 className="card-heading verified-heading">
+                <span className="heading-icon">🎓</span> College Verified ID
+                <span className="verified-icon">✓</span>
+              </h3>
+              <img
+                src={profile.id_card_url}
+                alt="College ID Card"
+                className="id-card-image"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* ------------------- 
+            RIGHT COLUMN (Booking) 
+             ------------------- */}
+        <div className="sidebar">
+          <div className="card booking-card">
+            <h3 className="booking-title">
+              Book this Session
+            </h3>
+            <p className="booking-subtitle">
+              After payment, the senior will contact you within 6 hours to
+              schedule the best time.
+            </p>
+
+            <div className="price-box">
+              <span className="price-text">₹{totalAmount}</span>
+              <span className="duration-text">+ Chat Free</span>
+            </div>
+
+            <button
+              onClick={displayRazorpay}
+              className="book-button"
+            >
+              <span className="button-icon">🔒</span> Pay ₹{totalAmount} & Book
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* फूटर को यहाँ जोड़ा गया है */}
+      <Footer />
     </div>
   );
 }
