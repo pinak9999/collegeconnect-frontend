@@ -1030,7 +1030,11 @@ const MyBookings = ({ seniors }) => {
     const dispute = b.dispute_status?.toLowerCase() || "none";
     const status = b.status?.toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
-    const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
+    const seniorProfile = seniors.find((s) => s.user?._id === b.mentor?._id); // mentor use karein
+    {/* b.status dikhane ke baad ye line jodein */}
+<div style={{ marginTop: '10px', fontSize: '0.9rem', color: 'var(--muted)', fontWeight: '600' }}>
+  📅 {new Date(b.scheduledDate).toLocaleDateString()} | 🕒 {b.startTime}
+</div>
     const correctAvatar = seniorProfile ? seniorProfile.avatar : null;
     const yearText = getYearSuffix(b.profile?.year);
 
