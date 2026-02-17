@@ -7,7 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import MobileNumberModal from './components/MobileNumberModal';
 import ProtectedRoute from './components/ProtectedRoute';
-import StudentBookings from './pages/StudentBookings';
+
 // 🔹 Pages
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import StudentDashboard from './pages/StudentDashboard';
+import StudentBookings from './pages/StudentBookings'; // ✅ Imported
 import SeniorDashboard from './pages/SeniorDashboard';
 import SeniorAvailabilityPage from './pages/SeniorAvailabilityPage';
 import SeniorEarningsPage from './pages/SeniorEarningsPage';
@@ -31,7 +32,7 @@ import AdminManageTags from './pages/AdminManageTags';
 import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
 
-// 🔹 ❗ सिर्फ VideoCallPage (Analytics हटा दिया गया है)
+// 🔹 ❗ VideoCallPage
 import VideoCallPage from './pages/VideoCallPage';
 
 // 🧩 Layout Component
@@ -40,13 +41,13 @@ function AppLayout() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
-  // 💡 Simulated app load (you can replace it with your API check)
+  // 💡 Simulated app load
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
-  // 🔹 Hide Navbar & Footer on Auth pages (login/register/forgot/reset)
+  // 🔹 Hide Navbar & Footer on Auth pages
   const hideLayout =
     location.pathname === '/login' ||
     location.pathname === '/register' ||
@@ -101,6 +102,16 @@ function AppLayout() {
             element={
               <ProtectedRoute>
                 <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* ✅ NEW ROUTE ADDED HERE: Student Bookings */}
+          <Route
+            path="/student/bookings"
+            element={
+              <ProtectedRoute>
+                <StudentBookings />
               </ProtectedRoute>
             }
           />
@@ -231,7 +242,17 @@ function AppLayout() {
             }
           />
 
-          {/* ❗ सिर्फ Video Call Route (Analytics हटा दिया गया है) */}
+          {/* VIDEO CALL ROUTE */}
+          {/* video-call/:roomId bhi add kar sakte hain agar direct link ho */}
+          <Route
+            path="/video-call/:roomId"
+            element={
+              <ProtectedRoute>
+                <VideoCallPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Ye purana wala session route */}
           <Route
             path="/session/:sessionId"
             element={
@@ -260,7 +281,7 @@ function AppLayout() {
         </Routes>
       </main>
 
-      {/* 🧩 Footer (Hidden on auth pages + hidden during loading) */}
+      {/* 🧩 Footer */}
       {!hideLayout && <Footer loading={loading} />}
     </div>
   );
