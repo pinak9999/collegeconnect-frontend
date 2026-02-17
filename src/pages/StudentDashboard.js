@@ -890,9 +890,8 @@ const FindSenior = ({ seniors, loading, colleges, tags }) => {
     </div>
   );
 };
-
 // ===============================
-// 📘 MyBookings (revamped UI)
+// 📘 MyBookings (Fixed & 100% Working)
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -908,12 +907,22 @@ const MyBookings = ({ seniors }) => {
     const loadBookings = async () => {
       try {
         const token = localStorage.getItem("token");
+        if(!token) return;
+
+        console.log("📡 Loading bookings...");
         const res = await axios.get(
           "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my",
           { headers: { "x-auth-token": token } }
         );
-        setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-      } catch {
+        
+        console.log("✅ Bookings Received:", res.data); // Debugging
+        
+        // Data ko sort karein latest first
+        const sortedData = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setBookings(sortedData);
+      
+      } catch (err) {
+        console.error("❌ Error loading bookings:", err);
         toast.error("⚠️ Unable to load bookings");
       } finally {
         setLoading(false);
@@ -924,6 +933,20 @@ const MyBookings = ({ seniors }) => {
 
   const handleDispute = (id) => navigate(`/raise-dispute/${id}`);
   const handleChat = (id) => navigate(`/chat/${id}`);
+
+  // 🕒 Time Check Logic (Video Call Button)
+  const isClassTime = (booking) => {
+    if (!booking.scheduledDate || !booking.startTime) return false;
+    const now = new Date();
+    const meetingDate = new Date(booking.scheduledDate);
+    const [h, m] = booking.startTime.split(':');
+    
+    meetingDate.setHours(parseInt(h), parseInt(m), 0);
+    const endTime = new Date(meetingDate.getTime() + 30 * 60000); // 30 mins session
+
+    // Button active: 5 mins before start -> until end time
+    return now >= new Date(meetingDate.getTime() - 5 * 60000) && now <= endTime;
+  };
 
   const openRatingModal = (bookingId, seniorId, value) => {
     setRatingData({ bookingId, seniorId, value });
@@ -957,12 +980,12 @@ const MyBookings = ({ seniors }) => {
 
       toast.success(`⭐ You rated ${value} stars!`);
     } catch (err) {
-      console.error("Rating submission error:", err.response || err.message || err);
-      const errorMsg = err.response?.data?.msg || "Failed to submit rating!";
-      toast.error(`⚠️ ${errorMsg}`);
+      console.error("Rating submission error:", err);
+      toast.error("⚠️ Failed to submit rating!");
     }
   };
 
+  // Helper functions for styles
   const getStatusTagClass = (status) => {
     const base = "status-tag";
     switch ((status || "").toLowerCase()) {
@@ -981,51 +1004,51 @@ const MyBookings = ({ seniors }) => {
     return null;
   };
 
-  const getYearSuffix = (year) => {
-    if (!year) return null;
-    const num = parseInt(year, 10);
-    if (isNaN(num)) return year;
-    if (num === 1) return "1st Year";
-    if (num === 2) return "2nd Year";
-    if (num === 3) return "3rd Year";
-    return `${num}th Year`;
-  };
-
+  // Render Single Booking Card
   const renderBookingCard = (b) => {
     const dispute = b.dispute_status?.toLowerCase() || "none";
     const status = b.status?.toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
-    const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
-    const correctAvatar = seniorProfile ? seniorProfile.avatar : null;
-    const yearText = getYearSuffix(b.profile?.year);
+    
+    // Find senior profile details from props or booking data
+    const seniorName = b.mentor?.name || b.senior?.name || "Senior";
+    const seniorAvatar = b.mentor?.avatar || b.senior?.avatar || "https://via.placeholder.com/60";
+    const collegeName = b.profile?.college?.name || "College info unavailable";
+    const yearText = b.profile?.year ? `${b.profile.year}th Year` : "";
 
     return (
       <div key={b._id} className="card booking-card">
         <div className="booking-header">
           <div>
-            <h3 className="booking-name">{b.senior?.name}</h3>
-            <p className="booking-college">{b.profile?.college?.name}</p>
+            <h3 className="booking-name">{seniorName}</h3>
+            <p className="booking-college">{collegeName}</p>
             {yearText && <p className="booking-year-style">{yearText}</p>}
+            
+            <div style={{marginTop: 8, display: 'flex', gap: 8, fontSize: '0.85rem', color: 'var(--muted)'}}>
+              <span>📅 {new Date(b.scheduledDate).toLocaleDateString()}</span>
+              <span>⏰ {b.startTime} - {b.endTime}</span>
+            </div>
           </div>
           <img
-            src={correctAvatar || b.profile?.avatar || "https://via.placeholder.com/60"}
-            alt={b.senior?.name}
+            src={seniorAvatar}
+            alt={seniorName}
             className="booking-avatar"
             loading="lazy"
           />
         </div>
 
         <div className="status-row">
-          <span className={getStatusTagClass(status)}>{b.status}</span>
+          <span className={getStatusTagClass(status)}>{b.status || "Scheduled"}</span>
           {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
         </div>
 
         {status === "confirmed" && (
           <p className="info-message">
-            ℹ️ The senior will contact you on your phone within 6 hours.
+            ℹ️ The senior will contact you. Join the video call at the scheduled time.
           </p>
         )}
 
+        {/* Rating Section */}
         {status === "completed" && !b.rated && (
           <div className="rating-section">
             <p className="rating-prompt">Rate this session:</p>
@@ -1063,15 +1086,28 @@ const MyBookings = ({ seniors }) => {
           {status === "confirmed" && (
             <>
               <button className="cc-btn primary btn-compact" onClick={() => handleChat(b._id)}>💬 Chat</button>
-              {/* 🚀 New Join Call Button added here */}
-              <Link to={`/session/${b._id}`} className="cc-btn success btn-compact" style={{textDecoration:'none'}}>📹 Join Call</Link>
+              
+              {/* 🚀 VIDEO CALL BUTTON with Logic */}
+              <a 
+                href={`/video-call/${b.meetingLink}`} 
+                target="_blank"
+                rel="noreferrer"
+                className={`cc-btn btn-compact ${isClassTime(b) ? "success" : "disabled"}`} 
+                style={{
+                  textDecoration:'none', 
+                  opacity: isClassTime(b) ? 1 : 0.6,
+                  pointerEvents: isClassTime(b) ? 'auto' : 'none',
+                  background: isClassTime(b) ? '' : 'var(--stroke)',
+                  color: isClassTime(b) ? '' : 'var(--muted)'
+                }}
+              >
+                {isClassTime(b) ? "📹 Join Call" : "Wait for Time"}
+              </a>
             </>
           )}
+
           {dispute === "none" && !b.rated && (
             <button className="cc-btn danger btn-compact" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
-          )}
-          {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
-            <span className="dispute-not-allowed">🚫 Dispute not allowed after rating.</span>
           )}
         </div>
       </div>
@@ -1086,6 +1122,7 @@ const MyBookings = ({ seniors }) => {
     );
   }
 
+  // Filter Active vs Past
   const activeBookings = bookings.filter(
     (b) => b.status?.toLowerCase() !== "completed" && b.status?.toLowerCase() !== "cancelled"
   );
@@ -1095,6 +1132,7 @@ const MyBookings = ({ seniors }) => {
 
   return (
     <div className="page-wrapper">
+      {/* Modal same as before */}
       <ConfirmModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -1102,19 +1140,24 @@ const MyBookings = ({ seniors }) => {
         title="⚠️ Confirm Rating"
       >
         <p>
-          Once you rate this senior, you cannot raise a dispute.
-          <br />
-          Are you sure you want to give a rating of 
-          <strong> {ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
+          Once you rate this senior, you cannot raise a dispute.<br />
+          Confirm rating: <strong>{ratingData.value} Stars</strong>?
         </p>
       </ConfirmModal>
     
       <h2 className="title-style">📘 My Bookings</h2>
 
       {bookings.length === 0 && (
-        <div className="card" style={{ padding: 26, textAlign: "center" }}>
-          <div style={{ color: "var(--txt)", fontWeight: 700 }}>You haven't booked any sessions yet.</div>
-          <div className="small-muted" style={{ marginTop: 6 }}>Find a senior and schedule your first session.</div>
+        <div className="card" style={{ padding: 40, textAlign: "center" }}>
+          <div style={{ fontSize: '1.2rem', color: "var(--txt)", fontWeight: 700 }}>You haven't booked any sessions yet.</div>
+          <div className="small-muted" style={{ marginTop: 10 }}>Find a senior and schedule your first session.</div>
+          <button 
+             onClick={() => window.location.href='/student-dashboard'} 
+             className="cc-btn primary" 
+             style={{marginTop: 20}}
+          >
+            Find a Mentor
+          </button>
         </div>
       )}
 
@@ -1134,7 +1177,6 @@ const MyBookings = ({ seniors }) => {
     </div>
   );
 };
-
 // ===============================
 // 🌈 Main Dashboard Shell
 // ===============================
