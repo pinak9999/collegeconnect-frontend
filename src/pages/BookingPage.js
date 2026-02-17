@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // 🟢 Auth use karein
+import { useAuth } from "../context/AuthContext"; 
 import toast from "react-hot-toast";
 import './BookingPage.css';
 
-// --- फूटर कंपोनेंट (Same as before) ---
+// 🌐 Production Backend URL (Render Link)
+const API_BASE_URL = "https://collegeconnect-backend-mrkz.onrender.com";
+
 function Footer() {
   const companyLinks = [{ name: "About Us", href: "#" }, { name: "Careers", href: "#" }, { name: "Press Release", href: "#" }, { name: "Blog", href: "#" }];
   const supportLinks = [{ name: "Let Us Help You", href: "#" }, { name: "Help Center", href: "#" }, { name: "Your Account", href: "#" }, { name: "Report Issue", href: "#" }, { name: "Contact Us", href: "#" }];
@@ -20,15 +22,15 @@ function Footer() {
         </div>
         <div className="footer-column">
           <h4 className="footer-heading">Company</h4>
-          {companyLinks.map((link) => (<a key={link.name} href={link.href} className="footer-link">{link.name}</a>))}
+          {companyLinks.map((link) => (<a key={link.name} href={link.href} className="footer-link" target="_blank" rel="noreferrer">{link.name}</a>))}
         </div>
         <div className="footer-column">
           <h4 className="footer-heading">Support</h4>
-          {supportLinks.map((link) => (<a key={link.name} href={link.href} className="footer-link">{link.name}</a>))}
+          {supportLinks.map((link) => (<a key={link.name} href={link.href} className="footer-link" target="_blank" rel="noreferrer">{link.name}</a>))}
         </div>
         <div className="footer-column">
           <h4 className="footer-heading">For Students</h4>
-          {studentLinks.map((link) => (<a key={link.name} href={link.href} className="footer-link">{link.name}</a>))}
+          {studentLinks.map((link) => (<a key={link.name} href={link.href} className="footer-link" target="_blank" rel="noreferrer">{link.name}</a>))}
         </div>
       </div>
       <div className="footer-copyright">© {new Date().getFullYear()} CollegeConnect. All Rights Reserved.</div>
@@ -36,18 +38,16 @@ function Footer() {
   );
 }
 
-// --- मुख्य बुकिंग पेज कंपोनेंट ---
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { auth } = useAuth(); // 🟢 Mock hata kar asli auth use karein
+  const { auth } = useAuth(); 
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // 🕒 Slot selection ke liye new states (Naya Backend logic)
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
 
@@ -61,14 +61,13 @@ function BookingPage() {
           return;
         }
 
-        // Backend Calls
         const [res, settingsRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } }),
-          axios.get(`http://localhost:5000/api/settings`)
+          axios.get(`${API_BASE_URL}/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } }),
+          axios.get(`${API_BASE_URL}/api/settings`)
         ]);
 
         setProfile(res.data);
-        const fee = res.data.price_per_session + (settingsRes.data.platformFee || 0);
+        const fee = (res.data.price_per_session || 0) + (settingsRes.data.platformFee || 0);
         setTotalAmount(fee);
         setLoading(false);
       } catch (err) {
@@ -79,7 +78,6 @@ function BookingPage() {
     loadPageData();
   }, [userId]);
 
-  // 🔹 Time format converter (12h to 24h for backend)
   const convertTo24Hour = (time12h) => {
     if(!time12h) return "10:00";
     const [time, modifier] = time12h.split(" ");
@@ -89,7 +87,6 @@ function BookingPage() {
     return `${hours}:${minutes}`;
   };
 
-  // --- Payment Handler ---
   const displayRazorpay = async () => {
     if (!auth.isAuthenticated) {
       toast.error("Please login to book.");
@@ -105,9 +102,8 @@ function BookingPage() {
     try {
       const token = localStorage.getItem("token");
       
-      // A. Create Order
       const orderRes = await axios.post(
-        "http://localhost:5000/api/payment/order",
+        `${API_BASE_URL}/api/payment/order`,
         { amount: totalAmount },
         { headers: { "x-auth-token": token } }
       );
@@ -116,7 +112,7 @@ function BookingPage() {
       toast.dismiss(toastId);
 
       const options = {
-        key: "rzp_test_RbhIpPvOLS2KkF",
+        key: "rzp_test_RbhIpPvOLS2KkF", 
         amount: order.amount,
         currency: order.currency,
         name: "CollegeConnect",
@@ -125,7 +121,6 @@ function BookingPage() {
         handler: async function (response) {
           const verifyToastId = toast.loading("Verifying payment...");
           try {
-            // 🟢 Naya Backend Format
             const bookingData = {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -138,7 +133,7 @@ function BookingPage() {
             };
 
             await axios.post(
-              "http://localhost:5000/api/payment/verify",
+              `${API_BASE_URL}/api/payment/verify`,
               bookingData,
               { headers: { "x-auth-token": token } }
             );
@@ -148,7 +143,7 @@ function BookingPage() {
             navigate("/student-dashboard/bookings");
           } catch (err) {
             toast.dismiss(verifyToastId);
-            toast.error("Verification failed. Contact support.");
+            toast.error("Verification failed. Please contact support.");
           }
         },
         prefill: { name: auth.user.name, email: auth.user.email },
@@ -163,13 +158,12 @@ function BookingPage() {
     }
   };
 
-  if (loading) return <div className="page-container loading-container"><h2>⏳ Loading...</h2></div>;
+  if (loading) return <div className="page-container loading-container"><h2>⏳ Loading Profile...</h2></div>;
   if (error) return <div className="page-container loading-container"><h2 className="error-text">❌ {error}</h2></div>;
 
   return (
     <div className="page-container">
       <div className="layout-container">
-        {/* LEFT COLUMN */}
         <div className="main-content">
           <div className="card profile-header">
             <img src={profile.avatar || "https://via.placeholder.com/120"} alt="avatar" className="avatar" />
@@ -178,7 +172,6 @@ function BookingPage() {
             <p className="profile-branch">{profile.branch} ({profile.year})</p>
           </div>
 
-          {/* 🕒 NEW: Slot Selection UI */}
           <div className="card">
             <h3 className="card-heading">📅 Select Schedule</h3>
             <div className="input-group">
@@ -187,17 +180,19 @@ function BookingPage() {
                 type="date" 
                 className="cc-input" 
                 min={new Date().toISOString().split("T")[0]} 
+                value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
               />
             </div>
             <div className="input-group" style={{marginTop: "15px"}}>
-              <label>Pick a Time</label>
+              <label>Pick a Time Slot (30 Mins)</label>
               <div className="slots-grid" style={{display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px"}}>
                 {["10:00 AM", "12:00 PM", "04:00 PM", "06:00 PM", "08:00 PM"].map(slot => (
                   <button 
                     key={slot} 
                     className={`cc-chip ${selectedSlot === slot ? 'active' : ''}`}
                     onClick={() => setSelectedSlot(slot)}
+                    type="button"
                   >
                     {slot}
                   </button>
@@ -208,20 +203,22 @@ function BookingPage() {
 
           <div className="card">
             <h3 className="card-heading">👤 About Me</h3>
-            <p className="card-bio">{profile.bio}</p>
+            <p className="card-bio">{profile.bio || "No bio available."}</p>
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
         <div className="sidebar">
           <div className="card booking-card">
-            <h3>Book Session</h3>
+            <h3>Booking Summary</h3>
             <div className="price-box">
               <span className="price-text">₹{totalAmount}</span>
-              <span className="duration-text">/ 30 min</span>
+              <span className="duration-text">/ Session</span>
             </div>
+            <p style={{fontSize: '0.8rem', color: '#666', marginTop: '10px'}}>
+              *Platform fee included. Senior will be notified instantly.
+            </p>
             <button onClick={displayRazorpay} className="cc-btn primary" style={{width: "100%", marginTop: "20px"}}>
-              🔒 Pay & Book Now
+              🔒 Pay ₹{totalAmount} & Book
             </button>
           </div>
         </div>
