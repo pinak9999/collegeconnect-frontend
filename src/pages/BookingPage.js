@@ -121,16 +121,7 @@ function BookingPage() {
         handler: async function (response) {
           const verifyToastId = toast.loading("Verifying payment...");
           try {
-            const bookingData = {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              mentorId: userId,
-              date: selectedDate,
-              time: convertTo24Hour(selectedSlot),
-              amount: totalAmount,
-              topic: "Mentorship Session"
-            };
+           
 
             await axios.post(
               `${API_BASE_URL}/api/payment/verify`,
