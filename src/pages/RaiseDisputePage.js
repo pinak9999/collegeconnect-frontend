@@ -16,7 +16,8 @@ const RaiseDisputePage = () => {
   const { bookingId } = useParams();
   const navigate = useNavigate();
   
-  const [reasons, setReasons] = useState<{_id: string, reason: string}[]>([]);
+  // यहाँ से TypeScript का <{_id...}> टाइप हटा दिया गया है
+  const [reasons, setReasons] = useState([]);
   const [selectedReason, setSelectedReason] = useState("");
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,6 @@ const RaiseDisputePage = () => {
     const fetchReasons = async () => {
       try {
         const token = localStorage.getItem("token");
-        // Using the same backend URL structure as other components
         const res = await axios.get("https://collegeconnect-backend-mrkz.onrender.com/api/disputes/reasons", {
             headers: { "x-auth-token": token }
         });
@@ -41,7 +41,8 @@ const RaiseDisputePage = () => {
     fetchReasons();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // यहाँ से (e: React.FormEvent) हटाकर सिर्फ (e) कर दिया गया है
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedReason) {
         toast.error("Please select a reason");
@@ -56,7 +57,7 @@ const RaiseDisputePage = () => {
       await axios.post(
         `https://collegeconnect-backend-mrkz.onrender.com/api/disputes/raise/${bookingId}`,
         {
-            reasonId: selectedReason, // Backend expects an ObjectId
+            reasonId: selectedReason,
             comment: comment
         },
         { headers: { "x-auth-token": token } }
@@ -64,11 +65,11 @@ const RaiseDisputePage = () => {
       
       toast.dismiss(t);
       toast.success("Dispute raised successfully.");
-      // Navigate back to student dashboard or previous page
       navigate("/student-dashboard"); 
-    } catch (err: any) {
+    } catch (err) { // यहाँ से : any हटा दिया गया है
       toast.dismiss(t);
       console.error(err);
+      // Optional chaining (?.) का उपयोग सुरक्षित रहता है
       toast.error(err.response?.data?.msg || "Failed to raise dispute");
     } finally {
       setLoading(false);
@@ -175,7 +176,7 @@ const RaiseDisputePage = () => {
                                 padding: 14,
                                 borderRadius: 12,
                                 border: "none",
-                                background: palette.danger, // Red for dispute
+                                background: palette.danger,
                                 color: "#fff",
                                 fontWeight: 700,
                                 cursor: loading ? "not-allowed" : "pointer",
