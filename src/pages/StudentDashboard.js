@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-// import './StudentDashboard.css'; // ⭐ CSS import ko hata diya gaya hai
 
 // ======================================
 // 🔮 Global CSS (Light + Dark Themes)
-// Saare CSS styles ab yahin hain
 // ======================================
 const globalStyles = `
 @keyframes floatUp { 0%{transform:translateY(0)} 50%{transform:translateY(-4px)} 100%{transform:translateY(0)} }
@@ -89,7 +87,7 @@ const globalStyles = `
     radial-gradient(800px 350px at 110% 0%, rgba(6,182,212,.22), transparent 60%),
     var(--bg-gradient);
   background-color: var(--bg); /* Fallback */
-  font-family: "Poppins", sans-serif; /* 🚀 BOLD: Font set globally */
+  font-family: "Poppins", sans-serif;
 }
 .main-container {
   max-width: 1180px;
@@ -145,7 +143,7 @@ const globalStyles = `
 .cc-tab.active {
   background: linear-gradient(90deg, var(--brand1), var(--brand2));
   box-shadow: 0 8px 22px rgba(6,182,212,.25);
-  color: white; /* 🚀 BOLD: Ensure text is white */
+  color: white; 
 }
 .cc-tab:not(.active):hover { 
   transform: translateY(-2px); 
@@ -220,14 +218,14 @@ const globalStyles = `
   gap: 12px;
   padding: 10px;
   border-radius: 16px;
-  background: var(--panel-bg); /* 🚀 BOLD: Use panel background */
+  background: var(--panel-bg); 
   border: 1px solid var(--stroke);
   margin-bottom: 18px;
   position: sticky;
   top: 12px;
   z-index: 5;
   backdrop-filter: blur(10px);
-  align-items: center; /* 🚀 BOLD: To center toggle button */
+  align-items: center; 
 }
 .dark .tab-bar {
   box-shadow: 0 20px 40px rgba(2,6,23,.35);
@@ -236,7 +234,7 @@ const globalStyles = `
   background: #ffffff99;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-/* 🚀 BOLD: New Theme Toggle Button */
+
 .theme-toggle-btn {
   height: 40px;
   width: 40px;
@@ -248,7 +246,7 @@ const globalStyles = `
   color: var(--txt);
   font-size: 1.25rem;
   cursor: pointer;
-  margin-left: auto; /* 🚀 BOLD: Pushes to the right */
+  margin-left: auto; 
   transition: all 0.25s ease;
 }
 .theme-toggle-btn:hover {
@@ -457,7 +455,7 @@ const globalStyles = `
   font-weight: 800;
   font-size: .78rem;
   text-transform: capitalize;
-  border: 1px solid transparent; /* 🚀 BOLD: Removed border for light */
+  border: 1px solid transparent; 
 }
 .dark .booking-card .status-tag {
   border: 1px solid var(--stroke);
@@ -611,7 +609,7 @@ const globalStyles = `
 }
 .modal-body strong {
   color: var(--brand1);
-  font-weight: 700; /* 🚀 BOLD: Added */
+  font-weight: 700; 
 }
 .modal-footer {
   display: flex;
@@ -661,15 +659,15 @@ const globalStyles = `
   }
   
   .booking-header {
-     flex-direction: column-reverse;
-     align-items: center;
-     text-align: center;
-     gap: 12px;
+      flex-direction: column-reverse;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
   }
   
   .booking-card .booking-avatar {
-     width: 70px;
-     height: 70px;
+      width: 70px;
+      height: 70px;
   }
   
   .title-style, .section-title-style {
@@ -677,10 +675,6 @@ const globalStyles = `
     padding-left: 8px;
   }
 }
-
-/* =================================
-  10. NEWLY ADDED CLASSES (from inline styles)
-================================= */
 
 /* SkeletonCard */
 .skeleton-card-padding {
@@ -772,7 +766,7 @@ const StarIcon = ({ filled, size = 24, isClickable = false }) => (
     width={size}
     height={size}
     viewBox="0 0 24 24"
-    style={{ // यह स्टाइल डायनामिक है, इसलिए इसे यहीं रहने दिया
+    style={{
       transition: "0.25s",
       cursor: isClickable ? "pointer" : "default",
       transform: isClickable ? "scale(1.02)" : "scale(1)",
@@ -788,18 +782,12 @@ const StarIcon = ({ filled, size = 24, isClickable = false }) => (
   </svg>
 );
 
-// ======================================
-// 🎛️ Small UI atoms
-// ======================================
 const Chip = ({ active, onClick, children }) => (
   <button className={`cc-chip ${active ? "active" : ""}`} onClick={onClick}>
     {children}
   </button>
 );
 
-// ===============================
-// ✨ Skeletons
-// ===============================
 const SkeletonCard = () => (
   <div className="card skeleton-card-padding">
     <div className="skeleton skeleton-avatar" />
@@ -812,7 +800,7 @@ const SkeletonCard = () => (
 );
 
 // ===============================
-// 🎓 FindSenior (revamped UI)
+// 🎓 FindSenior (Original UI Kept)
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags }) => {
   const [search, setSearch] = useState("");
@@ -928,9 +916,9 @@ const FindSenior = ({ seniors, loading, colleges, tags }) => {
 };
 
 // ===============================
-// 📘 MyBookings (revamped UI)
+// 📘 MyBookings (WITH FIXED LOGIC + ORIGINAL UI)
 // ===============================
-const MyBookings = ({ seniors }) => {
+const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoverRating, setHoverRating] = useState({ bookingId: null, value: 0 });
@@ -1017,52 +1005,45 @@ const MyBookings = ({ seniors }) => {
     return null;
   };
 
-  const getYearSuffix = (year) => {
-    if (!year) return null;
-    const num = parseInt(year, 10);
-    if (isNaN(num)) return year;
-    if (num === 1) return "1st Year";
-    if (num === 2) return "2nd Year";
-    if (num === 3) return "3rd Year";
-    return `${num}th Year`;
-  };
-
+  // 🟢 CORE LOGIC FIX: Render function
   const renderBookingCard = (b) => {
-    const dispute = b.dispute_status?.toLowerCase() || "none";
-    const status = b.status?.toLowerCase();
+    // Data Extraction Fixes for "No Bookings" issue
+    const dispute = (b.dispute_status || "").toLowerCase();
+    const status = (b.status || "").toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
-    const seniorProfile = seniors.find((s) => s.user?._id === b.mentor?._id); // mentor use karein
-    {/* b.status dikhane ke baad ye line jodein */}
-<div style={{ marginTop: '10px', fontSize: '0.9rem', color: 'var(--muted)', fontWeight: '600' }}>
-  📅 {new Date(b.scheduledDate).toLocaleDateString()} | 🕒 {b.startTime}
-</div>
-    const correctAvatar = seniorProfile ? seniorProfile.avatar : null;
-    const yearText = getYearSuffix(b.profile?.year);
+    
+    // 🔥 Backend ab 'mentor' object bhej raha hai (fixed backend)
+    const mentor = b.mentor || {}; 
+    const mentorName = mentor.name || "Senior (Unavailable)";
+    const mentorAvatar = mentor.avatar || "https://via.placeholder.com/60";
 
     return (
       <div key={b._id} className="card booking-card">
         <div className="booking-header">
           <div>
-            <h3 className="booking-name">{b.senior?.name}</h3>
-            <p className="booking-college">{b.profile?.college?.name}</p>
-            {yearText && <p className="booking-year-style">{yearText}</p>}
+            <h3 className="booking-name">{mentorName}</h3>
+            {/* Topic ko college ki jagah dikha sakte hain agar college data missing ho */}
+            <p className="booking-college">{b.topic || "Mentorship Session"}</p>
+            <p className="booking-year-style">
+              📅 {new Date(b.scheduledDate || b.createdAt).toLocaleDateString()}
+            </p>
           </div>
           <img
-            src={correctAvatar || b.profile?.avatar || "https://via.placeholder.com/60"}
-            alt={b.senior?.name}
+            src={mentorAvatar}
+            alt={mentorName}
             className="booking-avatar"
             loading="lazy"
           />
         </div>
 
         <div className="status-row">
-          <span className={getStatusTagClass(status)}>{b.status}</span>
-          {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+          <span className={getStatusTagClass(status)}>{status}</span>
+          {dispute !== "none" && dispute && <span className={disputeTagClass}>{b.dispute_status}</span>}
         </div>
 
         {status === "confirmed" && (
           <p className="info-message">
-            ℹ️ The senior will contact you on your phone within 6 hours.
+            ℹ️ The senior will contact you for a Flexible time soon.
           </p>
         )}
 
@@ -1075,7 +1056,7 @@ const MyBookings = ({ seniors }) => {
                   key={star}
                   onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })}
                   onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })}
-                  onClick={() => openRatingModal(b._id, b.senior?._id, star)}
+                  onClick={() => openRatingModal(b._id, mentor._id, star)}
                 >
                   <StarIcon
                     filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)}
@@ -1103,7 +1084,7 @@ const MyBookings = ({ seniors }) => {
           {status === "confirmed" && (
             <button className="cc-btn primary btn-compact" onClick={() => handleChat(b._id)}>💬 Chat</button>
           )}
-          {dispute === "none" && !b.rated && (
+          {dispute === "none" && !b.rated && status !== "cancelled" && (
             <button className="cc-btn danger btn-compact" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
           )}
           {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
@@ -1122,11 +1103,12 @@ const MyBookings = ({ seniors }) => {
     );
   }
 
+  // 🟢 LOWERCASE FILTERING (Crucial Fix)
   const activeBookings = bookings.filter(
-    (b) => b.status?.toLowerCase() !== "completed" && b.status?.toLowerCase() !== "cancelled"
+    (b) => (b.status || "").toLowerCase() !== "completed" && (b.status || "").toLowerCase() !== "cancelled"
   );
   const pastBookings = bookings.filter(
-    (b) => b.status?.toLowerCase() === "completed" || b.status?.toLowerCase() === "cancelled"
+    (b) => (b.status || "").toLowerCase() === "completed" || (b.status || "").toLowerCase() === "cancelled"
   );
 
   return (
@@ -1172,7 +1154,7 @@ const MyBookings = ({ seniors }) => {
 };
 
 // ===============================
-// 🚀 BOLD: Custom Modal Component
+// 🚀 Custom Modal Component
 // ===============================
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   if (!isOpen) return null;
@@ -1209,15 +1191,13 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   );
 };
 
-
 // ===============================
 // 🌈 Main Dashboard Shell
 // ===============================
 const StudentDashboard = () => {
   const location = useLocation();
   const onBookingsTab = location.pathname.includes("/bookings");
-
-  const [theme, setTheme] = useState('light'); // Default to light
+  const [theme, setTheme] = useState('light'); 
 
   const [seniors, setSeniors] = useState([]);
   const [colleges, setColleges] = useState([]);
@@ -1259,7 +1239,7 @@ const StudentDashboard = () => {
 
   return (
     <div className={`page-bg ${theme}`}>
-      {/* ⭐ Saara CSS <style> tag ke zariye yahan inject kiya gaya hai */}
+      {/* ⭐ CSS Injection */}
       <style>{globalStyles}</style>
 
       <div className="main-container">
@@ -1284,7 +1264,7 @@ const StudentDashboard = () => {
               />
             }
           />
-          <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
+          <Route path="/bookings" element={<MyBookings />} />
         </Routes>
       </div>
     </div>
