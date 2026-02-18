@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-// 📦 Booking Cards Component
+// 📦 Booking Cards Component (Clean & UI Fixed)
 const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
   const actionButton = (text, gradient, action) => ({
     background: gradient,
@@ -97,10 +97,12 @@ function SeniorDashboard() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
+      // 🔥 URL Check: Make sure backend URL is correct
       const res = await axios.get(
         "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my",
         { headers: { "x-auth-token": token } }
       );
+      // Newest first sorting
       const sortedData = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setMyBookings(sortedData);
     } catch (err) {
@@ -136,7 +138,7 @@ function SeniorDashboard() {
 
   const handleStartChat = (id) => navigate(`/chat/${id}`);
 
-  // 🟢 Correct Filtering Logic
+  // 🟢 Filter Logic
   const tasks = myBookings.filter((b) => {
     const s = (b.status || "").toLowerCase();
     return s === "confirmed" && (!b.dispute_status || b.dispute_status === "Resolved");
