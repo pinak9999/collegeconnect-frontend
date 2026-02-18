@@ -4,135 +4,293 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-// 📦 Booking Cards Component (Modern UI)
+/* -------------------------------------------
+   🎨 Design Tokens (single place to tweak UI)
+------------------------------------------- */
+const palette = {
+  primary: "#2563EB",
+  primaryDark: "#1E40AF",
+  accent: "#00B4D8",
+  ok: "#10B981",
+  warn: "#F59E0B",
+  danger: "#EF4444",
+  text: "#0F172A",
+  subtext: "#475569",
+  glass: "rgba(255,255,255,0.88)",
+};
+
+const softShadow = "0 10px 30px rgba(0,0,0,0.10)";
+
+/* -------------------------------------------
+   🧱 Reusable UI Pieces
+------------------------------------------- */
+
+// Shimmer skeleton card (for loading state)
+const SkeletonCard = () => (
+  <div
+    style={{
+      borderRadius: 20,
+      padding: 18,
+      background: "linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.9))",
+      position: "relative",
+      overflow: "hidden",
+      boxShadow: softShadow,
+      height: 150,
+    }}
+  >
+    <div style={{ height: 16, width: "60%", background: "#e5e7eb", borderRadius: 8, marginBottom: 10 }} />
+    <div style={{ height: 12, width: "40%", background: "#e5e7eb", borderRadius: 6, marginBottom: 8 }} />
+    <div style={{ height: 12, width: "30%", background: "#e5e7eb", borderRadius: 6 }} />
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        background:
+          "linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent)",
+        transform: "translateX(-100%)",
+        animation: "shimmer 1.3s infinite",
+      }}
+    />
+    {/* keyframes via style tag below in parent */}
+  </div>
+);
+
+// Tiny status chip
+const Chip = ({ label, tone = "neutral" }) => {
+  const colors =
+    tone === "ok"
+      ? { bg: "rgba(16,185,129,.12)", fg: palette.ok }
+      : tone === "warn"
+      ? { bg: "rgba(245,158,11,.12)", fg: palette.warn }
+      : tone === "danger"
+      ? { bg: "rgba(239,68,68,.12)", fg: palette.danger }
+      : { bg: "rgba(37,99,235,.10)", fg: palette.primary };
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "6px 10px",
+        borderRadius: 999,
+        fontSize: 12,
+        fontWeight: 600,
+        background: colors.bg,
+        color: colors.fg,
+      }}
+    >
+      {label}
+    </span>
+  );
+};
+
+/* -------------------------------------------
+   📦 Bookings Grid (cards with gradient ring)
+------------------------------------------- */
 const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
-  const actionButton = (text, gradient, action) => ({
-    background: gradient,
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    padding: "8px 14px",
+  const btnBase = {
+    padding: "10px 14px",
+    borderRadius: 12,
+    fontSize: 14,
     fontWeight: 600,
+    border: "none",
     cursor: "pointer",
-    transition: "all 0.3s ease",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-    fontSize: "13px",
-    ...(action && { onClick: action }),
-  });
+    transition: "transform .2s, box-shadow .2s",
+  };
+  const btnPrimary = {
+    ...btnBase,
+    color: "#fff",
+    background: `linear-gradient(45deg, ${palette.primary}, ${palette.primaryDark})`,
+    boxShadow: "0 6px 14px rgba(37,99,235,.35)",
+  };
+  const btnOutline = {
+    ...btnBase,
+    color: palette.primary,
+    background: "#fff",
+    border: `1.5px solid ${palette.primary}`,
+  };
 
-  if (loading)
-    return (
-      <p style={{ textAlign: "center", color: "#6b7280", fontWeight: 500 }}>
-        ⏳ Loading bookings...
-      </p>
-    );
-
-  if (!bookings.length)
-    return (
-      <p style={{ textAlign: "center", color: "#9ca3af", fontWeight: 500 }}>
-        No bookings found.
-      </p>
-    );
+  const renderActions = (b) => {
+    if (b.dispute_status === "Pending") {
+      return (
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <Chip label="Under Review" tone="warn" />
+          <button
+            style={btnOutline}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onClick={() => onStartChat(b._id)}
+          >
+            Chat
+          </button>
+        </div>
+      );
+    }
+    if (b.status === "Completed") {
+      return (
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <Chip label="Completed" tone="ok" />
+          <button
+            style={btnOutline}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onClick={() => onStartChat(b._id)}
+          >
+            Chat History
+          </button>
+        </div>
+      );
+    }
+    if (b.status === "Confirmed") {
+      return (
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <button
+            style={btnPrimary}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onClick={() => onStartChat(b._id)}
+          >
+            💬 Start Chat
+          </button>
+          <button
+            style={btnOutline}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onClick={() => onMarkComplete(b._id)}
+          >
+            ✔ Mark Done
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div style={{ animation: "fadeIn 0.6s ease" }}>
+    <div style={{ animation: "fadeIn .45s ease" }}>
       <h3
         style={{
           textAlign: "center",
-          color: "#1e3a8a",
-          marginBottom: "20px",
-          fontWeight: 700,
-          fontSize: "1.3rem",
+          marginBottom: 16,
+          fontWeight: 800,
+          fontSize: "1.2rem",
+          background: `linear-gradient(90deg, ${palette.primary}, ${palette.primaryDark})`,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
         }}
       >
         {title}
       </h3>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))",
-          gap: "18px",
-          padding: "0 10px",
-        }}
-      >
-        {bookings.map((b) => (
-          <div
-            key={b._id}
-            style={{
-              background: "rgba(255,255,255,0.85)",
-              borderRadius: "18px",
-              padding: "20px",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-              backdropFilter: "blur(12px)",
-              transition: "all 0.3s ease",
-              border: b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
-            }}
-          >
-            <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
-              👨‍🎓 {b.student?.name || "Student"}
-            </h4>
-            <p style={{ color: "#6b7280", margin: "5px 0" }}>
-              📞 {b.student?.mobileNumber || "N/A"}
-            </p>
-            <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px" }}>
-              Status: {b.status}
-            </p>
+      {/* Loading state */}
+      {loading ? (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+            gap: 18,
+            padding: "0 10px",
+          }}
+        >
+          {[...Array(6)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      ) : bookings.length === 0 ? (
+        <p style={{ textAlign: "center", color: "#94a3b8" }}>No bookings found.</p>
+      ) : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+            gap: 18,
+            padding: "0 10px",
+          }}
+        >
+          {bookings.map((b) => (
+            <div
+              key={b._id}
+              style={{
+                position: "relative",
+                borderRadius: 20,
+                padding: 18,
+                background: palette.glass,
+                backdropFilter: "blur(10px)",
+                boxShadow: softShadow,
+                overflow: "hidden",
+                transition: "transform .25s, box-shadow .25s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-6px)";
+                e.currentTarget.style.boxShadow = "0 18px 36px rgba(0,0,0,.16)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = softShadow;
+              }}
+            >
+              {/* Gradient ring accent */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: -1,
+                  borderRadius: 22,
+                  padding: 1,
+                  background:
+                    "linear-gradient(135deg, rgba(37,99,235,.45), rgba(0,180,216,.35), rgba(16,185,129,.35))",
+                  WebkitMask:
+                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                  pointerEvents: "none",
+                }}
+              />
+              <h4 style={{ margin: 0, color: palette.text, fontWeight: 700 }}>
+                👨‍🎓 {b.student?.name || "Student"}
+              </h4>
+              <p style={{ color: palette.subtext, margin: "6px 0" }}>
+                📞 {b.student?.mobileNumber || "N/A"}
+              </p>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                <Chip label={`Status: ${b.status}`} tone={b.status === "Completed" ? "ok" : "neutral"} />
+                {b.dispute_status === "Pending" && (
+                  <Chip
+                    label={b.dispute_reason?.reason || "Under Review"}
+                    tone="warn"
+                  />
+                )}
+              </div>
 
-            <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}>
-              {b.dispute_status === "Pending"
-                ? `⚠ ${b.dispute_reason?.reason || "Under Review"}`
-                : b.dispute_status || "No dispute"}
-            </p>
-
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-              {b.status === "Confirmed" && (
-                <>
-                  <button
-                    style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
-                    onClick={() => onStartChat(b._id)}
-                  >
-                    💬 Chat
-                  </button>
-                  <button
-                    style={actionButton("✔ Mark Done", "linear-gradient(45deg,#10b981,#059669)")}
-                    onClick={() => onMarkComplete(b._id)}
-                  >
-                    ✔ Done
-                  </button>
-                </>
-              )}
-              {b.status === "Completed" && (
-                <span style={{ color: "#10b981", fontWeight: 600 }}>✅ Completed</span>
-              )}
-              {b.dispute_status === "Pending" && (
-                <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
-              )}
+              <div style={{ marginTop: 12 }}>{renderActions(b)}</div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-// 🧠 Main Senior Dashboard
+/* -------------------------------------------
+   🧠 Senior Dashboard (Hybrid Light Theme)
+------------------------------------------- */
 function SeniorDashboard() {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [myBookings, setMyBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const loadBookings = useCallback(async () => {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (auth?.user?.name) toast.success(`Welcome ${auth.user.name}! 👋`);
+  }, [auth?.user]);
+
+  const fetchBookings = useCallback(async () => {
     setLoading(true);
     try {
       const token = auth?.token || localStorage.getItem("token");
@@ -140,7 +298,7 @@ function SeniorDashboard() {
         "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my",
         { headers: { "x-auth-token": token } }
       );
-      setMyBookings(res.data);
+      setBookings(res.data);
     } catch {
       toast.error("Failed to load bookings");
     } finally {
@@ -149,77 +307,98 @@ function SeniorDashboard() {
   }, [auth?.token]);
 
   useEffect(() => {
-    loadBookings();
-  }, [loadBookings]);
+    fetchBookings();
+  }, [fetchBookings]);
 
-  const markAsCompletedHandler = async (id) => {
+  const markAsCompleted = async (id) => {
     if (!window.confirm("Mark this booking as completed?")) return;
-    const toastId = toast.loading("Updating...");
+    const t = toast.loading("Updating...");
     try {
       const token = auth?.token || localStorage.getItem("token");
       await axios.put(
         `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${id}`,
-        null,
+        {},
         { headers: { "x-auth-token": token } }
       );
-      toast.dismiss(toastId);
+      toast.dismiss(t);
       toast.success("Marked as Completed!");
-      loadBookings();
+      fetchBookings();
     } catch (err) {
-      toast.dismiss(toastId);
+      toast.dismiss(t);
       toast.error("Error: " + (err.response ? err.response.data.msg : err.message));
     }
   };
 
-  const handleStartChat = (id) => navigate(`/chat/${id}`);
+  const startChat = (id) => navigate(`/chat/${id}`);
 
-  const tasks = myBookings.filter((b) => b.status === "Confirmed" && b.dispute_status !== "Pending");
-  const disputes = myBookings.filter((b) => b.dispute_status === "Pending");
-  const history = myBookings.filter(
-    (b) => b.status === "Completed" || b.dispute_status === "Resolved"
-  );
+  // Filters
+  const tasks = bookings.filter((b) => b.status === "Confirmed" && b.dispute_status !== "Pending");
+  const disputes = bookings.filter((b) => b.dispute_status === "Pending");
+  const history = bookings.filter((b) => b.status === "Completed" || b.dispute_status === "Resolved");
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg,#1e3a8a,#2563eb,#38bdf8)",
-        padding: "20px 10px 60px",
+        padding: isMobile ? "16px" : "28px 48px",
         fontFamily: "'Poppins', sans-serif",
-        animation: "fadeIn 0.6s ease-in-out",
+        position: "relative",
+        overflowX: "hidden",
+        // layered soft gradient background
+        background:
+          "radial-gradient(1200px 600px at -10% -10%, #e0f2fe 0%, transparent 60%), radial-gradient(1000px 600px at 110% -20%, #ccfbf1 0%, transparent 55%), linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%)",
       }}
     >
-      {/* 🧭 Header */}
-      <div style={{ textAlign: "center", marginBottom: "25px" }}>
-        <h2
+      {/* keyframes for shimmer */}
+      <style>
+        {`
+          @keyframes shimmer {
+            100% { transform: translateX(100%); }
+          }
+          @keyframes fadeIn { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+        `}
+      </style>
+
+      {/* Header */}
+      <header
+        style={{
+          textAlign: "center",
+          marginBottom: 20,
+          animation: "fadeIn .4s ease",
+        }}
+      >
+        <h1
           style={{
-            color: "#fff",
-            fontSize: "2rem",
-            fontWeight: 700,
-            textShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            fontSize: isMobile ? "1.6rem" : "2rem",
+            fontWeight: 800,
+            lineHeight: 1.1,
+            background: `linear-gradient(90deg, ${palette.primary}, ${palette.accent})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            margin: 0,
           }}
         >
           Welcome, {auth.user?.name || "Senior"} 👋
-        </h2>
-        <p style={{ color: "#dbeafe", fontSize: "0.95rem" }}>
-          Manage your sessions, chat with students, and monitor your progress easily.
+        </h1>
+        <p style={{ color: palette.subtext, marginTop: 8 }}>
+          Manage sessions, chat with students & track progress—seamlessly.
         </p>
-      </div>
+      </header>
 
-      {/* 🪄 Tabs */}
-      <div
+      {/* Floating Tabs (glass) */}
+      <nav
         style={{
           display: "flex",
           justifyContent: "center",
           flexWrap: "wrap",
-          gap: "10px",
-          background: "rgba(255,255,255,0.15)",
-          padding: "10px 15px",
-          borderRadius: "20px",
-          width: "95%",
-          margin: "0 auto 25px auto",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-          backdropFilter: "blur(15px)",
+          gap: 10,
+          background: palette.glass,
+          borderRadius: 28,
+          padding: isMobile ? "10px 12px" : "12px 18px",
+          width: isMobile ? "98%" : "85%",
+          margin: "0 auto 24px",
+          boxShadow: softShadow,
+          backdropFilter: "blur(10px)",
           position: "sticky",
           top: 10,
           zIndex: 10,
@@ -230,51 +409,52 @@ function SeniorDashboard() {
           { path: "/senior-dashboard/disputes", label: "⚠️ Disputes", count: disputes.length },
           { path: "/senior-dashboard/history", label: "✅ History", count: history.length },
         ].map((tab) => {
-          const isActive =
+          const active =
             (tab.path === "/senior-dashboard" && location.pathname === "/senior-dashboard") ||
-            (tab.path !== "/senior-dashboard" &&
-              location.pathname.startsWith(tab.path));
+            (tab.path !== "/senior-dashboard" && location.pathname.startsWith(tab.path));
           return (
             <Link
               key={tab.path}
               to={tab.path}
               style={{
                 textDecoration: "none",
-                padding: "8px 18px",
-                borderRadius: "25px",
-                fontWeight: 600,
-                background: isActive
-                  ? "linear-gradient(45deg,#3b82f6,#2563eb)"
-                  : "rgba(255,255,255,0.2)",
-                color: isActive ? "#fff" : "#e0f2fe",
-                boxShadow: isActive
-                  ? "0 3px 10px rgba(37, 116, 235, 0.4)"
-                  : "none",
-                transition: "all 0.3s ease",
+                padding: "10px 18px",
+                borderRadius: 999,
+                fontWeight: 700,
+                fontSize: 14,
+                background: active
+                  ? `linear-gradient(45deg, ${palette.primary}, ${palette.primaryDark})`
+                  : "#f1f5f9",
+                color: active ? "#fff" : palette.primary,
+                boxShadow: active ? "0 6px 16px rgba(37,99,235,.35)" : "none",
+                transition: "transform .2s, box-shadow .2s",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
             >
               {tab.label} ({tab.count})
             </Link>
           );
         })}
-
         <Link
           to="/senior-earnings"
           style={{
-            background: "linear-gradient(45deg,#16a34a,#22c55e)",
-            color: "#fff",
             textDecoration: "none",
-            padding: "8px 16px",
-            borderRadius: "25px",
-            fontWeight: 600,
-            boxShadow: "0 3px 10px rgba(22,163,74,0.4)",
+            padding: "10px 16px",
+            borderRadius: 999,
+            fontWeight: 700,
+            color: "#fff",
+            background: "linear-gradient(45deg, #22c55e, #16a34a)",
+            boxShadow: "0 6px 16px rgba(22,163,74,.35)",
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
         >
-          💰 My Earnings
+          💰 Earnings
         </Link>
-      </div>
+      </nav>
 
-      {/* 🧾 Routes */}
+      {/* Routes -> three grids */}
       <Routes>
         <Route
           path="/"
@@ -283,8 +463,8 @@ function SeniorDashboard() {
               title="New Bookings"
               bookings={tasks}
               loading={loading}
-              onMarkComplete={markAsCompletedHandler}
-              onStartChat={handleStartChat}
+              onMarkComplete={markAsCompleted}
+              onStartChat={startChat}
             />
           }
         />
@@ -295,8 +475,8 @@ function SeniorDashboard() {
               title="Active Disputes"
               bookings={disputes}
               loading={loading}
-              onMarkComplete={markAsCompletedHandler}
-              onStartChat={handleStartChat}
+              onMarkComplete={markAsCompleted}
+              onStartChat={startChat}
             />
           }
         />
@@ -307,8 +487,8 @@ function SeniorDashboard() {
               title="Completed History"
               bookings={history}
               loading={loading}
-              onMarkComplete={markAsCompletedHandler}
-              onStartChat={handleStartChat}
+              onMarkComplete={markAsCompleted}
+              onStartChat={startChat}
             />
           }
         />
