@@ -491,7 +491,7 @@ function SeniorDashboard() {
               onStartChat={startChat}
             />
           }
-        />
+        />x
       </Routes>
     </div>
   );

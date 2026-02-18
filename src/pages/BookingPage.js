@@ -1,167 +1,281 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
-import { Profile } from '../types';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams, useNavigate, BrowserRouter } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
-declare global {
-  interface Window {
-    Razorpay: any;
+// 🛠️ MOCK AUTH HOOK (Preview ke liye)
+// Real project me: import { useAuth } from "../context/AuthContext";
+const useAuth = () => {
+  const [user] = useState({
+    id: "student_123",
+    name: "Rahul Verma",
+    email: "rahul@example.com",
+    mobileNumber: "9998887776",
+    isSenior: false
+  });
+  return { auth: { user } };
+};
+
+// 🎨 CSS STYLES (Injected for Preview)
+const styles = `
+  .booking-container {
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    background: #f3f4f6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
   }
-}
+  .layout {
+    display: flex;
+    gap: 20px;
+    max-width: 1000px;
+    width: 100%;
+  }
+  @media (max-width: 768px) {
+    .layout { flex-direction: column; }
+  }
+  
+  /* Left Column */
+  .profile-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+  }
+  
+  /* Profile Header */
+  .profile-header {
+    text-align: center;
+  }
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  .name { margin: 10px 0 5px; font-size: 1.5rem; font-weight: 700; color: #1f2937; }
+  .college { color: #6b7280; font-weight: 500; }
+  
+  /* Right Column (Booking Box) */
+  .booking-sidebar {
+    flex: 1;
+  }
+  .booking-box {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+    position: sticky;
+    top: 20px;
+  }
+  .price-tag {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1f2937;
+    text-align: center;
+    display: block;
+    margin: 15px 0;
+  }
+  .info-note {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  
+  .pay-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .pay-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  }
 
-const BookingPage: React.FC = () => {
+  /* Utility */
+  .tag { background: #f3f4f6; padding: 5px 12px; borderRadius: 20px; font-size: 0.85rem; display: inline-block; margin-right: 8px; margin-bottom: 8px; color: #374151; }
+  .loading { display: flex; justify-content: center; alignItems: center; height: 100vh; color: #6b7280; }
+`;
+
+// 🧩 Main Component Logic
+function BookingContent() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { auth } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { auth } = useAuth(); 
+
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const loadData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error("No token");
+        const token = localStorage.getItem("token");
         
-        // Parallel fetch for profile and settings (for fee)
-        const [resProfile, resSettings] = await Promise.all([
-           axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, {
-             headers: { 'x-auth-token': token }
-           }),
+        // 🟡 REAL API CALLS (Commented out for Preview Stability)
+        // Uncomment in your real project
+        /*
+        const [res, settings] = await Promise.all([
+           axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } }),
            axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`)
         ]);
+        setProfile(res.data);
+        setTotalAmount(res.data.price_per_session + settings.data.platformFee);
+        */
 
-        setProfile(resProfile.data);
-        const fee = (resProfile.data.price_per_session || 0) + (resSettings.data.platformFee || 20);
-        setTotalAmount(fee);
-      } catch (error) {
-        toast.error("Failed to load profile details");
-        navigate(-1);
-      } finally {
+        // 🟢 MOCK DATA (For Preview)
+        // Remove this block in real project
+        setTimeout(() => {
+            setProfile({
+                user: { _id: userId || "mock_id", name: "Aryan Sharma" },
+                college: { name: "IIT Bombay" },
+                branch: "Computer Science",
+                year: "4th Year",
+                bio: "Expert in JEE preparation. I can guide you on how to crack exams and manage stress.",
+                price_per_session: 200,
+                session_duration_minutes: 30,
+                tags: [{_id:1, name:"JEE"}, {_id:2, name:"Mentorship"}],
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aryan",
+                id_card_url: null
+            });
+            setTotalAmount(250); // 200 + 50 fee
+            setLoading(false);
+        }, 1000);
+
+      } catch (err) {
+        console.error(err);
         setLoading(false);
       }
     };
-    fetchProfile();
-  }, [userId, navigate]);
+    loadData();
+  }, [userId]);
 
-  const handlePayment = async () => {
-    if (!profile) return;
-    
-    // --- KEY FIX: Structure matches backend expectation ---
-    const bookingDetails = {
-      senior: profile.user._id || profile.user.id,  // Must match backend schema
-      profileId: profile._id,
-      amount: totalAmount,
-      slot_time: new Date(),     // In a real app, user selects this
+  const handlePayment = () => {
+    if (!auth.user) return toast.error("Please login first");
+
+    const toastId = toast.loading("Processing Request...");
+
+    // 1. Booking Data (Slot Time is NULL for Request)
+    const bookingData = {
+       senior: profile.user._id,
+       slot_time: null, // 🚀 Important: Request Mode
+       amount: totalAmount
     };
 
-    const toastId = toast.loading("Initializing payment...");
+    // 2. Simulate Razorpay (Replace with Real Razorpay Code)
+    setTimeout(() => {
+        toast.dismiss(toastId);
+        toast.success("Request Sent Successfully!");
+        // navigate("/student-dashboard"); // Redirect in real app
+    }, 2000);
+
+    /* REAL RAZORPAY CODE:
     try {
-      const token = localStorage.getItem('token');
-      // 1. Create Order
-      const { data: order } = await axios.post(
-        'https://collegeconnect-backend-mrkz.onrender.com/api/payment/order',
-        { amount: totalAmount },
-        { headers: { 'x-auth-token': token } }
-      );
-
-      const options = {
-        key: "rzp_test_RbhIpPvOLS2KkF", // Ideally from env
-        amount: order.amount,
-        currency: order.currency,
-        name: "CollegeConnect",
-        description: `Session with ${profile.user.name}`,
-        order_id: order.id,
-        handler: async function (response: any) {
-          toast.loading("Verifying...", { id: toastId });
-          try {
-            await axios.post(
-              'https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify',
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                bookingDetails: bookingDetails // Passing the structured details
-              },
-              { headers: { 'x-auth-token': token } }
-            );
-            toast.success("Booking Confirmed!", { id: toastId });
-            navigate('/student-dashboard/bookings');
-          } catch (verifyErr) {
-             toast.error("Verification Failed", { id: toastId });
+       const order = await axios.post(".../api/payment/order", ...);
+       const options = {
+          key: "YOUR_KEY",
+          amount: order.data.amount,
+          handler: async (response) => {
+             await axios.post(".../api/payment/verify", { ...response, bookingData });
+             navigate("/student-dashboard");
           }
-        },
-        prefill: {
-          name: auth.user?.name,
-          email: auth.user?.email,
-          contact: auth.user?.mobileNumber
-        },
-        theme: { color: "#2563EB" }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      toast.error("Payment initiation failed", { id: toastId });
-    }
+       };
+       new window.Razorpay(options).open();
+    } catch(e) { toast.error("Payment Failed"); }
+    */
   };
 
-  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
-  if (!profile) return <div className="p-10 text-center">Profile not found</div>;
+  if (loading) return <div className="loading">⏳ Loading Profile...</div>;
+  if (!profile) return <div className="loading">❌ Profile not found</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4">
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Left: Profile Info */}
-        <div className="md:col-span-2 space-y-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-6">
-            <img src={profile.avatar || "https://via.placeholder.com/100"} alt="Avatar" className="w-24 h-24 rounded-full border-4 border-blue-50 object-cover" />
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">{profile.user.name}</h2>
-              <p className="text-blue-600 font-medium">{profile.college.name}</p>
-              <div className="flex gap-2 mt-2">
-                {profile.tags.map(t => <span key={t._id} className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded">{t.name}</span>)}
+    <div className="booking-container">
+      <style>{styles}</style>
+      
+      <div className="layout">
+        {/* Left Column */}
+        <div className="profile-section">
+           {/* Header Card */}
+           <div className="card profile-header">
+              <img src={profile.avatar} alt="Profile" className="avatar" />
+              <h2 className="name">{profile.user.name}</h2>
+              <p className="college">{profile.college.name} • {profile.branch}</p>
+           </div>
+
+           {/* About Card */}
+           <div className="card">
+              <h3>👤 About Me</h3>
+              <p style={{color: '#4b5563', lineHeight: 1.6}}>{profile.bio}</p>
+           </div>
+
+           {/* Tags Card */}
+           <div className="card">
+              <h3>🏷️ Expertise</h3>
+              <div style={{marginTop: '10px'}}>
+                 {profile.tags.map(tag => (
+                    <span key={tag._id} className="tag">{tag.name}</span>
+                 ))}
               </div>
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h3 className="font-bold text-lg mb-2">About</h3>
-            <p className="text-slate-600 leading-relaxed">{profile.bio || "No bio available."}</p>
-          </div>
+           </div>
         </div>
 
-        {/* Right: Payment Card */}
-        <div className="md:col-span-1">
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 sticky top-24">
-            <h3 className="text-xl font-bold mb-4 text-slate-800">Booking Summary</h3>
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between text-sm text-slate-600">
-                <span>Session Fee</span>
-                <span>₹{profile.price_per_session}</span>
+        {/* Right Column (Action) */}
+        <div className="booking-sidebar">
+           <div className="booking-box">
+              <h3 style={{textAlign:'center', color:'#1e3a8a', margin:'0 0 15px'}}>Request Session</h3>
+              
+              <div className="info-note">
+                 <strong>How it works:</strong><br/>
+                 1. You pay & send a request.<br/>
+                 2. Senior accepts & schedules a time.<br/>
+                 3. You join the call when scheduled.
               </div>
-              <div className="flex justify-between text-sm text-slate-600">
-                <span>Platform Fee</span>
-                <span>₹{(totalAmount - profile.price_per_session)}</span>
+
+              <div style={{textAlign:'center', background:'#f9fafb', padding:'10px', borderRadius:'10px', marginBottom:'20px'}}>
+                  <span style={{display:'block', fontSize:'0.9rem', color:'#6b7280'}}>Total to pay</span>
+                  <span className="price-tag">₹{totalAmount}</span>
+                  <span style={{color:'#10b981', fontSize:'0.85rem', fontWeight:'bold'}}>+ Free Chat Access</span>
               </div>
-              <div className="border-t pt-3 flex justify-between font-bold text-lg text-blue-600">
-                <span>Total</span>
-                <span>₹{totalAmount}</span>
-              </div>
-            </div>
-            <button 
-              onClick={handlePayment}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold py-3 rounded-xl hover:shadow-lg transition transform active:scale-95"
-            >
-              Pay & Book Now
-            </button>
-            <p className="text-xs text-center text-slate-400 mt-4">Secure payment via Razorpay</p>
-          </div>
+
+              <button className="pay-btn" onClick={handlePayment}>
+                 🔒 Pay & Send Request
+              </button>
+           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default BookingPage;
+// 🚀 Wrapper for Preview (Remove BrowserRouter if copying to existing project)
+export default function BookingPage() {
+  return (
+    <BrowserRouter>
+      <Toaster position="top-center" />
+      <BookingContent />
+    </BrowserRouter>
+  );
+}
