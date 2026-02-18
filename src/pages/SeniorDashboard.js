@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-// 📦 Booking Cards Component (Modern UI)
+// 📦 Booking Cards Component (Fixed Logic)
 const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
   const actionButton = (text, gradient, action) => ({
     background: gradient,
@@ -22,15 +22,15 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
 
   if (loading)
     return (
-      <p style={{ textAlign: "center", color: "#6b7280", fontWeight: 500 }}>
+      <p style={{ textAlign: "center", color: "#6b7280", fontWeight: 500, marginTop: "50px" }}>
         ⏳ Loading bookings...
       </p>
     );
 
-  if (!bookings.length)
+  if (!bookings || bookings.length === 0)
     return (
-      <p style={{ textAlign: "center", color: "#9ca3af", fontWeight: 500 }}>
-        No bookings found.
+      <p style={{ textAlign: "center", color: "#9ca3af", fontWeight: 500, marginTop: "50px" }}>
+        No bookings found in this category.
       </p>
     );
 
@@ -39,7 +39,7 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
       <h3
         style={{
           textAlign: "center",
-          color: "#1e3a8a",
+          color: "#fff", // Header visible on blue background
           marginBottom: "20px",
           fontWeight: 700,
           fontSize: "1.3rem",
@@ -60,41 +60,41 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
           <div
             key={b._id}
             style={{
-              background: "rgba(255,255,255,0.85)",
+              background: "rgba(255,255,255,0.95)", // Thoda solid background for readability
               borderRadius: "18px",
               padding: "20px",
               boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-              backdropFilter: "blur(12px)",
               transition: "all 0.3s ease",
               border: b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
-            }}
           >
             <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
-              👨‍🎓 {b.student?.name || "Student"}
+              👨‍🎓 {b.student?.name || "Student (Unknown)"}
             </h4>
-            <p style={{ color: "#6b7280", margin: "5px 0" }}>
-              📞 {b.student?.mobileNumber || "N/A"}
+            <p style={{ color: "#6b7280", margin: "5px 0", fontSize: "0.9rem" }}>
+              📧 {b.student?.email || "No Email"}
             </p>
-            <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px" }}>
+            
+            {/* Status Check - Lowercase fix */}
+            <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px", textTransform: "capitalize" }}>
               Status: {b.status}
             </p>
 
-            <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "10px" }}>
+            {/* Date Display */}
+            <p style={{ fontSize: "0.8rem", color: "#555" }}>
+               📅 {new Date(b.scheduledDate).toLocaleDateString()}
+            </p>
+
+            <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "15px" }}>
               {b.dispute_status === "Pending"
-                ? `⚠ ${b.dispute_reason?.reason || "Under Review"}`
-                : b.dispute_status || "No dispute"}
+                ? `⚠ Dispute: ${b.dispute_reason?.reason || "Under Review"}`
+                : b.dispute_status ? `Dispute: ${b.dispute_status}` : "No Active Disputes"}
             </p>
 
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-              {b.status === "Confirmed" && (
+              
+              {/* 🟢 FIX: Check for lowercase 'confirmed' */}
+              {b.status === "confirmed" && (
                 <>
                   <button
                     style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
@@ -110,9 +110,14 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
                   </button>
                 </>
               )}
-              {b.status === "Completed" && (
-                <span style={{ color: "#10b981", fontWeight: 600 }}>✅ Completed</span>
+
+              {/* 🟢 FIX: Check for lowercase 'completed' */}
+              {b.status === "completed" && (
+                <span style={{ color: "#10b981", fontWeight: 600, padding: "5px 10px", background: "#dcfce7", borderRadius: "10px" }}>
+                    ✅ Completed
+                </span>
               )}
+              
               {b.dispute_status === "Pending" && (
                 <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
               )}
@@ -135,49 +140,51 @@ function SeniorDashboard() {
   const loadBookings = useCallback(async () => {
     setLoading(true);
     try {
-      const token = auth?.token || localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       const res = await axios.get(
         "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my",
         { headers: { "x-auth-token": token } }
       );
       setMyBookings(res.data);
-    } catch {
+      console.log("🔥 Senior Bookings Loaded:", res.data); // Debugging Log
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to load bookings");
     } finally {
       setLoading(false);
     }
-  }, [auth?.token]);
+  }, []);
 
   useEffect(() => {
     loadBookings();
   }, [loadBookings]);
 
   const markAsCompletedHandler = async (id) => {
-    if (!window.confirm("Mark this booking as completed?")) return;
-    const toastId = toast.loading("Updating...");
+    if (!window.confirm("Are you sure this session is completed?")) return;
+    const toastId = toast.loading("Updating status...");
     try {
-      const token = auth?.token || localStorage.getItem("token");
+      const token = localStorage.getItem("token");
+      // Note: Ensure backend has this route created
       await axios.put(
         `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${id}`,
-        null,
+        {}, // Empty body
         { headers: { "x-auth-token": token } }
       );
       toast.dismiss(toastId);
-      toast.success("Marked as Completed!");
-      loadBookings();
+      toast.success("Session marked as Completed!");
+      loadBookings(); // Refresh list
     } catch (err) {
       toast.dismiss(toastId);
-      toast.error("Error: " + (err.response ? err.response.data.msg : err.message));
+      toast.error("Error: " + (err.response?.data?.msg || err.message));
     }
   };
 
   const handleStartChat = (id) => navigate(`/chat/${id}`);
 
-  const tasks = myBookings.filter((b) => b.status === "Confirmed" && b.dispute_status !== "Pending");
-  const disputes = myBookings.filter((b) => b.dispute_status === "Pending");
-  const history = myBookings.filter(
-    (b) => b.status === "Completed" || b.dispute_status === "Resolved"
-  );
+  // 🟢 FIX: Lowercase checks for filtering
+  const tasks = myBookings.filter((b) => b.status === "confirmed" && (!b.dispute_status || b.dispute_status === "Resolved"));
+  const disputes = myBookings.filter((b) => b.dispute_status && b.dispute_status !== "Resolved");
+  const history = myBookings.filter((b) => b.status === "completed" || b.status === "cancelled");
 
   return (
     <div
@@ -190,19 +197,12 @@ function SeniorDashboard() {
       }}
     >
       {/* 🧭 Header */}
-      <div style={{ textAlign: "center", marginBottom: "25px" }}>
-        <h2
-          style={{
-            color: "#fff",
-            fontSize: "2rem",
-            fontWeight: 700,
-            textShadow: "0 2px 8px rgba(0,0,0,0.2)",
-          }}
-        >
+      <div style={{ textAlign: "center", marginBottom: "25px", color: "white" }}>
+        <h2 style={{ fontSize: "2rem", fontWeight: 700 }}>
           Welcome, {auth.user?.name || "Senior"} 👋
         </h2>
-        <p style={{ color: "#dbeafe", fontSize: "0.95rem" }}>
-          Manage your sessions, chat with students, and monitor your progress easily.
+        <p style={{ opacity: 0.9 }}>
+          Manage your sessions, chat with students, and monitor your progress.
         </p>
       </div>
 
@@ -213,27 +213,25 @@ function SeniorDashboard() {
           justifyContent: "center",
           flexWrap: "wrap",
           gap: "10px",
-          background: "rgba(255,255,255,0.15)",
-          padding: "10px 15px",
+          background: "rgba(255,255,255,0.2)",
+          padding: "10px",
           borderRadius: "20px",
-          width: "95%",
+          width: "fit-content",
           margin: "0 auto 25px auto",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-          backdropFilter: "blur(15px)",
-          position: "sticky",
-          top: 10,
-          zIndex: 10,
+          backdropFilter: "blur(10px)",
         }}
       >
         {[
-          { path: "/senior-dashboard", label: "🆕 New", count: tasks.length },
+          { path: "/senior-dashboard", label: "🆕 New Tasks", count: tasks.length },
           { path: "/senior-dashboard/disputes", label: "⚠️ Disputes", count: disputes.length },
           { path: "/senior-dashboard/history", label: "✅ History", count: history.length },
         ].map((tab) => {
-          const isActive =
-            (tab.path === "/senior-dashboard" && location.pathname === "/senior-dashboard") ||
-            (tab.path !== "/senior-dashboard" &&
-              location.pathname.startsWith(tab.path));
+          // Logic for active tab highlighting
+          const currentPath = location.pathname;
+          const isActive = tab.path === "/senior-dashboard" 
+            ? (currentPath === "/senior-dashboard" || currentPath === "/senior-dashboard/")
+            : currentPath.startsWith(tab.path);
+
           return (
             <Link
               key={tab.path}
@@ -241,37 +239,18 @@ function SeniorDashboard() {
               style={{
                 textDecoration: "none",
                 padding: "8px 18px",
-                borderRadius: "25px",
+                borderRadius: "20px",
                 fontWeight: 600,
-                background: isActive
-                  ? "linear-gradient(45deg,#3b82f6,#2563eb)"
-                  : "rgba(255,255,255,0.2)",
-                color: isActive ? "#fff" : "#e0f2fe",
-                boxShadow: isActive
-                  ? "0 3px 10px rgba(37, 116, 235, 0.4)"
-                  : "none",
+                background: isActive ? "#fff" : "transparent",
+                color: isActive ? "#2563eb" : "#fff",
                 transition: "all 0.3s ease",
+                boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.2)" : "none",
               }}
             >
-              {tab.label} ({tab.count})
+              {tab.label} {tab.count > 0 && `(${tab.count})`}
             </Link>
           );
         })}
-
-        <Link
-          to="/senior-earnings"
-          style={{
-            background: "linear-gradient(45deg,#16a34a,#22c55e)",
-            color: "#fff",
-            textDecoration: "none",
-            padding: "8px 16px",
-            borderRadius: "25px",
-            fontWeight: 600,
-            boxShadow: "0 3px 10px rgba(22,163,74,0.4)",
-          }}
-        >
-          💰 My Earnings
-        </Link>
       </div>
 
       {/* 🧾 Routes */}
@@ -280,7 +259,7 @@ function SeniorDashboard() {
           path="/"
           element={
             <BookingsTable
-              title="New Bookings"
+              title="Upcoming Sessions"
               bookings={tasks}
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
@@ -289,7 +268,7 @@ function SeniorDashboard() {
           }
         />
         <Route
-          path="/disputes"
+          path="disputes"
           element={
             <BookingsTable
               title="Active Disputes"
@@ -301,10 +280,10 @@ function SeniorDashboard() {
           }
         />
         <Route
-          path="/history"
+          path="history"
           element={
             <BookingsTable
-              title="Completed History"
+              title="Session History"
               bookings={history}
               loading={loading}
               onMarkComplete={markAsCompletedHandler}
