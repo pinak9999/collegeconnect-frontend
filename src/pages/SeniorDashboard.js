@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-// 📦 Booking Cards Component (Fixed Logic)
+// 📦 Booking Cards Component (Fixed Logic + Your UI)
 const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
   const actionButton = (text, gradient, action) => ({
     background: gradient,
@@ -22,14 +22,14 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
 
   if (loading)
     return (
-      <p style={{ textAlign: "center", color: "#6b7280", fontWeight: 500, marginTop: "50px" }}>
+      <p style={{ textAlign: "center", color: "#e0f2fe", fontWeight: 500, marginTop: "50px" }}>
         ⏳ Loading bookings...
       </p>
     );
 
   if (!bookings || bookings.length === 0)
     return (
-      <p style={{ textAlign: "center", color: "#9ca3af", fontWeight: 500, marginTop: "50px" }}>
+      <p style={{ textAlign: "center", color: "#dbeafe", fontWeight: 500, marginTop: "50px" }}>
         No bookings found in this category.
       </p>
     );
@@ -39,7 +39,7 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
       <h3
         style={{
           textAlign: "center",
-          color: "#fff", // Header visible on blue background
+          color: "#fff", 
           marginBottom: "20px",
           fontWeight: 700,
           fontSize: "1.3rem",
@@ -56,74 +56,79 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
           padding: "0 10px",
         }}
       >
-        {bookings.map((b) => (
-          <div
-            key={b._id}
-            style={{
-              background: "rgba(255,255,255,0.95)", // Thoda solid background for readability
-              borderRadius: "18px",
-              padding: "20px",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-              transition: "all 0.3s ease",
-              border: b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
-            }}
-          >
-            <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
-              👨‍🎓 {b.student?.name || "Student (Unknown)"}
-            </h4>
-            <p style={{ color: "#6b7280", margin: "5px 0", fontSize: "0.9rem" }}>
-              📧 {b.student?.email || "No Email"}
-            </p>
-            
-            {/* Status Check - Lowercase fix */}
-            <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px", textTransform: "capitalize" }}>
-              Status: {b.status}
-            </p>
+        {bookings.map((b) => {
+          // 🟢 LOGIC FIX: Normalize status to lowercase for comparison
+          const status = (b.status || "").toLowerCase();
+          const studentName = b.student?.name || "Student (Unknown)";
+          const studentEmail = b.student?.email || "No Email";
 
-            {/* Date Display */}
-            <p style={{ fontSize: "0.8rem", color: "#555" }}>
-               📅 {new Date(b.scheduledDate).toLocaleDateString()}
-            </p>
-
-            <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "15px" }}>
-              {b.dispute_status === "Pending"
-                ? `⚠ Dispute: ${b.dispute_reason?.reason || "Under Review"}`
-                : b.dispute_status ? `Dispute: ${b.dispute_status}` : "No Active Disputes"}
-            </p>
-
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+          return (
+            <div
+              key={b._id}
+              style={{
+                background: "rgba(255,255,255,0.95)",
+                borderRadius: "18px",
+                padding: "20px",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                transition: "all 0.3s ease",
+                border: b.dispute_status === "Pending" ? "2px solid #f59e0b" : "none",
+              }}
+            >
+              <h4 style={{ margin: 0, color: "#111827", fontWeight: 600 }}>
+                👨‍🎓 {studentName}
+              </h4>
+              <p style={{ color: "#6b7280", margin: "5px 0", fontSize: "0.9rem" }}>
+                📧 {studentEmail}
+              </p>
               
-              {/* 🟢 FIX: Check for lowercase 'confirmed' */}
-              {b.status === "confirmed" && (
-                <>
-                  <button
-                    style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
-                    onClick={() => onStartChat(b._id)}
-                  >
-                    💬 Chat
-                  </button>
-                  <button
-                    style={actionButton("✔ Mark Done", "linear-gradient(45deg,#10b981,#059669)")}
-                    onClick={() => onMarkComplete(b._id)}
-                  >
-                    ✔ Done
-                  </button>
-                </>
-              )}
+              <p style={{ color: "#2563eb", fontWeight: 600, marginBottom: "4px", textTransform: "capitalize" }}>
+                Status: {status}
+              </p>
 
-              {/* 🟢 FIX: Check for lowercase 'completed' */}
-              {b.status === "completed" && (
-                <span style={{ color: "#10b981", fontWeight: 600, padding: "5px 10px", background: "#dcfce7", borderRadius: "10px" }}>
-                    ✅ Completed
-                </span>
-              )}
-              
-              {b.dispute_status === "Pending" && (
-                <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
-              )}
+              <p style={{ fontSize: "0.8rem", color: "#555" }}>
+                 📅 {new Date(b.scheduledDate || b.createdAt).toLocaleDateString()}
+              </p>
+
+              <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "15px" }}>
+                {b.dispute_status === "Pending"
+                  ? `⚠ Dispute: ${b.dispute_reason?.reason || "Under Review"}`
+                  : b.dispute_status ? `Dispute: ${b.dispute_status}` : "No Active Disputes"}
+              </p>
+
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+                
+                {/* 🟢 FIX: Check against lowercase 'confirmed' */}
+                {status === "confirmed" && (
+                  <>
+                    <button
+                      style={actionButton("💬 Chat", "linear-gradient(45deg,#3b82f6,#2563eb)")}
+                      onClick={() => onStartChat(b._id)}
+                    >
+                      💬 Chat
+                    </button>
+                    <button
+                      style={actionButton("✔ Mark Done", "linear-gradient(45deg,#10b981,#059669)")}
+                      onClick={() => onMarkComplete(b._id)}
+                    >
+                      ✔ Done
+                    </button>
+                  </>
+                )}
+
+                {/* 🟢 FIX: Check against lowercase 'completed' */}
+                {status === "completed" && (
+                  <span style={{ color: "#10b981", fontWeight: 600, padding: "5px 10px", background: "#dcfce7", borderRadius: "10px" }}>
+                      ✅ Completed
+                  </span>
+                )}
+                
+                {b.dispute_status === "Pending" && (
+                  <span style={{ color: "#f59e0b", fontWeight: 600 }}>⚠ Under Review</span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -145,8 +150,8 @@ function SeniorDashboard() {
         "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my",
         { headers: { "x-auth-token": token } }
       );
-      setMyBookings(res.data);
       console.log("🔥 Senior Bookings Loaded:", res.data); // Debugging Log
+      setMyBookings(res.data);
     } catch (err) {
       console.error(err);
       toast.error("Failed to load bookings");
@@ -164,10 +169,9 @@ function SeniorDashboard() {
     const toastId = toast.loading("Updating status...");
     try {
       const token = localStorage.getItem("token");
-      // Note: Ensure backend has this route created
       await axios.put(
         `https://collegeconnect-backend-mrkz.onrender.com/api/bookings/mark-complete/${id}`,
-        {}, // Empty body
+        {}, 
         { headers: { "x-auth-token": token } }
       );
       toast.dismiss(toastId);
@@ -181,10 +185,20 @@ function SeniorDashboard() {
 
   const handleStartChat = (id) => navigate(`/chat/${id}`);
 
-  // 🟢 FIX: Lowercase checks for filtering
-  const tasks = myBookings.filter((b) => b.status === "confirmed" && (!b.dispute_status || b.dispute_status === "Resolved"));
-  const disputes = myBookings.filter((b) => b.dispute_status && b.dispute_status !== "Resolved");
-  const history = myBookings.filter((b) => b.status === "completed" || b.status === "cancelled");
+  // 🟢 CORE LOGIC FIX: Filter using Lowercase and safety checks
+  const tasks = myBookings.filter((b) => {
+    const s = (b.status || "").toLowerCase();
+    return s === "confirmed" && (!b.dispute_status || b.dispute_status === "Resolved");
+  });
+
+  const disputes = myBookings.filter((b) => {
+    return b.dispute_status && b.dispute_status !== "Resolved";
+  });
+
+  const history = myBookings.filter((b) => {
+    const s = (b.status || "").toLowerCase();
+    return s === "completed" || s === "cancelled";
+  });
 
   return (
     <div
