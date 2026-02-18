@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // ❗ Path को ठीक कर दिया है
+import { useAuth } from "../context/AuthContext"; 
 import toast from "react-hot-toast";
 
 function Navbar() {
@@ -27,9 +27,18 @@ function Navbar() {
     navigate("/");
   };
 
+  // 🟢 FIX: Dashboard Logic Update
   const getDashboardLink = () => {
-    if (auth.user?.role === "Admin") return "/admin-dashboard";
-    if (auth.user?.isSenior) return "/senior-dashboard";
+    const user = auth.user;
+    if (!user) return "/login";
+
+    // Admin Check
+    if (user.role === "Admin") return "/admin-dashboard";
+    
+    // Senior Check (Checks both 'role' string and 'isSenior' boolean)
+    if (user.role === "Senior" || user.isSenior === true) return "/senior-dashboard";
+    
+    // Default to Student
     return "/student-dashboard";
   };
 
@@ -125,6 +134,7 @@ function Navbar() {
           <div style={menuStyle}>
             {auth.isAuthenticated && auth.user ? (
               <>
+                {/* 🟢 DYNAMIC DASHBOARD LINK */}
                 <Link
                   to={getDashboardLink()}
                   style={{
@@ -150,8 +160,8 @@ function Navbar() {
                   📊 Dashboard
                 </Link>
 
-                {/* --- ✨ NAYA ANALYTICS LINK --- */}
-                {(auth.user?.role === "Admin" || !auth.user?.isSenior) && (
+                {/* --- ✨ ANALYTICS LINK --- */}
+                {(auth.user?.role === "Admin" || (auth.user?.role !== "Senior" && !auth.user?.isSenior)) && (
                   <Link
                     to="/analytics"
                     style={{
@@ -177,7 +187,6 @@ function Navbar() {
                     📈 Analytics
                   </Link>
                 )}
-                {/* --- ✨ END --- */}
 
                 <button
                   onClick={logoutHandler}
@@ -261,7 +270,7 @@ function Navbar() {
       </nav>
 
       {/* 🌀 Moving Tagline */}
-         <div
+      <div
         style={{
           background: "linear-gradient(90deg, #ff0000b9, #b10cfdbb)",
           color: "white",
@@ -277,19 +286,26 @@ function Navbar() {
         <div
           style={{
             display: "inline-block",
-            paddingLeft: "100%", // ✅ start offset ताकि text instantly दिखे
+            paddingLeft: "100%",
             animation: "scrollText 18s linear infinite",
-            animationDelay: "0.3s", // ✅ browser को time दो width calculate करने का
-            willChange: "transform", // ✅ GPU optimization
-            transform: "translate3d(5%, 0, 0)", // ✅ pre-offset से instant motion
-            backfaceVisibility: "hidden", // ✅ mobile flicker fix
+            animationDelay: "0.3s",
+            willChange: "transform",
+            transform: "translate3d(5%, 0, 0)",
+            backfaceVisibility: "hidden",
           }}
         >
           🌟 "Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि असली
           सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो छात्रों
           को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
         </div>
-
+        <style>
+          {`
+            @keyframes scrollText {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-100%); }
+            }
+          `}
+        </style>
       </div>
     </>
   );
