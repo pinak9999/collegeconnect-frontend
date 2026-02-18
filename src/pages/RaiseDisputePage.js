@@ -1,188 +1,196 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import toast from "react-hot-toast";
 
-function RaiseDisputePage() {
+const palette = {
+  primary: "#2563EB",
+  primaryDark: "#1E40AF",
+  text: "#0F172A",
+  subtext: "#475569",
+  glass: "rgba(255,255,255,0.85)",
+  danger: "#EF4444",
+};
+
+const RaiseDisputePage = () => {
   const { bookingId } = useParams();
   const navigate = useNavigate();
-  const [reasonId, setReasonId] = useState("");
-  const [reasons, setReasons] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [hover, setHover] = useState(false);
-  const [focus, setFocus] = useState(false);
+  
+  const [reasons, setReasons] = useState<{_id: string, reason: string}[]>([]);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
-  // 🔹 Fetch Dispute Reasons
   useEffect(() => {
     const fetchReasons = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          "https://collegeconnect-backend-mrkz.onrender.com/api/disputereasons",
-          { headers: { "x-auth-token": token } }
-        );
+        // Using the same backend URL structure as other components
+        const res = await axios.get("https://collegeconnect-backend-mrkz.onrender.com/api/disputes/reasons", {
+            headers: { "x-auth-token": token }
+        });
         setReasons(res.data);
-      } catch {
-        toast.error("⚠️ Failed to load dispute reasons.");
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load dispute reasons.");
       } finally {
-        setLoading(false);
+        setFetching(false);
       }
     };
     fetchReasons();
   }, []);
 
-  // 🔹 Submit Handler
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reasonId) return toast.error("Please select a reason.");
+    if (!selectedReason) {
+        toast.error("Please select a reason");
+        return;
+    }
 
-    const toastId = toast.loading("Submitting dispute...");
+    setLoading(true);
+    const t = toast.loading("Submitting dispute...");
+    
     try {
       const token = localStorage.getItem("token");
       await axios.post(
         `https://collegeconnect-backend-mrkz.onrender.com/api/disputes/raise/${bookingId}`,
-        { reasonId },
+        {
+            reasonId: selectedReason, // Backend expects an ObjectId
+            comment: comment
+        },
         { headers: { "x-auth-token": token } }
       );
-      toast.dismiss(toastId);
-      toast.success("✅ Dispute raised successfully!");
-      navigate("/student-dashboard/bookings");
-    } catch (err) {
-      toast.dismiss(toastId);
-      toast.error("Error: " + (err.response ? err.response.data.msg : err.message));
+      
+      toast.dismiss(t);
+      toast.success("Dispute raised successfully.");
+      // Navigate back to student dashboard or previous page
+      navigate("/student-dashboard"); 
+    } catch (err: any) {
+      toast.dismiss(t);
+      console.error(err);
+      toast.error(err.response?.data?.msg || "Failed to raise dispute");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 🎨 Modern Inline Styles
-  const styles = {
-    container: {
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "20px",
-      background:
-        "linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #334155 100%)",
-      fontFamily: "'Poppins', sans-serif",
-      color: "#fff",
-    },
-    card: {
-      width: "100%",
-      maxWidth: "430px",
-      background:
-        "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15))",
-      backdropFilter: "blur(12px)",
-      borderRadius: "20px",
-      padding: "2rem",
-      boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      transform: hover ? "scale(1.02)" : "scale(1)",
-    },
-    heading: {
-      fontSize: "1.9rem",
-      fontWeight: 700,
-      textAlign: "center",
-      background: "linear-gradient(45deg,#f43f5e,#f97316)",
-      WebkitBackgroundClip: "text",
-      color: "transparent",
-      textShadow: "0 2px 10px rgba(255, 100, 100, 0.4)",
-      marginBottom: "1.5rem",
-    },
-    label: {
-      display: "block",
-      color: "#e2e8f0",
-      fontWeight: 500,
-      fontSize: "1rem",
-      marginBottom: "8px",
-    },
-    select: {
-      width: "100%",
-      padding: "12px 14px",
-      borderRadius: "12px",
-      background: "rgba(255,255,255,0.15)",
-      color: "#fff",
-      fontSize: "1rem",
-      border: focus ? "2px solid #f43f5e" : "1.5px solid rgba(255,255,255,0.2)",
-      outline: "none",
-      marginBottom: "1.2rem",
-      transition: "all 0.3s ease",
-    },
-    option: {
-      backgroundColor: "#1e293b",
-      color: "#fff",
-    },
-    button: {
-      width: "100%",
-      padding: "12px 16px",
-      borderRadius: "12px",
-      border: "none",
-      fontSize: "1rem",
-      fontWeight: "600",
-      background: hover
-        ? "linear-gradient(45deg,#ef4444,#f97316)"
-        : "linear-gradient(45deg,#f43f5e,#b91c1c)",
-      color: "#fff",
-      cursor: "pointer",
-      boxShadow: hover
-        ? "0 8px 20px rgba(244,63,94,0.4)"
-        : "0 4px 10px rgba(0,0,0,0.25)",
-      transform: hover ? "translateY(-2px)" : "translateY(0)",
-      transition: "all 0.3s ease",
-    },
-    footer: {
-      textAlign: "center",
-      marginTop: "20px",
-      fontSize: "0.9rem",
-      color: "#94a3b8",
-    },
-  };
-
-  if (loading)
-    return (
-      <div style={styles.container}>
-        <h2>⏳ Loading Dispute Reasons...</h2>
-      </div>
-    );
-
   return (
-    <div style={styles.container}>
-      <div
-        style={styles.card}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        <h2 style={styles.heading}>⚠️ Raise a Dispute</h2>
-        <form onSubmit={handleSubmit}>
-          <label style={styles.label}>Select Reason</label>
-          <select
-            value={reasonId}
-            onChange={(e) => setReasonId(e.target.value)}
-            onFocus={() => setFocus(true)}
-            onBlur={() => setFocus(false)}
-            style={styles.select}
-            required
-          >
-            <option value="" disabled>
-              Choose a reason
-            </option>
-            {reasons.map((r) => (
-              <option key={r._id} value={r._id} style={styles.option}>
-                {r.reason}
-              </option>
-            ))}
-          </select>
+    <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #F0F9FF 0%, #F1F5F9 100%)",
+        padding: 20,
+        fontFamily: "'Poppins', sans-serif",
+    }}>
+        <div style={{
+            width: "100%",
+            maxWidth: 500,
+            background: palette.glass,
+            borderRadius: 24,
+            padding: 32,
+            boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.6)"
+        }}>
+            <h2 style={{ textAlign: "center", color: palette.text, marginBottom: 24, fontSize: "1.8rem", fontWeight: 800 }}>
+                Raise a Dispute ⚠️
+            </h2>
+            
+            {fetching ? (
+                <p style={{textAlign: 'center', color: palette.subtext}}>Loading reasons...</p>
+            ) : (
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: 20 }}>
+                        <label style={{ display: "block", marginBottom: 8, fontWeight: 600, color: palette.subtext }}>
+                            Select Reason
+                        </label>
+                        <select
+                            style={{
+                                width: "100%",
+                                padding: "12px 16px",
+                                borderRadius: 12,
+                                border: "1px solid #cbd5e1",
+                                fontSize: 15,
+                                outline: "none",
+                                background: "#fff",
+                                color: palette.text
+                            }}
+                            value={selectedReason}
+                            onChange={(e) => setSelectedReason(e.target.value)}
+                            required
+                        >
+                            <option value="">-- Choose a reason --</option>
+                            {reasons.map(r => (
+                                <option key={r._id} value={r._id}>{r.reason}</option>
+                            ))}
+                        </select>
+                    </div>
 
-          <button type="submit" style={styles.button}>
-            🚀 Submit Dispute
-          </button>
-        </form>
+                    <div style={{ marginBottom: 24 }}>
+                        <label style={{ display: "block", marginBottom: 8, fontWeight: 600, color: palette.subtext }}>
+                            Additional Details (Optional)
+                        </label>
+                        <textarea
+                            style={{
+                                width: "100%",
+                                padding: "12px 16px",
+                                borderRadius: 12,
+                                border: "1px solid #cbd5e1",
+                                fontSize: 15,
+                                minHeight: 120,
+                                outline: "none",
+                                resize: "vertical"
+                            }}
+                            placeholder="Describe the issue..."
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                        />
+                    </div>
 
-        <p style={styles.footer}>
-          Once submitted, our team will review your issue within 48 hours.
-        </p>
-      </div>
+                    <div style={{ display: "flex", gap: 12 }}>
+                        <button
+                            type="button"
+                            onClick={() => navigate(-1)}
+                            style={{
+                                flex: 1,
+                                padding: 14,
+                                borderRadius: 12,
+                                border: "none",
+                                background: "#e2e8f0",
+                                color: palette.text,
+                                fontWeight: 700,
+                                cursor: "pointer"
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            style={{
+                                flex: 1,
+                                padding: 14,
+                                borderRadius: 12,
+                                border: "none",
+                                background: palette.danger, // Red for dispute
+                                color: "#fff",
+                                fontWeight: 700,
+                                cursor: loading ? "not-allowed" : "pointer",
+                                opacity: loading ? 0.7 : 1,
+                                boxShadow: "0 4px 12px rgba(239,68,68,0.3)"
+                            }}
+                        >
+                            {loading ? "Submitting..." : "Submit Dispute"}
+                        </button>
+                    </div>
+                </form>
+            )}
+        </div>
     </div>
   );
-}
+};
 
 export default RaiseDisputePage;
