@@ -1,200 +1,167 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Real Auth use kar rahe hain
-import toast from "react-hot-toast";
-import './BookingPage.css'; 
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
+import { Profile } from '../types';
 
-// --- Footer Component ---
-function Footer() {
-  return (
-    <footer className="footer-container">
-      <div className="footer-grid">
-        <div className="footer-column">
-          <h3 className="footer-logo">CollegeConnect</h3>
-          <p className="footer-tagline">Connecting students with amazing mentors.</p>
-        </div>
-        <div className="footer-column">
-          <h4 className="footer-heading">Company</h4>
-          <a href="#" className="footer-link">About Us</a>
-          <a href="#" className="footer-link">Careers</a>
-          <a href="#" className="footer-link">Press Release</a>
-        </div>
-        <div className="footer-column">
-          <h4 className="footer-heading">Support</h4>
-          <a href="#" className="footer-link">Help Center</a>
-          <a href="#" className="footer-link">Your Account</a>
-          <a href="#" className="footer-link">Contact Us</a>
-        </div>
-      </div>
-      <div className="footer-copyright">
-        © {new Date().getFullYear()} CollegeConnect. All Rights Reserved.
-      </div>
-    </footer>
-  );
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
 }
 
-function BookingPage() {
+const BookingPage: React.FC = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { auth } = useAuth(); // Context se real data utha rahe hain
-
-  const [profile, setProfile] = useState(null);
+  const { auth } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
-    const loadPageData = async () => {
+    const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setLoading(false);
-          setError("Error: You are not logged in.");
-          return;
-        }
-
-        const [res, settingsRes] = await Promise.all([
-          axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, {
-            headers: { "x-auth-token": token }
-          }),
-          axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`)
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error("No token");
+        
+        // Parallel fetch for profile and settings (for fee)
+        const [resProfile, resSettings] = await Promise.all([
+           axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, {
+             headers: { 'x-auth-token': token }
+           }),
+           axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`)
         ]);
 
-        setProfile(res.data);
-        const fee = res.data.price_per_session + settingsRes.data.platformFee;
+        setProfile(resProfile.data);
+        const fee = (resProfile.data.price_per_session || 0) + (resSettings.data.platformFee || 20);
         setTotalAmount(fee);
-        setLoading(false);
-      } catch (err) {
-        setError("Error: Profile not found or server issue.");
+      } catch (error) {
+        toast.error("Failed to load profile details");
+        navigate(-1);
+      } finally {
         setLoading(false);
       }
     };
-    loadPageData();
-  }, [userId]);
+    fetchProfile();
+  }, [userId, navigate]);
 
-  const displayRazorpay = async () => {
-    if (!auth?.user) {
-      toast.error("Please login to book a session.");
-      navigate("/login");
-      return;
-    }
-
-    // 🟢 IMPORTANT: Backend fields ke sath sync kiya gaya hai
+  const handlePayment = async () => {
+    if (!profile) return;
+    
+    // --- KEY FIX: Structure matches backend expectation ---
     const bookingDetails = {
-      senior: profile.user._id,        // Backend expects 'senior'
-      profileId: profile._id,          // Backend expects 'profile'
-      amount: totalAmount,             // Total fee
-      slot_time: new Date(),           // Default current date
+      senior: profile.user._id || profile.user.id,  // Must match backend schema
+      profileId: profile._id,
+      amount: totalAmount,
+      slot_time: new Date(),     // In a real app, user selects this
     };
 
-    const toastId = toast.loading("Processing order...");
-
+    const toastId = toast.loading("Initializing payment...");
     try {
-      const token = localStorage.getItem("token");
-      
+      const token = localStorage.getItem('token');
       // 1. Create Order
-      const orderRes = await axios.post(
-        "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
+      const { data: order } = await axios.post(
+        'https://collegeconnect-backend-mrkz.onrender.com/api/payment/order',
         { amount: totalAmount },
-        { headers: { "x-auth-token": token } }
+        { headers: { 'x-auth-token': token } }
       );
 
-      const order = orderRes.data;
-      toast.dismiss(toastId);
-
       const options = {
-        key: "rzp_test_RbhIpPvOLS2KkF",
+        key: "rzp_test_RbhIpPvOLS2KkF", // Ideally from env
         amount: order.amount,
         currency: order.currency,
         name: "CollegeConnect",
-        description: `Booking with ${profile.user.name}`,
+        description: `Session with ${profile.user.name}`,
         order_id: order.id,
-        handler: async function (response) {
-          const verifyId = toast.loading("Confirming your slot...");
+        handler: async function (response: any) {
+          toast.loading("Verifying...", { id: toastId });
           try {
-            // 🟢 Backend Verify Call: Response + BookingDetails dono bhej rahe hain
             await axios.post(
-              "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
-              { 
+              'https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify',
+              {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                bookingDetails: bookingDetails 
+                bookingDetails: bookingDetails // Passing the structured details
               },
-              { headers: { "x-auth-token": token } }
+              { headers: { 'x-auth-token': token } }
             );
-            
-            toast.dismiss(verifyId);
-            toast.success("Payment Successful!");
-            navigate("/booking-success");
-          } catch (err) {
-            toast.dismiss(verifyId);
-            toast.error("Verification failed. Please contact support.");
+            toast.success("Booking Confirmed!", { id: toastId });
+            navigate('/student-dashboard/bookings');
+          } catch (verifyErr) {
+             toast.error("Verification Failed", { id: toastId });
           }
         },
         prefill: {
-          name: auth.user.name,
-          email: auth.user.email,
+          name: auth.user?.name,
+          email: auth.user?.email,
+          contact: auth.user?.mobileNumber
         },
-        theme: { color: "#2563EB" },
+        theme: { color: "#2563EB" }
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
-
     } catch (err) {
-      toast.dismiss(toastId);
-      toast.error("Failed to initiate payment.");
+      toast.error("Payment initiation failed", { id: toastId });
     }
   };
 
-  if (loading) return <div className="loading-container"><h2>⏳ Loading Profile...</h2></div>;
-  if (error) return <div className="loading-container"><h2 className="error-text">❌ {error}</h2></div>;
+  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
+  if (!profile) return <div className="p-10 text-center">Profile not found</div>;
 
   return (
-    <div className="page-container">
-      <div className="layout-container">
-        {/* Left Column */}
-        <div className="main-content">
-          <div className="card profile-header">
-            <img src={profile.avatar || "https://via.placeholder.com/120"} alt="Senior" className="avatar" />
-            <h2 className="profile-name">{profile.user?.name}</h2>
-            <p className="profile-college">{profile.college?.name}</p>
-            <p className="profile-branch">{profile.branch} ({profile.year} Year)</p>
-          </div>
-
-          <div className="card">
-            <h3 className="card-heading">👤 About Me</h3>
-            <p className="card-bio">{profile.bio || "No bio available."}</p>
-          </div>
-
-          <div className="card">
-            <h3 className="card-heading">🏷️ Specializations</h3>
-            <div className="tags-container">
-              {profile.tags?.map(tag => <span key={tag._id} className="tag">{tag.name}</span>)}
+    <div className="min-h-screen bg-slate-50 py-10 px-4">
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Left: Profile Info */}
+        <div className="md:col-span-2 space-y-6">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-6">
+            <img src={profile.avatar || "https://via.placeholder.com/100"} alt="Avatar" className="w-24 h-24 rounded-full border-4 border-blue-50 object-cover" />
+            <div>
+              <h2 className="text-2xl font-bold text-slate-800">{profile.user.name}</h2>
+              <p className="text-blue-600 font-medium">{profile.college.name}</p>
+              <div className="flex gap-2 mt-2">
+                {profile.tags.map(t => <span key={t._id} className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded">{t.name}</span>)}
+              </div>
             </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h3 className="font-bold text-lg mb-2">About</h3>
+            <p className="text-slate-600 leading-relaxed">{profile.bio || "No bio available."}</p>
           </div>
         </div>
 
-        {/* Right Column (Sticky Sidebar) */}
-        <div className="sidebar">
-          <div className="card booking-card">
-            <h3 className="booking-title">Book Session</h3>
-            <p className="booking-subtitle">The senior will contact you within 6 hours to schedule the call.</p>
-            <div className="price-box">
-              <span className="price-text">₹{totalAmount}</span>
-              <span className="duration-text">Full Support</span>
+        {/* Right: Payment Card */}
+        <div className="md:col-span-1">
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 sticky top-24">
+            <h3 className="text-xl font-bold mb-4 text-slate-800">Booking Summary</h3>
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between text-sm text-slate-600">
+                <span>Session Fee</span>
+                <span>₹{profile.price_per_session}</span>
+              </div>
+              <div className="flex justify-between text-sm text-slate-600">
+                <span>Platform Fee</span>
+                <span>₹{(totalAmount - profile.price_per_session)}</span>
+              </div>
+              <div className="border-t pt-3 flex justify-between font-bold text-lg text-blue-600">
+                <span>Total</span>
+                <span>₹{totalAmount}</span>
+              </div>
             </div>
-            <button onClick={displayRazorpay} className="book-button">
-              🔒 Pay & Confirm Booking
+            <button 
+              onClick={handlePayment}
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold py-3 rounded-xl hover:shadow-lg transition transform active:scale-95"
+            >
+              Pay & Book Now
             </button>
+            <p className="text-xs text-center text-slate-400 mt-4">Secure payment via Razorpay</p>
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
-}
+};
 
 export default BookingPage;
