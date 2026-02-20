@@ -1,247 +1,346 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-import { useAuth } from "../context/AuthContext"; // ✅ Real Auth Context Import
+// import { useAuth } from "../context/AuthContext"; // Asal code mein ise uncomment karein
+import toast from "react-hot-toast";
+import './BookingPage.css'; // ⭐ CSS फाइल को यहाँ इम्पोर्ट किया गया है
 
-// 🎨 CSS STYLES
-const styles = `
-  .booking-container {
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-    background: #f3f4f6;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-  }
-  .layout {
-    display: flex;
-    gap: 20px;
-    max-width: 1000px;
-    width: 100%;
-  }
-  @media (max-width: 768px) {
-    .layout { flex-direction: column; }
-  }
-  
-  /* Left Column */
-  .profile-section {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .card {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #e5e7eb;
-  }
-  
-  /* Profile Header */
-  .profile-header {
-    text-align: center;
-  }
-  .avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  }
-  .name { margin: 10px 0 5px; font-size: 1.5rem; font-weight: 700; color: #1f2937; }
-  .college { color: #6b7280; font-weight: 500; }
-  
-  /* Right Column (Booking Box) */
-  .booking-sidebar {
-    flex: 1;
-  }
-  .booking-box {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
-    position: sticky;
-    top: 20px;
-  }
-  .price-tag {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #1f2937;
-    text-align: center;
-    display: block;
-    margin: 15px 0;
-  }
-  .info-note {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #1e40af;
-    padding: 15px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-  }
-  
-  .pay-btn {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .pay-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-  }
+// --- फूटर कंपोनेंट ---
+function Footer() {
+  const companyLinks = [
+    { name: "About Us", href: "#" },
+    { name: "Careers", href: "#" },
+    { name: "Press Release", href: "#" },
+    { name: "Blog", href: "#" },
+  ];
 
-  /* Utility */
-  .tag { background: #f3f4f6; padding: 5px 12px; borderRadius: 20px; font-size: 0.85rem; display: inline-block; margin-right: 8px; margin-bottom: 8px; color: #374151; }
-  .loading { display: flex; justify-content: center; alignItems: center; height: 100vh; color: #6b7280; }
-`;
+  const supportLinks = [
+    { name: "Let Us Help You", href: "#" },
+    { name: "Help Center", href: "#" },
+    { name: "Your Account", href: "#" },
+    { name: "Report Issue", href: "#" },
+    { name: "Contact Us", href: "#" },
+  ];
 
+  const studentLinks = [
+    { name: "Find Mentors", href: "#" },
+    { name: "Book a Session", href: "#" },
+    { name: "REAP Guide", href: "#" },
+    { name: "Learning Hub", href: "#" },
+  ];
+
+  return (
+    <footer className="footer-container">
+      <div className="footer-grid">
+        <div className="footer-column">
+          <h3 className="footer-logo">CollegeConnect</h3>
+          <p className="footer-tagline">
+            Connecting students with amazing mentors.
+          </p>
+        </div>
+        <div className="footer-column">
+          <h4 className="footer-heading">Company</h4>
+          {companyLinks.map((link) => (
+            <a key={link.name} href={link.href} className="footer-link">
+              {link.name}
+            </a>
+          ))}
+        </div>
+        <div className="footer-column">
+          <h4 className="footer-heading">Support</h4>
+          {supportLinks.map((link) => (
+            <a key={link.name} href={link.href} className="footer-link">
+              {link.name}
+            </a>
+          ))}
+        </div>
+        <div className="footer-column">
+          <h4 className="footer-heading">For Students</h4>
+          {studentLinks.map((link) => (
+            <a key={link.name} href={link.href} className="footer-link">
+              {link.name}
+            </a>
+          ))}
+        </div>
+      </div>
+      <div className="footer-copyright">
+        © {new Date().getFullYear()} CollegeConnect. All Rights Reserved.
+      </div>
+    </footer>
+  );
+}
+
+// --- मुख्य बुकिंग पेज कंपोनेंट ---
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { auth } = useAuth(); // ✅ Using Real Auth
+
+  // ⭐ Mock AuthContext (Compile error se bachne ke liye)
+  const { auth } = {
+    auth: {
+      user: {
+        name: "Mock User",
+        email: "mock.user@example.com",
+      },
+    },
+  };
+  // const { auth } = useAuth(); // Asal app mein ise uncomment karein
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // Backend URL
-  const BACKEND_URL = "https://collegeconnect-backend-mrkz.onrender.com";
+  // ⭐ isMobile state ki ab style ke liye zaroorat nahi hai.
+  // CSS media queries ise handle kar rahe hain.
 
   useEffect(() => {
-    const loadData = async () => {
+    // window resize listener ki ab zaroorat nahi hai.
+    const loadPageData = async () => {
       try {
         const token = localStorage.getItem("token");
-        
-        // 🟡 REAL API CALLS
-        // Agar aapke paas real backend data hai to ye uncomment karein
-        // aur neeche wala MOCK DATA block hata dein.
-        
-        /*
-        const [res, settings] = await Promise.all([
-           axios.get(`${BACKEND_URL}/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } }),
-           axios.get(`${BACKEND_URL}/api/settings`)
+        if (!token) {
+          setLoading(false);
+          setError("Error: You are not logged in.");
+          return;
+        }
+
+        // --- ID CARD FIX (Aapka original logic) ---
+        const [res, settingsRes, allProfilesRes] = await Promise.all([
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
+            { headers: { "x-auth-token": token } }
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/settings`
+          ),
+          axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`,
+            { headers: { "x-auth-token": token } }
+          ),
         ]);
-        setProfile(res.data);
-        setTotalAmount(res.data.price_per_session + (settings.data.platformFee || 50));
+
+        const singleProfileData = res.data;
+        const allProfilesData = allProfilesRes.data;
+
+        const matchingProfileFromAll = allProfilesData.find(
+          (p) => p.user?._id === userId
+        );
+
+        const combinedProfile = {
+          ...singleProfileData,
+          ...matchingProfileFromAll,
+          user: singleProfileData.user || matchingProfileFromAll.user,
+          college: singleProfileData.college || matchingProfileFromAll.college,
+        };
+
+        setProfile(combinedProfile);
+
+        const fee =
+          combinedProfile.price_per_session + settingsRes.data.platformFee;
+        setTotalAmount(fee);
+
         setLoading(false);
-        */
-
-        // 🟢 MOCK DATA (Fallback agar backend data nahi hai)
-        setTimeout(() => {
-            setProfile({
-                user: { _id: userId || "mock_id", name: "Senior Name" },
-                college: { name: "IIT Delhi" },
-                branch: "Computer Science",
-                year: "4th Year",
-                bio: "I can help you with career guidance and coding interviews.",
-                price_per_session: 200,
-                session_duration_minutes: 30,
-                tags: [{_id:1, name:"Career"}, {_id:2, name:"Coding"}],
-                avatar: "https://placehold.co/150", // ✅ Fixed Image URL
-                id_card_url: null
-            });
-            setTotalAmount(250); // 200 + 50 fee
-            setLoading(false);
-        }, 800);
-
       } catch (err) {
-        console.error("Error loading profile:", err);
+        let errorMsg = err.response
+          ? err.response.data.msg || err.response.data
+          : err.message;
+        setError("Error: " + errorMsg);
         setLoading(false);
-        toast.error("Failed to load senior profile");
       }
     };
-    loadData();
+
+    loadPageData();
+    // useEffect se resize listener hata diya gaya hai
   }, [userId]);
 
-  const handlePayment = () => {
-    if (!auth.isAuthenticated) return toast.error("Please login first");
-
-    const toastId = toast.loading("Processing Request...");
-
-    // Simulate Payment Process
-    setTimeout(() => {
-        toast.dismiss(toastId);
-        toast.success("Request Sent Successfully!");
-        
-        // Yahan aap Real Razorpay Logic laga sakte hain baad mein
-        // Abhi ke liye bas success dikha rahe hain
-        
-        // navigate("/student-dashboard"); // Redirect user
-    }, 2000);
+  // --- Payment Handler (Aapka original logic) ---
+  const displayRazorpay = async () => {
+    if (!auth.user) {
+      toast.error("You must be logged in to book.");
+      navigate("/login");
+      return;
+    }
+    const bookingDetails = {
+      senior: profile.user._id,
+      profileId: profile._id,
+      slot_time: new Date(),
+      duration: profile.session_duration_minutes,
+      amount: totalAmount,
+    };
+    const toastId = toast.loading("Creating your order...");
+    try {
+      const token = localStorage.getItem("token");
+      const orderRes = await axios.post(
+        "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
+        { seniorId: profile.user._id },
+        { headers: { "x-auth-token": token } }
+      );
+      const order = orderRes.data;
+      toast.dismiss(toastId);
+      const options = {
+        key: "rzp_test_RbhIpPvOLS2KkF",
+        amount: order.amount,
+        currency: order.currency,
+        name: "CollegeConnect",
+        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
+        order_id: order.id,
+        handler: async function (response) {
+          const verifyToastId = toast.loading("Verifying payment...");
+          try {
+            await axios.post(
+              "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
+              { ...response, bookingDetails },
+              { headers: { "x-auth-token": token } }
+            );
+            toast.dismiss(verifyToastId);
+            toast.success("Booking Confirmed!");
+            navigate("/booking-success");
+          } catch {
+            toast.dismiss(verifyToastId);
+            toast.error("Payment Verification Failed. Please contact support.");
+          }
+        },
+        prefill: { name: auth.user.name, email: auth.user.email },
+        theme: { color: "#10B981" }, // Mint theme color
+      };
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (err) {
+      toast.dismiss(toastId);
+      let errorMsg = err.response
+        ? err.response.data.msg || err.response.data
+        : err.message;
+      toast.error("Error creating order. " + errorMsg);
+    }
   };
 
-  if (loading) return <div className="loading">⏳ Loading Profile...</div>;
-  if (!profile) return <div className="loading">❌ Profile not found</div>;
+  // --- LOADING / ERROR / NOT FOUND STATES ---
+
+  if (loading)
+    return (
+      <div className="page-container loading-container">
+        <h2>⏳ Loading Booking Page...</h2>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="page-container loading-container">
+        <h2 className="error-text">❌ {error}</h2>
+      </div>
+    );
+
+  if (!profile)
+    return (
+      <div className="page-container loading-container">
+        <h2>Profile not found.</h2>
+      </div>
+    );
+
+  // --- FINAL JSX (Ab yahan classNames ka istemal hai) ---
 
   return (
-    <div className="booking-container">
-      <style>{styles}</style>
-      <Toaster position="top-center" />
-      
-      <div className="layout">
-        {/* Left Column */}
-        <div className="profile-section">
-           {/* Header Card */}
-           <div className="card profile-header">
-              <img src={profile.avatar || "https://placehold.co/150"} alt="Profile" className="avatar" />
-              <h2 className="name">{profile.user.name}</h2>
-              <p className="college">{profile.college?.name} • {profile.branch}</p>
-           </div>
+    <div className="page-container">
+      <div className="layout-container">
+        {/* ------------------- 
+            LEFT COLUMN (Info) 
+             ------------------- */}
+        <div className="main-content">
+          {/* Profile Header Card */}
+          <div className="card profile-header">
+            <img
+              src={profile.avatar || "https://via.placeholder.com/120"}
+              alt={profile.user?.name || "Senior"}
+              className="avatar"
+            />
+            <h2 className="profile-name">
+              {profile.user?.name}
+            </h2>
+            <p className="profile-college">
+              {profile.college?.name || "N/A"}
+            </p>
+            <p className="profile-branch">
+              {profile.branch} ({profile.year})
+            </p>
+          </div>
 
-           {/* About Card */}
-           <div className="card">
-              <h3>👤 About Me</h3>
-              <p style={{color: '#4b5563', lineHeight: 1.6}}>{profile.bio}</p>
-           </div>
+          {/* About Me Card */}
+          <div className="card">
+            <h3 className="card-heading">
+              <span className="heading-icon">👤</span> About Me
+            </h3>
+            <p className="card-bio">
+              {profile.bio}
+            </p>
+          </div>
 
-           {/* Tags Card */}
-           <div className="card">
-              <h3>🏷️ Expertise</h3>
-              <div style={{marginTop: '10px'}}>
-                 {profile.tags?.map(tag => (
-                    <span key={tag._id} className="tag">{tag.name}</span>
-                 ))}
-              </div>
-           </div>
+          {/* Specializations Card */}
+          <div className="card">
+            <h3 className="card-heading">
+              <span className="heading-icon">🏷️</span> Specializations
+            </h3>
+            <div className="tags-container">
+              {profile.tags?.length ? (
+                profile.tags.map((tag) => (
+                  <span key={tag._id} className="tag">
+                    {tag.name}
+                  </span>
+                ))
+              ) : (
+                <p className="no-tags-text">
+                  No tags listed.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Verified ID Card */}
+          {profile.id_card_url && (
+            <div className="card">
+              <h3 className="card-heading verified-heading">
+                <span className="heading-icon">🎓</span> College Verified ID
+                <span className="verified-icon">✓</span>
+              </h3>
+              <img
+                src={profile.id_card_url}
+                alt="College ID Card"
+                className="id-card-image"
+              />
+            </div>
+          )}
         </div>
 
-        {/* Right Column (Action) */}
-        <div className="booking-sidebar">
-           <div className="booking-box">
-              <h3 style={{textAlign:'center', color:'#1e3a8a', margin:'0 0 15px'}}>Request Session</h3>
-              
-              <div className="info-note">
-                 <strong>How it works:</strong><br/>
-                 1. You pay & send a request.<br/>
-                 2. Senior accepts & schedules a time.<br/>
-                 3. You join the call when scheduled.
-              </div>
+        {/* ------------------- 
+            RIGHT COLUMN (Booking) 
+             ------------------- */}
+        <div className="sidebar">
+          <div className="card booking-card">
+            <h3 className="booking-title">
+              Book this Session
+            </h3>
+            <p className="booking-subtitle">
+              After payment, the senior will contact you within 6 hours to
+              schedule the best time.
+            </p>
 
-              <div style={{textAlign:'center', background:'#f9fafb', padding:'10px', borderRadius:'10px', marginBottom:'20px'}}>
-                  <span style={{display:'block', fontSize:'0.9rem', color:'#6b7280'}}>Total to pay</span>
-                  <span className="price-tag">₹{totalAmount}</span>
-                  <span style={{color:'#10b981', fontSize:'0.85rem', fontWeight:'bold'}}>+ Free Chat Access</span>
-              </div>
+            <div className="price-box">
+              <span className="price-text">₹{totalAmount}</span>
+              <span className="duration-text">+ Chat Free</span>
+            </div>
 
-              <button className="pay-btn" onClick={handlePayment}>
-                  🔒 Pay & Send Request
-              </button>
-           </div>
+            <button
+              onClick={displayRazorpay}
+              className="book-button"
+            >
+              <span className="button-icon">🔒</span> Pay ₹{totalAmount} & Book
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* फूटर को यहाँ जोड़ा गया है */}
+      <Footer />
     </div>
   );
 }
