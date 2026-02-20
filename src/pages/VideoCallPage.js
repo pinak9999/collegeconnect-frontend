@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import io from "socket.io-client";
 import Peer from "peerjs";
 import toast from "react-hot-toast";
 
-// ⚠️ Global socket: इसे disconnect मत करना cleanup में
+// ⚠️ Global socket
 const SOCKET_URL = "https://collegeconnect-backend-mrkz.onrender.com";
 const socket = io(SOCKET_URL, { transports: ["websocket"] });
 
@@ -61,78 +61,71 @@ const styles = {
 
 export default function VideoCallPage() {
   const { sessionId } = useParams();
+  const navigate = useNavigate();
   const { auth } = useAuth();
 
   const [peerName, setPeerName] = useState("Connecting...");
   const [peerStream, setPeerStream] = useState(null);
   const [micOn, setMicOn] = useState(true);
   const [camOn, setCamOn] = useState(true);
-  const [remoteMuted, setRemoteMuted] = useState(true); // autoplay safe
+  const [remoteMuted, setRemoteMuted] = useState(true);
 
   const myVideoRef = useRef(null);
   const peerVideoRef = useRef(null);
 
-  const myStreamRef = useRef(null);     // local MediaStream
-  const peerRef = useRef(null);         // Peer instance
-  const activeCallRef = useRef(null);   // current PeerJS call
+  const myStreamRef = useRef(null);
+  const peerRef = useRef(null);
+  const activeCallRef = useRef(null);
 
-  // attach local video when ready
+  // Apna local video dikhane ke liye
   useEffect(() => {
-    const v = myVideoRef.current;
-    const s = myStreamRef.current;
-    if (v && s) {
-      v.srcObject = s;
-      v.play().catch(() => {});
+    if (myVideoRef.current && myStreamRef.current) {
+      myVideoRef.current.srcObject = myStreamRef.current;
+      myVideoRef.current.play().catch((e) => console.error("Local play error:", e));
     }
   }, [myStreamRef.current]);
 
-  // attach remote video when stream changes
+  // Dusre ka video dikhane ke liye
   useEffect(() => {
     if (peerVideoRef.current && peerStream) {
       peerVideoRef.current.srcObject = peerStream;
-      const p = peerVideoRef.current.play();
-      if (p && p.catch) {
-        // autoplay fallback: keep muted until user clicks “Hear Other”
-        p.catch(() => {});
-      }
+      peerVideoRef.current.play().catch((e) => console.error("Remote play error:", e));
     }
   }, [peerStream]);
 
   useEffect(() => {
-    let cleaned = false;
+    let isCleanedUp = false;
 
-    (async () => {
+    const initializeMediaAndPeer = async () => {
       try {
-        // 1) Get local media (always before calling/answering)
-        const local = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        if (cleaned) return;
-        myStreamRef.current = local;
+        // 1. Camera aur Mic ki permission lo
+        const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (isCleanedUp) return;
+        
+        myStreamRef.current = localStream;
         if (myVideoRef.current) {
-          myVideoRef.current.srcObject = local;
+          myVideoRef.current.srcObject = localStream;
           myVideoRef.current.play().catch(() => {});
         }
         toast.success("Camera/Mic ready ✅");
-        console.log("[VIDEO] got local media", local.getTracks().map(t => `${t.kind}:${t.enabled}`));
 
-        // 2) PeerJS (with STUN+TURN for strict NATs)
+        // 2. PeerJS Setup (Fixed Configuration)
+        // Humne purane fake servers hata diye hain aur PeerJS ka default stable server use kar rahe hain
         const peer = new Peer(undefined, {
-          host: "0.peerjs.com",
-          port: 443,
-          secure: true,
           config: {
             iceServers: [
               { urls: "stun:stun.l.google.com:19302" },
-              // 🔁 TURN – PRODUCTION में अपने creds दें
-              { urls: "turn:relay1.expressturn.com:3478", username: "expressturn", credential: "password" },
+              { urls: "stun:global.stun.twilio.com:3478" }
             ],
           },
         });
+        
         peerRef.current = peer;
 
-        // 3) When PeerJS ready, join socket room with my peerId
+        // 3. Jab Peer ready ho jaye, Socket room join karo
         peer.on("open", (id) => {
-          if (cleaned) return;
-          console.log("[PEER] open", id);
+          if (isCleanedUp) return;
+          console.log("My Peer ID is:", id);
           socket.emit("join_video_room", {
             room: sessionId,
             peerId: id,
@@ -140,107 +133,101 @@ export default function VideoCallPage() {
           });
         });
 
-        // 4) Answer incoming calls with my local stream
+        // 4. Jab koi doosra humein Call kare (Aane wali call uthana)
         peer.on("call", (call) => {
-          console.log("[PEER] incoming call from", call.metadata?.name);
-          if (!myStreamRef.current) {
-            console.warn("No local stream to answer with");
-            return;
-          }
-          // close previous call if any
+          console.log("Incoming call from:", call.peer);
           if (activeCallRef.current) activeCallRef.current.close();
+          
           activeCallRef.current = call;
-
-          const remoteName = call.metadata?.name || "Peer";
-          setPeerName(remoteName);
-
-          call.answer(myStreamRef.current);
-          call.on("stream", (remote) => {
-            console.log("[PEER] got remote stream (incoming)");
-            setPeerStream(remote);
+          setPeerName(call.metadata?.name || "Peer connected");
+          
+          call.answer(myStreamRef.current); // Apna stream bhej kar answer kiya
+          
+          call.on("stream", (remoteStream) => {
+            console.log("Received remote stream");
+            setPeerStream(remoteStream);
           });
+
           call.on("close", () => {
             setPeerStream(null);
-            activeCallRef.current = null;
+            setPeerName("Peer left");
           });
         });
 
-        // 5) When socket tells us who else is in the room / joined
-        const onOther = ({ peerId, name }) => {
-          if (!peerRef.current || !myStreamRef.current) {
-            console.warn("Peer or local stream not ready; skip call");
-            return;
-          }
-          console.log("[SOCKET] other_user_for_video", peerId, name);
-          setPeerName(name || "Peer");
-
-          // call the other side with my local stream
+        // 5. Socket se pata chale ki doosra aa gaya hai, toh usko Call karo
+        socket.on("other_user_for_video", ({ peerId, name }) => {
+          if (!peerRef.current || !myStreamRef.current || isCleanedUp) return;
+          console.log("Other user joined, calling them:", peerId);
+          
+          setPeerName(name || "Peer connected");
+          
           if (activeCallRef.current) activeCallRef.current.close();
+          
           const call = peerRef.current.call(peerId, myStreamRef.current, {
             metadata: { name: auth?.user?.name || "User" },
           });
+          
           activeCallRef.current = call;
 
-          call.on("stream", (remote) => {
-            console.log("[PEER] got remote stream (outgoing)");
-            setPeerStream(remote);
+          call.on("stream", (remoteStream) => {
+            console.log("Received remote stream (outgoing call)");
+            setPeerStream(remoteStream);
           });
+
           call.on("close", () => {
             setPeerStream(null);
-            activeCallRef.current = null;
+            setPeerName("Peer left");
           });
-        };
+        });
 
-        const onPeerLeft = ({ peerId }) => {
-          console.log("[SOCKET] peer_left", peerId);
-          if (activeCallRef.current) {
-            activeCallRef.current.close();
-            activeCallRef.current = null;
-          }
+        socket.on("peer_left", () => {
+          console.log("Peer disconnected from socket");
+          if (activeCallRef.current) activeCallRef.current.close();
           setPeerStream(null);
           setPeerName("Peer left");
-        };
+        });
 
-        socket.on("other_user_for_video", onOther);
-        socket.on("peer_left", onPeerLeft);
-
-        // cleanup
-        VideoCallPage._cleanup = () => {
-          socket.off("other_user_for_video", onOther);
-          socket.off("peer_left", onPeerLeft);
-          try { activeCallRef.current?.close?.(); } catch {}
-          try { peerRef.current?.destroy?.(); } catch {}
-          try { myStreamRef.current?.getTracks()?.forEach(t => t.stop()); } catch {}
-        };
-      } catch (e) {
-        console.error(e);
-        toast.error("Could not access camera/mic");
+      } catch (err) {
+        console.error("Media error:", err);
+        toast.error("Could not access camera/mic. Please allow permissions.");
       }
-    })();
-
-    return () => {
-      cleaned = true;
-      if (VideoCallPage._cleanup) {
-        VideoCallPage._cleanup();
-        VideoCallPage._cleanup = null;
-      }
-      // ⚠️ global socket को disconnect मत करो
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId]);
 
-  // mic/cam toggles
+    initializeMediaAndPeer();
+
+    // Cleanup logic
+    return () => {
+      isCleanedUp = true;
+      socket.off("other_user_for_video");
+      socket.off("peer_left");
+      if (activeCallRef.current) activeCallRef.current.close();
+      if (peerRef.current) peerRef.current.destroy();
+      if (myStreamRef.current) {
+        myStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [sessionId, auth?.user?.name]);
+
   const toggleMic = () => {
-    const a = myStreamRef.current?.getAudioTracks?.()[0];
-    if (!a) return;
-    a.enabled = !a.enabled;
-    setMicOn(a.enabled);
+    const audioTrack = myStreamRef.current?.getAudioTracks()[0];
+    if (audioTrack) {
+      audioTrack.enabled = !audioTrack.enabled;
+      setMicOn(audioTrack.enabled);
+    }
   };
+
   const toggleCam = () => {
-    const v = myStreamRef.current?.getVideoTracks?.()[0];
-    if (!v) return;
-    v.enabled = !v.enabled;
-    setCamOn(v.enabled);
+    const videoTrack = myStreamRef.current?.getVideoTracks()[0];
+    if (videoTrack) {
+      videoTrack.enabled = !videoTrack.enabled;
+      setCamOn(videoTrack.enabled);
+    }
+  };
+
+  const endCall = () => {
+    if (activeCallRef.current) activeCallRef.current.close();
+    socket.emit("leave_video_room", { room: sessionId }); // Optional emit
+    navigate("/"); // Redirecting to home/dashboard
   };
 
   return (
@@ -248,46 +235,34 @@ export default function VideoCallPage() {
       <div style={styles.header}>Video Session: {sessionId}</div>
 
       <div style={styles.grid}>
-        {/* My video */}
+        {/* Local Video */}
         <div style={styles.card}>
-          <video
-            ref={myVideoRef}
-            autoPlay
-            playsInline
-            muted
-            style={{ ...styles.video, ...styles.myMirror }}
-          />
+          <video ref={myVideoRef} autoPlay playsInline muted style={{ ...styles.video, ...styles.myMirror }} />
           <div style={styles.tag}>
-            {(auth?.user?.name || "You")} (You) {micOn ? "🎙️" : "🔇"} {camOn ? "📷" : "🚫"}
+            {auth?.user?.name || "You"} (You) {micOn ? "🎙️" : "🔇"} {camOn ? "📷" : "🚫"}
           </div>
         </div>
 
-        {/* Peer video (ALWAYS mounted) */}
+        {/* Remote Video */}
         <div style={styles.card}>
-          <video
-            ref={peerVideoRef}
-            autoPlay
-            playsInline
-            muted={remoteMuted}
-            style={styles.video}
-          />
-          <div style={styles.tag}>{peerStream ? (peerName || "Peer") : "Connecting..."}</div>
+          <video ref={peerVideoRef} autoPlay playsInline muted={remoteMuted} style={styles.video} />
+          <div style={styles.tag}>{peerStream ? peerName : "Connecting..."}</div>
         </div>
       </div>
 
       <div style={styles.controls}>
-        <button onClick={toggleMic} style={styles.btn("#2563eb")}>
+        <button onClick={toggleMic} style={styles.btn(micOn ? "#2563eb" : "#475569")}>
           {micOn ? "🔇 Mute" : "🎙️ Unmute"}
         </button>
-        <button onClick={toggleCam} style={styles.btn("#7c3aed")}>
-          {camOn ? "🚫 Camera Off" : "📷 Camera On"}
+        <button onClick={toggleCam} style={styles.btn(camOn ? "#7c3aed" : "#475569")}>
+          {camOn ? "🚫 Cam Off" : "📷 Cam On"}
         </button>
-        {remoteMuted && (
+        {remoteMuted && peerStream && (
           <button onClick={() => setRemoteMuted(false)} style={styles.btn("#10b981")}>
-            🔊 Hear Other
+            🔊 Hear Audio
           </button>
         )}
-        <button onClick={() => (window.location.href = "/")} style={styles.btn("#ef4444")}>
+        <button onClick={endCall} style={styles.btn("#ef4444")}>
           📞 End Call
         </button>
       </div>
