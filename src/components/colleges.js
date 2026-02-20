@@ -5,7 +5,7 @@ export const colleges = [
     name: "MBM University",
     location: "Jodhpur, Rajasthan",
     coords: [26.2624, 73.0138], // [latitude, longitude]
-    image: "https://www.mbmalumni.org/wp-content/uploads/2024/07/about-mbm.jpg", // यह टैग इमेज दिखाएगा
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPgYTL_FdSsdHVHft1FJMsK66plYKt0XHtYw&s", // यह टैग इमेज दिखाएगा
   },
    {
     name: "RTU Kota",
