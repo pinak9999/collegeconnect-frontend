@@ -150,31 +150,7 @@ function Navbar() {
                   📊 Dashboard
                 </Link>
 
-                {/* My Appointments */}
-                <Link
-                  to="/my-appointments"
-                  style={{
-                    ...btnBaseStyle,
-                    background: "linear-gradient(135deg,#34d399,#059669)",
-                    boxShadow: "0 3px 10px rgba(5,150,105,0.35)",
-                  }}
-                  onMouseEnter={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1.05)",
-                      "0 6px 14px rgba(5,150,105,0.5)"
-                    )
-                  }
-                  onMouseLeave={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1)",
-                      "0 3px 10px rgba(5,150,105,0.35)"
-                    )
-                  }
-                >
-                  📅 My Appointments
-                </Link>
+            
 
                 {/* Logout */}
                 <button
