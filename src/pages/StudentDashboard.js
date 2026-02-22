@@ -4,241 +4,225 @@ import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast";
 
 // ======================================
-// 🔮 Global CSS (Light + Dark Themes)
+// 🔮 Global CSS (Dark Space + Glassmorphism)
 // ======================================
 const globalStyles = `
 @keyframes floatUp { 0%{transform:translateY(0)} 50%{transform:translateY(-4px)} 100%{transform:translateY(0)} }
 @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
-@keyframes subtleGlow { 0%{box-shadow:0 0 0 rgba(99,102,241,0)} 100%{box-shadow:0 8px 28px rgba(99,102,241,.18)} }
+@keyframes twinkle { 0% { opacity: 0.3; } 50% { opacity: 0.7; } 100% { opacity: 0.3; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-:root{
-  --bg: #f4fcf6ff;              
-  --card: #ffffff;              
-  --panel: #ffffffcc;             
-  --stroke: #e5e7eb;              
-  --txt: #1f2937;              
-  --muted: #6b7280;              
-  --brand1: #7c3aed;              
-  --brand2: #06b6d4;              
-  --ok: #16a34a;              
-  --warn: #f59e0b;              
+:root {
+  --bg: #090a0f;              
+  --card: rgba(17, 24, 39, 0.45);              
+  --stroke: rgba(139, 92, 246, 0.35);              
+  --txt: #ffffff;              
+  --muted: #9ca3af;              
+  --brand1: #8b5cf6;              
+  --brand2: #3b82f6;              
+  --ok: #34d399;              
+  --warn: #fbbf24;              
   --danger: #ef4444;              
   
-  --bg-gradient: linear-gradient(180deg, #f4f7fc 0%, #f4f7fc 100%);
-  --panel-bg: #ffffffcc;
-  --input-bg: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-  --tab-bg: #f3f4f6;
-  --tab-hover-bg: #e5e7eb;
-  --info-bg: #eff6ff;
-  --info-color: #3b82f6;
-  --rating-bg: #f9fafb;
-  --rating-prompt-color: var(--brand1);
-  --rated-bg: #f0fdf4;
-  --rated-color: #166534;
-  --dispute-color: #fca5a5;
-  --modal-bg: #ffffff;
-}
-
-.dark {
-  --bg: #0b1220;
-  --card: #0f172a99;
-  --panel: #101827cc;
-  --stroke: #27324a;
-  --txt: #e5e7eb;
-  --muted: #9aa3b2;
-  --brand1: #7c3aed;
-  --brand2: #06b6d4;
-  --ok: #16a34a;
-  --warn: #f59e0b;
-  --danger: #ef4444;
-
-  --bg-gradient: linear-gradient(180deg, #050816 0%, #0b1220 100%);
-  --panel-bg: #101827cc;
-  --input-bg: linear-gradient(180deg, #0b1220 0%, #0b1220 60%, #0d1628 100%);
-  --tab-bg: linear-gradient(180deg,#0e1628,#0b1323);
-  --tab-hover-bg: linear-gradient(180deg,#0e1628,#0b1323); 
-  --info-bg: linear-gradient(180deg, #0e1b31, #0b1426);
-  --info-color: #c7d2fe;
-  --rating-bg: linear-gradient(180deg, #0e1628, #0b1323);
+  --input-bg: rgba(17, 24, 39, 0.6);
+  --tab-bg: rgba(255, 255, 255, 0.05);
+  --tab-hover-bg: rgba(255, 255, 255, 0.1);
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --info-color: #a5b4fc;
+  --rating-bg: rgba(17, 24, 39, 0.6);
   --rating-prompt-color: #c7d2fe;
-  --rated-bg: linear-gradient(180deg, #0d1a2f, #0a1324);
-  --rated-color: #86efac;
+  --rated-bg: rgba(16, 185, 129, 0.1);
+  --rated-color: #6ee7b7;
   --dispute-color: #fca5a5;
-  --modal-bg: linear-gradient(145deg, #0f172a, #0b1220);
+  --modal-bg: #0f172a;
 }
 
 * { outline: none; box-sizing: border-box; }
 
 .page-bg {
   min-height: 100vh;
-  background:
-    radial-gradient(1000px 400px at -10% -10%, rgba(124,58,237,.25), transparent 60%),
-    radial-gradient(800px 350px at 110% 0%, rgba(6,182,212,.22), transparent 60%),
-    var(--bg-gradient);
-  background-color: var(--bg); 
-  font-family: "Poppins", sans-serif; 
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+  color: var(--txt);
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  overflow-x: hidden;
 }
-.main-container { max-width: 1180px; margin: 0 auto; padding: 20px 16px 60px; }
-.page-wrapper { padding: 8px; color: var(--txt); }
+
+/* Stars Background */
+.page-bg::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: twinkle 5s infinite;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.main-container { max-width: 600px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 2; }
+.page-wrapper { padding: 8px 0; color: var(--txt); }
 .small-muted { color: var(--muted); font-size: .9rem; }
-.rating-row svg { filter: drop-shadow(0 1px 0 rgba(0,0,0,.25)); }
-.light .rating-row svg { filter: none; }
 
-.cc-input, .cc-select { border:1px solid var(--stroke); background: var(--input-bg); color:var(--txt); border-radius:14px; padding:12px 16px; width:100%; transition:.25s border-color, .25s box-shadow, .25s transform; font-family: "Poppins", sans-serif; font-size: 1rem; }
-.cc-input:focus, .cc-select:focus { border-color: #7dd3fc; box-shadow: 0 0 0 4px rgba(125,211,252,.15); transform: translateY(-1px); }
-.cc-tab { border:1px solid var(--stroke); border-radius:12px; padding:10px 16px; font-weight:700; text-decoration:none; color:var(--txt); background: var(--tab-bg); transition:.25s transform,.25s box-shadow,.25s background; will-change: transform; white-space: nowrap; }
-.cc-tab.active { background: linear-gradient(90deg, var(--brand1), var(--brand2)); box-shadow: 0 8px 22px rgba(6,182,212,.25); color: white; }
-.cc-tab:not(.active):hover { transform: translateY(-2px); background: var(--tab-hover-bg); }
-.cc-btn { border:none; cursor:pointer; border-radius:12px; padding:10px 16px; font-weight:700; color:white; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease; justify-content: center; }
-.cc-btn:active { transform: translateY(1px) scale(.99) }
-.cc-btn.primary { background: linear-gradient(120deg, var(--brand2), var(--brand1)); box-shadow: 0 8px 22px rgba(124,58,237,.25); }
-.cc-btn.danger { background: linear-gradient(120deg, #fb7185, var(--danger)); box-shadow: 0 8px 22px rgba(239,68,68,.25); }
-.cc-chip { border:1px solid var(--stroke); color:var(--muted); background: var(--tab-bg); border-radius:999px; padding:8px 12px; font-weight:600; cursor:pointer; transition:.2s transform,.2s box-shadow,.2s color,.2s background,.2s border-color; margin: 4px; }
-.cc-chip:hover { transform: translateY(-1px) }
-.cc-chip.active { color:white; border-color: transparent; background: linear-gradient(90deg, var(--brand1), var(--brand2)); box-shadow: 0 8px 22px rgba(124,58,237,.25); }
-.card { background: var(--card); backdrop-filter: blur(12px); border:1px solid var(--stroke); border-radius:18px; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-.dark .card { box-shadow: 0 30px 60px rgba(2,6,23,.35); }
-.light .card { box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-.card:hover { transform: translateY(-2px); border-color:#334155; }
-.dark .card:hover { border-color:#334155; }
-.light .card:hover { border-color:var(--brand2); }
-
-.skeleton { background: linear-gradient(90deg, #0d1526 25%, #111b31 50%, #0d1526 75%); background-size: 800px 100%; animation: shimmer 1.5s infinite linear; border-radius: 10px; }
-.light .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 800px 100%; }
-
-.tab-bar { display: flex; gap: 12px; padding: 10px; border-radius: 16px; background: var(--panel-bg); border: 1px solid var(--stroke); margin-bottom: 18px; position: sticky; top: 12px; z-index: 5; backdrop-filter: blur(10px); align-items: center; }
-.dark .tab-bar { box-shadow: 0 20px 40px rgba(2,6,23,.35); }
-.light .tab-bar { background: #ffffff99; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-.theme-toggle-btn { height: 40px; width: 40px; min-width: 40px; padding: 0; border-radius: 10px; border: 1px solid var(--stroke); background: var(--tab-bg); color: var(--txt); font-size: 1.25rem; cursor: pointer; margin-left: auto; transition: all 0.25s ease; }
-.theme-toggle-btn:hover { transform: translateY(-2px); border-color: var(--brand2); color: var(--brand2); }
-
-.title-style { text-align: left; color: var(--txt); margin-bottom: 16px; font-weight: 900; letter-spacing: .3px; font-size: 1.4rem; }
-.dark .title-style { text-shadow: 0 1px 0 rgba(0,0,0,.4); }
-.light .title-style { text-shadow: none; }
-.section-title-style { color: var(--txt); font-weight: 800; font-size: 1.15rem; margin: 10px 0 10px 2px; border-left: 3px solid var(--brand1); padding-left: 10px; }
-
-.panel-wrap { border: 1px solid var(--stroke); background: var(--panel-bg); backdrop-filter: blur(10px); border-radius: 16px; padding: 14px; margin-bottom: 16px; }
-.dark .panel-wrap { box-shadow: 0 20px 40px rgba(2,6,23,.35); }
-.light .panel-wrap { box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-.filter-row { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
-.tag-chips-container { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-.grid-style-seniors { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-.senior-card { padding: 18px; text-align: center; }
-.senior-card .image-wrapper { display: flex; justify-content: center; margin-top: 4px; }
-.senior-card .avatar { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(124,58,237,.55); box-shadow: 0 10px 24px rgba(124,58,237,.25); }
-.light .senior-card .avatar { border-color: var(--brand1); }
-.senior-card .name-style { color: var(--txt); font-weight: 800; font-size: 1.05rem; margin: 10px 0 6px; }
-.light .senior-card .name-style { color: var(--brand1); }
-.senior-card .college-style { color: var(--muted); font-size: .92rem; margin: 0 0 6px; }
-.senior-card .bio-style { color: var(--txt); font-size: .92rem; margin: 6px 0 12px; min-height: 40px; }
-.light .senior-card .bio-style { color: var(--muted); }
-.senior-card .rating-container { display: flex; justify-content: center; align-items: center; gap: 2px; margin-bottom: 6px; }
-.senior-card .rating-count { margin-left: 8px; color: var(--muted); font-weight: 600; }
-.senior-card .price-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; }
-.senior-card .small-chip { border: 1px solid var(--stroke); color: var(--txt); border-radius: 999px; padding: 4px 10px; font-weight: 700; font-size: .8rem; }
-.senior-card .price-text { color: #86efac; font-weight: 800; font-size: 1.05rem; }
-.light .senior-card .price-text { color: var(--ok); }
-
-.grid-style-bookings { display: grid; grid-template-columns: 1fr; gap: 16px; }
-.booking-card { padding: 18px; }
-.booking-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--stroke); padding-bottom: 12px; gap: 12px; }
-.booking-card .booking-name { color: var(--txt); font-weight: 800; font-size: 1.1rem; margin: 0; }
-.light .booking-card .booking-name { color: var(--brand1); }
-.booking-card .booking-college { color: var(--muted); font-size: .92rem; margin: 6px 0 0 0; }
-.booking-card .booking-year-style { color: #a5b4fc; font-size: .9rem; font-weight: 700; margin: 6px 0 0 0; }
-.light .booking-card .booking-year-style { color: var(--brand1); }
-.booking-card .booking-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(124,58,237,.45); box-shadow: 0 8px 18px rgba(124,58,237,.25); flex-shrink: 0; }
-.booking-card .status-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
-.booking-card .status-tag { padding: 4px 12px; border-radius: 999px; font-weight: 800; font-size: .78rem; text-transform: capitalize; border: 1px solid transparent; }
-.dark .booking-card .status-tag { border: 1px solid var(--stroke); }
-
-.status-tag.status-confirmed { background: rgba(99,102,241,.15); color: #a5b4fc; }
-.status-tag.status-completed { background: rgba(34,197,94,.15); color: #86efac; }
-.status-tag.status-pending { background: rgba(245,158,11,.15); color: #fde68a; }
-.status-tag.status-cancelled { background: rgba(239,68,68,.15); color: #fca5a5; }
-.light .status-tag.status-confirmed { background: #e0e7ff; color: #4f46e5; }
-.light .status-tag.status-completed { background: #dcfce7; color: #166534; }
-.light .status-tag.status-pending { background: #fef9c3; color: #a16207; }
-.light .status-tag.status-cancelled { background: #fee2e2; color: #b91c1c; }
-
-.booking-card .info-message { background: var(--info-bg); color: var(--info-color); padding: 12px; border-radius: 10px; font-size: .95rem; font-weight: 600; text-align: left; line-height: 1.5; border: 1px solid var(--stroke); margin-top: 10px; }
-.booking-card .rating-section { background: var(--rating-bg); border-radius: 10px; padding: 14px; text-align: center; border: 1px solid var(--stroke); margin-top: 8px; }
-.booking-card .rating-prompt { font-weight: 800; color: var(--rating-prompt-color); margin: 0 0 10px 0; font-size: .95rem; }
-.booking-card .rating-stars-container { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-.booking-card .rated-section { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: var(--rated-bg); border-radius: 10px; color: var(--rated-color); font-weight: 800; border: 1px solid var(--stroke); margin-top: 6px; }
-.light .booking-card .rated-section { border-color: #bbf7d0; }
-.booking-card .rated-stars { display: flex; gap: 2px; }
-.booking-card .button-row { display: flex; gap: 10px; justify-content: flex-start; flex-wrap: wrap; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--stroke); }
-.booking-card .btn-compact { font-size: .9rem; padding: 8px 14px; }
-.booking-card .dispute-not-allowed { color: var(--dispute-color); font-weight: 700; font-size: .86rem; padding: 8px 0; }
-
-.modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.3s ease; }
-.modal-content { background: var(--modal-bg); border: 1px solid var(--stroke); border-radius: 16px; width: 90%; max-width: 450px; animation: slideIn 0.3s ease; overflow: hidden; }
-.dark .modal-content { box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-.light .modal-content { box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--stroke); }
-.modal-title { color: var(--brand1); margin: 0; font-size: 1.2rem; font-weight: 700; }
-.modal-close-btn { background: none; border: none; font-size: 2rem; color: var(--muted); cursor: pointer; line-height: 1; padding: 0; transition: color 0.2s; }
-.modal-close-btn:hover { color: var(--txt); }
-.modal-body { padding: 20px; color: var(--txt); font-size: 1rem; line-height: 1.6; }
-.modal-body strong { color: var(--brand1); font-weight: 700; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 20px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--stroke); }
-.light .modal-footer { background: #f9fafb; }
-
-@media (max-width: 640px) {
-  .main-container { padding: 8px 8px 40px; }
-  .tab-bar { justify-content: flex-start; overflow-x: auto; padding: 8px; gap: 8px; }
-  .tab-bar::-webkit-scrollbar { display: none; }
-  .tab-bar { -ms-overflow-style: none; scrollbar-width: none; }
-  .cc-tab { padding: 8px 12px; }
-  .theme-toggle-btn { height: 38px; width: 38px; min-width: 38px; }
-  .panel-wrap { padding: 10px; }
-  .filter-row { grid-template-columns: 1fr; gap: 10px; }
-  .booking-header { flex-direction: column-reverse; align-items: center; text-align: center; gap: 12px; }
-  .booking-card .booking-avatar { width: 70px; height: 70px; }
-  .title-style, .section-title-style { font-size: 1.1rem; padding-left: 8px; }
+/* Inputs & Selects - Pill Shaped */
+.cc-input, .cc-select { 
+  border: 1px solid var(--stroke); 
+  background: var(--input-bg); 
+  color: var(--txt); 
+  border-radius: 30px; 
+  padding: 12px 20px; 
+  width: 100%; 
+  transition: .3s all; 
+  font-family: "Poppins", sans-serif; 
+  font-size: 0.95rem; 
+  box-shadow: inset 0 0 10px rgba(139, 92, 246, 0.05);
+}
+.cc-input::placeholder { color: #6b7280; }
+.cc-input:focus, .cc-select:focus { 
+  border-color: var(--brand1); 
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.4), inset 0 0 10px rgba(139, 92, 246, 0.1); 
 }
 
-.skeleton-card-padding { padding: 18px; }
-.skeleton-avatar { width: 90px; height: 90px; border-radius: 999px; margin: 8px auto; }
-.skeleton-line-1 { width: 60%; height: 14px; margin: 14px auto; }
-.skeleton-line-2 { width: 40%; height: 12px; margin: 8px auto; }
-.skeleton-line-3 { width: 80%; height: 10px; margin: 16px auto; }
-.skeleton-line-4 { width: 50%; height: 12px; margin: 16px auto; }
-.skeleton-button { width: 70%; height: 36px; margin: 16px auto; border-radius: 12px; }
+/* Tab Bar - Exact Match to Screenshot */
+.tab-bar { 
+  display: flex; 
+  gap: 15px; 
+  margin-bottom: 25px; 
+  justify-content: center;
+}
+.cc-tab { 
+  flex: 1;
+  border: 1px solid var(--stroke); 
+  border-radius: 30px; 
+  padding: 12px 16px; 
+  font-weight: 600; 
+  text-align: center;
+  text-decoration: none; 
+  color: var(--muted); 
+  background: var(--input-bg); 
+  transition: all .3s ease; 
+  backdrop-filter: blur(10px);
+}
+.cc-tab.active { 
+  background: linear-gradient(90deg, #312e81, #4338ca); 
+  border-color: var(--brand1);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5), inset 0 0 10px rgba(139, 92, 246, 0.3); 
+  color: white; 
+}
 
-.filter-grid-inner { display: grid; gap: 10px; }
-.no-seniors-card { padding: 24px; grid-column: 1 / -1; text-align: center; }
-.no-seniors-title { font-size: 18px; color: var(--txt); font-weight: 700; }
-.no-seniors-subtitle { margin-top: 6px; }
+/* Buttons */
+.cc-btn { 
+  border: none; cursor: pointer; border-radius: 30px; padding: 10px 20px; font-weight: 600; 
+  color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; 
+  transition: all .3s ease; justify-content: center; font-size: 0.9rem;
+}
+.cc-btn.primary { 
+  background: linear-gradient(90deg, #312e81, #4338ca); 
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(139, 92, 246, 0.2); 
+}
+.cc-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.6), inset 0 0 15px rgba(139, 92, 246, 0.4); 
+}
+.cc-btn.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; }
 
-.past-bookings-title { margin-top: 28px; }
-.no-bookings-card { padding: 26px; text-align: center; }
-.no-bookings-title { color: var(--txt); font-weight: 700; }
-.no-bookings-subtitle { margin-top: 6px; }
+/* Filter Chips */
+.cc-chip { 
+  border: 1px solid var(--stroke); color: var(--muted); background: var(--tab-bg); 
+  border-radius: 30px; padding: 6px 14px; font-weight: 500; font-size: 0.85rem; cursor: pointer; 
+  transition: all .3s ease; margin: 4px; 
+}
+.cc-chip.active { 
+  color: white; border-color: var(--brand1); 
+  background: rgba(139, 92, 246, 0.2); 
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); 
+}
 
-.btn-cancel { background: var(--stroke); color: var(--muted); }
-.btn-cancel:hover { background: var(--tab-hover-bg); color: var(--txt); }
+/* Cards (Glassmorphism) */
+.card { 
+  background: var(--card); 
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--stroke); 
+  border-radius: 20px; 
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(139, 92, 246, 0.1);
+  transition: all .3s ease; 
+  margin-bottom: 20px;
+}
+.card:hover { border-color: rgba(139, 92, 246, 0.6); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(139, 92, 246, 0.2); }
+
+/* Horizontal Card Layout (Like Screenshot) */
+.card-top-row { display: flex; align-items: center; gap: 16px; margin-bottom: 15px; }
+.card-avatar { 
+  width: 65px; height: 65px; border-radius: 50%; object-fit: cover; 
+  border: 2px solid rgba(139, 92, 246, 0.6); 
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); 
+  flex-shrink: 0;
+}
+.card-info { flex: 1; text-align: left; }
+.card-name { color: #ffffff; font-weight: 700; font-size: 1.1rem; margin: 0 0 4px 0; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+.card-subtext { color: var(--muted); font-size: 0.85rem; margin: 0 0 2px 0; line-height: 1.4; }
+.card-status { color: #a5b4fc; font-size: 0.85rem; margin-top: 10px; font-weight: 500; }
+
+.card-bottom-row { 
+  display: flex; align-items: center; justify-content: space-between; 
+  margin-top: 15px;
+}
+.price-text { color: #2dd4bf; font-weight: 700; font-size: 1.1rem; text-shadow: 0 0 10px rgba(45, 212, 191, 0.3); }
+.duration-text { color: var(--muted); font-size: 0.9rem; font-weight: 400; text-shadow: none; }
+
+.skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 800px 100%; animation: shimmer 1.5s infinite linear; border-radius: 10px; }
+
+/* Filter Section */
+.filter-panel { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+.filter-row { display: grid; gap: 15px; grid-template-columns: 1fr 1fr; }
+.tag-chips-container { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Status Tags */
+.status-tag { padding: 6px 14px; border-radius: 30px; font-weight: 600; font-size: .8rem; text-transform: capitalize; border: 1px solid transparent; }
+.status-confirmed { background: rgba(99,102,241,.15); color: #a5b4fc; border-color: rgba(99,102,241,.3); }
+.status-completed { background: rgba(16,185,129,.15); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
+.status-pending { background: rgba(245,158,11,.15); color: #fde68a; border-color: rgba(245,158,11,.3); }
+.status-cancelled { background: rgba(239,68,68,.15); color: #fca5a5; border-color: rgba(239,68,68,.3); }
+
+/* Modals */
+.modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.3s ease; }
+.modal-content { background: var(--modal-bg); border: 1px solid var(--stroke); border-radius: 20px; width: 90%; max-width: 400px; animation: slideIn 0.3s ease; overflow: hidden; box-shadow: 0 0 30px rgba(139,92,246,0.2); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.modal-title { color: #ffffff; margin: 0; font-size: 1.2rem; font-weight: 700; }
+.modal-close-btn { background: none; border: none; font-size: 2rem; color: var(--muted); cursor: pointer; line-height: 1; padding: 0; }
+.modal-body { padding: 20px; color: #d1d5db; font-size: 0.95rem; line-height: 1.6; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 20px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); }
+
+/* Remove Theme Toggle Button as UI is fixed to Dark Space */
+.theme-toggle-btn { display: none; }
 `;
 
-const StarIcon = ({ filled, size = 24, isClickable = false }) => (
+const StarIcon = ({ filled, size = 18, isClickable = false }) => (
   <svg
-    fill={filled ? "url(#grad)" : "var(--stroke, #d1d5db)"}
+    fill={filled ? "url(#grad)" : "rgba(255,255,255,0.1)"}
     width={size}
     height={size}
     viewBox="0 0 24 24"
     style={{ 
       transition: "0.25s",
       cursor: isClickable ? "pointer" : "default",
-      transform: isClickable ? "scale(1.02)" : "scale(1)",
+      transform: isClickable ? "scale(1.1)" : "scale(1)",
+      filter: filled ? 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.5))' : 'none'
     }}
   >
     <defs>
       <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style={{ stopColor: "#06b6d4" }} />
-        <stop offset="100%" style={{ stopColor: "#7c3aed" }} />
+        <stop offset="0%" style={{ stopColor: "#a5b4fc" }} />
+        <stop offset="100%" style={{ stopColor: "#8b5cf6" }} />
       </linearGradient>
     </defs>
     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -252,20 +236,22 @@ const Chip = ({ active, onClick, children }) => (
 );
 
 const SkeletonCard = () => (
-  <div className="card skeleton-card-padding">
-    <div className="skeleton skeleton-avatar" />
-    <div className="skeleton skeleton-line-1" />
-    <div className="skeleton skeleton-line-2" />
-    <div className="skeleton skeleton-line-3" />
-    <div className="skeleton skeleton-line-4" />
-    <div className="skeleton skeleton-button" />
+  <div className="card" style={{ padding: "20px" }}>
+    <div style={{ display: "flex", gap: "15px", marginBottom: "15px" }}>
+      <div className="skeleton" style={{ width: "65px", height: "65px", borderRadius: "50%" }} />
+      <div style={{ flex: 1 }}>
+        <div className="skeleton" style={{ width: "60%", height: "14px", marginBottom: "8px" }} />
+        <div className="skeleton" style={{ width: "80%", height: "10px", marginBottom: "6px" }} />
+        <div className="skeleton" style={{ width: "40%", height: "10px" }} />
+      </div>
+    </div>
+    <div className="skeleton" style={{ width: "100%", height: "40px", borderRadius: "30px", marginTop: "10px" }} />
   </div>
 );
 
 // ===============================
 // 🎓 FindSenior 
 // ===============================
-// 🔥 UPDATED: Added platformFee as a prop
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
   const [search, setSearch] = useState("");
   const [selectedCollege, setSelectedCollege] = useState("");
@@ -288,101 +274,93 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
 
   return (
     <div className="page-wrapper">
-      <div className="panel-wrap">
-        <div className="filter-grid-inner">
-          <input
-            className="cc-input"
-            type="text"
-            placeholder="🔎 Search by name, college or branch..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="filter-row">
-            <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
-              <option value="">🎓 All Colleges</option>
-              {colleges.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <select className="cc-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="rating">⭐ Top Rated</option>
-              <option value="price_asc">💰 Low Price</option>
-              <option value="price_desc">💸 High Price</option>
-            </select>
-          </div>
-
-          <div className="tag-chips-container">
-            <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>
-              🏷️ All Tags
-            </Chip>
-            {tags.slice(0, 10).map((t) => (
-              <Chip key={t._id} active={selectedTag === t._id} onClick={() => setSelectedTag(t._id)}>
-                {t.name}
-              </Chip>
+      <div className="filter-panel">
+        <input
+          className="cc-input"
+          type="text"
+          placeholder="🔍 Search by name, college or branch..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="filter-row">
+          <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
+            <option value="">🏢 All Colleges</option>
+            {colleges.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.name}
+              </option>
             ))}
-          </div>
+          </select>
+          <select className="cc-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="rating">⭐ Top Rated</option>
+            <option value="price_asc">💰 Low Price</option>
+            <option value="price_desc">💸 High Price</option>
+          </select>
+        </div>
+
+        <div className="tag-chips-container">
+          <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>
+            🏷️ All
+          </Chip>
+          {tags.slice(0, 10).map((t) => (
+            <Chip key={t._id} active={selectedTag === t._id} onClick={() => setSelectedTag(t._id)}>
+              {t.name}
+            </Chip>
+          ))}
         </div>
       </div>
 
-      <div className="grid-style-seniors">
+      <div>
         {loading
-          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
           : filtered.length > 0
           ? filtered.map((p) => {
-              // 🔥 UPDATED: Avatar fallback logic
               const seniorName = p.user?.name || 'Senior';
-              const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=eff6ff&color=1e293b&size=150&font-size=0.4&bold=true`;
+              const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=312e81&color=ffffff&size=150&font-size=0.4&bold=true`;
 
               return (
-                <div
-                  key={p._id}
-                  className="card senior-card"
-                >
-                  <div className="image-wrapper">
+                <div key={p._id} className="card">
+                  <div className="card-top-row">
                     <img
                       src={p.avatar || fallbackImage}
                       alt={seniorName}
-                      className="avatar"
+                      className="card-avatar"
                       loading="lazy"
                       onError={(e) => {
                           e.target.onerror = null; 
                           e.target.src = fallbackImage;
                       }}
                     />
+                    <div className="card-info">
+                      <h3 className="card-name">{seniorName}</h3>
+                      <p className="card-subtext">{p.college?.name || "College N/A"}</p>
+                      <p className="card-subtext" style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} size={14} />
+                        ))}
+                        <span style={{ color: "var(--muted)", marginLeft: "4px" }}>({p.total_ratings || 0})</span>
+                      </p>
+                    </div>
                   </div>
 
-                  <h3 className="name-style">{seniorName}</h3>
+                  {/* Horizontal Line Split */}
+                  <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.08)', margin: '10px 0' }}></div>
 
-                  <div className="rating-row rating-container">
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} />
-                    ))}
-                    <span className="rating-count">
-                      {p.average_rating?.toFixed?.(1) ?? "0.0"} • {p.total_ratings || 0}
-                    </span>
+                  <div className="card-bottom-row">
+                    <div className="price-text">
+                      ₹{(p.price_per_session || 0) + platformFee} <span className="duration-text">• {p.session_duration_minutes || 20} min</span>
+                    </div>
+                    <Link to={`/book/${p.user._id}`} className="cc-btn primary">
+                      Join Call
+                    </Link>
                   </div>
-
-                  <p className="college-style">{p.college?.name}</p>
-                  <p className="bio-style">{(p.bio || "—").substring(0, 90)}{(p.bio?.length ?? 0) > 90 ? "…" : ""}</p>
-
-                  <div className="price-row">
-                    {/* 🔥 UPDATED: Added platformFee to price calculation */}
-                    <span className="price-text">₹{(p.price_per_session || 0) + platformFee}</span>
-                    <span className="small-chip">{p.session_duration_minutes || 20} min</span>
-                  </div>
-
-                  <Link to={`/book/${p.user._id}`} className="cc-btn primary">
-                    🚀 Book Session
-                  </Link>
                 </div>
               );
             })
           : (
-            <div className="card no-seniors-card">
-              <div className="no-seniors-title">No seniors found</div>
-              <div className="small-muted no-seniors-subtitle">Try adjusting filters or search keywords.</div>
+            <div className="card" style={{ textAlign: "center", padding: "40px 20px" }}>
+              <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "var(--txt)" }}>No seniors found</div>
+              <div className="small-muted" style={{ marginTop: "10px" }}>Try adjusting filters or search keywords.</div>
             </div>
           )}
       </div>
@@ -494,50 +472,49 @@ const MyBookings = ({ seniors }) => {
     const status = b.status?.toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
     
-    // 🔥 UPDATED: Added avatar fallback here too for consistency
     const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
     const seniorName = b.senior?.name || 'Senior';
-    const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=eff6ff&color=1e293b&size=150&font-size=0.4&bold=true`;
+    const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=312e81&color=ffffff&size=150&font-size=0.4&bold=true`;
     const correctAvatar = seniorProfile ? seniorProfile.avatar : null;
     const finalAvatar = correctAvatar || b.profile?.avatar || fallbackImage;
     
     const yearText = getYearSuffix(b.profile?.year);
 
     return (
-      <div key={b._id} className="card booking-card">
-        <div className="booking-header">
-          <div>
-            <h3 className="booking-name">{seniorName}</h3>
-            <p className="booking-college">{b.profile?.college?.name}</p>
-            {yearText && <p className="booking-year-style">{yearText}</p>}
-          </div>
+      <div key={b._id} className="card">
+        <div className="card-top-row" style={{ alignItems: "flex-start" }}>
           <img
             src={finalAvatar}
             alt={seniorName}
-            className="booking-avatar"
+            className="card-avatar"
             loading="lazy"
             onError={(e) => {
                 e.target.onerror = null; 
                 e.target.src = fallbackImage;
             }}
           />
-        </div>
-
-        <div className="status-row">
-          <span className={getStatusTagClass(status)}>{b.status}</span>
-          {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+          <div className="card-info">
+            <h3 className="card-name">{seniorName}</h3>
+            <p className="card-subtext">{b.profile?.college?.name}</p>
+            {yearText && <p className="card-subtext">{yearText}</p>}
+            
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "12px" }}>
+              <span className={getStatusTagClass(status)}>{b.status}</span>
+              {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+            </div>
+          </div>
         </div>
 
         {status === "confirmed" && (
-          <p className="info-message">
-            ℹ️ The senior will contact you on your phone within 6 hours.
-          </p>
+          <div style={{ background: "rgba(59, 130, 246, 0.1)", color: "#a5b4fc", padding: "10px 15px", borderRadius: "10px", fontSize: "0.9rem", marginTop: "10px", border: "1px solid rgba(59, 130, 246, 0.3)" }}>
+            ℹ️ The senior will contact you within 6 hours.
+          </div>
         )}
 
         {status === "completed" && !b.rated && (
-          <div className="rating-section">
-            <p className="rating-prompt">Rate this session:</p>
-            <div className="rating-stars-container">
+          <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: "10px", padding: "15px", textAlign: "center", marginTop: "10px", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <p style={{ margin: "0 0 10px 0", color: "#c7d2fe", fontSize: "0.9rem" }}>Rate this session:</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
@@ -547,7 +524,7 @@ const MyBookings = ({ seniors }) => {
                 >
                   <StarIcon
                     filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)}
-                    size={30}
+                    size={28}
                     isClickable={true}
                   />
                 </span>
@@ -557,25 +534,25 @@ const MyBookings = ({ seniors }) => {
         )}
         
         {b.rated && (
-          <div className="rated-section">
-            <span>You rated:</span>
-            <div className="rated-stars">
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 15px", background: "rgba(16, 185, 129, 0.1)", borderRadius: "10px", marginTop: "10px", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+            <span style={{ color: "#6ee7b7", fontSize: "0.9rem" }}>You rated:</span>
+            <div style={{ display: "flex", gap: "2px" }}>
               {[...Array(5)].map((_, i) => (
-                <StarIcon key={i} filled={i < b.rating} size={20} />
+                <StarIcon key={i} filled={i < b.rating} size={16} />
               ))}
             </div>
           </div>
         )}
 
-        <div className="button-row">
+        <div style={{ display: "flex", gap: "10px", marginTop: "15px", paddingTop: "15px", borderTop: "1px solid rgba(255,255,255,0.08)", flexWrap: "wrap" }}>
           {status === "confirmed" && (
-            <button className="cc-btn primary btn-compact" onClick={() => handleChat(b._id)}>💬 Chat</button>
+            <button className="cc-btn primary" onClick={() => handleChat(b._id)}>💬 Chat</button>
           )}
           {dispute === "none" && !b.rated && (
-            <button className="cc-btn danger btn-compact" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
+            <button className="cc-btn danger" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>
           )}
           {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
-            <span className="dispute-not-allowed">🚫 Dispute not allowed after rating.</span>
+            <span style={{ color: "#fca5a5", fontSize: "0.85rem", padding: "8px 0" }}>🚫 Dispute not allowed after rating.</span>
           )}
         </div>
       </div>
@@ -584,7 +561,7 @@ const MyBookings = ({ seniors }) => {
 
   if (loading) {
     return (
-      <div className="grid-style-bookings">
+      <div>
         {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
       </div>
     );
@@ -607,32 +584,30 @@ const MyBookings = ({ seniors }) => {
       >
         <p>
           Once you rate this senior, you cannot raise a dispute.
-          <br />
+          <br /><br />
           Are you sure you want to give a rating of 
-          <strong> {ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
+          <strong style={{ color: "#a5b4fc" }}> {ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
         </p>
       </ConfirmModal>
     
-      <h2 className="title-style">📘 My Bookings</h2>
-
       {bookings.length === 0 && (
-        <div className="card no-bookings-card">
-          <div className="no-bookings-title">You haven't booked any sessions yet.</div>
-          <div className="small-muted no-bookings-subtitle">Find a senior and schedule your first session.</div>
+        <div className="card" style={{ textAlign: "center", padding: "40px 20px" }}>
+          <div style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--txt)" }}>You haven't booked any sessions yet.</div>
+          <div className="small-muted" style={{ marginTop: "8px" }}>Find a senior and schedule your first session.</div>
         </div>
       )}
 
       {activeBookings.length > 0 && (
         <>
-          <h3 className="section-title-style">Ongoing & Active</h3>
-          <div className="grid-style-bookings">{activeBookings.map(renderBookingCard)}</div>
+          <h3 style={{ fontSize: "1.1rem", color: "#ffffff", marginBottom: "15px", paddingLeft: "5px" }}>Ongoing & Active</h3>
+          <div>{activeBookings.map(renderBookingCard)}</div>
         </>
       )}
 
       {pastBookings.length > 0 && (
         <>
-          <h3 className="section-title-style past-bookings-title">Completed & Past</h3>
-          <div className="grid-style-bookings">{pastBookings.map(renderBookingCard)}</div>
+          <h3 style={{ fontSize: "1.1rem", color: "#ffffff", marginBottom: "15px", marginTop: "30px", paddingLeft: "5px" }}>Completed & Past</h3>
+          <div>{pastBookings.map(renderBookingCard)}</div>
         </>
       )}
     </div>
@@ -653,8 +628,8 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
           {children}
         </div>
         <div className="modal-footer">
-          <button onClick={onClose} className="cc-btn btn-cancel">Cancel</button>
-          <button onClick={onConfirm} className="cc-btn danger">Yes, Continue</button>
+          <button onClick={onClose} className="cc-btn" style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)" }}>Cancel</button>
+          <button onClick={onConfirm} className="cc-btn primary">Yes, Continue</button>
         </div>
       </div>
     </div>
@@ -668,23 +643,18 @@ const StudentDashboard = () => {
   const location = useLocation();
   const onBookingsTab = location.pathname.includes("/bookings");
 
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
 
   const [seniors, setSeniors] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [tags, setTags] = useState([]);
   
-  // 🔥 UPDATED: Added state for platform fee
   const [platformFee, setPlatformFee] = useState(20); 
   const [loading, setLoading] = useState(true);
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
   
   useEffect(() => {
     const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
   }, []);
@@ -695,7 +665,6 @@ const StudentDashboard = () => {
         const token = localStorage.getItem("token");
         const API = "https://collegeconnect-backend-mrkz.onrender.com";
         
-        // 🔥 UPDATED: Fetching settings (Platform Fee) directly in Promise.all
         const [s, c, t, settingsRes] = await Promise.all([
           axios.get(`${API}/api/profile/all`, { headers: { "x-auth-token": token } }),
           axios.get(`${API}/api/colleges`, { headers: { "x-auth-token": token } }),
@@ -707,7 +676,6 @@ const StudentDashboard = () => {
         setColleges(c.data);
         setTags(t.data);
         
-        // Save Platform Fee
         if (settingsRes.data && settingsRes.data.platformFee !== undefined) {
           setPlatformFee(settingsRes.data.platformFee);
         }
@@ -722,17 +690,18 @@ const StudentDashboard = () => {
   }, []);
 
   return (
-    <div className={`page-bg ${theme}`}>
+    <div className="page-bg">
       <style>{globalStyles}</style>
 
       <div className="main-container">
+        {/* Top Pills Tab Bar like Screenshot */}
         <div className="tab-bar">
-          <Link to="/student-dashboard" className={`cc-tab ${!onBookingsTab ? "active" : ""}`}>🎓 Find Seniors</Link>
-          <Link to="/student-dashboard/bookings" className={`cc-tab ${onBookingsTab ? "active" : ""}`}>📘 My Bookings</Link>
-          
-          <button onClick={toggleTheme} className="theme-toggle-btn" title="Toggle Theme">
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
+          <Link to="/student-dashboard" className={`cc-tab ${!onBookingsTab ? "active" : ""}`}>
+            📄 Find Seniors
+          </Link>
+          <Link to="/student-dashboard/bookings" className={`cc-tab ${onBookingsTab ? "active" : ""}`}>
+            📘 My Bookings
+          </Link>
         </div>
 
         <Routes>
@@ -744,7 +713,7 @@ const StudentDashboard = () => {
                 loading={loading}
                 colleges={colleges}
                 tags={tags}
-                platformFee={platformFee} // 🔥 UPDATED: Passing platformFee to child
+                platformFee={platformFee} 
               />
             }
           />
