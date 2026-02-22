@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 
 function Footer({ loading }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -12,10 +13,15 @@ function Footer({ loading }) {
 
   if (loading) return null;
 
-  // 🚀 FIX 1: Links के लिए एक मैप बनाया गया ताकि उन्हें सही href दिया जा सके
+  // 🚀 PRO FIX: 404 Error रोकने के लिए फंक्शन
+  const handleComingSoon = (e) => {
+    e.preventDefault(); // पेज को 404 पर जाने से रोकेगा
+    alert("🚀 This page is currently under construction. Coming soon!");
+  };
+
   const linksMap = {
     "Get to Know Us": [
-      { name: "About Us", href: "/about" },
+      { name: "About Us", href: "/about" }, // इसका पेज बन चुका है
       { name: "Careers", href: "/careers" },
       { name: "Press Release", href: "/press" },
       { name: "Blog", href: "/blog" },
@@ -34,7 +40,6 @@ function Footer({ loading }) {
     ],
   };
 
-  // 🚀 FIX 2: सोशल लिंक्स के लिए भी href जोड़ा गया
   const socialLinks = [
     { icon: "🌐", href: "https://yourwebsite.com", name: "Website" },
     { icon: "📸", href: "https://instagram.com/yourprofile", name: "Instagram" },
@@ -42,15 +47,14 @@ function Footer({ loading }) {
     { icon: "💼", href: "https://linkedin.com/company/yourprofile", name: "LinkedIn" },
   ];
 
-
   const styles = {
     footer: {
       width: "100%",
       background: "#131A22",
       color: "#ddd",
-      marginBottom:"-22px",
+      marginBottom: "-22px",
       fontFamily: "'Poppins', sans-serif",
-      padding: isMobile ? "2rem 1rem" : "2.5rem 0 2rem 0", // 🚀 पैडिंग ठीक की
+      padding: isMobile ? "2rem 1rem" : "2.5rem 0 2rem 0",
       borderTop: "1px solid rgba(255,255,255,0.1)",
       marginTop: "1px",
     },
@@ -79,6 +83,7 @@ function Footer({ loading }) {
       textDecoration: "none",
       fontSize: "0.9rem",
       transition: "color 0.2s ease",
+      cursor: "pointer",
     },
     linkHover: {
       color: "#00a8e1",
@@ -101,7 +106,7 @@ function Footer({ loading }) {
       cursor: "pointer",
       fontSize: "1.1rem",
       transition: "all 0.3s ease",
-      textDecoration: "none", // 🚀 जोड़ा गया
+      textDecoration: "none",
     },
     brandSection: {
       textAlign: "center",
@@ -109,9 +114,9 @@ function Footer({ loading }) {
       paddingTop: "1.5rem",
       marginTop: "1.5rem",
     },
-    brandName: { color: "#00a8e1", fontWeight: 700, fontSize: "1.2rem" }, // 🚀 थोड़ा बड़ा किया
+    brandName: { color: "#00a8e1", fontWeight: 700, fontSize: "1.2rem" },
     bottomText: { fontSize: "0.85rem", color: "#aaa", marginTop: "4px" },
-    tagline: { // 🚀 नई टैगलाइन के लिए स्टाइल
+    tagline: {
       fontSize: "1rem", 
       color: "#ddd", 
       margin: "0 0 8px 0",
@@ -126,10 +131,46 @@ function Footer({ loading }) {
         <div style={styles.column}>
           <h4 style={styles.heading}>Get to Know Us</h4>
           {linksMap["Get to Know Us"].map((item) => (
+            // 🚀 MAGIC: अगर "About Us" है तो <Link> चलाओ, वर्ना <a> पर Alert
+            item.name === "About Us" ? (
+              <Link
+                key={item.name}
+                to={item.href}
+                style={{
+                  ...styles.link,
+                  ...(hovered === item.name ? styles.linkHover : {}),
+                }}
+                onMouseEnter={() => setHovered(item.name)}
+                onMouseLeave={() => setHovered("")}
+              >
+                {item.name}
+              </Link>
+            ) : (
+              <a
+                key={item.name}
+                href={item.href}
+                onClick={handleComingSoon}
+                style={{
+                  ...styles.link,
+                  ...(hovered === item.name ? styles.linkHover : {}),
+                }}
+                onMouseEnter={() => setHovered(item.name)}
+                onMouseLeave={() => setHovered("")}
+              >
+                {item.name}
+              </a>
+            )
+          ))}
+        </div>
+
+        {/* Column 2 */}
+        <div style={styles.column}>
+          <h4 style={styles.heading}>Let Us Help You</h4>
+          {linksMap["Let Us Help You"].map((item) => (
             <a
               key={item.name}
-              // 🚀 FIX 3: href को मैप से लिया गया
               href={item.href}
+              onClick={handleComingSoon} // 🚀 यहाँ Alert लगा दिया
               style={{
                 ...styles.link,
                 ...(hovered === item.name ? styles.linkHover : {}),
@@ -142,61 +183,37 @@ function Footer({ loading }) {
           ))}
         </div>
 
-        {/* Column 2 */}
-        <div style={styles.column}>
-          <h4 style={styles.heading}>Let Us Help You</h4>
-          {linksMap["Let Us Help You"].map(
-            (item) => (
-              <a
-                key={item.name}
-                // 🚀 FIX 4: href को मैप से लिया गया
-                href={item.href}
-                style={{
-                  ...styles.link,
-                  ...(hovered === item.name ? styles.linkHover : {}),
-                }}
-                onMouseEnter={() => setHovered(item.name)}
-                onMouseLeave={() => setHovered("")}
-              >
-                {item.name}
-              </a>
-            )
-          )}
-        </div>
-
         {/* Column 3 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>For Students</h4>
-          {linksMap["For Students"].map(
-            (item) => (
-              <a
-                key={item.name}
-                // 🚀 FIX 5: href को मैप से लिया गया
-                href={item.href}
-                style={{
-                  ...styles.link,
-                  ...(hovered === item.name ? styles.linkHover : {}),
-                }}
-                onMouseEnter={() => setHovered(item.name)}
-                onMouseLeave={() => setHovered("")}
-              >
-                {item.name}
-              </a>
-            )
-          )}
+          {linksMap["For Students"].map((item) => (
+            <a
+              key={item.name}
+              href={item.href}
+              onClick={handleComingSoon} // 🚀 यहाँ Alert लगा दिया
+              style={{
+                ...styles.link,
+                ...(hovered === item.name ? styles.linkHover : {}),
+              }}
+              onMouseEnter={() => setHovered(item.name)}
+              onMouseLeave={() => setHovered("")}
+            >
+              {item.name}
+            </a>
+          ))}
         </div>
 
         {/* Column 4 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Connect With Us</h4>
           <div style={styles.socialRow}>
-            {/* 🚀 FIX 6: इन्हें <a> टैग में बदल दिया गया */}
             {socialLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                target="_blank" // ताकि नई टैब में खुले
-                rel="noopener noreferrer" // सुरक्षा के लिए
+                onClick={handleComingSoon} // 🚀 Social icons पर भी Alert
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   ...styles.socialIcon,
                   background:
@@ -207,7 +224,7 @@ function Footer({ loading }) {
                 }}
                 onMouseEnter={() => setHovered(link.name)}
                 onMouseLeave={() => setHovered("")}
-                aria-label={link.name} // एक्सेसिबिलिटी के लिए
+                aria-label={link.name}
               >
                 {link.icon}
               </a>
@@ -218,17 +235,14 @@ function Footer({ loading }) {
 
       {/* Brand Footer */}
       <div style={styles.brandSection}>
-        {/* 🚀 NAME CHANGED (नाम बदल दिया गया) */}
         <h3>
           <span style={styles.brandName}>Reapify by Pinak</span>
         </h3>
-        {/* 🚀 TAGLINE CHANGED (टैगलाइन बदल दी गई) */}
         <p style={styles.tagline}>
           Simplifying engineering admission & beyond
         </p>
         <p style={styles.bottomText}>
-          {/* 🚀 Copyright भी अपडेट किया गया */}
-          © 2025 Reapify by Pinak. Made with ❤️ for Indian Students.
+          © 2026 Reapify by Pinak. Made with ❤️ for Indian Students.
         </p>
       </div>
     </footer>
