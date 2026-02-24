@@ -5,15 +5,7 @@ function HowItWorks() {
   return (
     <section className="how-it-works-premium">
       <div className="container">
-        {/* Header Section */}
-        <div className="section-header">
-          <h2>
-            <span className="icon-bulb">💡</span> How It Works
-          </h2>
-          <p className="subtitle">
-            3 Simple Steps to <strong>Find Your Perfect College</strong>
-          </p>
-        </div>
+       
 
         {/* Steps Grid */}
         <div className="steps-wrapper">

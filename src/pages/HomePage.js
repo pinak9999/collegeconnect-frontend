@@ -233,6 +233,7 @@ function HomePage() {
             fontSize: isMobile ? "1.6rem" : "2rem", // ज़्यादा इम्पैक्टफुल
             fontWeight: 700, // ज़्यादा बोल्ड
             marginBottom: "30px", // ज़्यादा स्पेस
+          
             textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
           }}
         >

@@ -9,7 +9,6 @@ const StarIcon = ({ filled }) => (
     </svg>
 );
 
-// चित्र जैसा वेरिफाइड ग्रीन टिकमार्क
 const VerifiedBadge = () => (
     <svg className="premium-verified-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="12" fill="#2ECC71"/>
@@ -26,7 +25,6 @@ function FeaturedSeniors() {
         const loadData = async () => {
             try {
                 const seniorsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/profile/public/top-rated');
-                // टेस्टिंग के लिए हम सिर्फ टॉप 2-3 सीनियर्स ही दिखाएंगे ताकि डिज़ाइन चित्र जैसा दिखे
                 setSeniors(seniorsRes.data.slice(0, 3));
 
                 const settingsRes = await axios.get('https://collegeconnect-backend-mrkz.onrender.com/api/settings');
@@ -54,24 +52,19 @@ function FeaturedSeniors() {
 
     return (
         <section className="premium-seniors-section">
-            {/* Animated Background Elements (चित्र जैसे जादुई इफ़ेक्ट के लिए) */}
+            {/* Animated Background Elements */}
             <div className="animated-bg-shape shape-1"></div>
             <div className="animated-bg-shape shape-2"></div>
             
-            {/* Floating Sparkles (चमकते सितारे) */}
+            {/* Floating Sparkles */}
             <div className="floating-sparkle sparkle-1">✦</div>
             <div className="floating-sparkle sparkle-2">✦</div>
             <div className="floating-sparkle sparkle-3">✦</div>
             <div className="floating-sparkle sparkle-4">✦</div>
 
             <div className="premium-container">
-                {/* Header */}
-                <div className="premium-header">
-                    <h2><span className="header-star">⭐</span> Featured Seniors</h2>
-                    <p>Get insights from real students who've experienced your dream college.</p>
-                </div>
+                
 
-                {/* Outer Glass Container (चित्र में कार्ड्स के पीछे वाला ट्रांसपेरेंट बॉक्स) */}
                 <div className="glass-container">
                     <div className="premium-grid">
                         {seniors.map(profile => (
@@ -88,15 +81,15 @@ function FeaturedSeniors() {
                                     <VerifiedBadge />
                                 </div>
 
-                                {/* Info Section */}
+                                {/* Text Info - Yearth Year Fix Applied Here */}
                                 <h4 className="profile-name">
                                     {profile.user ? profile.user.name : 'Senior'}
                                 </h4>
                                 <p className="profile-branch">
-                                    {profile.branch || 'Branch N/A'} • {profile.year ? `${profile.year}th Year` : 'N/A'}
+                                    {profile.branch || 'Branch N/A'} • {profile.year ? profile.year : 'N/A'}
                                 </p>
 
-                                {/* Ratings */}
+                                {/* Rating */}
                                 <div className="profile-rating">
                                     <div className="stars-container">
                                         {[...Array(5)].map((_, i) => (
@@ -108,7 +101,7 @@ function FeaturedSeniors() {
                                     </span>
                                 </div>
 
-                                {/* Price Pill (चित्र जैसा ग्रीन टैग) */}
+                                {/* Price Pill */}
                                 <div className="price-pill">
                                     <span className="price-amt">₹{(profile.price_per_session || 0) + platformFee}</span>
                                     <span className="price-dur"> / {profile.session_duration_minutes} min</span>
