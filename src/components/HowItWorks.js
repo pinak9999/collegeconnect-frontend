@@ -42,7 +42,7 @@ function HowItWorks() {
             <div className="step-badge">2</div>
             <div className="step-image-placeholder">
               {/* यहाँ आप अपनी स्टेप 2 की इमेज लगा सकते हैं */}
-              <img src="/path-to-your-step2-image.png" alt="Book a Slot" />
+              <img src="  \step3.png" alt="Book a Slot" />
             </div>
             <h3>Book a Slot</h3>
             <p className="step-desc">
@@ -67,7 +67,7 @@ function HowItWorks() {
             <div className="step-badge">3</div>
             <div className="step-image-placeholder">
               {/* यहाँ आप अपनी स्टेप 3 की इमेज लगा सकते हैं */}
-              <img src="/path-to-your-step3-image.png" alt="Get Insights" />
+              <img src="\step4.png" alt="Get Insights" />
             </div>
             <h3>Get Insights</h3>
             <p className="step-desc">
