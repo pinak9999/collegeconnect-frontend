@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
 /* -------------------------------------------
-   🎨 Design Tokens (single place to tweak UI)
+   🎨 Design Tokens
 ------------------------------------------- */
 const palette = {
   primary: "#2563EB",
@@ -24,241 +24,50 @@ const softShadow = "0 10px 30px rgba(0,0,0,0.10)";
 /* -------------------------------------------
    🧱 Reusable UI Pieces
 ------------------------------------------- */
-
-// Shimmer skeleton card (for loading state)
 const SkeletonCard = () => (
-  <div
-    style={{
-      borderRadius: 20,
-      padding: 18,
-      background: "linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.9))",
-      position: "relative",
-      overflow: "hidden",
-      boxShadow: softShadow,
-      height: 150,
-    }}
-  >
+  <div style={{ borderRadius: 20, padding: 18, background: "linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.9))", position: "relative", overflow: "hidden", boxShadow: softShadow, height: 150 }}>
     <div style={{ height: 16, width: "60%", background: "#e5e7eb", borderRadius: 8, marginBottom: 10 }} />
     <div style={{ height: 12, width: "40%", background: "#e5e7eb", borderRadius: 6, marginBottom: 8 }} />
     <div style={{ height: 12, width: "30%", background: "#e5e7eb", borderRadius: 6 }} />
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        background:
-          "linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent)",
-        transform: "translateX(-100%)",
-        animation: "shimmer 1.3s infinite",
-      }}
-    />
-    {/* keyframes via style tag below in parent */}
+    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent)", transform: "translateX(-100%)", animation: "shimmer 1.3s infinite" }} />
   </div>
 );
 
-// Tiny status chip
 const Chip = ({ label, tone = "neutral" }) => {
-  const colors =
-    tone === "ok"
-      ? { bg: "rgba(16,185,129,.12)", fg: palette.ok }
-      : tone === "warn"
-      ? { bg: "rgba(245,158,11,.12)", fg: palette.warn }
-      : tone === "danger"
-      ? { bg: "rgba(239,68,68,.12)", fg: palette.danger }
-      : { bg: "rgba(37,99,235,.10)", fg: palette.primary };
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "6px 10px",
-        borderRadius: 999,
-        fontSize: 12,
-        fontWeight: 600,
-        background: colors.bg,
-        color: colors.fg,
-      }}
-    >
-      {label}
-    </span>
-  );
+  const colors = tone === "ok" ? { bg: "rgba(16,185,129,.12)", fg: palette.ok } : tone === "warn" ? { bg: "rgba(245,158,11,.12)", fg: palette.warn } : tone === "danger" ? { bg: "rgba(239,68,68,.12)", fg: palette.danger } : { bg: "rgba(37,99,235,.10)", fg: palette.primary };
+  return <span style={{ display: "inline-block", padding: "6px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, background: colors.bg, color: colors.fg }}>{label}</span>;
 };
 
 /* -------------------------------------------
-   📦 Bookings Grid (cards with gradient ring)
+   📦 Bookings Grid
 ------------------------------------------- */
 const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }) => {
-  const btnBase = {
-    padding: "10px 14px",
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: 600,
-    border: "none",
-    cursor: "pointer",
-    transition: "transform .2s, box-shadow .2s",
-  };
-  const btnPrimary = {
-    ...btnBase,
-    color: "#fff",
-    background: `linear-gradient(45deg, ${palette.primary}, ${palette.primaryDark})`,
-    boxShadow: "0 6px 14px rgba(37,99,235,.35)",
-  };
-  const btnOutline = {
-    ...btnBase,
-    color: palette.primary,
-    background: "#fff",
-    border: `1.5px solid ${palette.primary}`,
-  };
+  const btnBase = { padding: "10px 14px", borderRadius: 12, fontSize: 14, fontWeight: 600, border: "none", cursor: "pointer", transition: "transform .2s, box-shadow .2s" };
+  const btnPrimary = { ...btnBase, color: "#fff", background: `linear-gradient(45deg, ${palette.primary}, ${palette.primaryDark})`, boxShadow: "0 6px 14px rgba(37,99,235,.35)" };
+  const btnOutline = { ...btnBase, color: palette.primary, background: "#fff", border: `1.5px solid ${palette.primary}` };
 
   const renderActions = (b) => {
-    if (b.dispute_status === "Pending") {
-      return (
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <Chip label="Under Review" tone="warn" />
-          <button
-            style={btnOutline}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-            onClick={() => onStartChat(b._id)}
-          >
-            Chat
-          </button>
-        </div>
-      );
-    }
-    if (b.status === "Completed") {
-      return (
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <Chip label="Completed" tone="ok" />
-          <button
-            style={btnOutline}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-            onClick={() => onStartChat(b._id)}
-          >
-            Chat History
-          </button>
-        </div>
-      );
-    }
-    if (b.status === "Confirmed") {
-      return (
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <button
-            style={btnPrimary}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-            onClick={() => onStartChat(b._id)}
-          >
-            💬 Start Chat
-          </button>
-          <button
-            style={btnOutline}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-            onClick={() => onMarkComplete(b._id)}
-          >
-            ✔ Mark Done
-          </button>
-        </div>
-      );
-    }
+    if (b.dispute_status === "Pending") return (<div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}><Chip label="Under Review" tone="warn" /><button style={btnOutline} onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")} onClick={() => onStartChat(b._id)}>Chat</button></div>);
+    if (b.status === "Completed") return (<div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}><Chip label="Completed" tone="ok" /><button style={btnOutline} onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")} onClick={() => onStartChat(b._id)}>Chat History</button></div>);
+    if (b.status === "Confirmed") return (<div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}><button style={btnPrimary} onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")} onClick={() => onStartChat(b._id)}>💬 Start Chat</button><button style={btnOutline} onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")} onClick={() => onMarkComplete(b._id)}>✔ Mark Done</button></div>);
     return null;
   };
 
   return (
     <div style={{ animation: "fadeIn .45s ease" }}>
-      <h3
-        style={{
-          textAlign: "center",
-          marginBottom: 16,
-          fontWeight: 800,
-          fontSize: "1.2rem",
-          background: `linear-gradient(90deg, ${palette.primary}, ${palette.primaryDark})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
-        {title}
-      </h3>
-
-      {/* Loading state */}
+      <h3 style={{ textAlign: "center", marginBottom: 16, fontWeight: 800, fontSize: "1.2rem", background: `linear-gradient(90deg, ${palette.primary}, ${palette.primaryDark})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{title}</h3>
       {loading ? (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-            gap: 18,
-            padding: "0 10px",
-          }}
-        >
-          {[...Array(6)].map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
-        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 18, padding: "0 10px" }}>{[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}</div>
       ) : bookings.length === 0 ? (
         <p style={{ textAlign: "center", color: "#94a3b8" }}>No bookings found.</p>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
-            gap: 18,
-            padding: "0 10px",
-          }}
-        >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))", gap: 18, padding: "0 10px" }}>
           {bookings.map((b) => (
-            <div
-              key={b._id}
-              style={{
-                position: "relative",
-                borderRadius: 20,
-                padding: 18,
-                background: palette.glass,
-                backdropFilter: "blur(10px)",
-                boxShadow: softShadow,
-                overflow: "hidden",
-                transition: "transform .25s, box-shadow .25s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-6px)";
-                e.currentTarget.style.boxShadow = "0 18px 36px rgba(0,0,0,.16)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = softShadow;
-              }}
-            >
-              {/* Gradient ring accent */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: -1,
-                  borderRadius: 22,
-                  padding: 1,
-                  background:
-                    "linear-gradient(135deg, rgba(37,99,235,.45), rgba(0,180,216,.35), rgba(16,185,129,.35))",
-                  WebkitMask:
-                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude",
-                  pointerEvents: "none",
-                }}
-              />
-              <h4 style={{ margin: 0, color: palette.text, fontWeight: 700 }}>
-                👨‍🎓 {b.student?.name || "Student"}
-              </h4>
-              <p style={{ color: palette.subtext, margin: "6px 0" }}>
-                📞 {b.student?.mobileNumber || "N/A"}
-              </p>
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <Chip label={`Status: ${b.status}`} tone={b.status === "Completed" ? "ok" : "neutral"} />
-                {b.dispute_status === "Pending" && (
-                  <Chip
-                    label={b.dispute_reason?.reason || "Under Review"}
-                    tone="warn"
-                  />
-                )}
-              </div>
-
+            <div key={b._id} style={{ position: "relative", borderRadius: 20, padding: 18, background: palette.glass, backdropFilter: "blur(10px)", boxShadow: softShadow, overflow: "hidden", transition: "transform .25s, box-shadow .25s" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 18px 36px rgba(0,0,0,.16)"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = softShadow; }}>
+              <div style={{ position: "absolute", inset: -1, borderRadius: 22, padding: 1, background: "linear-gradient(135deg, rgba(37,99,235,.45), rgba(0,180,216,.35), rgba(16,185,129,.35))", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", pointerEvents: "none" }} />
+              <h4 style={{ margin: 0, color: palette.text, fontWeight: 700 }}>👨‍🎓 {b.student?.name || "Student"}</h4>
+              <p style={{ color: palette.subtext, margin: "6px 0" }}>📞 {b.student?.mobileNumber || "N/A"}</p>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}><Chip label={`Status: ${b.status}`} tone={b.status === "Completed" ? "ok" : "neutral"} />{b.dispute_status === "Pending" && <Chip label={b.dispute_reason?.reason || "Under Review"} tone="warn" />}</div>
               <div style={{ marginTop: 12 }}>{renderActions(b)}</div>
             </div>
           ))}
@@ -280,6 +89,14 @@ function SeniorDashboard() {
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  // 🚀 NEW STATE: Availability (No Google Meet)
+  const [overrides, setOverrides] = useState([]); // List of dates
+  const [overrideDate, setOverrideDate] = useState("");
+  const [isHoliday, setIsHoliday] = useState(false);
+  const [overrideStart, setOverrideStart] = useState("10:00 AM");
+  const [overrideEnd, setOverrideEnd] = useState("06:00 PM");
+  const [savingOverride, setSavingOverride] = useState(false);
+
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", onResize);
@@ -290,17 +107,28 @@ function SeniorDashboard() {
     if (auth?.user?.name) toast.success(`Welcome ${auth.user.name}! 👋`);
   }, [auth?.user]);
 
+  // 🚀 UPDATED: Fetch Bookings + Profile Overrides
   const fetchBookings = useCallback(async () => {
     setLoading(true);
     try {
       const token = auth?.token || localStorage.getItem("token");
-      const res = await axios.get(
-        "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/senior/my",
-        { headers: { "x-auth-token": token } }
-      );
-      setBookings(res.data);
+      const headers = { "x-auth-token": token };
+      
+      // ⚠️ IMPORTANT: Local Testing ke liye URL check karlena
+      // Agar local hai to "http://localhost:5000" use karo
+      const baseUrl = "https://collegeconnect-backend-mrkz.onrender.com"; 
+
+      const [bookRes, profRes] = await Promise.all([
+        axios.get(`${baseUrl}/api/bookings/senior/my`, { headers }),
+        axios.get(`${baseUrl}/api/profile/me`, { headers }) // Fetch Profile for overrides
+      ]);
+
+      setBookings(bookRes.data);
+      if (profRes.data) {
+        setOverrides(profRes.data.overrides || []);
+      }
     } catch {
-      toast.error("Failed to load bookings");
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -309,6 +137,34 @@ function SeniorDashboard() {
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
+
+  // 🚀 NEW FUNCTION: Save Override
+  const handleSaveOverride = async () => {
+    if(!overrideDate) return toast.error("Please select a date first.");
+    setSavingOverride(true);
+    try {
+        const token = auth?.token || localStorage.getItem("token");
+        const baseUrl = "https://collegeconnect-backend-mrkz.onrender.com"; // Change to localhost if testing locally
+
+        await axios.put(`${baseUrl}/api/profile/availability/override`, 
+            { 
+              date: overrideDate, 
+              isUnavailable: isHoliday, 
+              startTime: overrideStart, 
+              endTime: overrideEnd 
+            }, 
+            { headers: { "x-auth-token": token } }
+        );
+
+        toast.success(isHoliday ? "Date Blocked! 🚫" : "Time Updated! ✅");
+        fetchBookings(); // Refresh list
+        setOverrideDate(""); // Reset form
+        setIsHoliday(false);
+    } catch (err) { 
+        toast.error("Failed to update availability."); 
+    }
+    setSavingOverride(false);
+  };
 
   const markAsCompleted = async (id) => {
     if (!window.confirm("Mark this booking as completed?")) return;
@@ -344,29 +200,14 @@ function SeniorDashboard() {
         fontFamily: "'Poppins', sans-serif",
         position: "relative",
         overflowX: "hidden",
-        // layered soft gradient background
         background:
           "radial-gradient(1200px 600px at -10% -10%, #e0f2fe 0%, transparent 60%), radial-gradient(1000px 600px at 110% -20%, #ccfbf1 0%, transparent 55%), linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%)",
       }}
     >
-      {/* keyframes for shimmer */}
-      <style>
-        {`
-          @keyframes shimmer {
-            100% { transform: translateX(100%); }
-          }
-          @keyframes fadeIn { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
-        `}
-      </style>
+      <style>{`@keyframes shimmer { 100% { transform: translateX(100%); } } @keyframes fadeIn { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }`}</style>
 
       {/* Header */}
-      <header
-        style={{
-          textAlign: "center",
-          marginBottom: 20,
-          animation: "fadeIn .4s ease",
-        }}
-      >
+      <header style={{ textAlign: "center", marginBottom: 20, animation: "fadeIn .4s ease" }}>
         <h1
           style={{
             fontSize: isMobile ? "1.6rem" : "2rem",
@@ -384,6 +225,65 @@ function SeniorDashboard() {
           Manage sessions, chat with students & track progress—seamlessly.
         </p>
       </header>
+
+      {/* 🚀 NEW: Availability Manager Card (No Google Meet) */}
+      <div style={{ maxWidth: 800, margin: "0 auto 30px auto", animation: "fadeIn .5s ease" }}>
+        <div style={{ background: palette.glass, padding: 24, borderRadius: 20, boxShadow: softShadow, border: "1px solid rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}>
+            
+            <h4 style={{ margin: "0 0 16px 0", color: palette.primaryDark, fontWeight: 700, fontSize: "1.1rem" }}>
+              📅 Manage Specific Dates
+              <span style={{ fontSize: "0.85rem", color: palette.subtext, fontWeight: 400, marginLeft: 8 }}>(Block holidays or set special times)</span>
+            </h4>
+
+            {/* Controls */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 15, alignItems: "flex-end" }}>
+                {/* 1. Date Picker */}
+                <div style={{ flex: 1, minWidth: "200px" }}>
+                    <label style={{ display:"block", fontSize: 12, fontWeight: 600, color: palette.subtext, marginBottom: 6 }}>Select Date</label>
+                    <input type="date" value={overrideDate} onChange={(e)=>setOverrideDate(e.target.value)} style={{ width: "100%", padding: 12, borderRadius: 10, border: "1px solid #cbd5e1", outline: "none", fontSize: 14 }} />
+                </div>
+
+                {/* 2. Checkbox (Holiday) */}
+                <div style={{ marginBottom: 4 }}>
+                   <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 600, cursor: "pointer", background: isHoliday ? "#fef2f2" : "rgba(255,255,255,0.6)", padding: "10px 16px", borderRadius: 10, color: isHoliday ? palette.danger : palette.text, border: isHoliday ? `1px solid ${palette.danger}` : "1px solid #e2e8f0", transition: "all 0.2s" }}>
+                        <input type="checkbox" checked={isHoliday} onChange={(e)=>setIsHoliday(e.target.checked)} style={{ width: 16, height: 16, accentColor: palette.danger }} /> 
+                        Mark as Holiday / Exam
+                    </label>
+                </div>
+
+                {/* 3. Button */}
+                <button onClick={handleSaveOverride} disabled={savingOverride} style={{ padding: "12px 24px", borderRadius: 10, background: isHoliday ? palette.danger : palette.primary, color: "#fff", border: "none", fontWeight: 700, cursor: "pointer", marginBottom: 4, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", transition: "transform 0.2s" }} onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}>
+                    {savingOverride ? "Saving..." : (isHoliday ? "Block Date 🚫" : "Update Time ✅")}
+                </button>
+            </div>
+
+            {/* 4. Time Inputs (Only if NOT Holiday) */}
+            {!isHoliday && (
+                <div style={{ marginTop: 15, padding: 15, background: "rgba(248,250,252,0.7)", borderRadius: 12, border: "1px dashed #cbd5e1", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: palette.primary }}>Set Time:</span>
+                    <input type="text" placeholder="10:00 AM" value={overrideStart} onChange={(e)=>setOverrideStart(e.target.value)} style={{ width: 100, padding: 8, borderRadius: 8, border: "1px solid #cbd5e1", textAlign: "center" }} />
+                    <span style={{ color: palette.subtext }}>to</span>
+                    <input type="text" placeholder="06:00 PM" value={overrideEnd} onChange={(e)=>setOverrideEnd(e.target.value)} style={{ width: 100, padding: 8, borderRadius: 8, border: "1px solid #cbd5e1", textAlign: "center" }} />
+                </div>
+            )}
+            
+            {/* 5. List of Active Overrides */}
+            {overrides && overrides.length > 0 && (
+                <div style={{ marginTop: 20, paddingTop: 15, borderTop: "1px solid #e2e8f0" }}>
+                    <p style={{ fontSize: 12, color: palette.subtext, marginBottom: 10, fontWeight: 600 }}>YOUR BLOCKED DATES & CHANGES:</p>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        {overrides.map((o, i) => (
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, padding: "6px 12px", background: o.isUnavailable ? "#fef2f2" : "#eff6ff", color: o.isUnavailable ? palette.danger : palette.primary, borderRadius: 8, border: "1px solid rgba(0,0,0,0.05)", fontWeight: 600 }}>
+                                <span>{o.date}</span>
+                                <span style={{ opacity: 0.3 }}>|</span>
+                                <span>{o.isUnavailable ? "BLOCKED 🚫" : `${o.startTime} - ${o.endTime}`}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+      </div>
 
       {/* Floating Tabs (glass) */}
       <nav
@@ -491,7 +391,7 @@ function SeniorDashboard() {
               onStartChat={startChat}
             />
           }
-        />x
+        />
       </Routes>
     </div>
   );
