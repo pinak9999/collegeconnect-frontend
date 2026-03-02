@@ -26,7 +26,7 @@ function CollegeMap() {
       <MapContainer
         center={rajasthanCenter}
         zoom={7} // ज़ूम लेवल ताकि पूरा राजस्थान दिखे
-        style={{ height: "500px", width: "100%" }}
+        style={{ height: "200px", width: "100%" }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

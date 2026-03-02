@@ -137,7 +137,7 @@ function HomePage() {
       </section>
 
       {/* 🏛️ TOP COLLEGES */}
-      <section className="fade-in-up" style={{ ...sectionBase, background: "#ffffff" }}>
+      <section className="fade-in-up" style={{ ...sectionBase, background: "#f2f4ff" }}>
         <h2 style={sectionTitle}>🏛️ Explore Top Colleges in Rajasthan</h2>
         <p style={sectionDesc}>Get a glimpse of the top institutions participating in REAP.</p>
         <div style={gridStyle}>
