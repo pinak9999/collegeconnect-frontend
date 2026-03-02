@@ -4,253 +4,273 @@ import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast";
 
 // ======================================
-// 🔮 Reapify by Pinak - Dreamy UI CSS 
+// 🚀 Premium Zomato/Startup Level UI CSS
 // ======================================
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-@keyframes twinkle { 0% { opacity: 0.5; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.5; transform: scale(0.8); } }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
 :root {
-  --bg-dreamy: linear-gradient(180deg, #f4e8ff 0%, #e0f2fe 50%, #fef2f2 100%);
-  --hero-grad: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --panel-bg: rgba(255, 255, 255, 0.85);
-  
-  --brand-purple: #8b5cf6;
-  --brand-purple-dark: #6d28d9;
-  --brand-button: linear-gradient(90deg, #8b5cf6, #c084fc);
-  --brand-button-hover: linear-gradient(90deg, #7c3aed, #a855f7);
-  
-  --txt-main: #1e293b;
-  --txt-purple: #5b21b6;
-  --txt-muted: #64748b;
-  --stroke: #e2e8f0;
-  
-  --price-green: #10b981;
-  --price-bg: #ecfdf5;
-  
-  --shadow-soft: 0 8px 20px rgba(139, 92, 246, 0.08);
-  --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.05), 0 0 15px rgba(139, 92, 246, 0.1);
-  --shadow-hover: 0 15px 35px rgba(139, 92, 246, 0.15), 0 0 20px rgba(139, 92, 246, 0.2);
+  --bg-color: #f8f9fa;
+  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(226, 55, 68, 0.05) 0%, transparent 40%), 
+                radial-gradient(circle at 100% 100%, rgba(37, 165, 65, 0.05) 0%, transparent 40%);
+  --card-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --brand-primary: #e23744; 
+  --brand-hover: #cb202d;
+  --brand-light: #fcebed;
+  --brand-gradient: linear-gradient(135deg, #e23744 0%, #ff5e6b 100%);
+  --txt-main: #1c1c1c;
+  --txt-muted: #696969;
+  --stroke: #e8e8e8;
+  --price-green: #25a541;
+  --price-bg: #e5f6e8;
+  --star-color: #f5a623;
+  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 16px 32px rgba(226, 55, 68, 0.12);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --radius-pill: 50px;
 }
 
 .dark {
-  --bg-dreamy: linear-gradient(180deg, #1e1b4b 0%, #0f172a 50%, #171717 100%);
-  --card-bg: rgba(30, 41, 59, 0.85);
-  --panel-bg: rgba(30, 41, 59, 0.75);
-  --txt-main: #f8fafc;
-  --txt-purple: #c4b5fd;
-  --txt-muted: #94a3b8;
-  --stroke: rgba(139, 92, 246, 0.3);
-  --price-bg: rgba(16, 185, 129, 0.2);
+  --bg-color: #0a0a0a;
+  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(226, 55, 68, 0.1) 0%, transparent 40%), 
+                radial-gradient(circle at 100% 100%, rgba(37, 165, 65, 0.05) 0%, transparent 40%);
+  --card-bg: #141414;
+  --nav-bg: rgba(20, 20, 20, 0.95);
+  --txt-main: #f4f4f4;
+  --txt-muted: #a0a0a0;
+  --stroke: #262626;
+  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 16px 32px rgba(226, 55, 68, 0.2);
+  --brand-light: rgba(226, 55, 68, 0.15);
 }
 
 * { outline: none; box-sizing: border-box; }
 body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; }
 
-/* Magical Starry Background */
-.page-bg {
-  min-height: 100vh;
-  background: var(--bg-dreamy);
-  color: var(--txt-main);
+.page-bg { 
+  min-height: 100vh; 
+  background-color: var(--bg-color); 
+  background-image: var(--bg-pattern);
+  background-attachment: fixed;
+  color: var(--txt-main); 
+  transition: background 0.3s ease; 
+}
+
+.page-wrapper { animation: fadeIn 0.4s ease-out forwards; padding-bottom: 90px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.main-container { max-width: 1050px; margin: 0 auto; padding: 20px 16px; position: relative; }
+
+/* --- Top Header (App Style) --- */
+.top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 0; }
+.brand-title { font-size: 1.6rem; font-weight: 800; margin: 0; color: var(--txt-main); display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+.theme-btn { background: var(--card-bg); border: 1px solid var(--stroke); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; color: var(--txt-main); font-weight: 600; font-size: 0.85rem; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.theme-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
+
+/* --- Startup Hero Banner --- */
+.hero-premium {
+  background: var(--brand-gradient);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  margin-bottom: 24px;
+  color: white;
   position: relative;
-  overflow-x: hidden;
-  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
+.hero-premium::after { content: '🚀'; font-size: 120px; position: absolute; right: 10%; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); }
+.hero-premium h1 { font-size: 2.2rem; font-weight: 800; margin: 0 0 10px 0; position: relative; z-index: 2; }
+.hero-premium p { font-size: 1.1rem; font-weight: 500; margin: 0; opacity: 0.95; line-height: 1.5; position: relative; z-index: 2; }
 
-.stars-bg {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 90px 40px, #fff, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.6;
+/* --- Search & Filters --- */
+.search-section { background: var(--card-bg); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
+.search-bar-modern { display: flex; align-items: center; background: var(--bg-color); border: 1px solid var(--stroke); border-radius: var(--radius-pill); padding: 12px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
+.search-bar-modern:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-light); background: var(--card-bg); }
+.search-bar-modern input { border: none; background: transparent; width: 100%; padding: 4px 8px; font-family: inherit; font-size: 1rem; color: var(--txt-main); }
+.search-icon { font-size: 1.2rem; color: var(--brand-primary); flex-shrink: 0; }
+
+.filter-dropdowns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; width: 100%; }
+.cc-select { 
+  width: 100%; 
+  max-width: 100%;
+  box-sizing: border-box;
+  appearance: none; 
+  border: 1px solid var(--stroke); 
+  background: var(--bg-color) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; 
+  background-size: 16px; 
+  color: var(--txt-main); 
+  border-radius: var(--radius-md); 
+  padding: 14px 16px; 
+  font-family: inherit; 
+  font-size: 0.95rem; 
+  font-weight: 500; 
+  cursor: pointer; 
+  transition: border-color 0.2s; 
 }
+.cc-select:focus { border-color: var(--brand-primary); outline: none; }
 
-.main-container { max-width: 1100px; margin: 0 auto; padding: 20px 16px 80px; position: relative; z-index: 1; }
-.page-wrapper { animation: fadeIn 0.4s ease-out forwards; }
+/* --- Horizontal Scroll Tags --- */
+.tags-scroll-container { display: flex; gap: 12px; overflow-x: auto; padding: 16px 0 4px 0; scrollbar-width: none; width: 100%; box-sizing: border-box; }
+.tags-scroll-container::-webkit-scrollbar { display: none; }
+.tag-chip { flex-shrink: 0; padding: 8px 18px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); background: var(--bg-color); color: var(--txt-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.tag-chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
+.tag-chip.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); box-shadow: 0 4px 12px rgba(226, 55, 68, 0.25); }
 
-/* Top Navbar / Tabs */
-.top-nav-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  background: #0f172a; border-radius: 16px; padding: 12px 24px;
-  margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-.brand-logo { color: white; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-.nav-actions { display: flex; gap: 12px; }
+/* --- Mentor Cards --- */
+.grid-style-seniors { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 10px; }
+.senior-card-modern { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--stroke); padding: 24px; box-shadow: var(--shadow-card); transition: all 0.3s ease; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+.senior-card-modern:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--brand-light); }
 
-.tab-bar-floating { 
-  display: flex; gap: 12px; padding: 6px; border-radius: 16px; 
-  background: var(--panel-bg); border: 1px solid var(--stroke); 
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-  align-items: center; justify-content: center; width: max-content; margin: 0 auto 24px;
-  box-shadow: var(--shadow-soft);
-}
-.cc-tab { 
-  border: none; border-radius: 12px; padding: 10px 20px; font-weight: 600; font-size: 0.95rem;
-  text-decoration: none; color: var(--txt-muted); background: transparent; 
-  transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;
-}
-.cc-tab.active { background: var(--brand-button); color: white; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
-.cc-tab:not(.active):hover { color: var(--brand-purple); background: rgba(139, 92, 246, 0.1); }
+.card-header-flex { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+.avatar-box { width: 76px; height: 76px; border-radius: var(--radius-lg); flex-shrink: 0; overflow: hidden; border: 2px solid var(--brand-light); padding: 2px; background: var(--card-bg); }
+.avatar-box img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--radius-lg) - 4px); }
+.info-box { flex-grow: 1; overflow: hidden; }
+.name-text { font-size: 1.2rem; font-weight: 700; color: var(--txt-main); margin: 0 0 4px 0; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.verified-tick { color: #1da1f2; font-size: 0.95rem; }
+.college-text { font-size: 0.85rem; color: var(--txt-muted); margin: 0 0 8px 0; font-weight: 500; line-height: 1.3; }
 
-/* Hero Banner (As seen in image) */
-.hero-banner {
-  background: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&q=80&w=1000') center/cover;
-  border-radius: 24px; padding: 40px; margin-bottom: 24px; position: relative;
-  overflow: hidden; box-shadow: var(--shadow-card);
-  display: flex; flex-direction: column; justify-content: center; min-height: 220px;
-}
-.hero-banner::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, rgba(139,92,246,0.8) 0%, rgba(236,72,153,0.6) 100%);
-}
-.hero-content { position: relative; z-index: 1; color: white; text-align: left; }
-.hero-content h1 { font-size: 2.2rem; font-weight: 800; margin: 0 0 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-.hero-content p { font-size: 1.1rem; font-weight: 500; margin: 0; line-height: 1.4; }
-.hero-content strong { font-weight: 800; }
+.rating-row { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: var(--txt-muted); }
+.bio-text { font-size: 0.85rem; color: var(--txt-muted); font-style: italic; margin: 0 0 20px 0; background: var(--bg-color); padding: 10px 12px; border-radius: var(--radius-md); border-left: 3px solid var(--brand-primary); }
 
-/* Search & Filters */
-.filter-panel { background: var(--panel-bg); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-card); margin-bottom: 24px; border: 1px solid var(--stroke); backdrop-filter: blur(12px); }
-.search-wrapper { position: relative; margin-bottom: 12px; }
-.cc-input { 
-  border: 1px solid var(--stroke); background: white; color: var(--txt-main); 
-  border-radius: 12px; padding: 14px 16px 14px 40px; width: 100%; 
-  transition: all 0.3s ease; font-family: 'Poppins', sans-serif; font-size: 0.95rem; 
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-}
-.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--brand-purple); }
-.cc-input:focus { border-color: var(--brand-purple); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+.price-session-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: auto; }
+.price-badge { background: var(--price-bg); color: var(--price-green); padding: 6px 14px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.1rem; }
+.duration-badge { border: 1px solid var(--stroke); color: var(--txt-main); padding: 6px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.85rem; }
 
-.filter-row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
-.cc-select {
-  border: 1px solid var(--stroke); background: white; color: var(--txt-main); 
-  border-radius: 12px; padding: 12px 16px; width: 100%; font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease;
-}
+.cc-btn { width: 100%; border: none; cursor: pointer; border-radius: var(--radius-md); padding: 14px; font-family: inherit; font-weight: 600; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-sizing: border-box; }
+.cc-btn:active { transform: scale(0.98); }
+.cc-btn.primary { background: var(--brand-gradient); color: white; box-shadow: 0 4px 15px rgba(226, 55, 68, 0.2); }
+.cc-btn.primary:hover { box-shadow: 0 6px 20px rgba(226, 55, 68, 0.3); transform: translateY(-1px); }
 
-.tag-chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
-.cc-chip { 
-  border: 1px solid var(--stroke); color: var(--txt-muted); background: white; 
-  border-radius: 20px; padding: 6px 14px; font-weight: 500; font-size: 0.85rem; 
-  cursor: pointer; transition: all 0.2s ease;
-}
-.cc-chip:hover { border-color: var(--brand-purple); color: var(--brand-purple); }
-.cc-chip.active { color: white; background: var(--brand-button); border-color: transparent; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3); }
+/* --- Footer Trust Badges --- */
+.trust-badges-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px; margin-top: 40px; box-shadow: var(--shadow-card); border: 1px solid var(--stroke); }
+.trust-item { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; color: var(--txt-main); }
+.trust-item span { font-size: 1.3rem; }
 
-/* Senior Cards (Exact Match to Image) */
-.grid-style-seniors { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
-.senior-card { 
-  background: var(--card-bg); border: 1px solid var(--stroke); border-radius: 24px; 
-  padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center;
-  box-shadow: var(--shadow-card); transition: all 0.3s ease; backdrop-filter: blur(10px);
-}
-.senior-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: rgba(139, 92, 246, 0.4); }
+/* --- Bookings UI --- */
+.booking-card-modern { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--stroke); padding: 24px; box-shadow: var(--shadow-card); margin-bottom: 20px; }
+.booking-top-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed var(--stroke); padding-bottom: 16px; margin-bottom: 16px; }
 
-.senior-card .avatar-ring {
-  width: 86px; height: 86px; border-radius: 50%; padding: 3px;
-  background: var(--brand-button); margin-bottom: 16px;
-}
-.senior-card .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid white; }
+.booking-profile-flex { display: flex; gap: 16px; align-items: center; }
+.booking-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--brand-light); object-fit: cover; }
+.booking-name { font-size: 1.2rem; font-weight: 700; color: var(--txt-main); margin: 0 0 4px 0; }
+.booking-college { font-size: 0.9rem; color: var(--txt-muted); margin: 0; }
+.booking-year-tag { font-size: 0.8rem; font-weight: 600; color: var(--brand-primary); margin-top: 6px; display: inline-block; background: var(--brand-light); padding: 4px 10px; border-radius: var(--radius-pill); }
 
-.senior-card .name-style { color: var(--txt-purple); font-weight: 700; font-size: 1.15rem; margin: 0 0 4px 0; }
-.senior-card .college-style { color: var(--txt-muted); font-size: 0.85rem; margin: 0 0 8px 0; font-weight: 500; }
-.senior-card .rating-container { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 12px; }
-.senior-card .rating-count { color: var(--txt-muted); font-weight: 600; font-size: 0.85rem; }
-.senior-card .bio-style { color: var(--txt-muted); font-size: 0.8rem; margin: 0 0 16px 0; font-style: italic; }
-
-.senior-card .price-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; }
-.senior-card .price-text { background: var(--price-bg); color: var(--price-green); padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
-.senior-card .small-chip { background: transparent; border: 1px solid var(--stroke); color: var(--txt-main); padding: 4px 12px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; }
-
-.cc-btn { 
-  border: none; cursor: pointer; border-radius: 12px; padding: 12px 24px; width: 100%;
-  font-weight: 600; font-size: 0.95rem; text-decoration: none; display: inline-flex; 
-  align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; 
-}
-.cc-btn:active { transform: scale(0.97); }
-.cc-btn.primary { background: var(--brand-button); color: white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
-.cc-btn.primary:hover { background: var(--brand-button-hover); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4); }
-
-/* Footer Highlights */
-.footer-highlights {
-  display: flex; justify-content: center; flex-wrap: wrap; gap: 16px;
-  background: var(--panel-bg); border-radius: 16px; padding: 16px 24px;
-  margin-top: 32px; box-shadow: var(--shadow-card); border: 1px solid var(--stroke);
-  backdrop-filter: blur(12px); font-size: 0.9rem; font-weight: 500; color: var(--txt-main);
-}
-.highlight-item { display: flex; align-items: center; gap: 6px; }
-.highlight-item span { color: #f59e0b; }
-
-/* Bookings Card Styling */
-.grid-style-bookings { display: grid; grid-template-columns: 1fr; gap: 20px; }
-.booking-card { padding: 24px; background: var(--card-bg); border-radius: 24px; border: 1px solid var(--stroke); box-shadow: var(--shadow-card); }
-.booking-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--stroke); padding-bottom: 16px; margin-bottom: 16px; }
-.booking-card .booking-name { color: var(--txt-purple); font-weight: 700; font-size: 1.15rem; margin: 0 0 4px 0; }
-.booking-card .booking-college { color: var(--txt-muted); font-size: 0.9rem; margin: 0; }
-.booking-card .booking-year-style { color: var(--brand-purple); font-size: 0.85rem; font-weight: 600; margin: 4px 0 0 0; }
-.booking-card .booking-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-purple); }
-.booking-card .status-row { display: flex; gap: 8px; margin-bottom: 16px; }
-.booking-card .status-tag { padding: 6px 14px; border-radius: 12px; font-weight: 600; font-size: 0.8rem; text-transform: capitalize; }
-.status-confirmed { background: rgba(139,92,246,0.1); color: var(--brand-purple); }
+.status-column { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.booking-status { padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.status-confirmed { background: var(--brand-light); color: var(--brand-primary); }
 .status-completed { background: var(--price-bg); color: var(--price-green); }
-.status-pending { background: #fef3c7; color: #d97706; }
-.status-cancelled { background: #fee2e2; color: #ef4444; }
+.status-pending { background: #fff8e1; color: #ff8f00; }
+.status-cancelled { background: #ffebee; color: #d32f2f; }
 
-.info-message { background: rgba(139,92,246,0.05); color: var(--txt-purple); padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(139,92,246,0.1); margin-bottom: 16px; }
-.rating-section { background: #fafafa; border-radius: 16px; padding: 20px; text-align: center; border: 1px dashed var(--stroke); margin-bottom: 16px; }
-.rating-prompt { font-weight: 600; color: var(--txt-main); margin: 0 0 12px 0; }
-.rating-stars-container { display: flex; justify-content: center; gap: 6px; }
+.info-alert-box { background: rgba(226, 55, 68, 0.05); color: var(--brand-primary); padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(226, 55, 68, 0.15); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.rating-prompt-box { background: var(--bg-color); border: 1px dashed var(--stroke); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 16px; }
 
-/* Modals */
-.modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.2s ease; }
-.modal-content { background: var(--card-bg); border-radius: 24px; width: 90%; max-width: 400px; padding: 24px; text-align: center; box-shadow: var(--shadow-hover); }
-.modal-title { color: var(--txt-purple); margin: 0 0 16px 0; font-size: 1.2rem; font-weight: 700; }
-.modal-body { color: var(--txt-main); font-size: 0.95rem; margin-bottom: 24px; }
-.modal-footer { display: flex; gap: 12px; justify-content: center; }
+.booking-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+.btn-outline { background: transparent; border: 1px solid var(--stroke); color: var(--txt-main); width: auto; padding: 12px 24px; }
+.btn-outline.danger { color: #d32f2f; border-color: #ffcdd2; background: #ffebee; }
 
-@media (max-width: 640px) {
-  .hero-banner { padding: 24px; text-align: center; min-height: auto; }
-  .hero-content h1 { font-size: 1.6rem; }
-  .hero-content p { font-size: 0.95rem; }
-  .filter-row { grid-template-columns: 1fr; }
-  .footer-highlights { flex-direction: column; align-items: center; }
-  .booking-header { flex-direction: column-reverse; text-align: center; gap: 16px; }
+/* --- Desktop Nav / Bottom Nav Mobile --- */
+.desktop-tabs { display: flex; gap: 12px; margin-bottom: 24px; background: var(--card-bg); padding: 8px; border-radius: var(--radius-pill); box-shadow: var(--shadow-card); width: max-content; border: 1px solid var(--stroke); }
+.d-tab { text-decoration: none; color: var(--txt-muted); font-weight: 600; padding: 10px 24px; border-radius: var(--radius-pill); transition: all 0.3s; font-size: 0.95rem; }
+.d-tab.active { background: var(--brand-primary); color: white; box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3); }
+
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 -10px 25px rgba(0,0,0,0.05); border-top: 1px solid var(--stroke); z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.b-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px 0; text-decoration: none; color: var(--txt-muted); font-size: 0.75rem; font-weight: 600; gap: 4px; transition: color 0.2s; }
+.b-nav-item.active { color: var(--brand-primary); }
+.b-nav-icon { font-size: 1.4rem; }
+
+/* =========================================
+   📱 MOBILE RESPONSIVE FIXES 
+   ========================================= */
+@media (max-width: 768px) {
+  .desktop-tabs { display: none; }
+  .bottom-nav { display: flex; }
+  
+  /* 🚀 FOOTER OVERLAP FIX: Ensures the global footer component extends behind the nav */
+  footer {
+    padding-bottom: 90px !important; 
+  }
+
+  .main-container { padding: 12px; padding-bottom: -69px; overflow-x: hidden; }
+  
+  .hero-premium { padding: 24px 20px; border-radius: 16px; margin-bottom: 20px; }
+  .hero-premium h1 { font-size: 1.6rem; }
+  .hero-premium p { font-size: 0.95rem; }
+  .hero-premium::after { display: none; }
+  
+  .search-section { 
+    padding: 0; 
+    margin-bottom: 24px; 
+    background: transparent; 
+    box-shadow: none; 
+    border: none; 
+  }
+  
+  .search-bar-modern {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .filter-dropdowns { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-top: 12px; 
+    width: 100%;
+  }
+  
+  .cc-select { 
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-soft);
+    border-radius: 12px;
+  }
+  
+  .tags-scroll-container { padding: 8px 0; }
+  .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
+
+  .grid-style-seniors { gap: 16px; }
+  .senior-card-modern { padding: 20px; }
+  
+  .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; }
 }
 `;
 
 const StarIcon = ({ filled, size = 18, isClickable = false }) => (
-  <svg
-    fill={filled ? "#f59e0b" : "#e2e8f0"}
-    width={size} height={size} viewBox="0 0 24 24"
-    style={{ transition: "all 0.2s", cursor: isClickable ? "pointer" : "default", transform: isClickable ? "scale(1.1)" : "scale(1)" }}
-  >
+  <svg fill={filled ? "var(--star-color)" : "var(--stroke)"} width={size} height={size} viewBox="0 0 24 24" style={{ transition: "all 0.2s", cursor: isClickable ? "pointer" : "default", transform: isClickable ? "scale(1.1)" : "scale(1)" }}>
     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
   </svg>
 );
 
 const Chip = ({ active, onClick, children }) => (
-  <button className={`cc-chip ${active ? "active" : ""}`} onClick={onClick}>
+  <button className={`tag-chip ${active ? "active" : ""}`} onClick={onClick}>
     {children}
   </button>
 );
 
 const SkeletonCard = () => (
-  <div className="senior-card" style={{opacity: 0.7}}>
-    <div className="avatar-ring" style={{background: '#e2e8f0'}} />
-    <div style={{width: '60%', height: '16px', background: '#e2e8f0', borderRadius: '4px', marginBottom: '8px'}} />
-    <div style={{width: '40%', height: '12px', background: '#e2e8f0', borderRadius: '4px', marginBottom: '16px'}} />
-    <div style={{width: '100%', height: '40px', background: '#e2e8f0', borderRadius: '12px', marginTop: 'auto'}} />
+  <div className="senior-card-modern" style={{ opacity: 0.6 }}>
+    <div className="card-header-flex">
+      <div className="avatar-box" style={{ background: 'var(--stroke)', border: 'none' }} />
+      <div style={{ flex: 1 }}>
+        <div style={{ width: '70%', height: '16px', background: 'var(--stroke)', borderRadius: '4px', marginBottom: '8px' }} />
+        <div style={{ width: '50%', height: '12px', background: 'var(--stroke)', borderRadius: '4px' }} />
+      </div>
+    </div>
+    <div style={{ width: '100%', height: '40px', background: 'var(--stroke)', borderRadius: '12px', marginTop: 'auto' }} />
   </div>
 );
 
 // ===============================
-// 🎓 FindSenior 
+// 🎓 FindSenior (Logic Restored)
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
   const [search, setSearch] = useState("");
@@ -274,26 +294,19 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
 
   return (
     <div className="page-wrapper">
-      {/* 🚀 Hero Banner Matching the Image */}
-      <div className="hero-banner">
-        <div className="hero-content">
-          <h1>Welcome to Reap Campus Connect </h1>
-          <p>Connect with <strong>Top Seniors</strong>,<br/>True Guidance for Success</p>
-        </div>
+      
+      <div className="hero-premium">
+        <h1>Welcome to Reap Campus Connect</h1>
+        <p>Connect with <strong>Top Seniors</strong>,<br/>True Guidance for Success</p>
       </div>
-
-      <div className="filter-panel">
-        <div className="search-wrapper">
-          <span className="search-icon">🔎</span>
-          <input
-            className="cc-input"
-            type="text"
-            placeholder="Search by name, college or branch..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      
+      <div className="search-section">
+        <div className="search-bar-modern">
+          <span className="search-icon">🔍</span>
+          <input type="text" placeholder="Search by name, college or branch..." value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <div className="filter-row">
+
+        <div className="filter-dropdowns">
           <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
             <option value="">🎓 All Colleges</option>
             {colleges.map((c) => (
@@ -301,16 +314,14 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
             ))}
           </select>
           <select className="cc-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-            <option value="rating">⭐ Top Rated</option>
+            <option value="rating">⭐ Top Rated First</option>
             <option value="price_asc">💰 Low Price</option>
             <option value="price_desc">💸 High Price</option>
           </select>
         </div>
 
-        <div className="tag-chips-container">
-          <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>
-            🚀 All Tags
-          </Chip>
+        <div className="tags-scroll-container">
+          <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>🚀 All Tags</Chip>
           {tags.slice(0, 10).map((t) => (
             <Chip key={t._id} active={selectedTag === t._id} onClick={() => setSelectedTag(t._id)}>
               {t.name}
@@ -319,39 +330,41 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
         </div>
       </div>
 
+      <h3 style={{fontSize: '1.3rem', margin: '30px 0 16px 0', fontWeight: 800}}>Recommended Mentors</h3>
+
       <div className="grid-style-seniors">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : filtered.length > 0
           ? filtered.map((p) => {
               const seniorName = p.user?.name || 'Senior';
-              const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=8b5cf6&color=fff&size=150&font-size=0.4&bold=true`;
+              const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
+              const finalPrice = (p.price_per_session || 0) + platformFee;
 
               return (
-                <div key={p._id} className="senior-card">
-                  <div className="avatar-ring">
-                    <img
-                      src={p.avatar || fallbackImage}
-                      alt={seniorName}
-                      className="avatar"
-                      loading="lazy"
-                      onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
-                    />
+                <div key={p._id} className="senior-card-modern">
+                  <div className="card-header-flex">
+                    <div className="avatar-box">
+                      <img src={p.avatar || fallbackImage} alt={seniorName} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
+                    </div>
+                    <div className="info-box">
+                      <h3 className="name-text">{seniorName} <span className="verified-tick">✔</span></h3>
+                      <p className="college-text">{p.college?.name || "Premium Mentor"}</p>
+                      
+                      <div className="rating-row">
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} size={15} />
+                        ))}
+                        <span style={{marginLeft: '4px'}}>{p.average_rating?.toFixed?.(1) ?? "0.0"} • {p.total_ratings || 0}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <h3 className="name-style">{seniorName}</h3>
-                  <div className="rating-container">
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} size={14} />
-                    ))}
-                    <span className="rating-count">{p.average_rating?.toFixed?.(1) ?? "0.0"} • {p.total_ratings || 0}</span>
-                  </div>
+                  <p className="bio-text">Please ask Admin to update this profile.</p>
 
-                  <p className="bio-style">Please ask Admin to update this profile.</p>
-
-                  <div className="price-row">
-                    <span className="price-text">₹{(p.price_per_session || 0) + platformFee}</span>
-                    <span className="small-chip">{p.session_duration_minutes || 20} min</span>
+                  <div className="price-session-row">
+                    <span className="price-badge">₹{finalPrice}</span>
+                    <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
                   </div>
 
                   <Link to={`/book/${p.user._id}`} className="cc-btn primary">
@@ -361,25 +374,24 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
               );
             })
           : (
-            <div className="filter-panel" style={{gridColumn: '1/-1', textAlign: 'center'}}>
-              <h3 style={{color: 'var(--txt-purple)'}}>No seniors found</h3>
-              <p className="small-muted">Try adjusting filters or search keywords.</p>
+            <div style={{gridColumn: '1/-1', textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--stroke)'}}>
+              <h3 style={{color: 'var(--brand-primary)', margin: '0 0 8px 0'}}>No mentors found</h3>
+              <p style={{color: 'var(--txt-muted)', margin: 0}}>Try adjusting your filters or search terms.</p>
             </div>
           )}
       </div>
 
-      {/* Trust Highlights Bottom */}
-      <div className="footer-highlights">
-        <div className="highlight-item"><span>⭐</span> Verified Senior Mentors</div>
-        <div className="highlight-item" style={{borderLeft: '1px solid var(--stroke)', borderRight: '1px solid var(--stroke)', padding: '0 16px'}}><span>⭐</span> Trusted by 1000+ Students</div>
-        <div className="highlight-item"><span>⭐</span> 24/7 Support</div>
+      <div className="trust-badges-container">
+        <div className="trust-item"><span>🛡️</span> Verified Senior Mentors</div>
+        <div className="trust-item" style={{borderLeft: '1px solid var(--stroke)', borderRight: '1px solid var(--stroke)', padding: '0 20px'}}><span>👨‍🎓</span> Trusted by 1000+ Students</div>
+        <div className="trust-item"><span>🎧</span> 24/7 Support</div>
       </div>
     </div>
   );
 };
 
 // ===============================
-// 📘 MyBookings 
+// 📘 MyBookings (Logic Restored)
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -391,10 +403,7 @@ const MyBookings = ({ seniors }) => {
     const loadBookings = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my",
-          { headers: { "x-auth-token": token } }
-        );
+        const res = await axios.get("https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my", { headers: { "x-auth-token": token } });
         setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       } catch {
         toast.error("⚠️ Unable to load bookings");
@@ -423,15 +432,8 @@ const MyBookings = ({ seniors }) => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        `https://collegeconnect-backend-mrkz.onrender.com/api/ratings/submit/${bookingId}`,
-        { rating: value },
-        { headers: { "x-auth-token": token } }
-      );
-
-      setBookings((prev) =>
-        prev.map((b) => b._id === bookingId ? { ...b, rated: true, rating: value, dispute_status: "not_allowed" } : b )
-      );
+      await axios.post(`https://collegeconnect-backend-mrkz.onrender.com/api/ratings/submit/${bookingId}`, { rating: value }, { headers: { "x-auth-token": token } });
+      setBookings((prev) => prev.map((b) => b._id === bookingId ? { ...b, rated: true, rating: value, dispute_status: "not_allowed" } : b ));
       toast.success(`⭐ You rated ${value} stars!`);
     } catch (err) {
       const errorMsg = err.response?.data?.msg || "Failed to submit rating!";
@@ -440,7 +442,7 @@ const MyBookings = ({ seniors }) => {
   };
 
   const getStatusTagClass = (status) => {
-    const base = "status-tag";
+    const base = "booking-status";
     switch ((status || "").toLowerCase()) {
       case "confirmed": return `${base} status-confirmed`;
       case "completed": return `${base} status-completed`;
@@ -452,8 +454,8 @@ const MyBookings = ({ seniors }) => {
 
   const getDisputeTagClass = (dispute) => {
     const d = (dispute || "").toLowerCase();
-    if (d === "pending")  return "status-tag status-pending";
-    if (d === "resolved") return "status-tag status-completed";
+    if (d === "pending")  return "booking-status status-pending";
+    if (d === "resolved") return "booking-status status-completed";
     return null;
   };
 
@@ -474,75 +476,66 @@ const MyBookings = ({ seniors }) => {
     
     const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
     const seniorName = b.senior?.name || 'Senior';
-    const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=8b5cf6&color=fff&size=150&font-size=0.4&bold=true`;
+    const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
     const finalAvatar = seniorProfile?.avatar || b.profile?.avatar || fallbackImage;
     const yearText = getYearSuffix(b.profile?.year);
 
     return (
-      <div key={b._id} className="booking-card">
-        <div className="booking-header">
-          <div>
-            <h3 className="booking-name">{seniorName}</h3>
-            <p className="booking-college">{b.profile?.college?.name}</p>
-            {yearText && <p className="booking-year-style">{yearText}</p>}
+      <div key={b._id} className="booking-card-modern">
+        <div className="booking-top-row">
+          <div className="booking-profile-flex">
+            <img src={finalAvatar} alt={seniorName} className="booking-avatar" loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
+            <div>
+              <h3 className="booking-name">{seniorName}</h3>
+              <p className="booking-college">{b.profile?.college?.name}</p>
+              {yearText && <span className="booking-year-tag">{yearText}</span>}
+            </div>
           </div>
-          <img
-            src={finalAvatar}
-            alt={seniorName}
-            className="booking-avatar"
-            loading="lazy"
-            onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
-          />
-        </div>
-
-        <div className="status-row">
-          <span className={getStatusTagClass(status)}>{b.status}</span>
-          {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+          <div className="status-column">
+            <span className={getStatusTagClass(status)}>{b.status}</span>
+            {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+          </div>
         </div>
 
         {status === "confirmed" && (
-          <p className="info-message">ℹ️ The senior will contact you on your phone within 6 hours.</p>
+          <div className="info-alert-box">ℹ️ The senior will contact you on your phone within 6 hours.</div>
         )}
 
         {status === "completed" && !b.rated && (
-          <div className="rating-section">
-            <p className="rating-prompt">Rate this session:</p>
-            <div className="rating-stars-container">
+          <div className="rating-prompt-box">
+            <p style={{margin: '0 0 12px 0', fontSize: '1rem', fontWeight: 600}}>Rate this session:</p>
+            <div style={{display: 'flex', justifyContent: 'center', gap: '8px'}}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })}
-                  onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })}
-                  onClick={() => openRatingModal(b._id, b.senior?._id, star)}
-                >
-                  <StarIcon filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)} size={28} isClickable={true} />
+                <span key={star} onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })} onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })} onClick={() => openRatingModal(b._id, b.senior?._id, star)}>
+                  <StarIcon filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)} size={34} isClickable={true} />
                 </span>
               ))}
             </div>
           </div>
         )}
-        
+
         {b.rated && (
-          <div className="status-row" style={{background: 'var(--price-bg)', padding: '10px', borderRadius: '12px', display: 'inline-flex'}}>
+          <div style={{background: 'var(--price-bg)', padding: '10px 16px', borderRadius: 'var(--radius-md)', display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '16px'}}>
             <span style={{color: 'var(--price-green)', fontWeight: 600}}>You rated:</span>
             <div style={{display:'flex', gap:'2px'}}>
-              {[...Array(5)].map((_, i) => <StarIcon key={i} filled={i < b.rating} size={16} />)}
+              {[...Array(5)].map((_, i) => <StarIcon key={i} filled={i < b.rating} size={18} />)}
             </div>
           </div>
         )}
 
-        <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '16px'}}>
-          {status === "confirmed" && <button className="cc-btn primary" style={{width:'auto'}} onClick={() => handleChat(b._id)}>💬 Chat</button>}
-          {dispute === "none" && !b.rated && <button className="cc-btn" style={{background:'#fee2e2', color:'#ef4444', width:'auto'}} onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>}
+        <div className="booking-actions">
+          {status === "confirmed" && <button className="cc-btn primary" style={{width: 'auto', padding: '12px 24px'}} onClick={() => handleChat(b._id)}>💬 Chat</button>}
+          {dispute === "none" && !b.rated && <button className="cc-btn btn-outline danger" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>}
+          
           {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
-            <span style={{color:'var(--txt-muted)', fontSize:'0.85rem', alignSelf:'center'}}>🚫 Dispute not allowed after rating.</span>
+            <span style={{color:'var(--txt-muted)', fontSize:'0.85rem'}}>🚫 Dispute not allowed after rating.</span>
           )}
         </div>
       </div>
     );
   };
 
-  if (loading) return <div className="grid-style-bookings">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
+  if (loading) return <div className="grid-style-seniors">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
 
   const activeBookings = bookings.filter((b) => b.status?.toLowerCase() !== "completed" && b.status?.toLowerCase() !== "cancelled");
   const pastBookings = bookings.filter((b) => b.status?.toLowerCase() === "completed" || b.status?.toLowerCase() === "cancelled");
@@ -553,22 +546,22 @@ const MyBookings = ({ seniors }) => {
         Once you rate this senior, you cannot raise a dispute.<br /><br />
         Are you sure you want to give a rating of <strong>{ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
       </ConfirmModal>
-    
-      <h2 style={{color: 'var(--txt-purple)', fontWeight: 800, fontSize: '1.5rem', marginBottom: '24px'}}>📘 My Bookings</h2>
+
+      <h2 style={{color: 'var(--txt-main)', fontWeight: 800, fontSize: '1.6rem', margin: '0 0 24px 0'}}>📘 My Bookings</h2>
 
       {bookings.length === 0 && (
-        <div className="filter-panel" style={{textAlign: 'center'}}>
-          <div style={{fontWeight: 700, color: 'var(--txt-main)', fontSize: '1.1rem'}}>You haven't booked any sessions yet.</div>
-          <div className="small-muted">Find a senior and schedule your first session.</div>
+        <div style={{textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--stroke)'}}>
+          <h3 style={{color: 'var(--txt-main)', margin: '0 0 8px 0'}}>You haven't booked any sessions yet.</h3>
+          <p style={{color: 'var(--txt-muted)', margin: 0}}>Find a senior and schedule your first session.</p>
         </div>
       )}
 
       {activeBookings.length > 0 && (
-        <><h3 style={{color:'var(--txt-main)', marginBottom:'16px'}}>Ongoing & Active</h3><div className="grid-style-bookings">{activeBookings.map(renderBookingCard)}</div></>
+        <><h3 style={{margin:'0 0 16px 0', fontSize: '1.2rem'}}>Ongoing & Active</h3><div>{activeBookings.map(renderBookingCard)}</div></>
       )}
 
       {pastBookings.length > 0 && (
-        <><h3 style={{color:'var(--txt-main)', margin:'32px 0 16px 0'}}>Completed & Past</h3><div className="grid-style-bookings">{pastBookings.map(renderBookingCard)}</div></>
+        <><h3 style={{margin:'32px 0 16px 0', fontSize: '1.2rem'}}>Completed & Past</h3><div>{pastBookings.map(renderBookingCard)}</div></>
       )}
     </div>
   );
@@ -577,12 +570,12 @@ const MyBookings = ({ seniors }) => {
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h3 className="modal-title">{title}</h3>
-        <div className="modal-body">{children}</div>
-        <div className="modal-footer">
-          <button onClick={onClose} className="cc-btn" style={{background: 'var(--stroke)', color: 'var(--txt-main)', width: 'auto'}}>Cancel</button>
+    <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px'}}>
+      <div style={{background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '400px', padding: '30px 24px', textAlign: 'center', boxShadow: 'var(--shadow-hover)'}}>
+        <h3 style={{margin: '0 0 16px 0', color: 'var(--brand-primary)'}}>{title}</h3>
+        <div style={{color: 'var(--txt-main)', marginBottom: '30px', fontSize: '0.95rem', lineHeight: '1.5'}}>{children}</div>
+        <div style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
+          <button onClick={onClose} className="cc-btn btn-outline">Cancel</button>
           <button onClick={onConfirm} className="cc-btn primary" style={{width: 'auto'}}>Yes, Continue</button>
         </div>
       </div>
@@ -606,6 +599,11 @@ const StudentDashboard = () => {
 
   const toggleTheme = () => setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   
+  // 🚀 SCROLL FIX: When changing tabs or refreshing, scroll to top
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [location.pathname]);
+
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -633,30 +631,23 @@ const StudentDashboard = () => {
   return (
     <div className={`page-bg ${theme}`}>
       <style>{globalStyles}</style>
-      <div className="stars-bg"></div>
 
       <div className="main-container">
         
-        {/* Mock Top Navbar from the Image */}
-        <div className="top-nav-bar">
-          <div className="brand-logo">🚀 Campus Connect </div>
-          <div className="nav-actions">
-            <button 
-              className="cc-btn" 
-              style={{background: 'rgba(255,255,255,0.1)', color: 'white', padding: '6px 16px', fontSize: '0.8rem', width: 'auto'}} 
-              onClick={toggleTheme}
-            >
-               {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-            </button>
-          </div>
+        {/* Premium App Header */}
+        <div className="top-header">
+          <h1 className="brand-title">CampusConnect</h1>
+          <button className="theme-btn" onClick={toggleTheme}>
+            {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+          </button>
         </div>
 
-        {/* Inner Tab Bar */}
-        <div className="tab-bar-floating">
-          <Link to="/student-dashboard" className={`cc-tab ${!onBookingsTab ? "active" : ""}`}>
+        {/* Desktop Navigation */}
+        <div className="desktop-tabs">
+          <Link to="/student-dashboard" className={`d-tab ${!onBookingsTab ? "active" : ""}`}>
             ✨ Find Seniors
           </Link>
-          <Link to="/student-dashboard/bookings" className={`cc-tab ${onBookingsTab ? "active" : ""}`}>
+          <Link to="/student-dashboard/bookings" className={`d-tab ${onBookingsTab ? "active" : ""}`}>
             📘 My Bookings
           </Link>
         </div>
@@ -665,6 +656,18 @@ const StudentDashboard = () => {
           <Route path="/" element={<FindSenior seniors={seniors} loading={loading} colleges={colleges} tags={tags} platformFee={platformFee} />} />
           <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
         </Routes>
+      </div>
+
+      {/* Bottom Navigation (Mobile Only) */}
+      <div className="bottom-nav">
+        <Link to="/student-dashboard" className={`b-nav-item ${!onBookingsTab ? "active" : ""}`}>
+          <span className="b-nav-icon">✨</span>
+          Find Seniors
+        </Link>
+        <Link to="/student-dashboard/bookings" className={`b-nav-item ${onBookingsTab ? "active" : ""}`}>
+          <span className="b-nav-icon">📘</span>
+          My Bookings
+        </Link>
       </div>
     </div>
   );

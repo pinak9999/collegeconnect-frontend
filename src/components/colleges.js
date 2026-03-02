@@ -5,13 +5,13 @@ export const colleges = [
     name: "MBM University",
     location: "Jodhpur, Rajasthan",
     coords: [26.2624, 73.0138], // [latitude, longitude]
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPgYTL_FdSsdHVHft1FJMsK66plYKt0XHtYw&s", // यह टैग इमेज दिखाएगा
+    image: "https://api.mbm.ac.in/assets/5738229d-2fff-4e00-bae2-6331f18298b2", // यह टैग इमेज दिखाएगा
   },
    {
     name: "RTU Kota",
     location: "Kota, Rajasthan",
     coords: [25.1578, 75.8504],
-    image: "https://i.ytimg.com/vi/kH-apsSipWY/maxresdefault.jpg",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYKjo4vvDf4O6tKfKso6jBXD25Yk-cUvrraw&s",
   },
     {
     name: "CTAE Udaipur",
@@ -36,6 +36,6 @@ export const colleges = [
     name: "Poornima College of Engineering - PCE",
     location: "Jaipur, Rajasthan",
     coords: [26.7656, 75.8536],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSonwFZ33_U7AkBapDOZRmLi21gtZl_g0UFEt_egVtwtlvEqd4phZRTeCPI_4dkv_KhlE&usqp=CAU",
+    image: "https://www.poornima.org/uploads/albums/1716486380_1.jpg",
   },
 ];

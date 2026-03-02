@@ -194,12 +194,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ⭐ SENIORS */}
+      
       <section className="fade-in-up" style={{ ...sectionBase, background: "#ffffff" }}>
-        <h2 style={sectionTitle}>⭐ Featured Seniors</h2>
-        <p style={sectionDesc}>
-          Get insights from real students who’ve experienced your dream college.
-        </p>
+        
+       
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <FeaturedSeniors />
         </div>

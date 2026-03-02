@@ -3,20 +3,170 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
+// ======================================
+// 🚀 Premium Navbar CSS
+// ======================================
+const navbarStyles = `
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* --- Global Navbar Wrapper --- */
+.nav-wrapper {
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Main Navbar Container --- */
+.main-nav {
+  width: 100%;
+  transition: background 0.3s ease;
+  padding: 12px 0;
+}
+
+/* Dynamic Backgrounds based on route */
+.main-nav.dashboard-bg {
+  background: linear-gradient(90deg, #0f172a, #1e293b); /* Dark Premium */
+}
+.main-nav.default-bg {
+  background: linear-gradient(90deg, #1A2980 0%, #26D0CE 100%); /* Ocean Blue Premium */
+}
+
+/* --- Inner Layout --- */
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+/* --- Brand Logo --- */
+.brand-logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.5px;
+}
+.brand-highlight {
+  background: linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+.brand-text {
+  color: #f8f9fa;
+  font-weight: 600;
+}
+
+/* --- Navigation Buttons --- */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-btn {
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+.nav-btn:active { transform: scale(0.96); }
+
+/* Specific Button Styles */
+.btn-dashboard {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+.btn-dashboard:hover { box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); transform: translateY(-2px); }
+
+.btn-logout {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+.btn-logout:hover { box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4); transform: translateY(-2px); }
+
+.btn-register {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+.btn-register:hover { box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4); transform: translateY(-2px); }
+
+.btn-login {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+.btn-login:hover { box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
+
+
+/* --- Scrolling Tagline (Marquee) --- */
+.scrolling-bar {
+  background: linear-gradient(90deg, #e23744, #b10cfd);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 8px 0;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.scrolling-text {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scrollMarquee 22s linear infinite;
+  will-change: transform;
+}
+
+@keyframes scrollMarquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* =========================================
+   📱 MOBILE RESPONSIVE FIXES
+   ========================================= */
+@media (max-width: 768px) {
+  .main-nav { padding: 16px 0; }
+  .nav-container {
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+  }
+  .brand-logo { font-size: 1.5rem; }
+  .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
+  
+  .nav-btn { padding: 8px 16px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 160px; }
+  
+  .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
+  .scrolling-text { animation-duration: 18s; } /* Thoda fast scrolling on mobile */
+}
+`;
+
 function Navbar() {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const isMobile = windowWidth <= 640;
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+  // Hide Navbar on specific routes
   const hiddenRoutes = ["/login", "/register", "/forgot-password"];
   const currentPath = location.pathname.toLowerCase();
   if (hiddenRoutes.some((r) => currentPath.startsWith(r))) return null;
@@ -34,238 +184,61 @@ function Navbar() {
   };
 
   const isDashboard = location.pathname.includes("dashboard");
-  const navBg = isDashboard
-    ? "linear-gradient(90deg, #0f172a, #1e293b)"
-    : "linear-gradient(90deg, #007BFF, #00B4D8)";
-
-  const navStyle = {
-    position: "relative",
-    width: "100%",
-    background: navBg,
-    margin: "0",
-    color: "#fff",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
-    padding: "10px 0",
-    zIndex: 2,
-  };
-
-  const containerStyle = {
-    maxWidth: "1150px",
-    margin: "0 auto",
-    display: "flex",
-    alignItems: "center",
-    padding: "0px 15px",
-    flexDirection: isMobile ? "column" : "row",
-    justifyContent: isMobile ? "center" : "space-between",
-    gap: isMobile ? "12px" : "0",
-  };
-
-  const logoStyle = {
-    fontSize: "1.5rem",
-    fontWeight: 700,
-    textDecoration: "none",
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-  };
-
-  const menuStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    width: isMobile ? "100%" : "auto",
-  };
-
-  const btnBaseStyle = {
-    color: "#fff",
-    padding: "7px 16px",
-    borderRadius: "50px",
-    fontWeight: 600,
-    textDecoration: "none",
-    fontSize: "0.9rem",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-    border: "none",
-    cursor: "pointer",
-  };
-
-  const applyHover = (e, transform, boxShadow) => {
-    e.currentTarget.style.transform = transform;
-    e.currentTarget.style.boxShadow = boxShadow;
-  };
 
   return (
     <>
-      {/* 🚀 Navbar */}
-      <nav style={navStyle}>
-        <div style={containerStyle}>
-          <Link to="/" style={logoStyle}>
-            🚀{" "}
-            <span style={{ letterSpacing: "0.5px" }}>
-              <span
-                style={{
-                  background: "linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8)",
-                  WebkitBackgroundClip: "text",
-                  color: "#ffffffff",
-                  fontWeight: 700,
-                }}
-              >
-                Reap 
-              </span>
-              <span style={{ color: "#fff3f3ff", fontWeight: 500 }}>
-                {" "}
-                CampusConnnect
-              </span>
-            </span>
-          </Link>
+      <style>{navbarStyles}</style>
 
-          <div style={menuStyle}>
-            {auth.isAuthenticated && auth.user ? (
-              <>
-                {/* Dashboard */}
-                <Link
-                  to={getDashboardLink()}
-                  style={{
-                    ...btnBaseStyle,
-                    background: "linear-gradient(135deg,#3b82f6,#2563eb)",
-                    boxShadow: "0 3px 10px rgba(37,99,235,0.35)",
-                  }}
-                  onMouseEnter={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1.05)",
-                      "0 6px 14px rgba(37,99,235,0.5)"
-                    )
-                  }
-                  onMouseLeave={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1)",
-                      "0 3px 10px rgba(37,99,235,0.35)"
-                    )
-                  }
-                >
-                  📊 Dashboard
-                </Link>
-
+      <div className="nav-wrapper">
+        
+        {/* 🚀 Main Navbar */}
+        <nav className={`main-nav ${isDashboard ? 'dashboard-bg' : 'default-bg'}`}>
+          <div className="nav-container">
             
+            {/* Logo */}
+            <Link to="/" className="brand-logo">
+              <span>🚀</span>
+              <span>
+                <span className="brand-highlight">Reap </span>
+                <span className="brand-text">CampusConnect</span>
+              </span>
+            </Link>
 
-                {/* Logout */}
-                <button
-                  onClick={logoutHandler}
-                  style={{
-                    ...btnBaseStyle,
-                    background: "linear-gradient(135deg,#ef4444,#dc2626)",
-                    boxShadow: "0 3px 10px rgba(239,68,68,0.35)",
-                  }}
-                  onMouseEnter={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1.05)",
-                      "0 6px 14px rgba(239,68,68,0.5)"
-                    )
-                  }
-                  onMouseLeave={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1)",
-                      "0 3px 10px rgba(239,68,68,0.35)"
-                    )
-                  }
-                >
-                  🚪 Logout
-                </button>
-              </>
-            ) : (
-              <>
-                {/* Register */}
-                <Link
-                  to="/register"
-                  style={{
-                    ...btnBaseStyle,
-                    background: "linear-gradient(135deg,#60a5fa,#2563eb)",
-                    boxShadow: "0 3px 10px rgba(59,130,246,0.35)",
-                  }}
-                  onMouseEnter={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1.05)",
-                      "0 6px 14px rgba(59,130,246,0.5)"
-                    )
-                  }
-                  onMouseLeave={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1)",
-                      "0 3px 10px rgba(59,130,246,0.35)"
-                    )
-                  }
-                >
-                  📝 Register
-                </Link>
+            {/* Actions / Buttons */}
+            <div className="nav-actions">
+              {auth.isAuthenticated && auth.user ? (
+                <>
+                  <Link to={getDashboardLink()} className="nav-btn btn-dashboard">
+                    📊 Dashboard
+                  </Link>
+                  <button onClick={logoutHandler} className="nav-btn btn-logout">
+                    🚪 Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/register" className="nav-btn btn-register">
+                    📝 Register
+                  </Link>
+                  <Link to="/login" className="nav-btn btn-login">
+                    🔐 Login
+                  </Link>
+                </>
+              )}
+            </div>
 
-                {/* Login */}
-                <Link
-                  to="/login"
-                  style={{
-                    ...btnBaseStyle,
-                    background: "linear-gradient(135deg,#34d399,#059669)",
-                    boxShadow: "0 3px 10px rgba(5,150,105,0.35)",
-                  }}
-                  onMouseEnter={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1.05)",
-                      "0 6px 14px rgba(5,150,105,0.5)"
-                    )
-                  }
-                  onMouseLeave={(e) =>
-                    applyHover(
-                      e,
-                      "scale(1)",
-                      "0 3px 10px rgba(5,150,105,0.35)"
-                    )
-                  }
-                >
-                  🔐 Login
-                </Link>
-              </>
-            )}
+          </div>
+        </nav>
+
+        {/* 🌀 Premium Scrolling Tagline */}
+        <div className="scrolling-bar">
+          <div className="scrolling-text">
+            🌟 "Rajasthan — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
+            असली सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो
+            छात्रों को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
           </div>
         </div>
-      </nav>
 
-      {/* 🌀 Moving Tagline */}
-      <div
-        style={{
-          background: "linear-gradient(90deg, #ff0000b9, #b10cfdbb)",
-          color: "white",
-          fontWeight: 600,
-          padding: "6px 0",
-          textAlign: "center",
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <div
-          style={{
-            display: "inline-block",
-            paddingLeft: "100%",
-            animation: "scrollText 18s linear infinite",
-            animationDelay: "0.3s",
-            willChange: "transform",
-            transform: "translate3d(5%, 0, 0)",
-            backfaceVisibility: "hidden",
-          }}
-        >
-          🌟 "Rajasthan — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
-          असली सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो
-          छात्रों को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
-        </div>
       </div>
     </>
   );
