@@ -112,11 +112,11 @@ function Navbar() {
                   fontWeight: 700,
                 }}
               >
-                Reapify
+                Reap 
               </span>
               <span style={{ color: "#fff3f3ff", fontWeight: 500 }}>
                 {" "}
-                by Pinak
+                CampusConnnect
               </span>
             </span>
           </Link>
@@ -262,7 +262,7 @@ function Navbar() {
             backfaceVisibility: "hidden",
           }}
         >
-          🌟 "Reapify — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
+          🌟 "Rajasthan — Top Seniors, Real Experience, True Guidance." 👉 (क्योंकि
           असली सीनियर्स वही हैं जो मदद करना जानते हैं) || भरोसेमंद प्लेटफ़ॉर्म जो
           छात्रों को सही जानकारी और सही दिशा देता है 🚀 || 24×7 Support Available
         </div>

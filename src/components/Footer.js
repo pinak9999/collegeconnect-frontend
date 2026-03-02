@@ -236,13 +236,13 @@ function Footer({ loading }) {
       {/* Brand Footer */}
       <div style={styles.brandSection}>
         <h3>
-          <span style={styles.brandName}>Reapify by Pinak</span>
+          <span style={styles.brandName}>Campus Connect</span>
         </h3>
         <p style={styles.tagline}>
           Simplifying engineering admission & beyond
         </p>
         <p style={styles.bottomText}>
-          © 2026 Reapify by Pinak. Made with ❤️ for Indian Students.
+          © 2026 RajasthanCampus Connect. Made with ❤️ for Indian Students.
         </p>
       </div>
     </footer>

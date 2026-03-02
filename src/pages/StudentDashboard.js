@@ -277,7 +277,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
       {/* 🚀 Hero Banner Matching the Image */}
       <div className="hero-banner">
         <div className="hero-content">
-          <h1>Welcome to Reapify</h1>
+          <h1>Welcome to Reap Campus Connect </h1>
           <p>Connect with <strong>Top Seniors</strong>,<br/>True Guidance for Success</p>
         </div>
       </div>
@@ -639,7 +639,7 @@ const StudentDashboard = () => {
         
         {/* Mock Top Navbar from the Image */}
         <div className="top-nav-bar">
-          <div className="brand-logo">🚀 Reapify by Pinak</div>
+          <div className="brand-logo">🚀 Campus Connect </div>
           <div className="nav-actions">
             <button 
               className="cc-btn" 

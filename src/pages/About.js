@@ -64,7 +64,7 @@ function About() {
 
       <div className="about-container">
         <h1 className="text-gradient" style={{ fontSize: "3rem", marginBottom: "10px" }}>
-          About Reapify
+          About Campus Connect
         </h1>
         <p style={{ color: "#aaa", fontSize: "1.2rem", marginBottom: "50px" }}>
           Simplifying engineering admission & beyond.
@@ -75,7 +75,7 @@ function About() {
           <h2 style={{ color: "#A5B4FC", marginBottom: "15px", fontSize: "1.8rem" }}>🎯 Our Mission</h2>
           <p style={{ color: "#ddd", lineHeight: "1.8", fontSize: "1.05rem" }}>
             Every year, thousands of students in Rajasthan struggle to find the right college through REAP. 
-            They rely on outdated information or biased agents. At <strong>Reapify</strong>, our mission is to bring 
+            They rely on outdated information or biased agents. At <strong>Campus Connect</strong>, our mission is to bring 
             100% transparency to college admissions. We connect you directly with real seniors who have lived 
             the experience, so you can make the most important decision of your life with confidence.
           </p>
@@ -83,9 +83,9 @@ function About() {
 
         {/* 🚀 The Story Card */}
         <div className="about-glass-card">
-          <h2 style={{ color: "#34D399", marginBottom: "15px", fontSize: "1.8rem" }}>💡 The Story Behind Reapify</h2>
+          <h2 style={{ color: "#34D399", marginBottom: "15px", fontSize: "1.8rem" }}>💡 The Story Behind Reap</h2>
           <p style={{ color: "#ddd", lineHeight: "1.8", fontSize: "1.05rem" }}>
-            Reapify was founded by <strong>Pinak Dave</strong>, a student who realized the massive gap between 
+            Campus Connect was founded by <strong>Pinak Dave</strong>, a student who realized the massive gap between 
             college brochures and college reality. What started as a simple idea to help juniors has now evolved 
             into a premium platform aiming to revolutionize how Indian students choose their engineering destiny.
           </p>
