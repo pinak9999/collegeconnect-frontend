@@ -9,7 +9,7 @@ html, body {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
   scroll-behavior: smooth;
-  background-color: #f8fafc;
+  background-color: #fdfdfd;
   overflow-x: hidden; /* Prevent unwanted horizontal scroll */
 }
 

@@ -4,7 +4,7 @@ import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Zomato/Startup Level UI CSS
+// 🚀 Premium Zomato/Startup Level UI CSS (Header & Avatar Fixed)
 // ======================================
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -67,9 +67,39 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .main-container { max-width: 1050px; margin: 0 auto; padding: 20px 16px; position: relative; }
 
 /* --- Top Header (App Style) --- */
-.top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 0; }
-.brand-title { font-size: 1.6rem; font-weight: 800; margin: 0; color: var(--txt-main); display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
-.theme-btn { background: var(--card-bg); border: 1px solid var(--stroke); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; color: var(--txt-main); font-weight: 600; font-size: 0.85rem; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.top-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 24px; 
+  padding: 10px 0; 
+}
+.brand-title { 
+  font-size: 1.6rem; 
+  font-weight: 800; 
+  margin: 0; 
+  color: var(--txt-main); 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  letter-spacing: -0.5px; 
+}
+.theme-btn { 
+  background: var(--card-bg); 
+  border: 1px solid var(--stroke); 
+  padding: 8px 16px; 
+  border-radius: var(--radius-pill); 
+  cursor: pointer; 
+  color: var(--txt-main); 
+  font-weight: 600; 
+  font-size: 0.85rem; 
+  box-shadow: var(--shadow-soft); 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; /* Icon se gap kam kiya */
+  transition: all 0.2s; 
+  white-space: nowrap; /* Taki button pichke nahi */
+}
 .theme-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
 /* --- Startup Hero Banner --- */
@@ -121,30 +151,90 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .tag-chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 .tag-chip.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); box-shadow: 0 4px 12px rgba(226, 55, 68, 0.25); }
 
-/* --- Mentor Cards --- */
-.grid-style-seniors { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 10px; }
-.senior-card-modern { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--stroke); padding: 24px; box-shadow: var(--shadow-card); transition: all 0.3s ease; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
-.senior-card-modern:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--brand-light); }
+/* --- 🚀 PREMIUM MENTOR CARDS FIX --- */
+.grid-style-seniors { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 24px; 
+  margin-top: 10px; 
+}
+.senior-card-modern { 
+  background: var(--card-bg); 
+  border-radius: var(--radius-lg); 
+  border: 1px solid var(--stroke); 
+  padding: 24px; 
+  box-shadow: var(--shadow-card); 
+  transition: all 0.3s ease; 
+  display: flex; 
+  flex-direction: column; 
+  width: 100%; 
+  box-sizing: border-box; 
+}
+.senior-card-modern:hover { 
+  transform: translateY(-5px); 
+  box-shadow: var(--shadow-hover); 
+  border-color: rgba(226, 55, 68, 0.3); 
+}
 
-.card-header-flex { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
-.avatar-box { width: 76px; height: 76px; border-radius: var(--radius-lg); flex-shrink: 0; overflow: hidden; border: 2px solid var(--brand-light); padding: 2px; background: var(--card-bg); }
-.avatar-box img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--radius-lg) - 4px); }
-.info-box { flex-grow: 1; overflow: hidden; }
-.name-text { font-size: 1.2rem; font-weight: 700; color: var(--txt-main); margin: 0 0 4px 0; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.verified-tick { color: #1da1f2; font-size: 0.95rem; }
-.college-text { font-size: 0.85rem; color: var(--txt-muted); margin: 0 0 8px 0; font-weight: 500; line-height: 1.3; }
+/* 🔥 AVATAR & HEADER LAYOUT FIX */
+.card-header-flex { 
+  display: flex; 
+  gap: 18px; 
+  align-items: center; /* Image aur text ekdum center me */
+  margin-bottom: 20px; 
+}
+.avatar-box { 
+  width: 90px; /* Pehle se badi photo */
+  height: 90px; 
+  border-radius: 50%; /* Perfect Gol */
+  flex-shrink: 0; 
+  border: 3px solid var(--brand-light); /* Premium Border */
+  padding: 3px; 
+  background: var(--bg-color); 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Photo me 3D feel */
+}
+.avatar-box img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  border-radius: 50%; /* Photo ko bhi gol kiya */
+}
+.info-box { 
+  flex-grow: 1; 
+  overflow: hidden; 
+}
+.name-text { 
+  font-size: 1.3rem; /* Bada naam */
+  font-weight: 800; 
+  color: var(--txt-main); 
+  margin: 0 0 6px 0; 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+.verified-tick { color: #1da1f2; font-size: 1.1rem; }
+.college-text { 
+  font-size: 0.9rem; 
+  color: var(--txt-muted); 
+  margin: 0 0 8px 0; 
+  font-weight: 500; 
+  line-height: 1.3; 
+}
 
 .rating-row { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: var(--txt-muted); }
-.bio-text { font-size: 0.85rem; color: var(--txt-muted); font-style: italic; margin: 0 0 20px 0; background: var(--bg-color); padding: 10px 12px; border-radius: var(--radius-md); border-left: 3px solid var(--brand-primary); }
+.bio-text { font-size: 0.85rem; color: var(--txt-muted); font-style: italic; margin: 0 0 20px 0; background: var(--bg-color); padding: 12px; border-radius: var(--radius-md); border-left: 3px solid var(--brand-primary); line-height: 1.5; }
 
 .price-session-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: auto; }
-.price-badge { background: var(--price-bg); color: var(--price-green); padding: 6px 14px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.1rem; }
+.price-badge { background: var(--price-bg); color: var(--price-green); padding: 6px 14px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.2rem; }
 .duration-badge { border: 1px solid var(--stroke); color: var(--txt-main); padding: 6px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.85rem; }
 
-.cc-btn { width: 100%; border: none; cursor: pointer; border-radius: var(--radius-md); padding: 14px; font-family: inherit; font-weight: 600; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-sizing: border-box; }
+.cc-btn { width: 100%; border: none; cursor: pointer; border-radius: var(--radius-md); padding: 14px; font-family: inherit; font-weight: 700; font-size: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-sizing: border-box; letter-spacing: 0.5px; }
 .cc-btn:active { transform: scale(0.98); }
-.cc-btn.primary { background: var(--brand-gradient); color: white; box-shadow: 0 4px 15px rgba(226, 55, 68, 0.2); }
-.cc-btn.primary:hover { box-shadow: 0 6px 20px rgba(226, 55, 68, 0.3); transform: translateY(-1px); }
+.cc-btn.primary { background: var(--brand-gradient); color: white; box-shadow: 0 4px 15px rgba(226, 55, 68, 0.25); }
+.cc-btn.primary:hover { box-shadow: 0 8px 25px rgba(226, 55, 68, 0.35); transform: translateY(-2px); }
 
 /* --- Footer Trust Badges --- */
 .trust-badges-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px; margin-top: 40px; box-shadow: var(--shadow-card); border: 1px solid var(--stroke); }
@@ -192,52 +282,34 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   .desktop-tabs { display: none; }
   .bottom-nav { display: flex; }
   
-  /* 🚀 FOOTER OVERLAP FIX: Ensures the global footer component extends behind the nav */
-  footer {
-    padding-bottom: 90px !important; 
-  }
-
-  .main-container { padding: 12px; padding-bottom: -69px; overflow-x: hidden; }
+  footer { padding-bottom: 90px !important; }
+  .main-container { padding: 12px; padding-bottom: 0px; overflow-x: hidden; }
+  
+  /* 🔥 HEADER OVERLAP FIX */
+  .top-header { gap: 10px; flex-wrap: wrap; }
+  .brand-title { font-size: 1.35rem; } /* Font thoda chota kiya taki na takraye */
+  .theme-btn { padding: 6px 12px; font-size: 0.8rem; }
   
   .hero-premium { padding: 24px 20px; border-radius: 16px; margin-bottom: 20px; }
   .hero-premium h1 { font-size: 1.6rem; }
   .hero-premium p { font-size: 0.95rem; }
   .hero-premium::after { display: none; }
   
-  .search-section { 
-    padding: 0; 
-    margin-bottom: 24px; 
-    background: transparent; 
-    box-shadow: none; 
-    border: none; 
-  }
+  .search-section { padding: 0; margin-bottom: 24px; background: transparent; box-shadow: none; border: none; }
+  .search-bar-modern { background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-soft); }
   
-  .search-bar-modern {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 12px 16px;
-    box-shadow: var(--shadow-soft);
-  }
-  
-  .filter-dropdowns { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-    margin-top: 12px; 
-    width: 100%;
-  }
-  
-  .cc-select { 
-    background-color: var(--card-bg);
-    box-shadow: var(--shadow-soft);
-    border-radius: 12px;
-  }
+  .filter-dropdowns { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; width: 100%; }
+  .cc-select { background-color: var(--card-bg); box-shadow: var(--shadow-soft); border-radius: 12px; }
   
   .tags-scroll-container { padding: 8px 0; }
   .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
 
+  /* 🔥 MOBILE CARD FIX: Photo aur Name ek line me, par BADI PHOTO */
   .grid-style-seniors { gap: 16px; }
   .senior-card-modern { padding: 20px; }
+  .card-header-flex { flex-direction: row; text-align: left; align-items: center; }
+  .avatar-box { width: 80px; height: 80px; margin-bottom: 0; }
+  .name-text { font-size: 1.2rem; }
   
   .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
   .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; }
@@ -270,7 +342,7 @@ const SkeletonCard = () => (
 );
 
 // ===============================
-// 🎓 FindSenior (Logic Restored)
+// 🎓 FindSenior
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
   const [search, setSearch] = useState("");
@@ -330,7 +402,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
         </div>
       </div>
 
-      <h3 style={{fontSize: '1.3rem', margin: '30px 0 16px 0', fontWeight: 800}}>Recommended Mentors</h3>
+      <h3 style={{fontSize: '1.4rem', margin: '30px 0 20px 0', fontWeight: 800}}>Recommended Mentors</h3>
 
       <div className="grid-style-seniors">
         {loading
@@ -360,8 +432,12 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
                     </div>
                   </div>
 
-                  <p className="bio-text">Please ask Admin to update this profile.</p>
-
+                
+<p className="bio-text">
+  {p.bio 
+    ? (p.bio.length > 70 ? p.bio.substring(0, 70) + "..." : p.bio) 
+    : `Expert senior from ${p.college?.name || "top college"} ready to guide you.`}
+</p>
                   <div className="price-session-row">
                     <span className="price-badge">₹{finalPrice}</span>
                     <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
@@ -391,7 +467,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
 };
 
 // ===============================
-// 📘 MyBookings (Logic Restored)
+// 📘 MyBookings
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -599,7 +675,6 @@ const StudentDashboard = () => {
 
   const toggleTheme = () => setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   
-  // 🚀 SCROLL FIX: When changing tabs or refreshing, scroll to top
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
@@ -661,7 +736,7 @@ const StudentDashboard = () => {
       {/* Bottom Navigation (Mobile Only) */}
       <div className="bottom-nav">
         <Link to="/student-dashboard" className={`b-nav-item ${!onBookingsTab ? "active" : ""}`}>
-          <span className="b-nav-icon">✨</span>
+          <span className="b-nav-icon">🏫</span>
           Find Seniors
         </Link>
         <Link to="/student-dashboard/bookings" className={`b-nav-item ${onBookingsTab ? "active" : ""}`}>

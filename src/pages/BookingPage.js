@@ -37,7 +37,7 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
   display: flex;
   flex-direction: column;
   min-height: 100vh; 
-  background-color: #f5fbf3;
+  background-color: #fef5f5;
   animation: fadeIn 0.4s ease-out forwards;
   padding-bottom: 40px; /* Space for main footer */
 }
