@@ -53,7 +53,7 @@
 
 /* Individual Cards */
 .step-card {
-  background: #ffffff;
+  background: #e8efff;
   border-radius: 20px;
   padding: 40px 25px 30px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
@@ -163,7 +163,7 @@
 .features-bottom-bar {
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: #fbfde4;
   padding: 15px 30px;
   border-radius: 50px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);

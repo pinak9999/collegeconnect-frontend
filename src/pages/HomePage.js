@@ -195,7 +195,14 @@ function HomePage() {
       </section>
 
       
-      <section className="fade-in-up" style={{ ...sectionBase, background: "#ffffff" }}>
+      <section
+  className="fade-in-up"
+  style={{
+    ...sectionBase,
+    padding: isMobile ? "0" : "40px 0px",   // 👈 YAHI CHANGE KARO
+    background: "#ffffff"
+  }}
+>
         
        
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -210,7 +217,7 @@ function HomePage() {
           Just register, choose your preferred senior, and book a call. Real advice. Real
           students. Real experiences.
         </p>
-        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <HowItWorks />
         </div>
       </section>

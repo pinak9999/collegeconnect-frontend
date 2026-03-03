@@ -186,7 +186,7 @@ const featuredStyles = `
 }
 .btn-book {
     display: block;
-    width: 100%;
+    width: 89%;
     padding: 14px;
     border-radius: 12px;
     background: linear-gradient(135deg, #e23744 0%, #ff5e6b 100%);
