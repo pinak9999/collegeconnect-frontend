@@ -88,7 +88,7 @@ function AIMatchmaker() {
         setError("");
         try {
             // Apna backend URL daalein
-            const res = await axios.post("http://localhost:5000/api/ai/matchmaker", { query });
+           const res = await axios.post("https://collegeconnect-backend-mrkz.onrender.com/api/ai/matchmaker", { query });
             setMatches(res.data.matches);
         } catch (err) {
             setError("AI is taking a break. Please try again later.");
