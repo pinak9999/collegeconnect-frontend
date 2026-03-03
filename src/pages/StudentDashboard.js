@@ -311,8 +311,17 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   .avatar-box { width: 80px; height: 80px; margin-bottom: 0; }
   .name-text { font-size: 1.2rem; }
   
+  /* 🔥 MY BOOKINGS CARD MOBILE ALIGNMENT FIXES */
   .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; }
+  .booking-profile-flex { flex-direction: row; align-items: center; width: 100%; } /* Center aligned avatar and name */
+  .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; }
+  
+  /* Alert Box padding fix */
+  .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
+  
+  /* Buttons Side-by-Side strictly */
+  .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
+  .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
 }
 `;
 
@@ -467,7 +476,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
 };
 
 // ===============================
-// 📘 MyBookings
+// 📘 MyBookings (Fixed Mobile Alignment)
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -600,7 +609,7 @@ const MyBookings = ({ seniors }) => {
         )}
 
         <div className="booking-actions">
-          {status === "confirmed" && <button className="cc-btn primary" style={{width: 'auto', padding: '12px 24px'}} onClick={() => handleChat(b._id)}>💬 Chat</button>}
+          {status === "confirmed" && <button className="cc-btn primary" onClick={() => handleChat(b._id)}>💬 Chat</button>}
           {dispute === "none" && !b.rated && <button className="cc-btn btn-outline danger" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>}
           
           {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (

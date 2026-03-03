@@ -71,6 +71,9 @@ function Footer({ loading }) {
       display: "flex",
       flexDirection: "column",
       gap: "6px",
+    margin: "20px",
+    padding: "-7px" ,
+
     },
     heading: {
       color: "#fff",
@@ -113,6 +116,11 @@ function Footer({ loading }) {
       borderTop: "1px solid rgba(255,255,255,0.15)",
       paddingTop: "1.5rem",
       marginTop: "1.5rem",
+    padding: "4px",
+    margin: "10px",
+    paddingright: "15px",
+    paddingleft: "8px",
+    alignItems:"center",
     },
     brandName: { color: "#00a8e1", fontWeight: 700, fontSize: "1.2rem" },
     bottomText: { fontSize: "0.85rem", color: "#aaa", marginTop: "4px" },
