@@ -137,7 +137,7 @@ function HomePage() {
       </section>
 
       {/* 🤖 AI MATCHMAKER SECTION (✅ FIX: Yahan add kiya hai) */}
-      <section className="fade-in-up" style={{ padding: isMobile ? "40px 10px" : "60px 20px", background: "#ffffff" }}>
+      <section className="fade-in-up" style={{ padding: isMobile ? "40px 10px" : "60px 20px", background: "rgb(234 235 253)" }}>
         <AIMatchmaker />
       </section>
 
@@ -204,7 +204,7 @@ function HomePage() {
         style={{
           ...sectionBase,
           padding: isMobile ? "0" : "40px 0px",
-          background: "#ffffff"
+          background: "rgb(234 235 253)"
         }}
       >
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
