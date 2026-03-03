@@ -4,6 +4,7 @@ import HowItWorks from "../components/HowItWorks";
 import FeaturedSeniors from "../components/FeaturedSeniors";
 import CollegeMap from "../components/CollegeMap";
 import { colleges } from "../components/colleges";
+import AIMatchmaker from '../components/AIMatchmaker';
 
 function HomePage() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -26,6 +27,7 @@ function HomePage() {
     );
     fadeElements.forEach((el) => observer.observe(el));
 
+    // ✅ FIX: yahan se <AIMatchmaker /> hata diya hai
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", resizeHandler);
@@ -34,89 +36,87 @@ function HomePage() {
 
   // --- एडवांस्ड और मॉडर्न इनलाइन स्टाइल्स ---
 
-  const primaryColor = "#4F46E5"; // एक ज़्यादा एडवांस्ड, रिच Indigo/Violet
-  const gradient = "linear-gradient(135deg, #4F46E5, #3B82F6)"; // नया ग्रेडिएंट
-  const lightBg = "#f9fafb"; // हल्का ग्रे बैकग्राउंड
-  const darkText = "#111827"; // डार्क टेक्स्ट
-  const lightText = "#4B5563"; // हल्का टेक्स्ट
+  const primaryColor = "#4F46E5"; 
+  const gradient = "linear-gradient(135deg, #4F46E5, #3B82F6)"; 
+  const lightBg = "#f9fafb"; 
+  const darkText = "#111827"; 
+  const lightText = "#4B5563"; 
 
   const heroTitle = {
-    fontSize: isMobile ? "2.2rem" : "3rem", // थोड़ा बड़ा और ज़्यादा इम्पैक्टफुल
+    fontSize: isMobile ? "2.2rem" : "3rem",
     fontWeight: 800,
     margin: "0 0 20px 0",
     lineHeight: 1.3,
-    textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)", // टेक्स्ट को पॉप करने के लिए शैडो
+    textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
   };
   const heroDesc = {
     fontSize: isMobile ? "1rem" : "1.2rem",
-    color: "rgba(255, 255, 255, 0.95)", // थोड़ी ज़्यादा विजिबिलिटी
+    color: "rgba(255, 255, 255, 0.95)",
     marginBottom: "40px",
     maxWidth: 600,
     margin: "0 auto 40px auto",
   };
   const ctaBtn = {
     background: "#ffffff",
-    color: primaryColor, // प्राइमरी कलर का टेक्स्ट
-    fontWeight: 700, // ज़्यादा बोल्ड
-    padding: isMobile ? "14px 30px" : "16px 40px", // थोड़ा बड़ा बटन
+    color: primaryColor,
+    fontWeight: 700,
+    padding: isMobile ? "14px 30px" : "16px 40px",
     borderRadius: 50,
     fontSize: isMobile ? "1rem" : "1.1rem",
     textDecoration: "none",
-    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)", // ज़्यादा सॉफ्ट शैडो
+    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
     transition: "all 0.25s ease",
     display: "inline-block",
   };
   const sectionBase = {
-    padding: isMobile ? "60px 20px" : "90px 25px", // ज़्यादा वर्टिकल पैडिंग
+    padding: isMobile ? "60px 20px" : "90px 25px",
     textAlign: "center",
     opacity: 0,
     transform: "translateY(40px)",
     transition: "all 1s ease",
   };
   const sectionTitle = {
-    fontSize: isMobile ? "1.8rem" : "2.4rem", // ज़्यादा प्रमुख टाइटल
+    fontSize: isMobile ? "1.8rem" : "2.4rem",
     fontWeight: 700,
-    color: primaryColor, // नया प्राइमरी कलर
+    color: primaryColor,
     margin: "0 0 15px 0",
   };
   const sectionDesc = {
-    color: lightText, // नया लाइट टेक्स्ट कलर
+    color: lightText,
     margin: "0 auto 40px auto",
     fontSize: isMobile ? "1rem" : "1.1rem",
     maxWidth: 800,
-    lineHeight: 1.7, // बेहतर रीडेबिलिटी
+    lineHeight: 1.7,
   };
   const gridStyle = {
     display: "grid",
     gridTemplateColumns: isMobile
       ? "repeat(auto-fit, minmax(280px, 1fr))"
-      : "repeat(auto-fit, minmax(320px, 1fr))", // थोड़े बड़े कार्ड्स
-    gap: isMobile ? "25px" : "35px", // ज़्यादा गैप
+      : "repeat(auto-fit, minmax(320px, 1fr))",
+    gap: isMobile ? "25px" : "35px",
     maxWidth: 1200,
     margin: "0 auto",
   };
   
-  // कार्ड के लिए बेस शैडो
   const cardBaseShadow = "0 8px 30px rgba(0, 0, 0, 0.06)";
-  // कार्ड के लिए एडवांस्ड कलर्ड होवर शैडो
-  const cardHoverShadow = `0 12px 35px rgba(79, 70, 229, 0.15)`; // ${primaryColor} का हल्का शैडो
+  const cardHoverShadow = `0 12px 35px rgba(79, 70, 229, 0.15)`;
 
   return (
     <div
       style={{
         fontFamily: "'Poppins', sans-serif",
-        backgroundColor: lightBg, // बेस बैकग्राउंड
-        color: darkText, // बेस टेक्स्ट
+        backgroundColor: lightBg,
+        color: darkText,
         overflowX: "hidden",
       }}
     >
       {/* 🌟 HERO */}
       <section
         style={{
-          background: gradient, // नया ग्रेडिएंट
+          background: gradient,
           color: "white",
           textAlign: "center",
-          padding: isMobile ? "80px 20px" : "120px 20px", // ज़्यादा पैडिंग
+          padding: isMobile ? "80px 20px" : "120px 20px",
           position: "relative",
         }}
         className="fade-in-up"
@@ -136,6 +136,11 @@ function HomePage() {
         </Link>
       </section>
 
+      {/* 🤖 AI MATCHMAKER SECTION (✅ FIX: Yahan add kiya hai) */}
+      <section className="fade-in-up" style={{ padding: isMobile ? "40px 10px" : "60px 20px", background: "#ffffff" }}>
+        <AIMatchmaker />
+      </section>
+
       {/* 🏛️ TOP COLLEGES */}
       <section className="fade-in-up" style={{ ...sectionBase, background: "#f2f4ff" }}>
         <h2 style={sectionTitle}>🏛️ Explore Top Colleges in Rajasthan</h2>
@@ -147,18 +152,18 @@ function HomePage() {
               style={{
                 background: "#ffffff",
                 borderRadius: 16,
-                boxShadow: cardBaseShadow, // बेस शैडो
+                boxShadow: cardBaseShadow,
                 overflow: "hidden",
                 textAlign: "left",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-8px)"; // ज़्यादा लिफ़्ट
-                e.currentTarget.style.boxShadow = cardHoverShadow; // कलर्ड शैडो
+                e.currentTarget.style.transform = "translateY(-8px)";
+                e.currentTarget.style.boxShadow = cardHoverShadow;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = cardBaseShadow; // वापस बेस शैडो
+                e.currentTarget.style.boxShadow = cardBaseShadow;
               }}
             >
               <img
@@ -166,11 +171,11 @@ function HomePage() {
                 alt={college.name}
                 style={{
                   width: "100%",
-                  height: isMobile ? "180px" : "220px", // थोड़ी ज़्यादा हाइट
+                  height: isMobile ? "180px" : "220px",
                   objectFit: "cover",
                 }}
               />
-              <div style={{ padding: "20px 22px" }}> {/* ज़्यादा पैडिंग */}
+              <div style={{ padding: "20px 22px" }}>
                 <h3 style={{ margin: "0 0 8px 0", color: primaryColor, fontSize: '1.25rem' }}>
                   {college.name}
                 </h3>
@@ -194,17 +199,14 @@ function HomePage() {
         </div>
       </section>
 
-      
       <section
-  className="fade-in-up"
-  style={{
-    ...sectionBase,
-    padding: isMobile ? "0" : "40px 0px",   // 👈 YAHI CHANGE KARO
-    background: "#ffffff"
-  }}
->
-        
-       
+        className="fade-in-up"
+        style={{
+          ...sectionBase,
+          padding: isMobile ? "0" : "40px 0px",
+          background: "#ffffff"
+        }}
+      >
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <FeaturedSeniors />
         </div>
@@ -226,7 +228,7 @@ function HomePage() {
       <section
         className="fade-in-up"
         style={{
-          background: gradient, // नया ग्रेडिएंट
+          background: gradient, 
           color: "#fff",
           textAlign: "center",
           padding: isMobile ? "70px 20px" : "90px 20px",
@@ -235,10 +237,9 @@ function HomePage() {
       >
         <h2
           style={{
-            fontSize: isMobile ? "1.6rem" : "2rem", // ज़्यादा इम्पैक्टफुल
-            fontWeight: 700, // ज़्यादा बोल्ड
-            marginBottom: "30px", // ज़्यादा स्पेस
-          
+            fontSize: isMobile ? "1.6rem" : "2rem",
+            fontWeight: 700,
+            marginBottom: "30px",
             textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
           }}
         >
