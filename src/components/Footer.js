@@ -13,15 +13,14 @@ function Footer({ loading }) {
 
   if (loading) return null;
 
-  // 🚀 PRO FIX: 404 Error रोकने के लिए फंक्शन
   const handleComingSoon = (e) => {
-    e.preventDefault(); // पेज को 404 पर जाने से रोकेगा
+    e.preventDefault();
     alert("🚀 This page is currently under construction. Coming soon!");
   };
 
   const linksMap = {
     "Get to Know Us": [
-      { name: "About Us", href: "/about" }, // इसका पेज बन चुका है
+      { name: "About Us", href: "/about" }, 
       { name: "Careers", href: "/careers" },
       { name: "Press Release", href: "/press" },
       { name: "Blog", href: "/blog" },
@@ -52,94 +51,109 @@ function Footer({ loading }) {
       width: "100%",
       background: "#131A22",
       color: "#ddd",
-      marginBottom: "-22px",
+      marginBottom: isMobile ? "-25px" : "0", 
       fontFamily: "'Poppins', sans-serif",
-      padding: isMobile ? "2rem 1rem" : "2.5rem 0 2rem 0",
-      borderTop: "1px solid rgba(255,255,255,0.1)",
-      marginTop: "1px",
+      /* 🔥 टॉप और बॉटम पैडिंग को बेहतर किया गया है */
+      padding: isMobile ? "2.5rem 0 1.5rem 0" : "3rem 0 2rem 0",
+      borderTop: "1px solid rgba(255,255,255,0.05)",
+      boxSizing: "border-box",
     },
     container: {
       maxWidth: "1200px",
       margin: "0 auto",
-      padding: isMobile ? "0 10px" : "0 20px",
+      /* 🔥 FIX: मोबाइल में लेफ्ट-राइट 20px की पैडिंग दी गई है ताकि कंटेंट बीच में रहे */
+      padding: isMobile ? "0 39px" : "0 40px",
       display: "grid",
-      gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)",
-      gap: isMobile ? "20px" : "40px",
-      textAlign: isMobile ? "center" : "left",
+      gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fit, minmax(200px, 1fr))",
+      gap: isMobile ? "35px 20px" : "40px", 
     },
     column: {
       display: "flex",
       flexDirection: "column",
-      gap: "6px",
-    margin: "20px",
-    padding: "-7px" ,
-
+      gap: "12px", 
+      width: "100%",
     },
     heading: {
-      color: "#fff",
+      color: "#ffffff",
       fontWeight: 600,
-      fontSize: "1rem",
-      marginBottom: "6px",
+      fontSize: isMobile ? "1.05rem" : "1.15rem",
+      marginBottom: "4px",
+      letterSpacing: "0.5px",
     },
     link: {
-      color: "#ccc",
+      color: "#a1a1aa", // मॉडर्न हल्का ग्रे कलर
       textDecoration: "none",
-      fontSize: "0.9rem",
-      transition: "color 0.2s ease",
+      fontSize: isMobile ? "0.9rem" : "0.95rem",
+      transition: "all 0.3s ease",
       cursor: "pointer",
+      display: "inline-block", // ट्रांसफॉर्म इफ़ेक्ट के लिए ज़रूरी
     },
     linkHover: {
-      color: "#00a8e1",
+      color: "#38bdf8", // प्रीमियम स्काई ब्लू
+      transform: "translateX(6px)", // 🔥 PRO: होवर करने पर हल्का सा आगे खिसकेगा
     },
     socialRow: {
       display: "flex",
-      justifyContent: isMobile ? "center" : "flex-start",
+      justifyContent: "flex-start",
       gap: "12px",
-      marginTop: "8px",
+      marginTop: "4px",
+      flexWrap: "wrap", 
     },
     socialIcon: {
-      width: "34px",
-      height: "34px",
+      width: isMobile ? "36px" : "40px",
+      height: isMobile ? "36px" : "40px",
       borderRadius: "50%",
-      background: "#232f3e",
+      background: "rgba(255,255,255,0.05)", // ट्रांसपेरेंट बैकग्राउंड
+      border: "1px solid rgba(255,255,255,0.1)", // हल्का बॉर्डर
       color: "#fff",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
       cursor: "pointer",
-      fontSize: "1.1rem",
+      fontSize: isMobile ? "1.1rem" : "1.2rem",
       transition: "all 0.3s ease",
       textDecoration: "none",
     },
     brandSection: {
       textAlign: "center",
-      borderTop: "1px solid rgba(255,255,255,0.15)",
-      paddingTop: "1.5rem",
-      marginTop: "1.5rem",
-    padding: "4px",
-    margin: "10px",
-    paddingright: "15px",
-    paddingleft: "8px",
-    alignItems:"center",
+      borderTop: "1px solid rgba(255,255,255,0.1)",
+      paddingTop: "2rem",
+      marginTop: "3rem",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: "8px",
+      padding: "0 15px",
+      gridColumn: "1 / -1", // पूरे ग्रिड में फैलेगा
+      
     },
-    brandName: { color: "#00a8e1", fontWeight: 700, fontSize: "1.2rem" },
-    bottomText: { fontSize: "0.85rem", color: "#aaa", marginTop: "4px" },
+    brandName: { 
+      /* 🔥 ब्रांड नेम को प्रीमियम ग्रेडिएंट लुक दिया है */
+      background: "linear-gradient(90deg, #00E0FF, #38BDF8)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      fontWeight: 800, 
+      fontSize: isMobile ? "1.4rem" : "1.6rem" 
+    },
+    bottomText: { fontSize: "0.8rem", color: "#64748b", marginTop: "6px" },
     tagline: {
-      fontSize: "1rem", 
-      color: "#ddd", 
-      margin: "0 0 8px 0",
-      fontWeight: 300,
+      fontSize: isMobile ? "0.9rem" : "0.95rem", 
+      color: "#94a3b8", 
+      fontWeight: 400,
+      textAlign: "center",
+      margin:"-4px",
+    
     },
   };
 
   return (
     <footer style={styles.footer}>
       <div style={styles.container}>
+        
         {/* Column 1 */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Get to Know Us</h4>
           {linksMap["Get to Know Us"].map((item) => (
-            // 🚀 MAGIC: अगर "About Us" है तो <Link> चलाओ, वर्ना <a> पर Alert
             item.name === "About Us" ? (
               <Link
                 key={item.name}
@@ -178,7 +192,7 @@ function Footer({ loading }) {
             <a
               key={item.name}
               href={item.href}
-              onClick={handleComingSoon} // 🚀 यहाँ Alert लगा दिया
+              onClick={handleComingSoon}
               style={{
                 ...styles.link,
                 ...(hovered === item.name ? styles.linkHover : {}),
@@ -198,7 +212,7 @@ function Footer({ loading }) {
             <a
               key={item.name}
               href={item.href}
-              onClick={handleComingSoon} // 🚀 यहाँ Alert लगा दिया
+              onClick={handleComingSoon}
               style={{
                 ...styles.link,
                 ...(hovered === item.name ? styles.linkHover : {}),
@@ -219,16 +233,17 @@ function Footer({ loading }) {
               <a
                 key={link.name}
                 href={link.href}
-                onClick={handleComingSoon} // 🚀 Social icons पर भी Alert
+                onClick={handleComingSoon}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
                   ...styles.socialIcon,
                   background:
                     hovered === link.name
-                      ? "linear-gradient(45deg,#00a8e1,#2563eb)"
-                      : "#232f3e",
-                  transform: hovered === link.name ? "scale(1.1)" : "scale(1)",
+                      ? "linear-gradient(135deg, #00E0FF, #38BDF8)"
+                      : "rgba(255,255,255,0.05)",
+                  borderColor: hovered === link.name ? "transparent" : "rgba(255,255,255,0.1)",
+                  transform: hovered === link.name ? "translateY(-4px)" : "translateY(0)",
                 }}
                 onMouseEnter={() => setHovered(link.name)}
                 onMouseLeave={() => setHovered("")}
@@ -239,19 +254,20 @@ function Footer({ loading }) {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Brand Footer */}
-      <div style={styles.brandSection}>
-        <h3>
-          <span style={styles.brandName}>Campus Connect</span>
-        </h3>
-        <p style={styles.tagline}>
-          Simplifying engineering admission & beyond
-        </p>
-        <p style={styles.bottomText}>
-          © 2026 RajasthanCampus Connect. Made with ❤️ for Indian Students.
-        </p>
+        {/* Brand Footer */}
+        <div style={styles.brandSection}>
+          <div>
+            <span style={styles.brandName}>Campus Connect</span>
+          </div>
+          <p style={styles.tagline}>
+            Simplifying engineering admission & beyond
+          </p>
+          <p style={styles.bottomText}>
+            © 2026 RajasthanCampus Connect. Made with ❤️ for Indian Students.
+          </p>
+        </div>
+
       </div>
     </footer>
   );

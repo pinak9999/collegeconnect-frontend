@@ -24,12 +24,11 @@ const navbarStyles = `
   padding: 12px 0;
 }
 
-/* Dynamic Backgrounds based on route */
-.main-nav.dashboard-bg {
-  background: linear-gradient(90deg, #0f172a, #1e293b); /* Dark Premium */
-}
+/* 🔥 Image ke hisaab se navabar ka color change kiya gaya hai */
+.main-nav.dashboard-bg,
 .main-nav.default-bg {
-  background: linear-gradient(90deg, #1A2980 0%, #26D0CE 100%); /* Ocean Blue Premium */
+  /* Dark Purple/Navy Gradient as seen in the image */
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
 }
 
 /* --- Inner Layout --- */
@@ -53,6 +52,7 @@ const navbarStyles = `
   gap: 8px;
   letter-spacing: -0.5px;
   white-space: nowrap; /* 🔥 FIX: यह टेक्स्ट को टूटने (break) से रोकेगा */
+  padding-top: 15px;
 }
 .brand-highlight {
   background: linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8);
@@ -117,8 +117,9 @@ const navbarStyles = `
 
 
 /* --- Scrolling Tagline (Marquee) --- */
+/* 🔥 Image ke hisaab se pinkish-purple color match kiya gaya hai */
 .scrolling-bar {
-  background: linear-gradient(90deg, #e23744, #b10cfd);
+  background: linear-gradient(90deg, #f43f5e 0%, #d946ef 50%, #8b5cf6 100%);
   color: #ffffff;
   font-weight: 600;
   padding: 8px 0;
@@ -153,9 +154,9 @@ const navbarStyles = `
     justify-content: center;
     gap: 14px;
   }
-  .brand-logo { font-size: 1.45rem; }
+  .brand-logo { font-size: 1.75rem; }
   .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
-  .nav-btn { padding: 8px 16px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 160px; }
+  .nav-btn { padding: 7px 0px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 160px; }
   .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
   .scrolling-text { animation-duration: 18s; } 
 }

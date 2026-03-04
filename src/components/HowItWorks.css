@@ -3,7 +3,7 @@
 
 .how-it-works-premium {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #fdfbfb 0%, #f4f5f9 100%);
+  background: linear-gradient(135deg, #fcffb0 0%, #bff6f3 100%);
   padding: 60px 20px;
   overflow: hidden;
 }
@@ -53,7 +53,7 @@
 
 /* Individual Cards */
 .step-card {
-  background: #e8efff;
+  background: #eaffebbc;
   border-radius: 20px;
   padding: 40px 25px 30px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);

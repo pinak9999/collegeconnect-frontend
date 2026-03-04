@@ -74,6 +74,7 @@ function HomePage() {
     opacity: 0,
     transform: "translateY(40px)",
     transition: "all 1s ease",
+
   };
   const sectionTitle = {
     fontSize: isMobile ? "1.8rem" : "2.4rem",
@@ -212,13 +213,25 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 💡 HOW IT WORKS */}
-      <section className="fade-in-up" style={{ ...sectionBase, background: lightBg }}>
+     {/* 💡 HOW IT WORKS (Zomato Style Integration) */}
+      <section 
+        className="fade-in-up" 
+        style={{ 
+          opacity: 0, 
+          transform: "translateY(40px)",
+          transition: "all 1s ease",
+          background: "#eef3ff", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
+          padding: isMobile ? "60px 20px" : "90px 20px", 
+          textAlign: "center" /* टेक्स्ट को बीच में रखने के लिए */
+        }}
+      >
+        {/* 👇 आपकी हेडिंग और पैराग्राफ वापस आ गए */}
         <h2 style={sectionTitle}>💡 How It Works</h2>
         <p style={sectionDesc}>
           Just register, choose your preferred senior, and book a call. Real advice. Real
           students. Real experiences.
         </p>
+        
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <HowItWorks />
         </div>

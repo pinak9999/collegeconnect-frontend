@@ -10,9 +10,9 @@ const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg-color: #f8f9fa;
-  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(226, 55, 68, 0.05) 0%, transparent 40%), 
-                radial-gradient(circle at 100% 100%, rgba(37, 165, 65, 0.05) 0%, transparent 40%);
+  --bg-color: #fbc2eb;
+  /* 🔥 Yahan sirf background image gradient change kiya gaya hai exact image jaisa */
+  --bg-pattern: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 35%, #ffb199 70%, #ffecd2 100%);
   --card-bg: #ffffff;
   --nav-bg: rgba(255, 255, 255, 0.95);
   --brand-primary: #e23744; 
@@ -36,8 +36,7 @@ const globalStyles = `
 
 .dark {
   --bg-color: #0a0a0a;
-  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(226, 55, 68, 0.1) 0%, transparent 40%), 
-                radial-gradient(circle at 100% 100%, rgba(37, 165, 65, 0.05) 0%, transparent 40%);
+  --bg-pattern: linear-gradient(135deg, #1e1332 0%, #4a154b 50%, #3e1b1b 100%);
   --card-bg: #141414;
   --nav-bg: rgba(20, 20, 20, 0.95);
   --txt-main: #f4f4f4;
@@ -96,9 +95,9 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   box-shadow: var(--shadow-soft); 
   display: flex; 
   align-items: center; 
-  gap: 6px; /* Icon se gap kam kiya */
+  gap: 6px; 
   transition: all 0.2s; 
-  white-space: nowrap; /* Taki button pichke nahi */
+  white-space: nowrap; 
 }
 .theme-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
@@ -119,7 +118,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 
 /* --- Search & Filters --- */
 .search-section { background: var(--card-bg); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
-.search-bar-modern { display: flex; align-items: center; background: var(--bg-color); border: 1px solid var(--stroke); border-radius: var(--radius-pill); padding: 12px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
+.search-bar-modern { display: flex; align-items: center; background: rgba(255,255,255,0.5); border: 1px solid var(--stroke); border-radius: var(--radius-pill); padding: 12px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
 .search-bar-modern:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-light); background: var(--card-bg); }
 .search-bar-modern input { border: none; background: transparent; width: 100%; padding: 4px 8px; font-family: inherit; font-size: 1rem; color: var(--txt-main); }
 .search-icon { font-size: 1.2rem; color: var(--brand-primary); flex-shrink: 0; }
@@ -131,7 +130,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   box-sizing: border-box;
   appearance: none; 
   border: 1px solid var(--stroke); 
-  background: var(--bg-color) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; 
+  background: var(--card-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; 
   background-size: 16px; 
   color: var(--txt-main); 
   border-radius: var(--radius-md); 
@@ -147,7 +146,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 /* --- Horizontal Scroll Tags --- */
 .tags-scroll-container { display: flex; gap: 12px; overflow-x: auto; padding: 16px 0 4px 0; scrollbar-width: none; width: 100%; box-sizing: border-box; }
 .tags-scroll-container::-webkit-scrollbar { display: none; }
-.tag-chip { flex-shrink: 0; padding: 8px 18px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); background: var(--bg-color); color: var(--txt-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.tag-chip { flex-shrink: 0; padding: 8px 18px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); background: var(--card-bg); color: var(--txt-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .tag-chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 .tag-chip.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); box-shadow: 0 4px 12px rgba(226, 55, 68, 0.25); }
 
@@ -180,31 +179,31 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .card-header-flex { 
   display: flex; 
   gap: 18px; 
-  align-items: center; /* Image aur text ekdum center me */
+  align-items: center; 
   margin-bottom: 20px; 
 }
 .avatar-box { 
-  width: 90px; /* Pehle se badi photo */
+  width: 90px; 
   height: 90px; 
-  border-radius: 50%; /* Perfect Gol */
+  border-radius: 50%; 
   flex-shrink: 0; 
-  border: 3px solid var(--brand-light); /* Premium Border */
+  border: 3px solid var(--brand-light); 
   padding: 3px; 
-  background: var(--bg-color); 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Photo me 3D feel */
+  background: var(--card-bg); 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
 }
 .avatar-box img { 
   width: 100%; 
   height: 100%; 
   object-fit: cover; 
-  border-radius: 50%; /* Photo ko bhi gol kiya */
+  border-radius: 50%; 
 }
 .info-box { 
   flex-grow: 1; 
   overflow: hidden; 
 }
 .name-text { 
-  font-size: 1.3rem; /* Bada naam */
+  font-size: 1.3rem; 
   font-weight: 800; 
   color: var(--txt-main); 
   margin: 0 0 6px 0; 
@@ -225,7 +224,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 }
 
 .rating-row { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: var(--txt-muted); }
-.bio-text { font-size: 0.85rem; color: var(--txt-muted); font-style: italic; margin: 0 0 20px 0; background: var(--bg-color); padding: 12px; border-radius: var(--radius-md); border-left: 3px solid var(--brand-primary); line-height: 1.5; }
+.bio-text { font-size: 0.85rem; color: var(--txt-muted); font-style: italic; margin: 0 0 20px 0; background: rgba(255,255,255,0.5); padding: 12px; border-radius: var(--radius-md); border-left: 3px solid var(--brand-primary); line-height: 1.5; }
 
 .price-session-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: auto; }
 .price-badge { background: var(--price-bg); color: var(--price-green); padding: 6px 14px; border-radius: var(--radius-md); font-weight: 800; font-size: 1.2rem; }
@@ -259,7 +258,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .status-cancelled { background: #ffebee; color: #d32f2f; }
 
 .info-alert-box { background: rgba(226, 55, 68, 0.05); color: var(--brand-primary); padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(226, 55, 68, 0.15); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.rating-prompt-box { background: var(--bg-color); border: 1px dashed var(--stroke); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 16px; }
+.rating-prompt-box { background: rgba(255,255,255,0.5); border: 1px dashed var(--stroke); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 16px; }
 
 .booking-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
 .btn-outline { background: transparent; border: 1px solid var(--stroke); color: var(--txt-main); width: auto; padding: 12px 24px; }
@@ -285,9 +284,8 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   footer { padding-bottom: 90px !important; }
   .main-container { padding: 12px; padding-bottom: 0px; overflow-x: hidden; }
   
-  /* 🔥 HEADER OVERLAP FIX */
   .top-header { gap: 10px; flex-wrap: wrap; }
-  .brand-title { font-size: 1.35rem; } /* Font thoda chota kiya taki na takraye */
+  .brand-title { font-size: 1.35rem; } 
   .theme-btn { padding: 6px 12px; font-size: 0.8rem; }
   
   .hero-premium { padding: 24px 20px; border-radius: 16px; margin-bottom: 20px; }
@@ -304,22 +302,18 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   .tags-scroll-container { padding: 8px 0; }
   .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
 
-  /* 🔥 MOBILE CARD FIX: Photo aur Name ek line me, par BADI PHOTO */
   .grid-style-seniors { gap: 16px; }
   .senior-card-modern { padding: 20px; }
   .card-header-flex { flex-direction: row; text-align: left; align-items: center; }
   .avatar-box { width: 80px; height: 80px; margin-bottom: 0; }
   .name-text { font-size: 1.2rem; }
   
-  /* 🔥 MY BOOKINGS CARD MOBILE ALIGNMENT FIXES */
   .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .booking-profile-flex { flex-direction: row; align-items: center; width: 100%; } /* Center aligned avatar and name */
+  .booking-profile-flex { flex-direction: row; align-items: center; width: 100%; } 
   .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; }
   
-  /* Alert Box padding fix */
   .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
   
-  /* Buttons Side-by-Side strictly */
   .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
   .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
 }
