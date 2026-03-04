@@ -154,7 +154,7 @@ const navbarStyles = `
     justify-content: center;
     gap: 14px;
   }
-  .brand-logo { font-size: 1.75rem; }
+  .brand-logo { font-size: 1.90rem; }
   .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
   .nav-btn { padding: 7px 0px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 160px; }
   .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }

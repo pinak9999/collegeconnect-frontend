@@ -68,7 +68,7 @@ const aiStyles = `
 .ai-book-btn:hover { background: #cb202d; }
 
 @media (max-width: 768px) {
-    .ai-search-box { flex-direction: column; padding: 12px; border-radius: 20px; }
+    .ai-search-box { flex-direction: column; padding: 12px; border-radius: 26px; }
     .ai-search-input { width: 100%; padding: 10px; text-align: center; }
     .ai-btn { width: 100%; justify-content: center; }
 }
@@ -118,7 +118,7 @@ function AIMatchmaker() {
                 <input 
                     type="text" 
                     className="ai-search-input" 
-                    placeholder="e.g. Meri REAP me 5000 rank hai, mujhe CS cahiye..."
+                    placeholder="e.g. Cs Specilization Best Senior"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />

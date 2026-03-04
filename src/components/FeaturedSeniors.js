@@ -10,7 +10,7 @@ const featuredStyles = `
 
 .featured-section-wrapper {
     padding: 80px 20px;
-    background-color: #f8f9fa; /* Clean off-white background */
+    background-color: #e7ffd6 ; /* Clean off-white background */
     font-family: 'Poppins', sans-serif;
     position: relative;
     overflow: hidden;
@@ -229,6 +229,7 @@ const featuredStyles = `
     }
     .expert-card {
         padding: 24px 20px;
+        background-color:  #fef4f4 ;
     }
     .expert-avatar {
         width: 90px;

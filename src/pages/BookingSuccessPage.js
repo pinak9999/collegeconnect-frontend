@@ -5,6 +5,11 @@ function BookingSuccessPage() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const [hover, setHover] = useState(false);
 
+  // 🔝 सबसे ऊपर स्क्रोल करने वाला कोड (Scroll to Top)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" }); // जैसे ही पेज खुलेगा, ये टॉप पर ले जाएगा
+  }, []);
+
   // ✅ Responsive listener
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 600);

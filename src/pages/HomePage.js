@@ -143,7 +143,7 @@ function HomePage() {
       </section>
 
       {/* 🏛️ TOP COLLEGES */}
-      <section className="fade-in-up" style={{ ...sectionBase, background: "#f2f4ff" }}>
+      <section className="fade-in-up" style={{ ...sectionBase, background: "#e3e8fd" }}>
         <h2 style={sectionTitle}>🏛️ Explore Top Colleges in Rajasthan</h2>
         <p style={sectionDesc}>Get a glimpse of the top institutions participating in REAP.</p>
         <div style={gridStyle}>
@@ -188,14 +188,35 @@ function HomePage() {
           ))}
         </div>
       </section>
-
-      {/* 🗺️ MAP */}
-      <section className="fade-in-up" style={{ ...sectionBase, background: lightBg }}>
-        <h2 style={sectionTitle}>🗺️ Find Colleges on the Map</h2>
-        <p style={sectionDesc}>
+{/* 🗺️ MAP */}
+      <section className="fade-in-up" style={{ 
+        ...sectionBase, 
+        /* 🔥 यहाँ मैंने बैकग्राउंड को एक प्रीमियम ग्रेडिएंट में बदल दिया है */
+        background: "linear-gradient(180deg, #ffd6a8 0%, #fbfcbf 100%)",
+        paddingBottom: "80px" // नीचे से थोड़ा स्पेस देने के लिए
+      }}>
+        <h2 style={{ 
+          ...sectionTitle, 
+          color: "#2e1065" /* हेडिंग को थोड़ा डार्क पर्पल किया ताकि और अच्छा लगे */ 
+        }}>
+          🗺️ Find Colleges on the Map
+        </h2>
+        
+        <p style={{ 
+          ...sectionDesc, 
+          color: "#4b5563" 
+        }}>
           Visually explore the locations of all major REAP colleges across Rajasthan.
         </p>
-        <div style={{ maxWidth: 1100, margin: "0 auto", borderRadius: '16px', overflow: 'hidden', boxShadow: cardBaseShadow }}>
+
+        <div style={{ 
+          maxWidth: 1100, 
+          margin: "0 auto", 
+          borderRadius: '24px', // थोड़ा और गोल किया है 
+          overflow: 'hidden', 
+          boxShadow: "0 20px 40px rgba(0,0,0,0.1)", // कार्ड की शैडो को थोड़ा और 3D बनाया है
+          padding: "10px", // CollegeMap के फ्रेम के लिए जगह
+        }}>
           <CollegeMap />
         </div>
       </section>
@@ -220,7 +241,7 @@ function HomePage() {
           opacity: 0, 
           transform: "translateY(40px)",
           transition: "all 1s ease",
-          background: "#eef3ff", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
+            background: "linear-gradient(180deg, #dae5ff 0%, #bffce4 100%)", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
           padding: isMobile ? "60px 20px" : "90px 20px", 
           textAlign: "center" /* टेक्स्ट को बीच में रखने के लिए */
         }}

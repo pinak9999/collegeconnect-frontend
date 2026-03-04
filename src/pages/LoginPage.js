@@ -89,13 +89,13 @@ function LoginPage() {
       justifyContent: "center",
       minHeight: "100vh",
       background:
-        "linear-gradient(135deg, #007bff 0%, #00b4d8 50%, #48cae4 100%)",
+        "linear-gradient(135deg, #ffd5d5c2 0%, #d9e5ff 50%, #dedff8 100%)",
       fontFamily: "'Poppins', sans-serif",
       padding: isMobile ? "1rem" : "2rem",
       transition: "all 0.3s ease",
     },
     card: {
-      background: "rgba(255,255,255,0.95)",
+      background: "rgba(251, 247, 247, 0.87)",
       padding: isMobile ? "1.5rem" : "2.5rem",
       borderRadius: "1.5rem",
       width: isMobile ? "90%" : "400px",
@@ -196,7 +196,7 @@ function LoginPage() {
       >
         <h2 style={styles.title}>Welcome Back 👋</h2>
         <p style={styles.subtitle}>
-          Sign in to continue your journey with <b>CollegeConnect</b>
+          Sign in to continue your journey with <b>Reap Campus Connect</b>
         </p>
 
         <div style={{ display: "flex", justifyContent: "center" }}>

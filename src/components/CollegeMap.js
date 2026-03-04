@@ -18,10 +18,10 @@ function CollegeMap() {
 
   return (
     <div style={{ 
-      border: "2px solid #007BFF", 
+      border: "2px solid #f20000", 
       borderRadius: "16px", 
       overflow: "hidden", 
-      boxShadow: "0 10px 30px rgba(0,123,255,0.2)" 
+      boxShadow: "0 10px 30px rgba(242, 255, 0, 0.2)" 
     }}>
       <MapContainer
         center={rajasthanCenter}
