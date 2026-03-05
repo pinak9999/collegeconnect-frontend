@@ -297,16 +297,16 @@ const SkeletonCard = () => (
 );
 
 // ===============================
-// 🎯 Component 1: College Predictor (NEW 🔥)
+// 🎯 Component 1: College Predictor (REAP Pro Algorithm 🔥)
 // ===============================
 const CollegePredictor = () => {
   const [mode, setMode] = useState("12th"); 
   const [score, setScore] = useState("");
   const [category, setCategory] = useState("GEN");
+  const [domicile, setDomicile] = useState("Rajasthan"); // नया: Home State
+  const [gender, setGender] = useState("Male");         // नया: Gender
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
-
-  // StudentDashboard.js में CollegePredictor के अंदर इस फंक्शन को बदलें:
 
   const handlePredict = async (e) => {
     e.preventDefault();
@@ -319,22 +319,24 @@ const CollegePredictor = () => {
     setResults(null);
 
     try {
-      // 🚀 अब यह आपके असली बैकएंड API से डेटा लाएगा
+      // बैकएंड को सारा असली डेटा भेजें
       const res = await axios.post("https://collegeconnect-backend-mrkz.onrender.com/api/predictor/predict", {
         score: score,
         category: category,
-        mode: mode
+        mode: mode,
+        domicile: domicile,
+        gender: gender
       });
 
       if (res.data.length === 0) {
         toast.error("No colleges found for this score.");
       } else {
         setResults(res.data);
-        toast.success("✨ Accurate Prediction Generated!");
+        toast.success("✨ REAP Algorithm applied successfully!");
       }
     } catch (err) {
       console.error(err);
-      toast.error("⚠️ Failed to fetch predictions. Server might be down.");
+      toast.error("⚠️ Failed to fetch predictions.");
     } finally {
       setLoading(false);
     }
@@ -343,8 +345,8 @@ const CollegePredictor = () => {
   return (
     <div className="page-wrapper">
       <div className="predictor-header">
-        <h2>REAP 2026 Predictor 🎯</h2>
-        <p>Know which college and branch you can get instantly!</p>
+        <h2>REAP 2026 Pro Predictor 🎯</h2>
+        <p>Based on Official Domicile, Category & Girls Quota rules</p>
       </div>
 
       <div className="predictor-card">
@@ -370,23 +372,49 @@ const CollegePredictor = () => {
             />
           </div>
 
-          <div className="input-group" style={{ display: 'flex', gap: '15px', marginTop: '-10px', marginBottom: '24px', flexWrap: 'wrap' }}>
-            {['GEN', 'OBC', 'SC', 'ST'].map(cat => (
+          {/* Domicile & Gender Dropdowns */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)' }}>Home State</label>
+              <select className="cc-select" value={domicile} onChange={(e) => setDomicile(e.target.value)} style={{ padding: '10px 16px', fontSize: '0.9rem', marginTop: '5px' }}>
+                <option value="Rajasthan">Rajasthan (85% Quota)</option>
+                <option value="Outside Rajasthan">Outside Rajasthan (15% Quota)</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)' }}>Gender</label>
+              <select className="cc-select" value={gender} onChange={(e) => setGender(e.target.value)} style={{ padding: '10px 16px', fontSize: '0.9rem', marginTop: '5px' }}>
+                <option value="Male">Male</option>
+                <option value="Female">Female (25% Quota)</option>
+              </select>
+            </div>
+          </div>
+
+          <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)', display: 'block', marginBottom: '8px' }}>Select Category</label>
+          <div className="input-group" style={{ display: 'flex', gap: '15px', marginBottom: '24px', flexWrap: 'wrap' }}>
+            {['GEN', 'EWS', 'OBC', 'MBC', 'SC', 'ST'].map(cat => (
               <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--txt-main)' }}>
                 <input type="radio" name="category" checked={category === cat} onChange={() => setCategory(cat)} /> {cat}
               </label>
             ))}
           </div>
 
+          {/* Warning for Outside Rajasthan */}
+          {domicile === "Outside Rajasthan" && category !== "GEN" && (
+             <div style={{ background: '#fff3cd', color: '#856404', padding: '10px', borderRadius: '8px', fontSize: '0.8rem', marginBottom: '15px' }}>
+               ℹ️ Note: Outside Rajasthan candidates are treated as General (GEN) in REAP counseling.
+             </div>
+          )}
+
           <button type="submit" className="predict-btn" disabled={loading}>
-            {loading ? "✨ Analyzing Data..." : "Predict My Colleges"}
+            {loading ? "✨ Running REAP Algorithm..." : "Predict My Colleges"}
           </button>
         </form>
       </div>
 
       {results && (
         <div style={{ marginTop: '24px' }}>
-          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--txt-main)' }}>Based on {score}{mode === "12th" ? "%" : " %ile"}:</h3>
+          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--txt-main)' }}>Based on Real REAP Algorithm:</h3>
           {results.map((col, idx) => (
             <div key={idx} className="result-card" style={{ animationDelay: `${idx * 0.15}s` }}>
               <div className="college-info">
@@ -399,14 +427,13 @@ const CollegePredictor = () => {
             </div>
           ))}
           <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--txt-muted)', marginTop: '16px'}}>
-            *This is an estimated prediction based on previous years' data.
+            *This prediction includes Girls Quota and State Domicile rules.
           </p>
         </div>
       )}
     </div>
   );
 };
-
 // ===============================
 // 🎓 Component 2: FindSenior (Aapka Purana)
 // ===============================
