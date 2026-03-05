@@ -334,46 +334,42 @@ function SeniorEarningsPage() {
               gap: "15px",
             }}
           >
-            {promoBookings.map((booking) => (
-              <div
-                key={booking._id}
-                style={{
-                  background: booking.payout_status === "Paid" ? "#D1FAE5" : "#ECFDF5",
-                  borderRadius: "14px",
-                  padding: "15px",
-                  boxShadow: "0 5px 15px rgba(16, 185, 129, 0.15)",
-                  border: "2px dashed #10B981",
-                  transition: "transform 0.3s ease",
-                  position: "relative",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-5px)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-              >
-                {/* Admin Sponsored Tag */}
-                <span style={{ position: "absolute", top: "-12px", right: "15px", background: "#10B981", color: "white", fontSize: "10px", fontWeight: 800, padding: "4px 10px", borderRadius: "50px", letterSpacing: "0.5px" }}>
-                  SPONSORED BY ADMIN
-                </span>
+         {/* 🎁 SECTION 2: PROMOTIONAL / FREE SESSIONS (UI Update) */}
+{promoBookings.map((booking) => (
+  <div
+    key={booking._id}
+    style={{
+      background: "#ECFDF5",
+      borderRadius: "14px",
+      padding: "15px",
+      boxShadow: "0 5px 15px rgba(16, 185, 129, 0.15)",
+      border: "2px dashed #10B981",
+      position: "relative",
+    }}
+  >
+    <span style={{ position: "absolute", top: "-12px", right: "15px", background: "#10B981", color: "white", fontSize: "10px", fontWeight: 800, padding: "4px 10px", borderRadius: "50px" }}>
+      PROMOTIONAL
+    </span>
 
-                <h4 style={{ marginBottom: "6px", color: "#064E3B", fontWeight: 600, marginTop: "5px" }}>
-                  👨‍🎓 {booking.student ? booking.student.name : "Unknown Student"}
-                </h4>
-                <p style={{ color: "#047857", fontSize: "13px", marginBottom: "4px" }}>
-                  📅 {new Date(booking.date).toLocaleDateString()}
-                </p>
-                <p
-                  style={{
-                    color: booking.payout_status === "Paid" ? "#059669" : "#F59E0B",
-                    fontWeight: "700",
-                    marginBottom: "5px",
-                  }}
-                >
-                  💸 {booking.payout_status}
-                </p>
-                <p style={{ color: "#065F46", fontWeight: 800, fontSize: "16px" }}>
-                  Earnings: ₹{booking.profile?.price_per_session || 100}
-                </p>
-              </div>
-            ))}
+    <h4 style={{ marginBottom: "6px", color: "#064E3B", fontWeight: 600 }}>
+      👨‍🎓 {booking.student ? booking.student.name : "Unknown Student"}
+    </h4>
+    <p style={{ color: "#047857", fontSize: "13px" }}>📅 {new Date(booking.date).toLocaleDateString()}</p>
+    
+    <p style={{
+      color: "#059669",
+      fontWeight: "700",
+      marginTop: "10px",
+      fontSize: "0.9rem"
+    }}>
+      {/* 💸 Yahan ab zero ya fixed amount nahi, sirf status dikhega */}
+      Earning: <span style={{ color: "#1e40af" }}>Admin Settlement</span>
+    </p>
+    <p style={{ fontSize: "0.75rem", color: "#6b7280" }}>
+      (This session will be paid separately by Admin)
+    </p>
+  </div>
+))}
           </div>
         ) : (
           <p style={{ textAlign: "center", color: "#6B7280" }}>
