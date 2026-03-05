@@ -249,71 +249,89 @@ function SeniorEarningsPage() {
               gap: "15px",
             }}
           >
-            {earningHistory.map((booking) => (
-              <div
-                key={booking._id}
-                style={{
-                  background:
-                    booking.payout_status === "Paid"
-                      ? "linear-gradient(135deg, #ECFDF5, #D1FAE5)"
-                      : "linear-gradient(135deg, #FFFFFF, #F9FAFB)",
-                  borderRadius: "14px",
-                  padding: "15px",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-5px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 20px rgba(0,0,0,0.15)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 5px 15px rgba(0,0,0,0.08)";
-                }}
-              >
-                <h4
+            {earningHistory.map((booking) => {
+              // 🚀 Logic for Free Coupon Handling
+              const isPromo = booking.paymentMethod === "Coupon_Free";
+              // Agar free session hai, toh hum senior ko uski base price (profile fee) dikhayenge
+              const actualEarnings = isPromo 
+                ? (booking.profile?.price_per_session || 100) 
+                : (booking.amount_paid - platformFee);
+
+              return (
+                <div
+                  key={booking._id}
                   style={{
-                    marginBottom: "6px",
-                    color: "#111827",
-                    fontWeight: 600,
-                  }}
-                >
-                  👨‍🎓 {booking.student ? booking.student.name : "Unknown Student"}
-                </h4>
-                <p
-                  style={{
-                    color: "#6B7280",
-                    fontSize: "13px",
-                    marginBottom: "4px",
-                  }}
-                >
-                  📅 {new Date(booking.date).toLocaleDateString()}
-                </p>
-                <p
-                  style={{
-                    color:
+                    background:
                       booking.payout_status === "Paid"
-                        ? "#10B981"
-                        : "#6B7280",
-                    fontWeight: "600",
-                    marginBottom: "5px",
+                        ? "linear-gradient(135deg, #ECFDF5, #D1FAE5)"
+                        : "#FFFFFF",
+                    borderRadius: "14px",
+                    padding: "15px",
+                    boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    position: "relative",
+                    border: isPromo ? "2px solid #10B981" : "none"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 20px rgba(0,0,0,0.15)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 5px 15px rgba(0,0,0,0.08)";
                   }}
                 >
-                  💸 {booking.payout_status}
-                </p>
-                <p
-                  style={{
-                    color: "#059669",
-                    fontWeight: 700,
-                    fontSize: "15px",
-                  }}
-                >
-                  Earnings: ₹{booking.amount_paid - platformFee}
-                </p>
-              </div>
-            ))}
+                  {/* Promo Badge UI */}
+                  {isPromo && (
+                    <span style={{ position: "absolute", top: "10px", right: "10px", background: "#D1FAE5", color: "#065F46", fontSize: "10px", fontWeight: 800, padding: "4px 8px", borderRadius: "50px" }}>
+                      PROMOTIONAL
+                    </span>
+                  )}
+
+                  <h4
+                    style={{
+                      marginBottom: "6px",
+                      color: "#111827",
+                      fontWeight: 600,
+                    }}
+                  >
+                    👨‍🎓 {booking.student ? booking.student.name : "Unknown Student"}
+                  </h4>
+                  <p
+                    style={{
+                      color: "#6B7280",
+                      fontSize: "13px",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    📅 {new Date(booking.date).toLocaleDateString()}
+                  </p>
+                  <p
+                    style={{
+                      color:
+                        booking.payout_status === "Paid"
+                          ? "#10B981"
+                          : "#6B7280",
+                      fontWeight: "600",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    💸 {booking.payout_status}
+                  </p>
+                  <p
+                    style={{
+                      color: "#059669",
+                      fontWeight: 700,
+                      fontSize: "15px",
+                    }}
+                  >
+                    Earnings: ₹{actualEarnings}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <p style={{ textAlign: "center", color: "#6B7280" }}>
