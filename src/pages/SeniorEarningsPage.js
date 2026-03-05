@@ -128,7 +128,16 @@ function SeniorEarningsPage() {
     if (auth?.user?.name) toast.success(`Welcome back, ${auth.user.name} 👋`);
   }, [auth?.user]);
 
-  const earningHistory = allBookings.filter((b) => b.status === "Completed");
+  // 🚀 NEW LOGIC: Bookings ko 2 hisso mein baantna (Regular vs Promotional)
+  const completedBookings = allBookings.filter((b) => b.status === "Completed");
+  
+  const regularBookings = completedBookings.filter(
+    (b) => !b.isPromotional && b.paymentMethod !== "Coupon_Free"
+  );
+  
+  const promoBookings = completedBookings.filter(
+    (b) => b.isPromotional || b.paymentMethod === "Coupon_Free"
+  );
 
   // --- Error UI ---
   if (error) {
@@ -224,7 +233,9 @@ function SeniorEarningsPage() {
         }}
       />
 
-      {/* 🪙 Earnings History */}
+      {/* ========================================= */}
+      {/* 🪙 SECTION 1: REGULAR EARNINGS HISTORY */}
+      {/* ========================================= */}
       <div style={{ padding: "0 10px" }}>
         <h2
           style={{
@@ -234,14 +245,12 @@ function SeniorEarningsPage() {
             fontSize: "1.5rem",
           }}
         >
-          Completed Calls & Payouts
+          Completed Calls & Payouts (Regular)
         </h2>
 
         {loading ? (
-          <p style={{ textAlign: "center", color: "#6B7280" }}>
-            Loading history...
-          </p>
-        ) : earningHistory.length > 0 ? (
+          <p style={{ textAlign: "center", color: "#6B7280" }}>Loading history...</p>
+        ) : regularBookings.length > 0 ? (
           <div
             style={{
               display: "grid",
@@ -249,7 +258,7 @@ function SeniorEarningsPage() {
               gap: "15px",
             }}
           >
-            {earningHistory.map((booking) => (
+            {regularBookings.map((booking) => (
               <div
                 key={booking._id}
                 style={{
@@ -264,52 +273,29 @@ function SeniorEarningsPage() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-5px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 20px rgba(0,0,0,0.15)";
+                  e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.15)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 5px 15px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
                 }}
               >
-                <h4
-                  style={{
-                    marginBottom: "6px",
-                    color: "#111827",
-                    fontWeight: 600,
-                  }}
-                >
+                <h4 style={{ marginBottom: "6px", color: "#111827", fontWeight: 600 }}>
                   👨‍🎓 {booking.student ? booking.student.name : "Unknown Student"}
                 </h4>
-                <p
-                  style={{
-                    color: "#6B7280",
-                    fontSize: "13px",
-                    marginBottom: "4px",
-                  }}
-                >
+                <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "4px" }}>
                   📅 {new Date(booking.date).toLocaleDateString()}
                 </p>
                 <p
                   style={{
-                    color:
-                      booking.payout_status === "Paid"
-                        ? "#10B981"
-                        : "#6B7280",
+                    color: booking.payout_status === "Paid" ? "#10B981" : "#6B7280",
                     fontWeight: "600",
                     marginBottom: "5px",
                   }}
                 >
                   💸 {booking.payout_status}
                 </p>
-                <p
-                  style={{
-                    color: "#059669",
-                    fontWeight: 700,
-                    fontSize: "15px",
-                  }}
-                >
+                <p style={{ color: "#059669", fontWeight: 700, fontSize: "15px" }}>
                   Earnings: ₹{booking.amount_paid - platformFee}
                 </p>
               </div>
@@ -317,10 +303,85 @@ function SeniorEarningsPage() {
           </div>
         ) : (
           <p style={{ textAlign: "center", color: "#6B7280" }}>
-            You have no completed bookings yet.
+            You have no regular completed bookings yet.
           </p>
         )}
       </div>
+
+      {/* ========================================= */}
+      {/* 🎁 SECTION 2: PROMOTIONAL / FREE SESSIONS */}
+      {/* ========================================= */}
+      <div style={{ padding: "0 10px", marginTop: "50px" }}>
+        <h2
+          style={{
+            color: "#065F46",
+            textAlign: "center",
+            marginBottom: "5px",
+            fontSize: "1.5rem",
+          }}
+        >
+          🎁 My Promotional Sessions
+        </h2>
+        <p style={{ textAlign: "center", color: "#6B7280", marginBottom: "20px", fontSize: "0.9rem" }}>
+          Sessions booked via Free Coupons. (Payout sponsored by Admin)
+        </p>
+
+        {loading ? null : promoBookings.length > 0 ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "15px",
+            }}
+          >
+            {promoBookings.map((booking) => (
+              <div
+                key={booking._id}
+                style={{
+                  background: booking.payout_status === "Paid" ? "#D1FAE5" : "#ECFDF5",
+                  borderRadius: "14px",
+                  padding: "15px",
+                  boxShadow: "0 5px 15px rgba(16, 185, 129, 0.15)",
+                  border: "2px dashed #10B981",
+                  transition: "transform 0.3s ease",
+                  position: "relative",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-5px)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+              >
+                {/* Admin Sponsored Tag */}
+                <span style={{ position: "absolute", top: "-12px", right: "15px", background: "#10B981", color: "white", fontSize: "10px", fontWeight: 800, padding: "4px 10px", borderRadius: "50px", letterSpacing: "0.5px" }}>
+                  SPONSORED BY ADMIN
+                </span>
+
+                <h4 style={{ marginBottom: "6px", color: "#064E3B", fontWeight: 600, marginTop: "5px" }}>
+                  👨‍🎓 {booking.student ? booking.student.name : "Unknown Student"}
+                </h4>
+                <p style={{ color: "#047857", fontSize: "13px", marginBottom: "4px" }}>
+                  📅 {new Date(booking.date).toLocaleDateString()}
+                </p>
+                <p
+                  style={{
+                    color: booking.payout_status === "Paid" ? "#059669" : "#F59E0B",
+                    fontWeight: "700",
+                    marginBottom: "5px",
+                  }}
+                >
+                  💸 {booking.payout_status}
+                </p>
+                <p style={{ color: "#065F46", fontWeight: 800, fontSize: "16px" }}>
+                  Earnings: ₹{booking.profile?.price_per_session || 100}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ textAlign: "center", color: "#6B7280" }}>
+            No promotional sessions yet.
+          </p>
+        )}
+      </div>
+      
     </div>
   );
 }

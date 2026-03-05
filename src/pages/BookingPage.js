@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Booking Page CSS (Footer Removed)
+// 🚀 Premium Booking Page CSS (Enhanced with Coupon UI)
 // ======================================
 const bookingStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -39,7 +39,7 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
   min-height: 100vh; 
   background-color: #fef5f5;
   animation: fadeIn 0.4s ease-out forwards;
-  padding-bottom: 40px; /* Space for main footer */
+  padding-bottom: 40px; 
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -59,7 +59,7 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
   width: 360px;
   flex-shrink: 0;
   position: sticky;
-  top: 30px; /* Sticks to top on scroll (Desktop) */
+  top: 30px; 
   height: max-content;
 }
 
@@ -128,6 +128,54 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
 .book-button:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(226, 55, 68, 0.3); }
 .book-button:active { transform: translateY(1px); }
 
+/* --- 🎟️ NEW: FIXED COUPON UI --- */
+.coupon-wrapper {
+  margin-bottom: 24px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-color);
+  text-align: left;
+}
+.coupon-label { font-size: 0.85rem; font-weight: 800; color: var(--text-dark); margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.coupon-input-group { 
+  display: flex; 
+  align-items: center; 
+  background: white;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 4px;
+  transition: border-color 0.2s;
+}
+.coupon-input-group:focus-within { border-color: var(--primary-color); }
+.coupon-input { 
+  flex: 1; 
+  padding: 10px 12px; 
+  border: none; 
+  font-family: inherit; 
+  font-weight: 700; 
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  min-width: 0; /* Important for flexbox overflow */
+}
+.coupon-input:disabled { background: transparent; color: var(--success-color); }
+
+.apply-btn { 
+  padding: 10px 20px; 
+  border-radius: 10px; 
+  border: none; 
+  background: var(--text-dark); 
+  color: white; 
+  font-weight: 700; 
+  cursor: pointer; 
+  transition: all 0.2s;
+  white-space: nowrap; 
+}
+.apply-btn:hover { background: #000; }
+.apply-btn:disabled { background: var(--success-color); cursor: default; }
+.free-text { color: var(--success-color) !important; animation: pulse 1s infinite alternate; }
+@keyframes pulse { from { opacity: 0.8; } to { opacity: 1; } }
+
 /* Loading & Error */
 .status-container { flex: 1; display: flex; justify-content: center; align-items: center; min-height: 60vh; }
 .error-text { color: var(--primary-color); font-weight: 600; font-size: 1.2rem; }
@@ -139,10 +187,13 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
   .profile-header { padding-top: 50px; }
   .avatar { width: 100px; height: 100px; margin-top: -35px; }
   .profile-name { font-size: 1.4rem; }
+  /* Coupon mobile adjustment */
+  .coupon-input { font-size: 0.9rem; padding: 8px 10px; }
+  .apply-btn { padding: 8px 15px; font-size: 0.85rem; }
 }
 `;
 
-// --- मुख्य बुकिंग पेज कंपोनेंट (Footer Removed) ---
+// --- मुख्य बुकिंग पेज कंपोनेंट ---
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -162,6 +213,11 @@ function BookingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
+
+  // 🎟️ NEW: Coupon States
+  const [coupon, setCoupon] = useState("");
+  const [isFree, setIsFree] = useState(false);
+  const [couponApplied, setCouponApplied] = useState(false);
 
   // 🚀 पेज खुलते ही टॉप पर स्क्रॉल करने के लिए
   useEffect(() => {
@@ -225,8 +281,59 @@ function BookingPage() {
     loadPageData();
   }, [userId]);
 
+  // 🎟️ NEW: Handle Apply Coupon
+  const handleApplyCoupon = async () => {
+    if (!coupon) return toast.error("Please enter a code");
+    const toastId = toast.loading("Verifying coupon...");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/apply-coupon",
+        { couponCode: coupon.toUpperCase() },
+        { headers: { "x-auth-token": token } }
+      );
+
+      if (res.data.success) {
+        setIsFree(true);
+        setCouponApplied(true);
+        toast.success(res.data.msg, { id: toastId });
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.msg || "Invalid Coupon", { id: toastId });
+    }
+  };
+
+  // 🚀 NEW: Handle Final Booking Action (Routing Logic)
+  const handleFinalAction = () => {
+    if (isFree) {
+      handleFreeBooking();
+    } else {
+      displayRazorpay();
+    }
+  };
+
+  // 🚀 NEW: Direct Free Booking (Bypass Razorpay)
+  const handleFreeBooking = async () => {
+    const toastId = toast.loading("Confirming your free session...");
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "https://collegeconnect-backend-mrkz.onrender.com/api/bookings/create-free-booking",
+        { 
+          seniorId: profile.user._id, 
+          profileId: profile._id, 
+          couponCode: coupon.toUpperCase()
+        },
+        { headers: { "x-auth-token": token } }
+      );
+      toast.success("Booking Confirmed for FREE! 🚀", { id: toastId });
+      navigate("/booking-success");
+    } catch (err) {
+      toast.error(err.response?.data?.msg || "Free booking failed", { id: toastId });
+    }
+  };
+
   // --- Payment Handler (Aapka original logic 100% same) ---
- // --- Payment Handler ---
   const displayRazorpay = async () => {
     if (!auth.user) {
       toast.error("You must be logged in to book.");
@@ -245,12 +352,11 @@ function BookingPage() {
     try {
       const token = localStorage.getItem("token");
       
-      // 🚀🔥 यहाँ ध्यान दें: { seniorId: profile.user._id, amount: totalAmount } होना चाहिए!
       const orderRes = await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
         { 
           seniorId: profile.user._id, 
-          amount: totalAmount  // <--- यह लाइन पहले मिसिंग थी!
+          amount: totalAmount 
         },
         { headers: { "x-auth-token": token } }
       );
@@ -265,7 +371,6 @@ function BookingPage() {
         name: "CampusConnect",
         description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
         order_id: order.id,
-        // ... (बाकी का कोड सेम रहेगा)
         handler: async function (response) {
           const verifyToastId = toast.loading("Verifying payment...");
           try {
@@ -394,13 +499,35 @@ function BookingPage() {
               After payment, the senior will contact you within 6 hours to schedule the best time.
             </p>
 
+            {/* 🎟️ NEW: Coupon UI Section */}
+            <div className="coupon-wrapper">
+              <span className="coupon-label">Have a Promo Code?</span>
+              <div className="coupon-input-group">
+                <input 
+                  className="coupon-input" 
+                  placeholder="e.g. FREE15"
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value)}
+                  disabled={couponApplied}
+                />
+                <button className="apply-btn" onClick={handleApplyCoupon} disabled={couponApplied}>
+                  {couponApplied ? "Applied" : "Apply"}
+                </button>
+              </div>
+              {couponApplied && <p style={{color: '#25a541', fontSize: '0.8rem', marginTop: '10px', fontWeight: 700, textAlign: 'center'}}>✓ Promotional Discount Applied!</p>}
+            </div>
+
             <div className="price-box">
-              <span className="price-text">₹{totalAmount}</span>
+              <span className={`price-text ${isFree ? 'free-text' : ''}`}>
+                 {isFree ? "₹0" : `₹${totalAmount}`}
+              </span>
+              {isFree && <p style={{textDecoration: 'line-through', color: '#999', fontSize: '1.1rem', marginTop: '-5px', fontWeight: 600}}>₹{totalAmount}</p>}
               <span className="duration-text">+ Chat Free</span>
             </div>
 
-            <button onClick={displayRazorpay} className="book-button">
-              <span>🔒</span> Pay ₹{totalAmount} & Book
+            {/* 🚀 NEW: Smart Button handling both Razorpay & Free Bookings */}
+            <button onClick={handleFinalAction} className="book-button">
+              {isFree ? "Confirm FREE Session 🚀" : <span>🔒 Pay ₹{totalAmount} & Book</span>}
             </button>
           </div>
         </div>
