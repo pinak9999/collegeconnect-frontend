@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext"; // Asal code mein ise uncomment karein
 import toast from "react-hot-toast";
 
+// ======================================
+// 🚀 Premium Booking Page CSS (Enhanced Mobile Alignment)
+// ======================================
 const bookingStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
@@ -86,7 +90,7 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
 .profile-college { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin: 0 0 8px; }
 .profile-branch { font-size: 0.9rem; color: var(--primary-color); font-weight: 600; background: var(--primary-light); display: inline-block; padding: 6px 16px; border-radius: 50px; margin-top: 4px;}
 
-.card-heading { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; }
+.card-heading { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; color: var(--text-dark); border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; }
 .card-bio { font-size: 1rem; line-height: 1.7; color: var(--text-muted); }
 
 .tags-container { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -101,7 +105,6 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
 
 .price-box { background: var(--bg-main); border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px; border: 1px dashed var(--border-color); }
 .price-text { display: block; font-size: 2.4rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
-.free-text { color: var(--success-color) !important; animation: pulse 1s infinite alternate; }
 .duration-text { display: inline-block; font-size: 0.9rem; font-weight: 700; color: var(--success-color); background: var(--success-bg); padding: 6px 14px; border-radius: 50px; }
 
 .book-button {
@@ -120,7 +123,7 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
   border: 1px dashed var(--border-color);
   text-align: left;
 }
-.coupon-label { font-size: 0.85rem; font-weight: 800; color: var(--text-dark); margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.coupon-label { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; display: block; }
 .coupon-input-group { 
   display: flex; 
   align-items: center; 
@@ -128,57 +131,44 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
   border: 1.5px solid var(--border-color);
   border-radius: 12px;
   padding: 4px;
-  transition: border-color 0.2s;
 }
-.coupon-input-group:focus-within { border-color: var(--primary-color); }
-
 .coupon-input { 
   flex: 1; 
   padding: 10px 12px; 
   border: none; 
   font-family: inherit; 
   font-weight: 700; 
-  font-size: 0.95rem;
   text-transform: uppercase;
-  min-width: 0; /* Prevents overflow in flexbox */
+  min-width: 0; /* Important for Mobile */
 }
 .coupon-input:disabled { background: transparent; color: var(--success-color); }
 
 .apply-btn { 
-  padding: 10px 20px; 
+  padding: 10px 16px; 
   border-radius: 10px; 
   border: none; 
   background: var(--text-dark); 
   color: white; 
   font-weight: 700; 
   cursor: pointer; 
-  transition: all 0.2s;
-  white-space: nowrap; /* Button won't wrap */
+  white-space: nowrap;
 }
-.apply-btn:hover { background: #000; }
-.apply-btn:disabled { background: var(--success-color); cursor: default; }
+.apply-btn:disabled { background: var(--success-color); }
 
-.status-container { flex: 1; display: flex; justify-content: center; align-items: center; min-height: 60vh; }
-
-/* --- 📱 MOBILE SPECIFIC ALIGNMENT --- */
+/* Mobile Specific */
 @media (max-width: 900px) {
-  .layout-container { flex-direction: column; padding: 15px; gap: 20px; }
+  .layout-container { flex-direction: column; padding: 20px 16px; gap: 24px; }
   .sidebar { width: 100%; position: relative; top: 0; }
-  .main-content { gap: 15px; }
-  .premium-card { padding: 20px; }
-  .profile-name { font-size: 1.4rem; }
-  
   .coupon-input { font-size: 0.9rem; padding: 8px 10px; }
-  .apply-btn { padding: 8px 15px; font-size: 0.85rem; }
+  .apply-btn { padding: 8px 14px; font-size: 0.85rem; }
 }
-
-@keyframes pulse { from { opacity: 0.8; } to { opacity: 1; } }
 `;
 
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
 
+  // ⭐ Auth State
   const auth = { user: JSON.parse(localStorage.getItem("user") || "{}") };
 
   const [profile, setProfile] = useState(null);
@@ -186,6 +176,7 @@ function BookingPage() {
   const [error, setError] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
 
+  // 🎟️ Coupon States
   const [coupon, setCoupon] = useState("");
   const [isFree, setIsFree] = useState(false);
   const [couponApplied, setCouponApplied] = useState(false);
@@ -204,6 +195,7 @@ function BookingPage() {
           return;
         }
 
+        // --- ID CARD FIX (Your Original 100% logic) ---
         const [res, settingsRes, allProfilesRes] = await Promise.all([
           axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`, { headers: { "x-auth-token": token } }),
           axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/settings`),
@@ -233,6 +225,7 @@ function BookingPage() {
     loadPageData();
   }, [userId]);
 
+  // 🎟️ Apply Coupon
   const handleApplyCoupon = async () => {
     if (!coupon) return toast.error("Please enter a code");
     const toastId = toast.loading("Verifying coupon...");
@@ -254,6 +247,7 @@ function BookingPage() {
     }
   };
 
+  // 🚀 Logic to decide Action
   const handleFinalAction = () => {
     if (isFree) {
       handleFreeBooking();
@@ -262,8 +256,9 @@ function BookingPage() {
     }
   };
 
+  // 🎉 Create Free Booking
   const handleFreeBooking = async () => {
-    const toastId = toast.loading("Confirming your free session...");
+    const toastId = toast.loading("Confirming free session...");
     try {
       const token = localStorage.getItem("token");
       await axios.post(
@@ -283,6 +278,7 @@ function BookingPage() {
     }
   };
 
+  // 💳 Razorpay (Original Logic)
   const displayRazorpay = async () => {
     if (!auth.user.name) {
       toast.error("You must be logged in to book.");
@@ -297,7 +293,7 @@ function BookingPage() {
       amount: totalAmount, 
     };
     
-    const toastId = toast.loading("Creating your order...");
+    const toastId = toast.loading("Creating order...");
     try {
       const token = localStorage.getItem("token");
       const orderRes = await axios.post(
@@ -312,9 +308,9 @@ function BookingPage() {
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF",
         amount: order.amount,
-        currency: order.currency || "INR",
+        currency: "INR",
         name: "CampusConnect",
-        description: `Booking with ${profile.user?.name || "Senior"}`,
+        description: `Booking with ${profile.user?.name}`,
         order_id: order.id,
         handler: async function (response) {
           const verifyToastId = toast.loading("Verifying payment...");
@@ -343,8 +339,8 @@ function BookingPage() {
     }
   };
 
-  if (loading) return <div className="status-container"><h2>⏳ Loading...</h2></div>;
-  if (error) return <div className="status-container"><h2 style={{color: '#e23744'}}>❌ {error}</h2></div>;
+  if (loading) return <div className="status-container"><h2>⏳ Loading Profile...</h2></div>;
+  if (error) return <div className="status-container"><h2>❌ {error}</h2></div>;
 
   return (
     <div className="page-container">
@@ -354,7 +350,7 @@ function BookingPage() {
         <div className="main-content">
           <div className="premium-card profile-header">
             <img src={profile.avatar || "https://ui-avatars.com/api/?name=Senior&background=e23744&color=fff&size=150&bold=true"} className="avatar" alt="Avatar" />
-            <h2 className="profile-name">{profile.user?.name} <span style={{color: '#1da1f2'}}>✔</span></h2>
+            <h2 className="profile-name">{profile.user?.name} <span className="verified-icon">✔</span></h2>
             <p className="profile-college">{profile.college?.name}</p>
             <p className="profile-branch">{profile.branch} ({profile.year})</p>
           </div>
@@ -367,40 +363,46 @@ function BookingPage() {
           <div className="premium-card">
             <h3 className="card-heading"><span>🎯</span> Specializations</h3>
             <div className="tags-container">
-              {profile.tags?.length ? profile.tags.map((tag) => <span key={tag._id} className="tag">{tag.name}</span>) : <p style={{color: '#696969'}}>No specializations.</p>}
+              {profile.tags?.length ? profile.tags.map((tag) => <span key={tag._id} className="tag">{tag.name}</span>) : <p>No specializations.</p>}
             </div>
           </div>
+
+          {profile.id_card_url && (
+            <div className="premium-card">
+              <h3 className="card-heading"><span>🎓</span> College Verified ID</h3>
+              <img src={profile.id_card_url} className="id-card-image" alt="ID Card" />
+            </div>
+          )}
         </div>
 
         <div className="sidebar">
           <div className="premium-card booking-card">
             <h3 className="booking-title">Book Session</h3>
-            <p className="booking-subtitle">Contacted within 6 hours to schedule time.</p>
+            <p className="booking-subtitle">The senior will contact you within 6 hours.</p>
 
-            {/* 🎟️ IMPROVED COUPON UI */}
             <div className="coupon-wrapper">
               <span className="coupon-label">Have a Promo Code?</span>
               <div className="coupon-input-group">
                 <input 
                   className="coupon-input" 
-                  placeholder="e.g. FREE15"
+                  placeholder="CODE"
                   value={coupon}
                   onChange={(e) => setCoupon(e.target.value)}
                   disabled={couponApplied}
                 />
                 <button className="apply-btn" onClick={handleApplyCoupon} disabled={couponApplied}>
-                  {couponApplied ? "Applied" : "Apply"}
+                  {couponApplied ? "✓" : "Apply"}
                 </button>
               </div>
-              {couponApplied && <p style={{color: '#25a541', fontSize: '0.8rem', marginTop: '10px', fontWeight: 700, textAlign: 'center'}}>✓ FREE15 Discount Applied!</p>}
+              {couponApplied && <p style={{color: '#25a541', fontSize: '0.75rem', marginTop: '8px', fontWeight: 700}}>✓ Discount Applied!</p>}
             </div>
 
             <div className="price-box">
-              <span className={`price-text ${isFree ? 'free-text' : ''}`}>
-                {isFree ? "₹0" : `₹${totalAmount}`}
+              <span className="price-text" style={{ textDecoration: isFree ? 'line-through' : 'none', color: isFree ? '#ccc' : 'inherit' }}>
+                ₹{totalAmount}
               </span>
-              {isFree && <p style={{textDecoration: 'line-through', color: '#999', fontSize: '1.1rem', marginTop: '-5px', fontWeight: 600}}>₹{totalAmount}</p>}
-              <span className="duration-text">{profile.session_duration_minutes || 15} Min + Chat</span>
+              {isFree && <span className="price-text" style={{ color: '#25a541', fontSize: '2.4rem' }}>₹0</span>}
+              <span className="duration-text">{profile.session_duration_minutes} Minutes</span>
             </div>
 
             <button onClick={handleFinalAction} className="book-button">
