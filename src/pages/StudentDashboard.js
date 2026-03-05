@@ -11,7 +11,6 @@ const globalStyles = `
 
 :root {
   --bg-color: #fbc2eb;
-  /* 🔥 Yahan sirf background image gradient change kiya gaya hai exact image jaisa */
   --bg-pattern: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 35%, #ffb199 70%, #ffecd2 100%);
   --card-bg: #ffffff;
   --nav-bg: rgba(255, 255, 255, 0.95);
@@ -65,7 +64,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 
 .main-container { max-width: 1050px; margin: 0 auto; padding: 20px 16px; position: relative; }
 
-/* --- Top Header (App Style) --- */
+/* --- Top Header --- */
 .top-header { 
   display: flex; 
   justify-content: space-between; 
@@ -101,22 +100,54 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 }
 .theme-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
-/* --- Startup Hero Banner --- */
-.hero-premium {
-  background: var(--brand-gradient);
+/* --- 🎯 PREDICTOR CSS --- */
+.predictor-header {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
   border-radius: var(--radius-lg);
-  padding: 40px;
+  padding: 30px 20px;
   margin-bottom: 24px;
   color: white;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
 }
+.predictor-header h2 { margin: 0 0 8px 0; font-size: 1.8rem; font-weight: 800; }
+.predictor-header p { margin: 0; font-size: 0.95rem; opacity: 0.9; }
+
+.predictor-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--stroke);
+  margin-bottom: 24px;
+}
+
+.toggle-group { display: flex; background: rgba(0,0,0,0.05); border-radius: var(--radius-pill); padding: 6px; margin-bottom: 20px; }
+.toggle-btn { flex: 1; padding: 10px 0; border: none; background: transparent; border-radius: var(--radius-pill); font-weight: 600; color: var(--txt-muted); cursor: pointer; transition: all 0.3s ease; }
+.toggle-btn.active { background: var(--card-bg); color: var(--brand-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: var(--txt-main); }
+.score-input { width: 100%; padding: 14px 20px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); font-size: 1.1rem; font-weight: 600; font-family: inherit; transition: all 0.3s; background: transparent; color: var(--txt-main); }
+.score-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-light); outline: none; }
+
+.predict-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; border: none; border-radius: var(--radius-pill); font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25); }
+.predict-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.35); }
+.predict-btn:disabled { opacity: 0.7; transform: none; cursor: wait; }
+
+.result-card { background: var(--card-bg); border: 1px solid var(--stroke); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-soft); animation: fadeIn 0.5s ease-out forwards; }
+.college-info h4 { margin: 0 0 4px 0; font-size: 1.1rem; color: var(--txt-main); }
+.college-info p { margin: 0; font-size: 0.85rem; color: var(--txt-muted); font-weight: 500;}
+.chance-badge { padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; }
+.chance-high { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.chance-medium { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+
+/* --- General Component CSS --- */
+.hero-premium { background: var(--brand-gradient); border-radius: var(--radius-lg); padding: 40px; margin-bottom: 24px; color: white; position: relative; overflow: hidden; box-shadow: var(--shadow-card); }
 .hero-premium::after { content: '🚀'; font-size: 120px; position: absolute; right: 10%; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); }
 .hero-premium h1 { font-size: 2.2rem; font-weight: 800; margin: 0 0 10px 0; position: relative; z-index: 2; }
 .hero-premium p { font-size: 1.1rem; font-weight: 500; margin: 0; opacity: 0.95; line-height: 1.5; position: relative; z-index: 2; }
 
-/* --- Search & Filters --- */
 .search-section { background: var(--card-bg); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
 .search-bar-modern { display: flex; align-items: center; background: rgba(255,255,255,0.5); border: 1px solid var(--stroke); border-radius: var(--radius-pill); padding: 12px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
 .search-bar-modern:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-light); background: var(--card-bg); }
@@ -124,104 +155,26 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .search-icon { font-size: 1.2rem; color: var(--brand-primary); flex-shrink: 0; }
 
 .filter-dropdowns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; width: 100%; }
-.cc-select { 
-  width: 100%; 
-  max-width: 100%;
-  box-sizing: border-box;
-  appearance: none; 
-  border: 1px solid var(--stroke); 
-  background: var(--card-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; 
-  background-size: 16px; 
-  color: var(--txt-main); 
-  border-radius: var(--radius-md); 
-  padding: 14px 16px; 
-  font-family: inherit; 
-  font-size: 0.95rem; 
-  font-weight: 500; 
-  cursor: pointer; 
-  transition: border-color 0.2s; 
-}
+.cc-select { width: 100%; max-width: 100%; box-sizing: border-box; appearance: none; border: 1px solid var(--stroke); background: var(--card-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; background-size: 16px; color: var(--txt-main); border-radius: var(--radius-md); padding: 14px 16px; font-family: inherit; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: border-color 0.2s; }
 .cc-select:focus { border-color: var(--brand-primary); outline: none; }
 
-/* --- Horizontal Scroll Tags --- */
 .tags-scroll-container { display: flex; gap: 12px; overflow-x: auto; padding: 16px 0 4px 0; scrollbar-width: none; width: 100%; box-sizing: border-box; }
 .tags-scroll-container::-webkit-scrollbar { display: none; }
 .tag-chip { flex-shrink: 0; padding: 8px 18px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); background: var(--card-bg); color: var(--txt-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .tag-chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 .tag-chip.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); box-shadow: 0 4px 12px rgba(226, 55, 68, 0.25); }
 
-/* --- 🚀 PREMIUM MENTOR CARDS FIX --- */
-.grid-style-seniors { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-  gap: 24px; 
-  margin-top: 10px; 
-}
-.senior-card-modern { 
-  background: var(--card-bg); 
-  border-radius: var(--radius-lg); 
-  border: 1px solid var(--stroke); 
-  padding: 24px; 
-  box-shadow: var(--shadow-card); 
-  transition: all 0.3s ease; 
-  display: flex; 
-  flex-direction: column; 
-  width: 100%; 
-  box-sizing: border-box; 
-}
-.senior-card-modern:hover { 
-  transform: translateY(-5px); 
-  box-shadow: var(--shadow-hover); 
-  border-color: rgba(226, 55, 68, 0.3); 
-}
+.grid-style-seniors { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 10px; }
+.senior-card-modern { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--stroke); padding: 24px; box-shadow: var(--shadow-card); transition: all 0.3s ease; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+.senior-card-modern:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: rgba(226, 55, 68, 0.3); }
 
-/* 🔥 AVATAR & HEADER LAYOUT FIX */
-.card-header-flex { 
-  display: flex; 
-  gap: 18px; 
-  align-items: center; 
-  margin-bottom: 20px; 
-}
-.avatar-box { 
-  width: 90px; 
-  height: 90px; 
-  border-radius: 50%; 
-  flex-shrink: 0; 
-  border: 3px solid var(--brand-light); 
-  padding: 3px; 
-  background: var(--card-bg); 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-}
-.avatar-box img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-  border-radius: 50%; 
-}
-.info-box { 
-  flex-grow: 1; 
-  overflow: hidden; 
-}
-.name-text { 
-  font-size: 1.3rem; 
-  font-weight: 800; 
-  color: var(--txt-main); 
-  margin: 0 0 6px 0; 
-  display: flex; 
-  align-items: center; 
-  gap: 6px; 
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
+.card-header-flex { display: flex; gap: 18px; align-items: center; margin-bottom: 20px; }
+.avatar-box { width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0; border: 3px solid var(--brand-light); padding: 3px; background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.avatar-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.info-box { flex-grow: 1; overflow: hidden; }
+.name-text { font-size: 1.3rem; font-weight: 800; color: var(--txt-main); margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .verified-tick { color: #1da1f2; font-size: 1.1rem; }
-.college-text { 
-  font-size: 0.9rem; 
-  color: var(--txt-muted); 
-  margin: 0 0 8px 0; 
-  font-weight: 500; 
-  line-height: 1.3; 
-}
+.college-text { font-size: 0.9rem; color: var(--txt-muted); margin: 0 0 8px 0; font-weight: 500; line-height: 1.3; }
 
 .rating-row { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: var(--txt-muted); }
 .bio-text { font-size: 0.85rem; color: var(--txt-muted); font-style: italic; margin: 0 0 20px 0; background: rgba(255,255,255,0.5); padding: 12px; border-radius: var(--radius-md); border-left: 3px solid var(--brand-primary); line-height: 1.5; }
@@ -235,12 +188,10 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .cc-btn.primary { background: var(--brand-gradient); color: white; box-shadow: 0 4px 15px rgba(226, 55, 68, 0.25); }
 .cc-btn.primary:hover { box-shadow: 0 8px 25px rgba(226, 55, 68, 0.35); transform: translateY(-2px); }
 
-/* --- Footer Trust Badges --- */
 .trust-badges-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px; margin-top: 40px; box-shadow: var(--shadow-card); border: 1px solid var(--stroke); }
 .trust-item { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; color: var(--txt-main); }
 .trust-item span { font-size: 1.3rem; }
 
-/* --- Bookings UI --- */
 .booking-card-modern { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--stroke); padding: 24px; box-shadow: var(--shadow-card); margin-bottom: 20px; }
 .booking-top-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed var(--stroke); padding-bottom: 16px; margin-bottom: 16px; }
 
@@ -269,6 +220,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .d-tab { text-decoration: none; color: var(--txt-muted); font-weight: 600; padding: 10px 24px; border-radius: var(--radius-pill); transition: all 0.3s; font-size: 0.95rem; }
 .d-tab.active { background: var(--brand-primary); color: white; box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3); }
 
+/* 🔥 Mobile Bottom Nav - 3 Tabs Fix */
 .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 -10px 25px rgba(0,0,0,0.05); border-top: 1px solid var(--stroke); z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
 .b-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px 0; text-decoration: none; color: var(--txt-muted); font-size: 0.75rem; font-weight: 600; gap: 4px; transition: color 0.2s; }
 .b-nav-item.active { color: var(--brand-primary); }
@@ -345,7 +297,118 @@ const SkeletonCard = () => (
 );
 
 // ===============================
-// 🎓 FindSenior
+// 🎯 Component 1: College Predictor (NEW 🔥)
+// ===============================
+const CollegePredictor = () => {
+  const [mode, setMode] = useState("12th"); 
+  const [score, setScore] = useState("");
+  const [category, setCategory] = useState("GEN");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
+
+  // StudentDashboard.js में CollegePredictor के अंदर इस फंक्शन को बदलें:
+
+  const handlePredict = async (e) => {
+    e.preventDefault();
+    if (!score || score < 0 || score > 100) {
+      toast.error("Please enter a valid percentage/percentile");
+      return;
+    }
+
+    setLoading(true);
+    setResults(null);
+
+    try {
+      // 🚀 अब यह आपके असली बैकएंड API से डेटा लाएगा
+      const res = await axios.post("https://collegeconnect-backend-mrkz.onrender.com/api/predictor/predict", {
+        score: score,
+        category: category,
+        mode: mode
+      });
+
+      if (res.data.length === 0) {
+        toast.error("No colleges found for this score.");
+      } else {
+        setResults(res.data);
+        toast.success("✨ Accurate Prediction Generated!");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("⚠️ Failed to fetch predictions. Server might be down.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="page-wrapper">
+      <div className="predictor-header">
+        <h2>REAP 2026 Predictor 🎯</h2>
+        <p>Know which college and branch you can get instantly!</p>
+      </div>
+
+      <div className="predictor-card">
+        <div className="toggle-group">
+          <button type="button" className={`toggle-btn ${mode === "12th" ? "active" : ""}`} onClick={() => setMode("12th")}>
+            12th Board %
+          </button>
+          <button type="button" className={`toggle-btn ${mode === "jee" ? "active" : ""}`} onClick={() => setMode("jee")}>
+            JEE Percentile
+          </button>
+        </div>
+
+        <form onSubmit={handlePredict}>
+          <div className="input-group">
+            <label>Enter your {mode === "12th" ? "12th Percentage" : "JEE Main Percentile"}</label>
+            <input 
+              type="number" 
+              step="0.01"
+              className="score-input" 
+              placeholder="e.g. 85.50"
+              value={score}
+              onChange={(e) => setScore(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group" style={{ display: 'flex', gap: '15px', marginTop: '-10px', marginBottom: '24px', flexWrap: 'wrap' }}>
+            {['GEN', 'OBC', 'SC', 'ST'].map(cat => (
+              <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--txt-main)' }}>
+                <input type="radio" name="category" checked={category === cat} onChange={() => setCategory(cat)} /> {cat}
+              </label>
+            ))}
+          </div>
+
+          <button type="submit" className="predict-btn" disabled={loading}>
+            {loading ? "✨ Analyzing Data..." : "Predict My Colleges"}
+          </button>
+        </form>
+      </div>
+
+      {results && (
+        <div style={{ marginTop: '24px' }}>
+          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--txt-main)' }}>Based on {score}{mode === "12th" ? "%" : " %ile"}:</h3>
+          {results.map((col, idx) => (
+            <div key={idx} className="result-card" style={{ animationDelay: `${idx * 0.15}s` }}>
+              <div className="college-info">
+                <h4>{col.name}</h4>
+                <p>📚 {col.branch}</p>
+              </div>
+              <div className={`chance-badge ${col.chance === 'High' ? 'chance-high' : 'chance-medium'}`}>
+                {col.chance} Chance
+              </div>
+            </div>
+          ))}
+          <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--txt-muted)', marginTop: '16px'}}>
+            *This is an estimated prediction based on previous years' data.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ===============================
+// 🎓 Component 2: FindSenior (Aapka Purana)
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
   const [search, setSearch] = useState("");
@@ -470,7 +533,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
 };
 
 // ===============================
-// 📘 MyBookings (Fixed Mobile Alignment)
+// 📘 Component 3: MyBookings (Aapka Purana)
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -645,7 +708,6 @@ const MyBookings = ({ seniors }) => {
     </div>
   );
 };
-
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   if (!isOpen) return null;
   return (
@@ -661,13 +723,12 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
     </div>
   );
 };
-
 // ===============================
 // 🌈 Main Dashboard Shell
 // ===============================
 const StudentDashboard = () => {
   const location = useLocation();
-  const onBookingsTab = location.pathname.includes("/bookings");
+  const currentPath = location.pathname;
   const [theme, setTheme] = useState('light');
 
   const [seniors, setSeniors] = useState([]);
@@ -680,7 +741,7 @@ const StudentDashboard = () => {
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [location.pathname]);
+  }, [currentPath]);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -720,31 +781,40 @@ const StudentDashboard = () => {
           </button>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation (Added Predictor) */}
         <div className="desktop-tabs">
-          <Link to="/student-dashboard" className={`d-tab ${!onBookingsTab ? "active" : ""}`}>
+          <Link to="/student-dashboard" className={`d-tab ${currentPath === "/student-dashboard" ? "active" : ""}`}>
             ✨ Find Seniors
           </Link>
-          <Link to="/student-dashboard/bookings" className={`d-tab ${onBookingsTab ? "active" : ""}`}>
-            📘 My Bookings
+          <Link to="/student-dashboard/predictor" className={`d-tab ${currentPath.includes("/predictor") ? "active" : ""}`}>
+            🎯 Predictor
+          </Link>
+          <Link to="/student-dashboard/bookings" className={`d-tab ${currentPath.includes("/bookings") ? "active" : ""}`}>
+            📘 Bookings
           </Link>
         </div>
 
         <Routes>
           <Route path="/" element={<FindSenior seniors={seniors} loading={loading} colleges={colleges} tags={tags} platformFee={platformFee} />} />
+          {/* 🔥 New Route added for Predictor */}
+          <Route path="/predictor" element={<CollegePredictor />} />
           <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
         </Routes>
       </div>
 
-      {/* Bottom Navigation (Mobile Only) */}
+      {/* Bottom Navigation (Mobile Only - 3 Tabs Perfect Width) */}
       <div className="bottom-nav">
-        <Link to="/student-dashboard" className={`b-nav-item ${!onBookingsTab ? "active" : ""}`}>
+        <Link to="/student-dashboard" className={`b-nav-item ${currentPath === "/student-dashboard" ? "active" : ""}`}>
           <span className="b-nav-icon">🏫</span>
-          Find Seniors
+          Seniors
         </Link>
-        <Link to="/student-dashboard/bookings" className={`b-nav-item ${onBookingsTab ? "active" : ""}`}>
+        <Link to="/student-dashboard/predictor" className={`b-nav-item ${currentPath.includes("/predictor") ? "active" : ""}`}>
+          <span className="b-nav-icon">🎯</span>
+          Predictor
+        </Link>
+        <Link to="/student-dashboard/bookings" className={`b-nav-item ${currentPath.includes("/bookings") ? "active" : ""}`}>
           <span className="b-nav-icon">📘</span>
-          My Bookings
+          Bookings
         </Link>
       </div>
     </div>
