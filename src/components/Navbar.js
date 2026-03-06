@@ -154,7 +154,7 @@ const navbarStyles = `
     flex-direction: column;
     justify-content: center;
     gap: 8px;
-            margin-top: 10px;
+            margin-top: -6px;
   }
   .brand-logo { font-size: 1.90rem; }
   .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
