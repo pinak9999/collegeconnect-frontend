@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Zomato/Startup Level UI CSS (Header & Avatar Fixed)
+// 🚀 Premium Zomato/Startup Level UI CSS
 // ======================================
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -48,7 +48,12 @@ const globalStyles = `
 }
 
 * { outline: none; box-sizing: border-box; }
-body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased;     margin-top: -7px;}
+body { 
+  margin: 0; 
+  margin-top: -7px; 
+  font-family: 'Poppins', sans-serif; 
+  -webkit-font-smoothing: antialiased; 
+}
 
 .page-bg { 
   min-height: 100vh; 
@@ -86,7 +91,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .predict-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.35); }
 .predict-btn:disabled { opacity: 0.7; transform: none; cursor: wait; }
 
-/* --- 📋 CHOICE FILLING CSS (NEW) --- */
+/* --- 📋 CHOICE FILLING CSS --- */
 .choice-header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: var(--radius-lg); padding: 30px 20px; margin-bottom: 24px; color: white; text-align: center; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2); }
 .choice-header h2 { margin: 0 0 8px 0; font-size: 1.8rem; font-weight: 800; }
 .choice-header p { margin: 0; font-size: 0.95rem; opacity: 0.9; }
@@ -106,8 +111,6 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .form-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
 .action-btn { width: 100%; padding: 16px; color: white; border: none; border-radius: var(--radius-pill); font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
 .btn-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25); }
-.btn-green:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(16, 185, 129, 0.35); }
-.btn-green:disabled { opacity: 0.7; transform: none; cursor: wait; }
 
 /* Result Cards */
 .result-card { background: var(--card-bg); border: 1px solid var(--stroke); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-soft); animation: fadeIn 0.5s ease-out forwards; }
@@ -189,6 +192,49 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .b-nav-item.active { color: var(--brand-primary); }
 .b-nav-icon { font-size: 1.35rem; }
 
+/* 🔥 FOMO Notification Popup CSS */
+.fomo-popup {
+  position: fixed;
+  bottom: 80px; /* Thoda upar rakha hai taki bottom nav se clash na kare */
+  left: 20px;
+  background: var(--card-bg);
+  border-left: 4px solid var(--price-green);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+  max-width: 320px;
+  transform: translateX(-150%);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fomo-popup.show {
+  transform: translateX(0);
+}
+
+.fomo-popup img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.fomo-popup .fomo-text {
+  font-size: 0.85rem;
+  color: var(--txt-main);
+  line-height: 1.3;
+}
+
+.fomo-popup .fomo-time {
+  font-size: 0.7rem;
+  color: var(--txt-muted);
+  margin-top: 4px;
+  display: block;
+}
+
 /* =========================================
    📱 MOBILE RESPONSIVE FIXES 
    ========================================= */
@@ -224,6 +270,15 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
   .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
   .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
+  
+  /* Mobile mein FOMO thoda adjust karein */
+  .fomo-popup {
+    bottom: 90px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    width: auto;
+  }
 }
 `;
 
@@ -253,7 +308,7 @@ const SkeletonCard = () => (
 );
 
 // ===============================
-// 📋 Component 1: Choice Filling Generator (NEW 🔥)
+// 📋 Component 1: Choice Filling Generator 
 // ===============================
 const ChoiceFillingGenerator = () => {
   const [branchFilter, setBranchFilter] = useState("CSE_IT");
@@ -266,16 +321,13 @@ const ChoiceFillingGenerator = () => {
     setLoading(true);
     setGeneratedList(null);
 
-    // 🚀 Frontend based 100% Accurate Priority Algorithm
     setTimeout(() => {
       const allColleges = [
-        // Top Govt
         { id: 1, name: "MBM University, Jodhpur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 1 },
         { id: 2, name: "RTU Kota", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 2 },
         { id: 3, name: "CTAE Udaipur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 3 },
         { id: 4, name: "MBM University, Jodhpur", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 4 },
         { id: 5, name: "MBM University, Jodhpur", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 5 },
-        // Top Private
         { id: 6, name: "SKIT Jaipur", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 6 },
         { id: 7, name: "JECRC Foundation", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 7 },
         { id: 8, name: "RTU Kota", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 8 },
@@ -283,7 +335,6 @@ const ChoiceFillingGenerator = () => {
         { id: 10, name: "SKIT Jaipur", branch: "Information Technology (IT)", type: "Private", bType: "CSE_IT", rank: 10 },
         { id: 11, name: "JECRC Foundation", branch: "AI & Machine Learning", type: "Private", bType: "AI_DS", rank: 11 },
         { id: 12, name: "Poornima College of Engg", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 12 },
-        // Average Govt & Core
         { id: 13, name: "Engineering College Bikaner", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 13 },
         { id: 14, name: "Engineering College Ajmer", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 14 },
         { id: 15, name: "RTU Kota", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 15 },
@@ -298,7 +349,7 @@ const ChoiceFillingGenerator = () => {
       });
 
       filtered.sort((a, b) => a.rank - b.rank);
-      setGeneratedList(filtered.slice(0, 15)); // Gives top 15 matching
+      setGeneratedList(filtered.slice(0, 15)); 
       setLoading(false);
       toast.success("✅ Ideal Preference List Generated!");
     }, 1000);
@@ -824,7 +875,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
 };
 
 // ===============================
-// 🌈 Main Dashboard Shell (With 4 Tabs)
+// 🌈 Main Dashboard Shell (With FOMO & 4 Tabs)
 // ===============================
 const StudentDashboard = () => {
   const location = useLocation();
@@ -836,6 +887,10 @@ const StudentDashboard = () => {
   const [tags, setTags] = useState([]);
   const [platformFee, setPlatformFee] = useState(20); 
   const [loading, setLoading] = useState(true);
+
+  // 🚀 FOMO State
+  const [fomoData, setFomoData] = useState(null);
+  const [showFomo, setShowFomo] = useState(false);
 
   const toggleTheme = () => setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   
@@ -867,6 +922,46 @@ const StudentDashboard = () => {
     fetchAll();
   }, []);
 
+  // 🚀 FOMO Notification Logic
+  useEffect(() => {
+    const fomoNames = ["Rahul from Jaipur", "Priya from Kota", "Amit from Udaipur", "Neha from Delhi", "Vikas from Jodhpur"];
+    const fomoColleges = ["MBM Jodhpur", "RTU Kota", "CTAE Udaipur", "SKIT Jaipur"];
+
+    const triggerFomo = () => {
+      const randomName = fomoNames[Math.floor(Math.random() * fomoNames.length)];
+      const randomCollege = fomoColleges[Math.floor(Math.random() * fomoColleges.length)];
+      const randomTime = Math.floor(Math.random() * 5) + 1; // 1 to 5 mins
+      
+      setFomoData({
+        text: `🔥 ${randomName} just booked a session with a Senior from ${randomCollege}!`,
+        time: `${randomTime} mins ago`,
+        img: `https://ui-avatars.com/api/?name=${encodeURIComponent(randomName)}&background=e23744&color=fff`
+      });
+
+      setShowFomo(true);
+      
+      // Hide popup after 5 seconds
+      setTimeout(() => {
+        setShowFomo(false);
+      }, 5000);
+    };
+
+    // Trigger pehla popup 15 seconds ke baad
+    const firstTimeout = setTimeout(() => {
+      triggerFomo();
+      
+      // Uske baad har 2 min (120 seconds) mein trigger karo
+      setInterval(() => {
+        triggerFomo();
+      }, 120000);
+
+    }, 15000);
+
+    return () => {
+      clearTimeout(firstTimeout);
+    };
+  }, []);
+
   return (
     <div className={`page-bg ${theme}`}>
       <style>{globalStyles}</style>
@@ -881,7 +976,7 @@ const StudentDashboard = () => {
           </button>
         </div>
 
-        {/* 💻 Desktop Navigation (Now 4 Tabs) */}
+        {/* 💻 Desktop Navigation */}
         <div className="desktop-tabs">
           <Link to="/student-dashboard" className={`d-tab ${currentPath === "/student-dashboard" ? "active" : ""}`}>
             ✨ Find Seniors
@@ -905,7 +1000,7 @@ const StudentDashboard = () => {
         </Routes>
       </div>
 
-      {/* 📱 Mobile Bottom Nav (4 Tabs Perfectly Aligned) */}
+      {/* 📱 Mobile Bottom Nav */}
       <div className="bottom-nav">
         <Link to="/student-dashboard" className={`b-nav-item ${currentPath === "/student-dashboard" ? "active" : ""}`}>
           <span className="b-nav-icon">🏫</span>
@@ -924,6 +1019,18 @@ const StudentDashboard = () => {
           Bookings
         </Link>
       </div>
+
+      {/* 🚀 FOMO Popup Component */}
+      {fomoData && (
+        <div className={`fomo-popup ${showFomo ? 'show' : ''}`}>
+          <img src={fomoData.img} alt="User" />
+          <div>
+            <div className="fomo-text">{fomoData.text}</div>
+            <span className="fomo-time">{fomoData.time}</span>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
