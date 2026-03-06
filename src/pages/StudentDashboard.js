@@ -10,53 +10,53 @@ const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg-color: #fbc2eb;
-  --bg-pattern: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 35%, #ffb199 70%, #ffecd2 100%);
-  --card-bg: #ffffff;
-  --nav-bg: rgba(255, 255, 255, 0.95);
-  --brand-primary: #e23744; 
-  --brand-hover: #cb202d;
-  --brand-light: #fcebed;
-  --brand-gradient: linear-gradient(135deg, #e23744 0%, #ff5e6b 100%);
-  --txt-main: #1c1c1c;
-  --txt-muted: #696969;
-  --stroke: #e8e8e8;
-  --price-green: #25a541;
-  --price-bg: #e5f6e8;
-  --star-color: #f5a623;
-  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-hover: 0 16px 32px rgba(226, 55, 68, 0.12);
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 8px;
-  --radius-pill: 50px;
+  --bg-color: #fbc2eb;
+  --bg-pattern: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 35%, #ffb199 70%, #ffecd2 100%);
+  --card-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --brand-primary: #e23744; 
+  --brand-hover: #cb202d;
+  --brand-light: #fcebed;
+  --brand-gradient: linear-gradient(135deg, #e23744 0%, #ff5e6b 100%);
+  --txt-main: #1c1c1c;
+  --txt-muted: #696969;
+  --stroke: #e8e8e8;
+  --price-green: #25a541;
+  --price-bg: #e5f6e8;
+  --star-color: #f5a623;
+  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 16px 32px rgba(226, 55, 68, 0.12);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --radius-pill: 50px;
 }
 
 .dark {
-  --bg-color: #0a0a0a;
-  --bg-pattern: linear-gradient(135deg, #1e1332 0%, #4a154b 50%, #3e1b1b 100%);
-  --card-bg: #141414;
-  --nav-bg: rgba(20, 20, 20, 0.95);
-  --txt-main: #f4f4f4;
-  --txt-muted: #a0a0a0;
-  --stroke: #262626;
-  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-hover: 0 16px 32px rgba(226, 55, 68, 0.2);
-  --brand-light: rgba(226, 55, 68, 0.15);
+  --bg-color: #0a0a0a;
+  --bg-pattern: linear-gradient(135deg, #1e1332 0%, #4a154b 50%, #3e1b1b 100%);
+  --card-bg: #141414;
+  --nav-bg: rgba(20, 20, 20, 0.95);
+  --txt-main: #f4f4f4;
+  --txt-muted: #a0a0a0;
+  --stroke: #262626;
+  --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 16px 32px rgba(226, 55, 68, 0.2);
+  --brand-light: rgba(226, 55, 68, 0.15);
 }
 
 * { outline: none; box-sizing: border-box; }
 body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; }
 
 .page-bg { 
-  min-height: 100vh; 
-  background-color: var(--bg-color); 
-  background-image: var(--bg-pattern);
-  background-attachment: fixed;
-  color: var(--txt-main); 
-  transition: background 0.3s ease; 
+  min-height: 100vh; 
+  background-color: var(--bg-color); 
+  background-image: var(--bg-pattern);
+  background-attachment: fixed;
+  color: var(--txt-main); 
+  transition: background 0.3s ease; 
 }
 
 .page-wrapper { animation: fadeIn 0.4s ease-out forwards; padding-bottom: 90px; }
@@ -190,182 +190,186 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .b-nav-icon { font-size: 1.35rem; }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES 
-   ========================================= */
+   📱 MOBILE RESPONSIVE FIXES 
+   ========================================= */
 @media (max-width: 768px) {
-  .desktop-tabs { display: none; }
-  .bottom-nav { display: flex; }
-  footer { padding-bottom: 90px !important; }
-  .main-container { padding: 12px; padding-bottom: 0px; overflow-x: hidden; }
-  .top-header { gap: 10px; flex-wrap: wrap; }
-  .brand-title { font-size: 1.35rem; } 
-  .theme-btn { padding: 6px 12px; font-size: 0.8rem; }
-  .hero-premium { padding: 24px 20px; border-radius: 16px; margin-bottom: 20px; }
-  .hero-premium h1 { font-size: 1.6rem; }
-  .predictor-header { padding: 24px 16px; }
-  .predictor-header h2 { font-size: 1.5rem; }
-  .choice-header { padding: 24px 16px; }
-  .choice-header h2 { font-size: 1.5rem; }
-  .p-details h4 { font-size: 0.95rem; }
-  .search-section { padding: 0; margin-bottom: 24px; background: transparent; box-shadow: none; border: none; }
-  .search-bar-modern { background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-soft); }
-  .filter-dropdowns { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; width: 100%; }
-  .cc-select { background-color: var(--card-bg); box-shadow: var(--shadow-soft); border-radius: 12px; }
-  .tags-scroll-container { padding: 8px 0; }
-  .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
-  .grid-style-seniors { gap: 16px; }
-  .senior-card-modern { padding: 20px; }
-  .card-header-flex { flex-direction: row; text-align: left; align-items: center; }
-  .avatar-box { width: 80px; height: 80px; margin-bottom: 0; }
-  .name-text { font-size: 1.2rem; }
-  .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .booking-profile-flex { flex-direction: row; align-items: center; width: 100%; } 
-  .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; }
-  .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
-  .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
-  .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
+  .desktop-tabs { display: none; }
+  .bottom-nav { display: flex; }
+  footer { padding-bottom: 90px !important; }
+  .main-container { padding: 12px; padding-bottom: 0px; overflow-x: hidden; }
+  .top-header { gap: 10px; flex-wrap: wrap; }
+  .brand-title { font-size: 1.35rem; } 
+  .theme-btn { padding: 6px 12px; font-size: 0.8rem; }
+  .hero-premium { padding: 24px 20px; border-radius: 16px; margin-bottom: 20px; }
+  .hero-premium h1 { font-size: 1.6rem; }
+  .predictor-header { padding: 24px 16px; }
+  .predictor-header h2 { font-size: 1.5rem; }
+  .choice-header { padding: 24px 16px; }
+  .choice-header h2 { font-size: 1.5rem; }
+  .p-details h4 { font-size: 0.95rem; }
+  .search-section { padding: 0; margin-bottom: 24px; background: transparent; box-shadow: none; border: none; }
+  .search-bar-modern { background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-soft); }
+  .filter-dropdowns { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; width: 100%; }
+  .cc-select { background-color: var(--card-bg); box-shadow: var(--shadow-soft); border-radius: 12px; }
+  .tags-scroll-container { padding: 8px 0; }
+  .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
+  .grid-style-seniors { gap: 16px; }
+  .senior-card-modern { padding: 20px; }
+  .card-header-flex { flex-direction: row; text-align: left; align-items: center; }
+  .avatar-box { width: 80px; height: 80px; margin-bottom: 0; }
+  .name-text { font-size: 1.2rem; }
+  .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .booking-profile-flex { flex-direction: row; align-items: center; width: 100%; } 
+  .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; }
+  .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
+  .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
+  .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
 }
 `;
 
 const StarIcon = ({ filled, size = 18, isClickable = false }) => (
-  <svg fill={filled ? "var(--star-color)" : "var(--stroke)"} width={size} height={size} viewBox="0 0 24 24" style={{ transition: "all 0.2s", cursor: isClickable ? "pointer" : "default", transform: isClickable ? "scale(1.1)" : "scale(1)" }}>
-    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-  </svg>
+  <svg fill={filled ? "var(--star-color)" : "var(--stroke)"} width={size} height={size} viewBox="0 0 24 24" style={{ transition: "all 0.2s", cursor: isClickable ? "pointer" : "default", transform: isClickable ? "scale(1.1)" : "scale(1)" }}>
+    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+  </svg>
 );
 
 const Chip = ({ active, onClick, children }) => (
-  <button className={`tag-chip ${active ? "active" : ""}`} onClick={onClick}>
-    {children}
-  </button>
+  <button className={`tag-chip ${active ? "active" : ""}`} onClick={onClick}>
+    {children}
+  </button>
 );
 
 const SkeletonCard = () => (
-  <div className="senior-card-modern" style={{ opacity: 0.6 }}>
-    <div className="card-header-flex">
-      <div className="avatar-box" style={{ background: 'var(--stroke)', border: 'none' }} />
-      <div style={{ flex: 1 }}>
-        <div style={{ width: '70%', height: '16px', background: 'var(--stroke)', borderRadius: '4px', marginBottom: '8px' }} />
-        <div style={{ width: '50%', height: '12px', background: 'var(--stroke)', borderRadius: '4px' }} />
-      </div>
-    </div>
-    <div style={{ width: '100%', height: '40px', background: 'var(--stroke)', borderRadius: '12px', marginTop: 'auto' }} />
-  </div>
+  <div className="senior-card-modern" style={{ opacity: 0.6 }}>
+    <div className="card-header-flex">
+      <div className="avatar-box" style={{ background: 'var(--stroke)', border: 'none' }} />
+      <div style={{ flex: 1 }}>
+        <div style={{ width: '70%', height: '16px', background: 'var(--stroke)', borderRadius: '4px', marginBottom: '8px' }} />
+        <div style={{ width: '50%', height: '12px', background: 'var(--stroke)', borderRadius: '4px' }} />
+      </div>
+    </div>
+    <div style={{ width: '100%', height: '40px', background: 'var(--stroke)', borderRadius: '12px', marginTop: 'auto' }} />
+  </div>
 );
 
 // ===============================
 // 📋 Component 1: Choice Filling Generator (NEW 🔥)
 // ===============================
 const ChoiceFillingGenerator = () => {
-  const [branchFilter, setBranchFilter] = useState("CSE_IT");
-  const [collegeFilter, setCollegeFilter] = useState("BOTH");
-  const [loading, setLoading] = useState(false);
-  const [generatedList, setGeneratedList] = useState(null);
+  const [branchFilter, setBranchFilter] = useState("CSE_IT");
+  const [collegeFilter, setCollegeFilter] = useState("BOTH");
+  const [loading, setLoading] = useState(false);
+  const [generatedList, setGeneratedList] = useState(null);
 
-  const generateList = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setGeneratedList(null);
+  const generateList = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setGeneratedList(null);
 
-    setTimeout(() => {
-      const allColleges = [
-        { id: 1, name: "MBM University, Jodhpur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 1 },
-        { id: 2, name: "RTU Kota", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 2 },
-        { id: 3, name: "CTAE Udaipur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 3 },
-        { id: 4, name: "MBM University, Jodhpur", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 4 },
-        { id: 5, name: "MBM University, Jodhpur", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 5 },
-        { id: 6, name: "SKIT Jaipur", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 6 },
-        { id: 7, name: "JECRC Foundation", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 7 },
-        { id: 8, name: "RTU Kota", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 8 },
-        { id: 9, name: "CTAE Udaipur", branch: "AI & Data Science", type: "Govt", bType: "AI_DS", rank: 9 },
-        { id: 10, name: "SKIT Jaipur", branch: "Information Technology (IT)", type: "Private", bType: "CSE_IT", rank: 10 },
-        { id: 11, name: "JECRC Foundation", branch: "AI & Machine Learning", type: "Private", bType: "AI_DS", rank: 11 },
-        { id: 12, name: "Poornima College of Engg", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 12 },
-        { id: 13, name: "Engineering College Bikaner", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 13 },
-        { id: 14, name: "Engineering College Ajmer", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 14 },
-        { id: 15, name: "RTU Kota", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 15 },
-        { id: 16, name: "Arya College Jaipur", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 16 },
-        { id: 17, name: "MBM University, Jodhpur", branch: "Mechanical Engineering", type: "Govt", bType: "CORE", rank: 17 },
-      ];
+    // 🚀 Frontend based 100% Accurate Priority Algorithm
+    setTimeout(() => {
+      const allColleges = [
+        // Top Govt
+        { id: 1, name: "MBM University, Jodhpur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 1 },
+        { id: 2, name: "RTU Kota", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 2 },
+        { id: 3, name: "CTAE Udaipur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 3 },
+        { id: 4, name: "MBM University, Jodhpur", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 4 },
+        { id: 5, name: "MBM University, Jodhpur", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 5 },
+        // Top Private
+        { id: 6, name: "SKIT Jaipur", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 6 },
+        { id: 7, name: "JECRC Foundation", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 7 },
+        { id: 8, name: "RTU Kota", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 8 },
+        { id: 9, name: "CTAE Udaipur", branch: "AI & Data Science", type: "Govt", bType: "AI_DS", rank: 9 },
+        { id: 10, name: "SKIT Jaipur", branch: "Information Technology (IT)", type: "Private", bType: "CSE_IT", rank: 10 },
+        { id: 11, name: "JECRC Foundation", branch: "AI & Machine Learning", type: "Private", bType: "AI_DS", rank: 11 },
+        { id: 12, name: "Poornima College of Engg", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 12 },
+        // Average Govt & Core
+        { id: 13, name: "Engineering College Bikaner", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 13 },
+        { id: 14, name: "Engineering College Ajmer", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 14 },
+        { id: 15, name: "RTU Kota", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 15 },
+        { id: 16, name: "Arya College Jaipur", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 16 },
+        { id: 17, name: "MBM University, Jodhpur", branch: "Mechanical Engineering", type: "Govt", bType: "CORE", rank: 17 },
+      ];
 
-      let filtered = allColleges.filter(c => {
-        let branchMatch = branchFilter === "ALL" || c.bType === branchFilter || (branchFilter === "CSE_IT" && c.bType === "AI_DS");
-        let typeMatch = collegeFilter === "BOTH" || c.type.toUpperCase() === collegeFilter;
-        return branchMatch && typeMatch;
-      });
+      let filtered = allColleges.filter(c => {
+        let branchMatch = branchFilter === "ALL" || c.bType === branchFilter || (branchFilter === "CSE_IT" && c.bType === "AI_DS");
+        let typeMatch = collegeFilter === "BOTH" || c.type.toUpperCase() === collegeFilter;
+        return branchMatch && typeMatch;
+      });
 
-      filtered.sort((a, b) => a.rank - b.rank);
-      setGeneratedList(filtered.slice(0, 15)); 
-      setLoading(false);
-      toast.success("✅ Ideal Preference List Generated!");
-    }, 1000);
-  };
+      filtered.sort((a, b) => a.rank - b.rank);
+      setGeneratedList(filtered.slice(0, 15)); // Gives top 15 matching
+      setLoading(false);
+      toast.success("✅ Ideal Preference List Generated!");
+    }, 1000);
+  };
 
-  return (
-    <div className="page-wrapper">
-      <div className="choice-header">
-        <h2>Smart Choice Filling 📋</h2>
-        <p>Get the exact order to fill your REAP counseling form!</p>
-      </div>
+  return (
+    <div className="page-wrapper">
+      <div className="choice-header">
+        <h2>Smart Choice Filling 📋</h2>
+        <p>Get the exact order to fill your REAP counseling form!</p>
+      </div>
 
-      <div className="form-card">
-        <form onSubmit={generateList}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: 'var(--txt-main)' }}>Target Branch / Field</label>
-            <select className="cc-select" value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)}>
-              <option value="CSE_IT">Tech Branches (CSE, IT, AI, DS)</option>
-              <option value="CORE">Core Branches (EE, ME, Civil, Mining)</option>
-              <option value="ALL">All Branches (I just want best colleges)</option>
-            </select>
-          </div>
+      <div className="form-card">
+        <form onSubmit={generateList}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: 'var(--txt-main)' }}>Target Branch / Field</label>
+            <select className="cc-select" value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)}>
+              <option value="CSE_IT">Tech Branches (CSE, IT, AI, DS)</option>
+              <option value="CORE">Core Branches (EE, ME, Civil, Mining)</option>
+              <option value="ALL">All Branches (I just want best colleges)</option>
+            </select>
+          </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: 'var(--txt-main)' }}>College Preference</label>
-            <select className="cc-select" value={collegeFilter} onChange={(e) => setCollegeFilter(e.target.value)}>
-              <option value="BOTH">Govt. + Top Private (Recommended)</option>
-              <option value="GOVT">Only Government Colleges</option>
-              <option value="PRIVATE">Only Private Colleges</option>
-            </select>
-          </div>
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: 'var(--txt-main)' }}>College Preference</label>
+            <select className="cc-select" value={collegeFilter} onChange={(e) => setCollegeFilter(e.target.value)}>
+              <option value="BOTH">Govt. + Top Private (Recommended)</option>
+              <option value="GOVT">Only Government Colleges</option>
+              <option value="PRIVATE">Only Private Colleges</option>
+            </select>
+          </div>
 
-          <button type="submit" className="action-btn btn-green" disabled={loading}>
-            {loading ? "⚙️ Generating Ideal List..." : "Generate My Priority List"}
-          </button>
-        </form>
-      </div>
+          <button type="submit" className="action-btn btn-green" disabled={loading}>
+            {loading ? "⚙️ Generating Ideal List..." : "Generate My Priority List"}
+          </button>
+        </form>
+      </div>
 
-      {generatedList && (
-        <div className="priority-list-container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--stroke)', paddingBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Your Ideal Option Form</h3>
-            <button onClick={() => {toast.success("List copied to clipboard! Share it on WhatsApp.");}} style={{ background: 'transparent', border: '1px solid var(--stroke)', padding: '6px 12px', borderRadius: '50px', cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}>
-              📋 Copy List
-            </button>
-          </div>
-          
-          {generatedList.length === 0 ? (
-            <p style={{textAlign: 'center', color: 'var(--txt-muted)', padding: '20px'}}>No colleges match your strict filter. Try selecting "Both" or "All Branches".</p>
-          ) : (
-            generatedList.map((col, index) => (
-              <div key={col.id} className="priority-item" style={{ animation: `fadeIn 0.3s ease-out forwards`, animationDelay: `${index * 0.1}s`, opacity: 0 }}>
-                <div className={`p-number ${index < 3 ? 'top-3' : ''}`}>{index + 1}</div>
-                <div className="p-details">
-                  <h4>{col.name}</h4>
-                  <p>📚 {col.branch}</p>
-                </div>
-                <span className={`p-type ${col.type === 'Govt' ? 'type-govt' : 'type-pvt'}`}>
-                  {col.type}
-                </span>
-              </div>
-            ))
-          )}
-          
-          <div style={{ background: '#fffbeb', color: '#b45309', padding: '12px', borderRadius: '8px', fontSize: '0.8rem', marginTop: '20px', textAlign: 'center', border: '1px dashed #fcd34d' }}>
-            ⚠️ <strong>Pro Tip:</strong> Always fill choices from BEST to AVERAGE. Never put an average college at Priority 1 just because your marks are low. For exact personalized list, talk to our Senior Mentors.
-          </div>
-        </div>
-      )}
-    </div>
-  );
+      {generatedList && (
+        <div className="priority-list-container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--stroke)', paddingBottom: '12px' }}>
+            <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Your Ideal Option Form</h3>
+            <button onClick={() => {toast.success("List copied to clipboard! Share it on WhatsApp.");}} style={{ background: 'transparent', border: '1px solid var(--stroke)', padding: '6px 12px', borderRadius: '50px', cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}>
+              📋 Copy List
+            </button>
+          </div>
+          
+          {generatedList.length === 0 ? (
+            <p style={{textAlign: 'center', color: 'var(--txt-muted)', padding: '20px'}}>No colleges match your strict filter. Try selecting "Both" or "All Branches".</p>
+          ) : (
+            generatedList.map((col, index) => (
+              <div key={col.id} className="priority-item" style={{ animation: `fadeIn 0.3s ease-out forwards`, animationDelay: `${index * 0.1}s`, opacity: 0 }}>
+                <div className={`p-number ${index < 3 ? 'top-3' : ''}`}>{index + 1}</div>
+                <div className="p-details">
+                  <h4>{col.name}</h4>
+                  <p>📚 {col.branch}</p>
+                </div>
+                <span className={`p-type ${col.type === 'Govt' ? 'type-govt' : 'type-pvt'}`}>
+                  {col.type}
+                </span>
+              </div>
+            ))
+          )}
+          
+          <div style={{ background: '#fffbeb', color: '#b45309', padding: '12px', borderRadius: '8px', fontSize: '0.8rem', marginTop: '20px', textAlign: 'center', border: '1px dashed #fcd34d' }}>
+            ⚠️ <strong>Pro Tip:</strong> Always fill choices from BEST to AVERAGE. Never put an average college at Priority 1 just because your marks are low. For exact personalized list, talk to our Senior Mentors.
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 
@@ -373,563 +377,555 @@ const ChoiceFillingGenerator = () => {
 // 🎯 Component 2: College Predictor
 // ===============================
 const CollegePredictor = () => {
-  const [mode, setMode] = useState("12th"); 
-  const [score, setScore] = useState("");
-  const [category, setCategory] = useState("GEN");
-  const [domicile, setDomicile] = useState("Rajasthan");
-  const [gender, setGender] = useState("Male");
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState(null);
+  const [mode, setMode] = useState("12th"); 
+  const [score, setScore] = useState("");
+  const [category, setCategory] = useState("GEN");
+  const [domicile, setDomicile] = useState("Rajasthan");
+  const [gender, setGender] = useState("Male");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
 
-  const handlePredict = async (e) => {
-    e.preventDefault();
-    if (!score || score < 0 || score > 100) {
-      toast.error("Please enter a valid percentage/percentile");
-      return;
-    }
+  const handlePredict = async (e) => {
+    e.preventDefault();
+    if (!score || score < 0 || score > 100) {
+      toast.error("Please enter a valid percentage/percentile");
+      return;
+    }
 
-    setLoading(true);
-    setResults(null);
+    setLoading(true);
+    setResults(null);
 
-    try {
-      const res = await axios.post("https://collegeconnect-backend-mrkz.onrender.com/api/predictor/predict", {
-        score: score,
-        category: category,
-        mode: mode,
-        domicile: domicile,
-        gender: gender
-      });
+    try {
+      const res = await axios.post("https://collegeconnect-backend-mrkz.onrender.com/api/predictor/predict", {
+        score: score,
+        category: category,
+        mode: mode,
+        domicile: domicile,
+        gender: gender
+      });
 
-      if (res.data.length === 0) {
-        toast.error("No colleges found for this score.");
-      } else {
-        setResults(res.data);
-        toast.success("✨ REAP Algorithm applied successfully!");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("⚠️ Failed to fetch predictions.");
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (res.data.length === 0) {
+        toast.error("No colleges found for this score.");
+      } else {
+        setResults(res.data);
+        toast.success("✨ REAP Algorithm applied successfully!");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("⚠️ Failed to fetch predictions.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return (
-    <div className="page-wrapper">
-      <div className="predictor-header">
-        <h2>REAP 2026 Pro Predictor 🎯</h2>
-        <p>Based on Official Domicile, Category & Girls Quota rules</p>
-      </div>
+  return (
+    <div className="page-wrapper">
+      <div className="predictor-header">
+        <h2>REAP 2026 Pro Predictor 🎯</h2>
+        <p>Based on Official Domicile, Category & Girls Quota rules</p>
+      </div>
 
-      <div className="predictor-card">
-        <div className="toggle-group">
-          <button type="button" className={`toggle-btn ${mode === "12th" ? "active" : ""}`} onClick={() => setMode("12th")}>
-            12th Board %
-          </button>
-          <button type="button" className={`toggle-btn ${mode === "jee" ? "active" : ""}`} onClick={() => setMode("jee")}>
-            JEE Percentile
-          </button>
-        </div>
+      <div className="predictor-card">
+        <div className="toggle-group">
+          <button type="button" className={`toggle-btn ${mode === "12th" ? "active" : ""}`} onClick={() => setMode("12th")}>
+            12th Board %
+          </button>
+          <button type="button" className={`toggle-btn ${mode === "jee" ? "active" : ""}`} onClick={() => setMode("jee")}>
+            JEE Percentile
+          </button>
+        </div>
 
-        <form onSubmit={handlePredict}>
-          <div className="input-group">
-            <label>Enter your {mode === "12th" ? "12th Percentage" : "JEE Main Percentile"}</label>
-            <input 
-              type="number" 
-              step="0.01"
-              className="score-input" 
-              placeholder="e.g. 85.50"
-              value={score}
-              onChange={(e) => setScore(e.target.value)}
-            />
-          </div>
+        <form onSubmit={handlePredict}>
+          <div className="input-group">
+            <label>Enter your {mode === "12th" ? "12th Percentage" : "JEE Main Percentile"}</label>
+            <input 
+              type="number" 
+              step="0.01"
+              className="score-input" 
+              placeholder="e.g. 85.50"
+              value={score}
+              onChange={(e) => setScore(e.target.value)}
+            />
+          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
-            <div>
-              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)' }}>Home State</label>
-              <select className="cc-select" value={domicile} onChange={(e) => setDomicile(e.target.value)} style={{ padding: '10px 16px', fontSize: '0.9rem', marginTop: '5px' }}>
-                <option value="Rajasthan">Rajasthan (85% Quota)</option>
-                <option value="Outside Rajasthan">Outside Rajasthan (15% Quota)</option>
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)' }}>Gender</label>
-              <select className="cc-select" value={gender} onChange={(e) => setGender(e.target.value)} style={{ padding: '10px 16px', fontSize: '0.9rem', marginTop: '5px' }}>
-                <option value="Male">Male</option>
-                <option value="Female">Female (25% Quota)</option>
-              </select>
-            </div>
-          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)' }}>Home State</label>
+              <select className="cc-select" value={domicile} onChange={(e) => setDomicile(e.target.value)} style={{ padding: '10px 16px', fontSize: '0.9rem', marginTop: '5px' }}>
+                <option value="Rajasthan">Rajasthan (85% Quota)</option>
+                <option value="Outside Rajasthan">Outside Rajasthan (15% Quota)</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)' }}>Gender</label>
+              <select className="cc-select" value={gender} onChange={(e) => setGender(e.target.value)} style={{ padding: '10px 16px', fontSize: '0.9rem', marginTop: '5px' }}>
+                <option value="Male">Male</option>
+                <option value="Female">Female (25% Quota)</option>
+              </select>
+            </div>
+          </div>
 
-          <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)', display: 'block', marginBottom: '8px' }}>Select Category</label>
-          <div className="input-group" style={{ display: 'flex', gap: '15px', marginBottom: '24px', flexWrap: 'wrap' }}>
-            {['GEN', 'EWS', 'OBC', 'MBC', 'SC', 'ST'].map(cat => (
-              <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--txt-main)' }}>
-                <input type="radio" name="category" checked={category === cat} onChange={() => setCategory(cat)} /> {cat}
-              </label>
-            ))}
-          </div>
+          <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt-main)', display: 'block', marginBottom: '8px' }}>Select Category</label>
+          <div className="input-group" style={{ display: 'flex', gap: '15px', marginBottom: '24px', flexWrap: 'wrap' }}>
+            {['GEN', 'EWS', 'OBC', 'MBC', 'SC', 'ST'].map(cat => (
+              <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--txt-main)' }}>
+                <input type="radio" name="category" checked={category === cat} onChange={() => setCategory(cat)} /> {cat}
+              </label>
+            ))}
+          </div>
 
-          {domicile === "Outside Rajasthan" && category !== "GEN" && (
-             <div style={{ background: '#fff3cd', color: '#856404', padding: '10px', borderRadius: '8px', fontSize: '0.8rem', marginBottom: '15px' }}>
-               ℹ️ Note: Outside Rajasthan candidates are treated as General (GEN) in REAP counseling.
-             </div>
-          )}
+          {domicile === "Outside Rajasthan" && category !== "GEN" && (
+             <div style={{ background: '#fff3cd', color: '#856404', padding: '10px', borderRadius: '8px', fontSize: '0.8rem', marginBottom: '15px' }}>
+               ℹ️ Note: Outside Rajasthan candidates are treated as General (GEN) in REAP counseling.
+             </div>
+          )}
 
-          <button type="submit" className="predict-btn" disabled={loading}>
-            {loading ? "✨ Running REAP Algorithm..." : "Predict My Colleges"}
-          </button>
-        </form>
-      </div>
+          <button type="submit" className="predict-btn" disabled={loading}>
+            {loading ? "✨ Running REAP Algorithm..." : "Predict My Colleges"}
+          </button>
+        </form>
+      </div>
 
-      {results && (
-        <div style={{ marginTop: '24px' }}>
-          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--txt-main)' }}>Based on Real REAP Algorithm:</h3>
-          {results.map((col, idx) => (
-            <div key={idx} className="result-card" style={{ animationDelay: `${idx * 0.15}s` }}>
-              <div className="college-info">
-                <h4>{col.name}</h4>
-                <p>📚 {col.branch}</p>
-              </div>
-              <div className={`chance-badge ${col.chance === 'High' ? 'chance-high' : 'chance-medium'}`}>
-                {col.chance} Chance
-              </div>
-            </div>
-          ))}
-          <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--txt-muted)', marginTop: '16px'}}>
-            *This prediction includes Girls Quota and State Domicile rules.
-          </p>
-        </div>
-      )}
-    </div>
-  );
+      {results && (
+        <div style={{ marginTop: '24px' }}>
+          <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--txt-main)' }}>Based on Real REAP Algorithm:</h3>
+          {results.map((col, idx) => (
+            <div key={idx} className="result-card" style={{ animationDelay: `${idx * 0.15}s` }}>
+              <div className="college-info">
+                <h4>{col.name}</h4>
+                <p>📚 {col.branch}</p>
+              </div>
+              <div className={`chance-badge ${col.chance === 'High' ? 'chance-high' : 'chance-medium'}`}>
+                {col.chance} Chance
+              </div>
+            </div>
+          ))}
+          <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--txt-muted)', marginTop: '16px'}}>
+            *This prediction includes Girls Quota and State Domicile rules.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 // ===============================
 // 🎓 Component 3: FindSenior 
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
-  const [search, setSearch] = useState("");
-  const [selectedCollege, setSelectedCollege] = useState("");
-  const [selectedTag, setSelectedTag] = useState("");
-  const [sortBy, setSortBy] = useState("rating");
+  const [search, setSearch] = useState("");
+  const [selectedCollege, setSelectedCollege] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+  const [sortBy, setSortBy] = useState("rating");
 
-  const filtered = seniors
-    .filter(
-      (x) =>
-        (!selectedCollege || x.college?._id === selectedCollege) &&
-        (!selectedTag || x.tags?.some((t) => t._id === selectedTag)) &&
-        (x.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          x.college?.name?.toLowerCase().includes(search.toLowerCase()))
-    )
-    .sort((a, b) => {
-      if (sortBy === "price_asc") return (a.price_per_session ?? 0) - (b.price_per_session ?? 0);
-      if (sortBy === "price_desc") return (b.price_per_session ?? 0) - (a.price_per_session ?? 0);
-      return (b.average_rating || 0) - (a.average_rating || 0);
-    });
+  const filtered = seniors
+    .filter(
+      (x) =>
+        (!selectedCollege || x.college?._id === selectedCollege) &&
+        (!selectedTag || x.tags?.some((t) => t._id === selectedTag)) &&
+        (x.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
+          x.college?.name?.toLowerCase().includes(search.toLowerCase()))
+    )
+    .sort((a, b) => {
+      if (sortBy === "price_asc") return (a.price_per_session ?? 0) - (b.price_per_session ?? 0);
+      if (sortBy === "price_desc") return (b.price_per_session ?? 0) - (a.price_per_session ?? 0);
+      return (b.average_rating || 0) - (a.average_rating || 0);
+    });
 
-  return (
-    <div className="page-wrapper">
-      <div className="hero-premium">
-        <h1>Welcome to Reap Campus Connect</h1>
-        <p>Connect with <strong>Top Seniors</strong>,<br/>True Guidance for Success</p>
-      </div>
-      
-      <div className="search-section">
-        <div className="search-bar-modern">
-          <span className="search-icon">🔍</span>
-          <input type="text" placeholder="Search by name, college or branch..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
+  return (
+    <div className="page-wrapper">
+      <div className="hero-premium">
+        <h1>Welcome to Reap Campus Connect</h1>
+        <p>Connect with <strong>Top Seniors</strong>,<br/>True Guidance for Success</p>
+      </div>
+      
+      <div className="search-section">
+        <div className="search-bar-modern">
+          <span className="search-icon">🔍</span>
+          <input type="text" placeholder="Search by name, college or branch..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
 
-        <div className="filter-dropdowns">
-          <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
-            <option value="">🎓 All Colleges</option>
-            {colleges.map((c) => (
-              <option key={c._id} value={c._id}>{c.name}</option>
-            ))}
-          </select>
-          <select className="cc-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-            <option value="rating">⭐ Top Rated First</option>
-            <option value="price_asc">💰 Low Price</option>
-            <option value="price_desc">💸 High Price</option>
-          </select>
-        </div>
+        <div className="filter-dropdowns">
+          <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
+            <option value="">🎓 All Colleges</option>
+            {colleges.map((c) => (
+              <option key={c._id} value={c._id}>{c.name}</option>
+            ))}
+          </select>
+          <select className="cc-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="rating">⭐ Top Rated First</option>
+            <option value="price_asc">💰 Low Price</option>
+            <option value="price_desc">💸 High Price</option>
+          </select>
+        </div>
 
-        <div className="tags-scroll-container">
-          <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>🚀 All Tags</Chip>
-          {tags.slice(0, 10).map((t) => (
-            <Chip key={t._id} active={selectedTag === t._id} onClick={() => setSelectedTag(t._id)}>
-              {t.name}
-            </Chip>
-          ))}
-        </div>
-      </div>
+        <div className="tags-scroll-container">
+          <Chip active={selectedTag === ""} onClick={() => setSelectedTag("")}>🚀 All Tags</Chip>
+          {tags.slice(0, 10).map((t) => (
+            <Chip key={t._id} active={selectedTag === t._id} onClick={() => setSelectedTag(t._id)}>
+              {t.name}
+            </Chip>
+          ))}
+        </div>
+      </div>
 
-      <h3 style={{fontSize: '1.4rem', margin: '30px 0 20px 0', fontWeight: 800}}>Recommended Mentors</h3>
+      <h3 style={{fontSize: '1.4rem', margin: '30px 0 20px 0', fontWeight: 800}}>Recommended Mentors</h3>
 
-      <div className="grid-style-seniors">
-        {loading
-          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-          : filtered.length > 0
-          ? filtered.map((p) => {
-              const seniorName = p.user?.name || 'Senior';
-              const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
-              const finalPrice = (p.price_per_session || 0) + platformFee;
+      <div className="grid-style-seniors">
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          : filtered.length > 0
+          ? filtered.map((p) => {
+              const seniorName = p.user?.name || 'Senior';
+              const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
+              const finalPrice = (p.price_per_session || 0) + platformFee;
 
-              return (
-                <div key={p._id} className="senior-card-modern">
-                  <div className="card-header-flex">
-                    <div className="avatar-box">
-                      <img src={p.avatar || fallbackImage} alt={seniorName} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
-                    </div>
-                    <div className="info-box">
-                      <h3 className="name-text">{seniorName} <span className="verified-tick">✔</span></h3>
-                      <p className="college-text">{p.college?.name || "Premium Mentor"}</p>
-                      
-                      <div className="rating-row">
-                        {[...Array(5)].map((_, i) => (
-                          <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} size={15} />
-                        ))}
-                        <span style={{marginLeft: '4px'}}>{p.average_rating?.toFixed?.(1) ?? "0.0"} • {p.total_ratings || 0}</span>
-                      </div>
-                    </div>
-                  </div>
+              return (
+                <div key={p._id} className="senior-card-modern">
+                  <div className="card-header-flex">
+                    <div className="avatar-box">
+                      <img src={p.avatar || fallbackImage} alt={seniorName} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
+                    </div>
+                    <div className="info-box">
+                      <h3 className="name-text">{seniorName} <span className="verified-tick">✔</span></h3>
+                      <p className="college-text">{p.college?.name || "Premium Mentor"}</p>
+                      
+                      <div className="rating-row">
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon key={i} filled={i < Math.round(p.average_rating || 0)} size={15} />
+                        ))}
+                        <span style={{marginLeft: '4px'}}>{p.average_rating?.toFixed?.(1) ?? "0.0"} • {p.total_ratings || 0}</span>
+                      </div>
+                    </div>
+                  </div>
 
 <p className="bio-text">
-  {p.bio ? (p.bio.length > 70 ? p.bio.substring(0, 70) + "..." : p.bio) : `Expert senior from ${p.college?.name || "top college"} ready to guide you.`}
+  {p.bio ? (p.bio.length > 70 ? p.bio.substring(0, 70) + "..." : p.bio) : `Expert senior from ${p.college?.name || "top college"} ready to guide you.`}
 </p>
-                  <div className="price-session-row">
-                    <span className="price-badge">₹{finalPrice}</span>
-                    <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
-                  </div>
+                  <div className="price-session-row">
+                    <span className="price-badge">₹{finalPrice}</span>
+                    <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
+                  </div>
 
-                  {/* 🚀 NEW: URL में college ID जोड़ दिया गया है ताकि सही प्रोफाइल खुले */}
-                  <Link to={`/book/${p.user._id}?college=${p.college?._id || ''}`} className="cc-btn primary">
-                    🚀 Book Session
-                  </Link>
-                </div>
-              );
-            })
-          : (
-            <div style={{gridColumn: '1/-1', textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--stroke)'}}>
-              <h3 style={{color: 'var(--brand-primary)', margin: '0 0 8px 0'}}>No mentors found</h3>
-              <p style={{color: 'var(--txt-muted)', margin: 0}}>Try adjusting your filters or search terms.</p>
-            </div>
-          )}
-      </div>
+                  <Link to={`/book/${p.user._id}`} className="cc-btn primary">
+                    🚀 Book Session
+                  </Link>
+                </div>
+              );
+            })
+          : (
+            <div style={{gridColumn: '1/-1', textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--stroke)'}}>
+              <h3 style={{color: 'var(--brand-primary)', margin: '0 0 8px 0'}}>No mentors found</h3>
+              <p style={{color: 'var(--txt-muted)', margin: 0}}>Try adjusting your filters or search terms.</p>
+            </div>
+          )}
+      </div>
 
-      <div className="trust-badges-container">
-        <div className="trust-item"><span>🛡️</span> Verified Senior Mentors</div>
-        <div className="trust-item" style={{borderLeft: '1px solid var(--stroke)', borderRight: '1px solid var(--stroke)', padding: '0 20px'}}><span>👨‍🎓</span> Trusted by 1000+ Students</div>
-        <div className="trust-item"><span>🎧</span> 24/7 Support</div>
-      </div>
-    </div>
-  );
+      <div className="trust-badges-container">
+        <div className="trust-item"><span>🛡️</span> Verified Senior Mentors</div>
+        <div className="trust-item" style={{borderLeft: '1px solid var(--stroke)', borderRight: '1px solid var(--stroke)', padding: '0 20px'}}><span>👨‍🎓</span> Trusted by 1000+ Students</div>
+        <div className="trust-item"><span>🎧</span> 24/7 Support</div>
+      </div>
+    </div>
+  );
 };
 
 // ===============================
 // 📘 Component 4: MyBookings 
 // ===============================
 const MyBookings = ({ seniors }) => {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [hoverRating, setHoverRating] = useState({ bookingId: null, value: 0 });
-  const navigate = useNavigate();
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [hoverRating, setHoverRating] = useState({ bookingId: null, value: 0 });
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadBookings = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my", { headers: { "x-auth-token": token } });
-        setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-      } catch {
-        toast.error("⚠️ Unable to load bookings");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadBookings();
-  }, []);
+  useEffect(() => {
+    const loadBookings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("https://collegeconnect-backend-mrkz.onrender.com/api/bookings/student/my", { headers: { "x-auth-token": token } });
+        setBookings(res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      } catch {
+        toast.error("⚠️ Unable to load bookings");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadBookings();
+  }, []);
 
-  const handleDispute = (id) => navigate(`/raise-dispute/${id}`);
-  const handleChat = (id) => navigate(`/chat/${id}`);
+  const handleDispute = (id) => navigate(`/raise-dispute/${id}`);
+  const handleChat = (id) => navigate(`/chat/${id}`);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [ratingData, setRatingData] = useState({ bookingId: null, seniorId: null, value: 0 });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [ratingData, setRatingData] = useState({ bookingId: null, seniorId: null, value: 0 });
 
-  const openRatingModal = (bookingId, seniorId, value) => {
-    setRatingData({ bookingId, seniorId, value });
-    setModalOpen(true);
-  }
+  const openRatingModal = (bookingId, seniorId, value) => {
+    setRatingData({ bookingId, seniorId, value });
+    setModalOpen(true);
+  }
 
-  const handleRating = async () => {
-    const { bookingId, seniorId, value } = ratingData;
-    if (!bookingId) { setModalOpen(false); return; }
-    setModalOpen(false); 
+  const handleRating = async () => {
+    const { bookingId, seniorId, value } = ratingData;
+    if (!bookingId) { setModalOpen(false); return; }
+    setModalOpen(false); 
 
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(`https://collegeconnect-backend-mrkz.onrender.com/api/ratings/submit/${bookingId}`, { rating: value }, { headers: { "x-auth-token": token } });
-      setBookings((prev) => prev.map((b) => b._id === bookingId ? { ...b, rated: true, rating: value, dispute_status: "not_allowed" } : b ));
-      toast.success(`⭐ You rated ${value} stars!`);
-    } catch (err) {
-      const errorMsg = err.response?.data?.msg || "Failed to submit rating!";
-      toast.error(`⚠️ ${errorMsg}`);
-    }
-  };
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(`https://collegeconnect-backend-mrkz.onrender.com/api/ratings/submit/${bookingId}`, { rating: value }, { headers: { "x-auth-token": token } });
+      setBookings((prev) => prev.map((b) => b._id === bookingId ? { ...b, rated: true, rating: value, dispute_status: "not_allowed" } : b ));
+      toast.success(`⭐ You rated ${value} stars!`);
+    } catch (err) {
+      const errorMsg = err.response?.data?.msg || "Failed to submit rating!";
+      toast.error(`⚠️ ${errorMsg}`);
+    }
+  };
 
-  const getStatusTagClass = (status) => {
-    const base = "booking-status";
-    switch ((status || "").toLowerCase()) {
-      case "confirmed": return `${base} status-confirmed`;
-      case "completed": return `${base} status-completed`;
-      case "pending":   return `${base} status-pending`;
-      case "cancelled": return `${base} status-cancelled`;
-      default:          return base;
-    }
-  };
+  const getStatusTagClass = (status) => {
+    const base = "booking-status";
+    switch ((status || "").toLowerCase()) {
+      case "confirmed": return `${base} status-confirmed`;
+      case "completed": return `${base} status-completed`;
+      case "pending":   return `${base} status-pending`;
+      case "cancelled": return `${base} status-cancelled`;
+      default:          return base;
+    }
+  };
 
-  const getDisputeTagClass = (dispute) => {
-    const d = (dispute || "").toLowerCase();
-    if (d === "pending")  return "booking-status status-pending";
-    if (d === "resolved") return "booking-status status-completed";
-    return null;
-  };
+  const getDisputeTagClass = (dispute) => {
+    const d = (dispute || "").toLowerCase();
+    if (d === "pending")  return "booking-status status-pending";
+    if (d === "resolved") return "booking-status status-completed";
+    return null;
+  };
 
-  const getYearSuffix = (year) => {
-    if (!year) return null;
-    const num = parseInt(year, 10);
-    if (isNaN(num)) return year;
-    if (num === 1) return "1st Year";
-    if (num === 2) return "2nd Year";
-    if (num === 3) return "3rd Year";
-    return `${num}th Year`;
-  };
+  const getYearSuffix = (year) => {
+    if (!year) return null;
+    const num = parseInt(year, 10);
+    if (isNaN(num)) return year;
+    if (num === 1) return "1st Year";
+    if (num === 2) return "2nd Year";
+    if (num === 3) return "3rd Year";
+    return `${num}th Year`;
+  };
 
-  const renderBookingCard = (b) => {
-    const dispute = b.dispute_status?.toLowerCase() || "none";
-    const status = b.status?.toLowerCase();
-    const disputeTagClass = getDisputeTagClass(dispute);
-    
-    // 🚀 NEW: सही कॉलेज का अवतार ढूँढने का लॉजिक
-    let seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id && s.college?._id === (b.profile?.college?._id || b.profile?.college));
-    
-    // अगर कोई पुराना डेटा है जहाँ कॉलेज सेव नहीं था, तो जो भी पहली प्रोफाइल मिले उसे ले लें
-    if (!seniorProfile) {
-        seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
-    }
+  const renderBookingCard = (b) => {
+    const dispute = b.dispute_status?.toLowerCase() || "none";
+    const status = b.status?.toLowerCase();
+    const disputeTagClass = getDisputeTagClass(dispute);
+    
+    const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
+    const seniorName = b.senior?.name || 'Senior';
+    const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
+    const finalAvatar = seniorProfile?.avatar || b.profile?.avatar || fallbackImage;
+    const yearText = getYearSuffix(b.profile?.year);
 
-    const seniorName = b.senior?.name || 'Senior';
-    const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
-    const finalAvatar = seniorProfile?.avatar || b.profile?.avatar || fallbackImage;
-    const yearText = getYearSuffix(b.profile?.year);
+    return (
+      <div key={b._id} className="booking-card-modern">
+        <div className="booking-top-row">
+          <div className="booking-profile-flex">
+            <img src={finalAvatar} alt={seniorName} className="booking-avatar" loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
+            <div>
+              <h3 className="booking-name">{seniorName}</h3>
+              <p className="booking-college">{b.profile?.college?.name}</p>
+              {yearText && <span className="booking-year-tag">{yearText}</span>}
+            </div>
+          </div>
+          <div className="status-column">
+            <span className={getStatusTagClass(status)}>{b.status}</span>
+            {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
+          </div>
+        </div>
 
-    return (
-      <div key={b._id} className="booking-card-modern">
-        <div className="booking-top-row">
-          <div className="booking-profile-flex">
-            <img src={finalAvatar} alt={seniorName} className="booking-avatar" loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
-            <div>
-              <h3 className="booking-name">{seniorName}</h3>
-              <p className="booking-college">{b.profile?.college?.name}</p>
-              {yearText && <span className="booking-year-tag">{yearText}</span>}
-            </div>
-          </div>
-          <div className="status-column">
-            <span className={getStatusTagClass(status)}>{b.status}</span>
-            {disputeTagClass && <span className={disputeTagClass}>{b.dispute_status}</span>}
-          </div>
-        </div>
+        {status === "confirmed" && (
+          <div className="info-alert-box">ℹ️ The senior will contact you on your phone within 6 hours.</div>
+        )}
 
-        {status === "confirmed" && (
-          <div className="info-alert-box">ℹ️ The senior will contact you on your phone within 6 hours.</div>
-        )}
+        {status === "completed" && !b.rated && (
+          <div className="rating-prompt-box">
+            <p style={{margin: '0 0 12px 0', fontSize: '1rem', fontWeight: 600}}>Rate this session:</p>
+            <div style={{display: 'flex', justifyContent: 'center', gap: '8px'}}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star} onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })} onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })} onClick={() => openRatingModal(b._id, b.senior?._id, star)}>
+                  <StarIcon filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)} size={34} isClickable={true} />
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {status === "completed" && !b.rated && (
-          <div className="rating-prompt-box">
-            <p style={{margin: '0 0 12px 0', fontSize: '1rem', fontWeight: 600}}>Rate this session:</p>
-            <div style={{display: 'flex', justifyContent: 'center', gap: '8px'}}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span key={star} onMouseEnter={() => setHoverRating({ bookingId: b._id, value: star })} onMouseLeave={() => setHoverRating({ bookingId: null, value: 0 })} onClick={() => openRatingModal(b._id, b.senior?._id, star)}>
-                  <StarIcon filled={star <= (hoverRating.bookingId === b._id ? hoverRating.value : 0)} size={34} isClickable={true} />
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        {b.rated && (
+          <div style={{background: 'var(--price-bg)', padding: '10px 16px', borderRadius: 'var(--radius-md)', display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '16px'}}>
+            <span style={{color: 'var(--price-green)', fontWeight: 600}}>You rated:</span>
+            <div style={{display:'flex', gap:'2px'}}>
+              {[...Array(5)].map((_, i) => <StarIcon key={i} filled={i < b.rating} size={18} />)}
+            </div>
+          </div>
+        )}
 
-        {b.rated && (
-          <div style={{background: 'var(--price-bg)', padding: '10px 16px', borderRadius: 'var(--radius-md)', display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '16px'}}>
-            <span style={{color: 'var(--price-green)', fontWeight: 600}}>You rated:</span>
-            <div style={{display:'flex', gap:'2px'}}>
-              {[...Array(5)].map((_, i) => <StarIcon key={i} filled={i < b.rating} size={18} />)}
-            </div>
-          </div>
-        )}
+        <div className="booking-actions">
+          {status === "confirmed" && <button className="cc-btn primary" onClick={() => handleChat(b._id)}>💬 Chat</button>}
+          {dispute === "none" && !b.rated && <button className="cc-btn btn-outline danger" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>}
+          
+          {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
+            <span style={{color:'var(--txt-muted)', fontSize:'0.85rem'}}>🚫 Dispute not allowed after rating.</span>
+          )}
+        </div>
+      </div>
+    );
+  };
 
-        <div className="booking-actions">
-          {status === "confirmed" && <button className="cc-btn primary" onClick={() => handleChat(b._id)}>💬 Chat</button>}
-          {dispute === "none" && !b.rated && <button className="cc-btn btn-outline danger" onClick={() => handleDispute(b._id)}>⚠️ Raise Dispute</button>}
-          
-          {(dispute === "not_allowed" || b.rated) && dispute !== "pending" && dispute !== "resolved" && (
-            <span style={{color:'var(--txt-muted)', fontSize:'0.85rem'}}>🚫 Dispute not allowed after rating.</span>
-          )}
-        </div>
-      </div>
-    );
-  };
+  if (loading) return <div className="grid-style-seniors">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
 
-  if (loading) return <div className="grid-style-seniors">{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
+  const activeBookings = bookings.filter((b) => b.status?.toLowerCase() !== "completed" && b.status?.toLowerCase() !== "cancelled");
+  const pastBookings = bookings.filter((b) => b.status?.toLowerCase() === "completed" || b.status?.toLowerCase() === "cancelled");
 
-  const activeBookings = bookings.filter((b) => b.status?.toLowerCase() !== "completed" && b.status?.toLowerCase() !== "cancelled");
-  const pastBookings = bookings.filter((b) => b.status?.toLowerCase() === "completed" || b.status?.toLowerCase() === "cancelled");
+  return (
+    <div className="page-wrapper">
+      <ConfirmModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onConfirm={handleRating} title="⚠️ Confirm Rating">
+        Once you rate this senior, you cannot raise a dispute.<br /><br />
+        Are you sure you want to give a rating of <strong>{ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
+      </ConfirmModal>
 
-  return (
-    <div className="page-wrapper">
-      <ConfirmModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onConfirm={handleRating} title="⚠️ Confirm Rating">
-        Once you rate this senior, you cannot raise a dispute.<br /><br />
-        Are you sure you want to give a rating of <strong>{ratingData.value} {ratingData.value > 1 ? "stars" : "star"}</strong>?
-      </ConfirmModal>
+      <h2 style={{color: 'var(--txt-main)', fontWeight: 800, fontSize: '1.6rem', margin: '0 0 24px 0'}}>📘 My Bookings</h2>
 
-      <h2 style={{color: 'var(--txt-main)', fontWeight: 800, fontSize: '1.6rem', margin: '0 0 24px 0'}}>📘 My Bookings</h2>
+      {bookings.length === 0 && (
+        <div style={{textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--stroke)'}}>
+          <h3 style={{color: 'var(--txt-main)', margin: '0 0 8px 0'}}>You haven't booked any sessions yet.</h3>
+          <p style={{color: 'var(--txt-muted)', margin: 0}}>Find a senior and schedule your first session.</p>
+        </div>
+      )}
 
-      {bookings.length === 0 && (
-        <div style={{textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--stroke)'}}>
-          <h3 style={{color: 'var(--txt-main)', margin: '0 0 8px 0'}}>You haven't booked any sessions yet.</h3>
-          <p style={{color: 'var(--txt-muted)', margin: 0}}>Find a senior and schedule your first session.</p>
-        </div>
-      )}
+      {activeBookings.length > 0 && (
+        <><h3 style={{margin:'0 0 16px 0', fontSize: '1.2rem'}}>Ongoing & Active</h3><div>{activeBookings.map(renderBookingCard)}</div></>
+      )}
 
-      {activeBookings.length > 0 && (
-        <><h3 style={{margin:'0 0 16px 0', fontSize: '1.2rem'}}>Ongoing & Active</h3><div>{activeBookings.map(renderBookingCard)}</div></>
-      )}
-
-      {pastBookings.length > 0 && (
-        <><h3 style={{margin:'32px 0 16px 0', fontSize: '1.2rem'}}>Completed & Past</h3><div>{pastBookings.map(renderBookingCard)}</div></>
-      )}
-    </div>
-  );
+      {pastBookings.length > 0 && (
+        <><h3 style={{margin:'32px 0 16px 0', fontSize: '1.2rem'}}>Completed & Past</h3><div>{pastBookings.map(renderBookingCard)}</div></>
+      )}
+    </div>
+  );
 };
 
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
-  if (!isOpen) return null;
-  return (
-    <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px'}}>
-      <div style={{background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '400px', padding: '30px 24px', textAlign: 'center', boxShadow: 'var(--shadow-hover)'}}>
-        <h3 style={{margin: '0 0 16px 0', color: 'var(--brand-primary)'}}>{title}</h3>
-        <div style={{color: 'var(--txt-main)', marginBottom: '30px', fontSize: '0.95rem', lineHeight: '1.5'}}>{children}</div>
-        <div style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
-          <button onClick={onClose} className="cc-btn btn-outline">Cancel</button>
-          <button onClick={onConfirm} className="cc-btn primary" style={{width: 'auto'}}>Yes, Continue</button>
-        </div>
-      </div>
-    </div>
-  );
+  if (!isOpen) return null;
+  return (
+    <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px'}}>
+      <div style={{background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '400px', padding: '30px 24px', textAlign: 'center', boxShadow: 'var(--shadow-hover)'}}>
+        <h3 style={{margin: '0 0 16px 0', color: 'var(--brand-primary)'}}>{title}</h3>
+        <div style={{color: 'var(--txt-main)', marginBottom: '30px', fontSize: '0.95rem', lineHeight: '1.5'}}>{children}</div>
+        <div style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
+          <button onClick={onClose} className="cc-btn btn-outline">Cancel</button>
+          <button onClick={onConfirm} className="cc-btn primary" style={{width: 'auto'}}>Yes, Continue</button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // ===============================
 // 🌈 Main Dashboard Shell (With 4 Tabs)
 // ===============================
 const StudentDashboard = () => {
-  const location = useLocation();
-  const currentPath = location.pathname;
-  const [theme, setTheme] = useState('light');
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const [theme, setTheme] = useState('light');
 
-  const [seniors, setSeniors] = useState([]);
-  const [colleges, setColleges] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [platformFee, setPlatformFee] = useState(20); 
-  const [loading, setLoading] = useState(true);
+  const [seniors, setSeniors] = useState([]);
+  const [colleges, setColleges] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [platformFee, setPlatformFee] = useState(20); 
+  const [loading, setLoading] = useState(true);
 
-  const toggleTheme = () => setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-  
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [currentPath]);
+  const toggleTheme = () => setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [currentPath]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const API = "https://collegeconnect-backend-mrkz.onrender.com";
-        const [s, c, t, settingsRes] = await Promise.all([
-          axios.get(`${API}/api/profile/all`, { headers: { "x-auth-token": token } }),
-          axios.get(`${API}/api/colleges`, { headers: { "x-auth-token": token } }),
-          axios.get(`${API}/api/tags`, { headers: { "x-auth-token": token } }),
-          axios.get(`${API}/api/settings`)
-        ]);
-        setSeniors(s.data); setColleges(c.data); setTags(t.data);
-        if (settingsRes.data && settingsRes.data.platformFee !== undefined) {
-          setPlatformFee(settingsRes.data.platformFee);
-        }
-      } catch {
-        toast.error("⚠️ Unable to load data");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAll();
-  }, []);
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const API = "https://collegeconnect-backend-mrkz.onrender.com";
+        const [s, c, t, settingsRes] = await Promise.all([
+          axios.get(`${API}/api/profile/all`, { headers: { "x-auth-token": token } }),
+          axios.get(`${API}/api/colleges`, { headers: { "x-auth-token": token } }),
+          axios.get(`${API}/api/tags`, { headers: { "x-auth-token": token } }),
+          axios.get(`${API}/api/settings`)
+        ]);
+        setSeniors(s.data); setColleges(c.data); setTags(t.data);
+        if (settingsRes.data && settingsRes.data.platformFee !== undefined) {
+          setPlatformFee(settingsRes.data.platformFee);
+        }
+      } catch {
+        toast.error("⚠️ Unable to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
 
-  return (
-    <div className={`page-bg ${theme}`}>
-      <style>{globalStyles}</style>
+  return (
+    <div className={`page-bg ${theme}`}>
+      <style>{globalStyles}</style>
 
-      <div className="main-container">
-        
-        {/* Premium App Header */}
-        <div className="top-header">
-          <h1 className="brand-title">CampusConnect</h1>
-          <button className="theme-btn" onClick={toggleTheme}>
-            {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-          </button>
-        </div>
+      <div className="main-container">
+        
+        {/* Premium App Header */}
+        <div className="top-header">
+          <h1 className="brand-title">CampusConnect</h1>
+          <button className="theme-btn" onClick={toggleTheme}>
+            {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+          </button>
+        </div>
 
-        {/* 💻 Desktop Navigation (Now 4 Tabs) */}
-        <div className="desktop-tabs">
-          <Link to="/student-dashboard" className={`d-tab ${currentPath === "/student-dashboard" ? "active" : ""}`}>
-            ✨ Find Seniors
-          </Link>
-          <Link to="/student-dashboard/predictor" className={`d-tab ${currentPath.includes("/predictor") ? "active" : ""}`}>
-            🎯 Predictor
-          </Link>
-          <Link to="/student-dashboard/choice-filling" className={`d-tab ${currentPath.includes("/choice-filling") ? "active" : ""}`}>
-            📋 Choice Filling
-          </Link>
-          <Link to="/student-dashboard/bookings" className={`d-tab ${currentPath.includes("/bookings") ? "active" : ""}`}>
-            📘 Bookings
-          </Link>
-        </div>
+        {/* 💻 Desktop Navigation (Now 4 Tabs) */}
+        <div className="desktop-tabs">
+          <Link to="/student-dashboard" className={`d-tab ${currentPath === "/student-dashboard" ? "active" : ""}`}>
+            ✨ Find Seniors
+          </Link>
+          <Link to="/student-dashboard/predictor" className={`d-tab ${currentPath.includes("/predictor") ? "active" : ""}`}>
+            🎯 Predictor
+          </Link>
+          <Link to="/student-dashboard/choice-filling" className={`d-tab ${currentPath.includes("/choice-filling") ? "active" : ""}`}>
+            📋 Choice Filling
+          </Link>
+          <Link to="/student-dashboard/bookings" className={`d-tab ${currentPath.includes("/bookings") ? "active" : ""}`}>
+            📘 Bookings
+          </Link>
+        </div>
 
-        <Routes>
-          <Route path="/" element={<FindSenior seniors={seniors} loading={loading} colleges={colleges} tags={tags} platformFee={platformFee} />} />
-          <Route path="/predictor" element={<CollegePredictor />} />
-          <Route path="/choice-filling" element={<ChoiceFillingGenerator />} />
-          <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
-        </Routes>
-      </div>
+        <Routes>
+          <Route path="/" element={<FindSenior seniors={seniors} loading={loading} colleges={colleges} tags={tags} platformFee={platformFee} />} />
+          <Route path="/predictor" element={<CollegePredictor />} />
+          <Route path="/choice-filling" element={<ChoiceFillingGenerator />} />
+          <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
+        </Routes>
+      </div>
 
-      {/* 📱 Mobile Bottom Nav (4 Tabs Perfectly Aligned) */}
-      <div className="bottom-nav">
-        <Link to="/student-dashboard" className={`b-nav-item ${currentPath === "/student-dashboard" ? "active" : ""}`}>
-          <span className="b-nav-icon">🏫</span>
-          Seniors
-        </Link>
-        <Link to="/student-dashboard/predictor" className={`b-nav-item ${currentPath.includes("/predictor") ? "active" : ""}`}>
-          <span className="b-nav-icon">🎯</span>
-          Predictor
-        </Link>
-        <Link to="/student-dashboard/choice-filling" className={`b-nav-item ${currentPath.includes("/choice-filling") ? "active" : ""}`}>
-          <span className="b-nav-icon">📋</span>
-          Choices
-        </Link>
-        <Link to="/student-dashboard/bookings" className={`b-nav-item ${currentPath.includes("/bookings") ? "active" : ""}`}>
-          <span className="b-nav-icon">📘</span>
-          Bookings
-        </Link>
-      </div>
-    </div>
-  );
+      {/* 📱 Mobile Bottom Nav (4 Tabs Perfectly Aligned) */}
+      <div className="bottom-nav">
+        <Link to="/student-dashboard" className={`b-nav-item ${currentPath === "/student-dashboard" ? "active" : ""}`}>
+          <span className="b-nav-icon">🏫</span>
+          Seniors
+        </Link>
+        <Link to="/student-dashboard/predictor" className={`b-nav-item ${currentPath.includes("/predictor") ? "active" : ""}`}>
+          <span className="b-nav-icon">🎯</span>
+          Predictor
+        </Link>
+        <Link to="/student-dashboard/choice-filling" className={`b-nav-item ${currentPath.includes("/choice-filling") ? "active" : ""}`}>
+          <span className="b-nav-icon">📋</span>
+          Choices
+        </Link>
+        <Link to="/student-dashboard/bookings" className={`b-nav-item ${currentPath.includes("/bookings") ? "active" : ""}`}>
+          <span className="b-nav-icon">📘</span>
+          Bookings
+        </Link>
+      </div>
+    </div>
+  );
 };
 
-export default StudentDashboard; 
+export default StudentDashboard;
