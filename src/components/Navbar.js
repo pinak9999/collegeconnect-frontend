@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Navbar CSS (Mobile Break Line Fixed)
+// 🚀 Premium Navbar CSS (Strict Mobile Lock Fixed)
 // ======================================
 const navbarStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -24,10 +24,8 @@ const navbarStyles = `
   padding: 12px 0;
 }
 
-/* 🔥 Image ke hisaab se navabar ka color change kiya gaya hai */
 .main-nav.dashboard-bg,
 .main-nav.default-bg {
-  /* Dark Purple/Navy Gradient as seen in the image */
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
 }
 
@@ -51,7 +49,7 @@ const navbarStyles = `
   align-items: center;
   gap: 8px;
   letter-spacing: -0.5px;
-  white-space: nowrap; /* 🔥 FIX: यह टेक्स्ट को टूटने (break) से रोकेगा */
+  white-space: nowrap; 
 }
 .brand-highlight {
   background: linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8);
@@ -83,40 +81,27 @@ const navbarStyles = `
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-family: inherit;
-  white-space: nowrap; /* 🔥 FIX: Butons ka text bhi nahi tutega */
+  white-space: nowrap; 
 }
 .nav-btn:active { transform: scale(0.96); }
 
 /* Specific Button Styles */
-.btn-dashboard {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
+.btn-dashboard { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
 .btn-dashboard:hover { box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); transform: translateY(-2px); }
 
-.btn-logout {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
+.btn-logout { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
 .btn-logout:hover { box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4); transform: translateY(-2px); }
 
-.btn-register {
-  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-}
+.btn-register { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25); }
 .btn-register:hover { box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4); transform: translateY(-2px); }
 
-.btn-login {
-  background: linear-gradient(135deg, #10b981, #059669);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-}
+.btn-login { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
 .btn-login:hover { box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
 
-
 /* --- Scrolling Tagline (Marquee) --- */
-/* 🔥 Image ke hisaab se pinkish-purple color match kiya gaya hai */
 .scrolling-bar {
   background: linear-gradient(90deg, #f43f5e 0%, #d946ef 50%, #8b5cf6 100%);
   color: #ffffff;
@@ -144,52 +129,41 @@ const navbarStyles = `
 }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES (FIXED ALIGNMENT)
+   📱 STRICT MOBILE RESPONSIVE FIX (LOCKED HEIGHT)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { 
-    padding: 12px 0; /* Padding sahi rakhi gayi hai taaki gap na aaye */
-  }
+  .main-nav { padding: 12px 0; }
   .nav-container {
     flex-direction: column;
     justify-content: center;
-    gap: 12px; /* Logo aur buttons ke beech barabar gap */
+    align-items: center;
+    gap: 12px; /* Fixed gap between logo and buttons */
   }
   .brand-logo { 
-    font-size: 1.8rem; 
-    padding-top: 0; /* Old padding hata di gayi */
+    font-size: 1.6rem; 
+    margin: 0; 
+    padding: 0;
   }
   .nav-actions { 
     width: 100%; 
+    display: flex;
+    flex-direction: row; /* Force buttons to be side-by-side */
+    flex-wrap: nowrap; /* STRICTLY PREVENT WRAPPING TO NEW LINE */
     justify-content: center; 
-    flex-wrap: wrap; 
     gap: 10px; 
   }
   .nav-btn { 
-    padding: 8px 12px; 
-    font-size: 0.9rem; 
-    flex: 1; 
-    justify-content: center; 
-    max-width: 160px; 
-  }
-  .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
-  .scrolling-text { animation-duration: 18s; } 
-}
-
-/* 🔥 EXTRA SMALL DEVICES (320px like old iPhones/Androids) FIX */
-@media (max-width: 400px) {
-  .brand-logo { 
-    font-size: 1.6rem; 
-    gap: 5px;
-  }
-  .nav-actions { 
-    gap: 8px; 
-    /* 🔥 Yaha padding-bottom: 15px tha jisne issue kiya tha, usko hata diya hai */
-  }
-  .nav-btn { 
-    padding: 8px 5px; 
+    flex: 1; /* Both buttons take exactly 50% space */
+    max-width: 150px; /* Stop them from getting too wide */
+    padding: 8px 10px; 
     font-size: 0.85rem; 
   }
+  .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
+}
+
+@media (max-width: 400px) {
+  .brand-logo { font-size: 1.45rem; }
+  .nav-btn { font-size: 0.8rem; padding: 6px 8px; }
 }
 `;
 
