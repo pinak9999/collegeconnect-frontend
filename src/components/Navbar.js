@@ -132,7 +132,7 @@ const navbarStyles = `
    📱 STRICT MOBILE RESPONSIVE FIX (LOCKED HEIGHT)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 12px 0; }
+  .main-nav { padding: 12px 0; margin-top: -25px;}
   .nav-container {
     flex-direction: column;
     justify-content: center;
