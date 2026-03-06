@@ -153,7 +153,8 @@ const navbarStyles = `
   .nav-container {
     flex-direction: column;
     justify-content: center;
-    gap: 14px;
+    gap: 8px;
+            margin-top: 10px;
   }
   .brand-logo { font-size: 1.90rem; }
   .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
