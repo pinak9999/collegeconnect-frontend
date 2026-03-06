@@ -57,25 +57,86 @@ function AppLayout() {
   const showMobileModal =
     auth.isAuthenticated && auth.user && !auth.user.mobileNumber;
 
-  // 🔹 Loader UI
-  if (loading)
+  // 🔹 Premium Loader UI
+  if (loading) {
+    const loaderCss = `
+    .premium-loader-wrapper {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #fdfdfd; /* क्लीन बैकग्राउंड */
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    /* 🚀 3D Spinner Animation */
+    .spinner-container {
+      position: relative;
+      width: 65px;
+      height: 65px;
+      margin-bottom: 24px;
+    }
+    
+    .spinner-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 4px solid transparent;
+    }
+    
+    /* 3 अलग-अलग रंग और स्पीड वाले रिंग्स */
+    .ring-1 { 
+      border-top-color: #e23744; /* Zomato Red */
+      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; 
+    }
+    .ring-2 { 
+      border-right-color: #ec4899; /* Pink */
+      animation: spin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite; 
+    }
+    .ring-3 { 
+      border-bottom-color: #8b5cf6; /* Purple */
+      animation: spin 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite; 
+    }
+    
+    /* ✨ Shining Text Animation */
+    .loader-text-premium {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #e23744, #ec4899, #8b5cf6, #e23744);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineText 2s linear infinite;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Keyframes for Animations */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes shineText {
+      to { background-position: 200% center; }
+    }
+    `;
+
     return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: 'linear-gradient(135deg,#e0f2fe,#eff6ff)',
-          fontFamily: 'Poppins, sans-serif',
-          color: '#2563eb',
-          fontSize: '1.2rem',
-          fontWeight: '600',
-        }}
-      >
-        ⏳ Loading College Connect...
-      </div>
+      <>
+        <style>{loaderCss}</style>
+        <div className="premium-loader-wrapper">
+          <div className="spinner-container">
+            <div className="spinner-ring ring-1"></div>
+            <div className="spinner-ring ring-2"></div>
+            <div className="spinner-ring ring-3"></div>
+          </div>
+          <div className="loader-text-premium">🚀 Loading CampusConnect...</div>
+        </div>
+      </>
     );
+  }
 
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
