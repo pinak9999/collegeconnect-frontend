@@ -52,7 +52,6 @@ const navbarStyles = `
   gap: 8px;
   letter-spacing: -0.5px;
   white-space: nowrap; /* 🔥 FIX: यह टेक्स्ट को टूटने (break) से रोकेगा */
-  padding-top: 15px;
 }
 .brand-highlight {
   background: linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8);
@@ -70,7 +69,6 @@ const navbarStyles = `
   display: flex;
   align-items: center;
   gap: 12px;
-
 }
 
 .nav-btn {
@@ -146,19 +144,34 @@ const navbarStyles = `
 }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES
+   📱 MOBILE RESPONSIVE FIXES (FIXED ALIGNMENT)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 0px 0; }
+  .main-nav { 
+    padding: 12px 0; /* Padding sahi rakhi gayi hai taaki gap na aaye */
+  }
   .nav-container {
     flex-direction: column;
     justify-content: center;
-    gap: 8px;
-            margin-top: -6px;
+    gap: 12px; /* Logo aur buttons ke beech barabar gap */
   }
-  .brand-logo { font-size: 1.90rem; }
-  .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
-  .nav-btn { padding: 7px 0px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 160px; }
+  .brand-logo { 
+    font-size: 1.8rem; 
+    padding-top: 0; /* Old padding hata di gayi */
+  }
+  .nav-actions { 
+    width: 100%; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+    gap: 10px; 
+  }
+  .nav-btn { 
+    padding: 8px 12px; 
+    font-size: 0.9rem; 
+    flex: 1; 
+    justify-content: center; 
+    max-width: 160px; 
+  }
   .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
   .scrolling-text { animation-duration: 18s; } 
 }
@@ -166,13 +179,17 @@ const navbarStyles = `
 /* 🔥 EXTRA SMALL DEVICES (320px like old iPhones/Androids) FIX */
 @media (max-width: 400px) {
   .brand-logo { 
-    font-size: 1.59rem; /* Font chota kiya taki screen se bahar na jaye */
+    font-size: 1.6rem; 
     gap: 5px;
-    margin-top: 12px;
-    
   }
-  .nav-actions { gap: 8px;        padding-bottom: 15px; }
-  .nav-btn { padding: 8px 10px; font-size: 0.85rem; }
+  .nav-actions { 
+    gap: 8px; 
+    /* 🔥 Yaha padding-bottom: 15px tha jisne issue kiya tha, usko hata diya hai */
+  }
+  .nav-btn { 
+    padding: 8px 5px; 
+    font-size: 0.85rem; 
+  }
 }
 `;
 
