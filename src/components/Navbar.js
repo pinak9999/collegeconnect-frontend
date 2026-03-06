@@ -169,9 +169,10 @@ const navbarStyles = `
   .brand-logo { 
     font-size: 1.59rem; /* Font chota kiya taki screen se bahar na jaye */
     gap: 5px;
+
     
   }
-  .nav-actions { gap: 8px;        padding-bottom: 15px; }
+  .nav-actions { gap: 8px;             margin-top: 10px;   padding-bottom: 15px; }
   .nav-btn { padding: 8px 10px; font-size: 0.85rem; }
 }
 `;
