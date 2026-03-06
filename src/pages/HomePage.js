@@ -192,7 +192,7 @@ function HomePage() {
       <section className="fade-in-up" style={{ 
         ...sectionBase, 
         /* 🔥 यहाँ मैंने बैकग्राउंड को एक प्रीमियम ग्रेडिएंट में बदल दिया है */
-        background: "linear-gradient(180deg, #ffd6a8 0%, #fbfcbf 100%)",
+        background: "linear-gradient(rgb(201 209 255) 0%, rgb(243 209 235) 100%)",
         paddingBottom: "80px" // नीचे से थोड़ा स्पेस देने के लिए
       }}>
         <h2 style={{ 
@@ -241,7 +241,7 @@ function HomePage() {
           opacity: 0, 
           transform: "translateY(40px)",
           transition: "all 1s ease",
-            background: "linear-gradient(180deg, #dae5ff 0%, #bffce4 100%)", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
+            background: "linear-gradient(rgb(232 232 255) 0%, rgb(197 220 255) 100%);", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
           padding: isMobile ? "60px 20px" : "90px 20px", 
           textAlign: "center" /* टेक्स्ट को बीच में रखने के लिए */
         }}

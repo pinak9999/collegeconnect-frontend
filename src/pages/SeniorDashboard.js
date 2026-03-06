@@ -249,6 +249,20 @@ const BookingsTable = ({ title, bookings, loading, onMarkComplete, onStartChat }
               <p style={{ color: palette.subtext, margin: "6px 0" }}>
                 📞 {b.student?.mobileNumber || "N/A"}
               </p>
+              
+              {/* 🚀 NEW: Multiple Colleges Support - Show which college was booked */}
+              <p style={{ 
+                color: palette.primaryDark, 
+                margin: "0 0 10px 0", 
+                fontSize: "0.85rem", 
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "5px"
+              }}>
+                🏫 {b.profile?.college?.name || "General Session"}
+              </p>
+
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <Chip label={`Status: ${b.status}`} tone={b.status === "Completed" ? "ok" : "neutral"} />
                 {b.dispute_status === "Pending" && (
@@ -491,7 +505,7 @@ function SeniorDashboard() {
               onStartChat={startChat}
             />
           }
-        />x
+        />
       </Routes>
     </div>
   );

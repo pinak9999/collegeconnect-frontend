@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext"; // Asal code mein ise uncomment karein
 import toast from "react-hot-toast";
 
@@ -197,6 +197,11 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
 function BookingPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  
+  // 🚀 NEW: URL से college ID निकालें
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const targetCollegeId = queryParams.get("college");
 
   // ⭐ Mock AuthContext (Compile error se bachne ke liye)
   const { auth } = {
@@ -234,10 +239,9 @@ function BookingPage() {
           return;
         }
 
-        // --- ID CARD FIX (Aapka original logic 100% same) ---
         const [res, settingsRes, allProfilesRes] = await Promise.all([
           axios.get(
-            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}`,
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/senior/${userId}${targetCollegeId ? `?college=${targetCollegeId}` : ''}`, 
             { headers: { "x-auth-token": token } }
           ),
           axios.get(
@@ -252,9 +256,10 @@ function BookingPage() {
         const singleProfileData = res.data;
         const allProfilesData = allProfilesRes.data;
 
+        // 🚀 NEW: matching profile dhoondte waqt bhi college match karein
         const matchingProfileFromAll = allProfilesData.find(
-          (p) => p.user?._id === userId
-        );
+          (p) => p.user?._id === userId && (!targetCollegeId || p.college?._id === targetCollegeId)
+        ) || allProfilesData.find((p) => p.user?._id === userId); // Fallback to any profile of this senior
 
         const combinedProfile = {
           ...singleProfileData,
@@ -265,7 +270,7 @@ function BookingPage() {
 
         setProfile(combinedProfile);
 
-        const fee = combinedProfile.price_per_session + settingsRes.data.platformFee;
+        const fee = (combinedProfile.price_per_session || 0) + (settingsRes.data.platformFee || 20);
         setTotalAmount(fee);
 
         setLoading(false);
@@ -279,7 +284,7 @@ function BookingPage() {
     };
 
     loadPageData();
-  }, [userId]);
+  }, [userId, targetCollegeId]);
 
   // 🎟️ NEW: Handle Apply Coupon
   const handleApplyCoupon = async () => {
@@ -366,7 +371,7 @@ function BookingPage() {
       
       const options = {
         key: "rzp_test_RbhIpPvOLS2KkF",
-        amount: order.amount, // बैकएंड से जो पैसा आया है
+        amount: order.amount, 
         currency: order.currency || "INR",
         name: "CampusConnect",
         description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
@@ -388,7 +393,7 @@ function BookingPage() {
           }
         },
         prefill: { name: auth.user.name, email: auth.user.email },
-        theme: { color: "#e23744" }, // Zomato Red theme matched
+        theme: { color: "#e23744" }, 
       };
       const rzp1 = new window.Razorpay(options);
       rzp1.open();

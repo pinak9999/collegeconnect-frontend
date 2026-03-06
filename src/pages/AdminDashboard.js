@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-// 🚀 BOLD: Pagination import hata diya gaya, kyunki component ab isi file mein hai
 
 // 🚀 BOLD: Pagination component ab isi file mein bana diya gaya hai
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
@@ -39,7 +38,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
 
 // 🚀 BOLD: नया कस्टम पॉप-अप (Modal) कॉम्पोनेंट
-// (window.confirm की जगह)
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   if (!isOpen) return null;
 
@@ -73,17 +71,14 @@ function AdminDashboard() {
   const [userPageData, setUserPageData] = useState({ currentPage: 1, totalPages: 1 });
   const [bookingPageData, setBookingPageData] = useState({ currentPage: 1, totalPages: 1 });
   
-  // 🚀 BOLD: टैब मैनेजमेंट
-  const [activeTab, setActiveTab] = useState("users"); // Main tab: 'users' or 'bookings'
-  const [userView, setUserView] = useState("students"); // Sub-tab: 'students' or 'seniors'
-  const [bookingView, setBookingView] = useState("all"); // 🚀 BOLD: Naya state bookings ke liye
+  const [activeTab, setActiveTab] = useState("users"); // Main tab
+  const [userView, setUserView] = useState("students"); // Sub-tab
+  const [bookingView, setBookingView] = useState("all"); 
 
-  // 🚀 BOLD: सीनियर्स को फ़िल्टर करने के लिए नया स्टेट
   const [allProfiles, setAllProfiles] = useState([]); // सभी सीनियर प्रोफ़ाइल्स
   const [colleges, setColleges] = useState([]); // सभी कॉलेज
   const [selectedCollege, setSelectedCollege] = useState(""); // फ़िल्टर वैल्यू
 
-  // 🚀 BOLD: पॉप-अप (Modal) के लिए स्टेट
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -91,7 +86,6 @@ function AdminDashboard() {
     onConfirm: () => {},
   });
 
-  // 🔹 Load Users (यह स्टूडेंट्स और सीनियर्स, दोनों को लाता है)
   const loadUsers = async (page = 1) => {
     setLoading(true);
     try {
@@ -113,7 +107,6 @@ function AdminDashboard() {
     }
   };
 
-  // 🔹 Load Bookings
   const loadBookings = async (page = 1) => {
     setLoading(true);
     try {
@@ -135,11 +128,9 @@ function AdminDashboard() {
     }
   };
 
-  // 🚀 BOLD: सीनियर्स और कॉलेज की जानकारी लोड करने के लिए नया फ़ंक्शन
   const loadSeniorData = async () => {
     try {
       const token = localStorage.getItem("token");
-      // एक साथ दोनों API को कॉल करें
       const [profileRes, collegeRes] = await Promise.all([
         axios.get(`https://collegeconnect-backend-mrkz.onrender.com/api/profile/all`, {
           headers: { "x-auth-token": token },
@@ -155,25 +146,22 @@ function AdminDashboard() {
     }
   };
 
-  // 🔹 useEffect (डेटा लोड करने के लिए)
   useEffect(() => {
     if (activeTab === "users") {
       loadUsers();
-      // 🚀 BOLD: अगर 'users' टैब पर हैं, तो सीनियर और कॉलेज डेटा भी लोड करें
       loadSeniorData();
     } else {
       loadBookings();
     }
   }, [activeTab]);
 
-  // 🔹 Make Senior
   const makeSeniorHandler = (userId) => {
     setModalState({
       isOpen: true,
       title: "Confirm Promotion",
       message: "Are you sure you want to make this user a Senior?",
       onConfirm: async () => {
-        setModalState({ ...modalState, isOpen: false }); // Modal बंद करें
+        setModalState({ ...modalState, isOpen: false }); 
         const toastId = toast.loading("Updating...");
         try {
           const token = localStorage.getItem("token");
@@ -194,7 +182,6 @@ function AdminDashboard() {
     });
   };
 
-  // 🔹 Delete User
   const deleteUserHandler = (userId, name) => {
     setModalState({
       isOpen: true,
@@ -220,7 +207,6 @@ function AdminDashboard() {
     });
   };
 
-  // 🔹 Resolve Dispute
   const resolveDisputeHandler = (id) => {
     setModalState({
       isOpen: true,
@@ -247,29 +233,24 @@ function AdminDashboard() {
     });
   };
 
-  // 🚀 BOLD: फ़िल्टर किया हुआ यूज़र डेटा
-  // 1. स्टूडेंट्स (Students)
   const students = users.filter((u) => !u.isSenior && u.role !== "Admin");
   
-  // 2. सीनियर्स (Seniors) - पहले यूज़र्स को प्रोफ़ाइल के साथ मिलाएँ
+  // 🚀 UPDATE: एक सीनियर के मल्टीपल कॉलेज सपोर्ट के लिए .filter() इस्तेमाल किया गया
   const seniorsWithProfile = users
     .filter((u) => u.isSenior)
     .map((senior) => {
-      // यूज़र लिस्ट (senior) को प्रोफ़ाइल लिस्ट (allProfiles) से मिलाएँ
-      const profile = allProfiles.find((p) => p.user._id === senior._id);
-      return { ...senior, profile: profile || {} }; // प्रोफ़ाइल को मर्ज करें
+      // Find ALL profiles for this senior
+      const profiles = allProfiles.filter((p) => p.user && p.user._id === senior._id);
+      return { ...senior, profiles: profiles }; 
     });
 
-  // 3. फ़िल्टर किए गए सीनियर्स (Filtered Seniors)
+  // 🚀 UPDATE: फ़िल्टर लॉजिक को भी अपडेट किया ताकि अगर कोई भी प्रोफाइल मैच करे तो सीनियर दिखे
   const filteredSeniors = seniorsWithProfile.filter(s => 
-    !selectedCollege || s.profile?.college?._id === selectedCollege
+    !selectedCollege || s.profiles.some(p => p.college && p.college._id === selectedCollege)
   );
 
-  // 🚀 BOLD: बुकिंग्स को फ़िल्टर करें
   const disputedBookings = bookings.filter(b => b.dispute_status === "Pending");
 
-
-  // 🔹 Error State
   if (error)
     return (
       <div style={errorBox}>
@@ -281,10 +262,8 @@ function AdminDashboard() {
       </div>
     );
 
-  // 🔹 Main Render
   return (
     <div style={mainWrapper}>
-      {/* 🚀 BOLD: नया पॉप-अप (Modal) */}
       <ConfirmModal
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ ...modalState, isOpen: false })}
@@ -296,7 +275,6 @@ function AdminDashboard() {
 
       <h1 style={headerTitle}>🛠 Admin Dashboard</h1>
 
-      {/* 🔹 Top Management Buttons */}
       <div style={adminBtnWrapper}>
         {topButtons.map((btn, i) => (
           <Link key={i} to={btn.link} style={adminButton(btn.color)}>
@@ -305,7 +283,6 @@ function AdminDashboard() {
         ))}
       </div>
 
-      {/* 🔹 Main Tabs */}
       <div style={tabWrapper}>
         <button onClick={() => setActiveTab("users")} style={tab(activeTab === "users")}>
           👥 Users
@@ -315,16 +292,11 @@ function AdminDashboard() {
         </button>
       </div>
 
-      {/* ======================= */}
-      {/* 🔹 Main Data Section 🔹 */}
-      {/* ======================= */}
       {loading ? (
         <h3 style={{ textAlign: "center", color: "#2563eb" }}>⏳ Loading...</h3>
       ) : activeTab === "users" ? (
         
-        // 🚀 BOLD: यूज़र्स (Users) टैब का नया लेआउट
         <div>
-          {/* 🚀 BOLD: Sub-tabs (स्टूडेंट / सीनियर) */}
           <div style={subTabWrapper}>
             <button
               onClick={() => setUserView("students")}
@@ -340,7 +312,6 @@ function AdminDashboard() {
             </button>
           </div>
 
-          {/* 🚀 BOLD: स्टूडेंट लिस्ट (Student List) */}
           {userView === "students" && (
             <>
               <h3 style={sectionTitle}>All Students</h3>
@@ -365,12 +336,10 @@ function AdminDashboard() {
             </>
           )}
 
-          {/* 🚀 BOLD: सीनियर लिस्ट (Senior List) */}
           {userView === "seniors" && (
             <>
               <h3 style={sectionTitle}>All Seniors</h3>
               
-              {/* 🚀 BOLD: कॉलेज फ़िल्टर ड्रॉपडाउन */}
               <div style={filterWrapper}>
                 <select 
                   style={adminSelect}
@@ -390,13 +359,23 @@ function AdminDashboard() {
                     <h4 style={userName}>{u.name}</h4>
                     <p style={userEmail}>{u.email}</p>
                     <p style={userPhone}>📞 {u.mobileNumber}</p>
-                    {/* 🚀 BOLD: कॉलेज का नाम दिखाना */}
-                    <p style={collegeNameStyle}>
-                      {u.profile?.college?.name || "No College Info"}
-                    </p>
+                    
+                    {/* 🚀 UPDATE: सीनियर के सभी कॉलेजों को बैज के रूप में दिखाना */}
+                    <div style={collegesWrapper}>
+                      {u.profiles.length > 0 ? (
+                        u.profiles.map((p, idx) => (
+                          <span key={idx} style={collegeBadgeStyle}>
+                            🏫 {p.college?.name || "Unknown"}
+                          </span>
+                        ))
+                      ) : (
+                        <span style={collegeBadgeStyle}>No College Assigned</span>
+                      )}
+                    </div>
+
                     <div style={btnRow}>
                       <Link to={`/admin-edit-profile/${u._id}`} style={btnGradient}>
-                        ✏ Edit Profile
+                        ⚙️ Manage Profiles
                       </Link>
                       <button style={btnRed} onClick={() => deleteUserHandler(u._id, u.name)}>
                         🗑 Delete
@@ -408,7 +387,6 @@ function AdminDashboard() {
             </>
           )}
           
-          {/* 🚀 BOLD: यूज़र लिस्ट के लिए Pagination */}
           <Pagination
             currentPage={userPageData.currentPage}
             totalPages={userPageData.totalPages}
@@ -417,9 +395,7 @@ function AdminDashboard() {
         </div>
       ) : (
         
-        // 🚀 BOLD: बुकिंग्स (Bookings) टैब (पूरा ब्लॉक अपडेट किया गया)
         <div>
-          {/* 🚀 BOLD: Naye Sub-tabs (All / Disputed) */}
           <div style={subTabWrapper}>
             <button
               onClick={() => setBookingView("all")}
@@ -431,9 +407,7 @@ function AdminDashboard() {
               onClick={() => setBookingView("disputed")}
               style={{
                 ...subTab(bookingView === "disputed"),
-                // Agar active nahi hai, lekin disputes hain, tab bhi highlight karein
                 ...(bookingView !== 'disputed' && disputedBookings.length > 0 ? disputeTabAlert : {}),
-                // Agar active hai aur disputes hain
                 ...(bookingView === 'disputed' && disputedBookings.length > 0 ? disputeTabActive : {})
               }}
             >
@@ -441,7 +415,6 @@ function AdminDashboard() {
             </button>
           </div>
 
-          {/* 🚀 BOLD: 'All Bookings' List */}
           {bookingView === "all" && (
             <>
               <h3 style={sectionTitle}>All Bookings</h3>
@@ -489,7 +462,6 @@ function AdminDashboard() {
             </>
           )}
 
-          {/* 🚀 BOLD: 'Disputed Bookings' List */}
           {bookingView === "disputed" && (
             <>
               <h3 style={sectionTitle}>Disputed Bookings</h3>
@@ -540,7 +512,6 @@ function AdminDashboard() {
 }
 
 /* 🎨 === Styles === */
-// (पहले के सभी स्टाइल्स वही हैं)
 const mainWrapper = {
   minHeight: "100vh",
   background: "linear-gradient(135deg,#eef2ff,#f9fafb)",
@@ -602,7 +573,6 @@ const tab = (active) => ({
   boxShadow: active ? "0 4px 12px rgba(37,99,235,0.3)" : "none",
 });
 
-// 🚀 BOLD: नए सब-टैब के लिए स्टाइल
 const subTabWrapper = {
   display: 'flex',
   justifyContent: 'center',
@@ -621,7 +591,6 @@ const subTab = (active) => ({
   transition: "0.3s",
 });
 
-// 🚀 BOLD: Dispute tab highlight styles
 const disputeTabAlert = {
   borderColor: '#f97316',
   color: '#f97316',
@@ -643,7 +612,6 @@ const emptyListMessage = {
   boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
 };
 
-// 🚀 BOLD: नए कॉलेज फ़िल्टर के लिए स्टाइल
 const filterWrapper = {
   display: 'flex',
   justifyContent: 'center',
@@ -677,19 +645,33 @@ const userCard = {
   textAlign: "center",
   transition: "0.3s",
   backdropFilter: "blur(6px)",
-  border: "1px solid #fff", // 🚀 BOLD: सफ़ेद बॉर्डर जोड़ा गया
+  border: "1px solid #fff", 
 };
 
 const userName = { margin: 0, color: "#111827", fontWeight: 600, fontSize: '1.1rem' };
 const userEmail = { color: "#6b7280", margin: "4px 0", fontSize: '0.9rem' };
 const userPhone = { color: "#2563eb", fontWeight: 500, margin: '4px 0' };
-const collegeNameStyle = { // 🚀 BOLD: सीनियर के कॉलेज के लिए नया स्टाइल
-  color: "#6366f1", 
-  fontWeight: 600, 
-  margin: '4px 0',
-  fontSize: '0.9rem',
-  minHeight: '1.2em'
+
+// 🚀 BOLD: नए स्टाइल्स: मल्टीपल कॉलेजों के बैज के लिए
+const collegesWrapper = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  gap: '5px',
+  margin: '10px 0',
+  minHeight: '28px'
 };
+
+const collegeBadgeStyle = { 
+  background: "#e0e7ff",
+  color: "#4f46e5",
+  padding: "4px 10px",
+  borderRadius: "20px",
+  fontSize: "0.8rem",
+  fontWeight: 600,
+  border: "1px solid #c7d2fe"
+};
+
 const btnRow = { marginTop: "10px", display: "flex", justifyContent: "center", gap: "8px", flexWrap: 'wrap' };
 
 const btnPrimary = {
@@ -700,13 +682,13 @@ const btnPrimary = {
   border: "none",
   cursor: "pointer",
   fontWeight: 600,
-  fontSize: '0.9rem', // 🚀 BOLD: एक जैसा फ़ॉन्ट साइज़
+  fontSize: '0.9rem', 
   transition: "0.3s",
 };
 const btnBlue = { ...btnPrimary, background: "linear-gradient(45deg,#3b82f6,#2563eb)" };
 const btnRed = { ...btnPrimary, background: "linear-gradient(45deg,#ef4444,#b91c1c)" };
 const btnGreen = { ...btnPrimary, background: "linear-gradient(45deg,#22c55e,#16a34a)" };
-const btnGray = { ...btnPrimary, background: "#6b7280" }; // 🚀 BOLD: Modal के लिए
+const btnGray = { ...btnPrimary, background: "#6b7280" }; 
 const btnGradient = {
   ...btnPrimary,
   background: "linear-gradient(45deg,#6366f1,#2563eb)",
@@ -725,10 +707,9 @@ const sectionTitle = {
   textAlign: "center",
   color: "#1e40af",
   marginBottom: "10px",
-  fontSize: "1.5rem", // 🚀 BOLD: साइज़ बढ़ाया
+  fontSize: "1.5rem", 
 };
 
-// 🚀 BOLD: नए कस्टम Modal (पॉप-अप) के लिए स्टाइल्स
 const modalBackdrop = {
   position: 'fixed',
   top: 0,
@@ -794,7 +775,6 @@ const modalFooter = {
   borderTop: '1px solid #e5e7eb',
 };
 
-// 🚀 BOLD: Pagination styles
 const paginationContainer = {
   display: 'flex',
   justifyContent: 'center',
@@ -820,6 +800,5 @@ const paginationInfo = {
   fontSize: '1rem',
   margin: '0 10px',
 };
-
 
 export default AdminDashboard;

@@ -164,7 +164,7 @@ const navbarStyles = `
 /* 🔥 EXTRA SMALL DEVICES (320px like old iPhones/Androids) FIX */
 @media (max-width: 400px) {
   .brand-logo { 
-    font-size: 1.25rem; /* Font chota kiya taki screen se bahar na jaye */
+    font-size: 1.59rem; /* Font chota kiya taki screen se bahar na jaye */
     gap: 5px;
   }
   .nav-actions { gap: 8px; }

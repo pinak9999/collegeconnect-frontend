@@ -10,7 +10,7 @@ const featuredStyles = `
 
 .featured-section-wrapper {
     padding: 80px 20px;
-    background-color: #e7ffd6 ; /* Clean off-white background */
+    background-color: #e6eeff; /* Clean off-white background */
     font-family: 'Poppins', sans-serif;
     position: relative;
     overflow: hidden;

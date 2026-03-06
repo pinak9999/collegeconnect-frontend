@@ -266,16 +266,13 @@ const ChoiceFillingGenerator = () => {
     setLoading(true);
     setGeneratedList(null);
 
-    // 🚀 Frontend based 100% Accurate Priority Algorithm
     setTimeout(() => {
       const allColleges = [
-        // Top Govt
         { id: 1, name: "MBM University, Jodhpur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 1 },
         { id: 2, name: "RTU Kota", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 2 },
         { id: 3, name: "CTAE Udaipur", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 3 },
         { id: 4, name: "MBM University, Jodhpur", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 4 },
         { id: 5, name: "MBM University, Jodhpur", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 5 },
-        // Top Private
         { id: 6, name: "SKIT Jaipur", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 6 },
         { id: 7, name: "JECRC Foundation", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 7 },
         { id: 8, name: "RTU Kota", branch: "Information Technology (IT)", type: "Govt", bType: "CSE_IT", rank: 8 },
@@ -283,7 +280,6 @@ const ChoiceFillingGenerator = () => {
         { id: 10, name: "SKIT Jaipur", branch: "Information Technology (IT)", type: "Private", bType: "CSE_IT", rank: 10 },
         { id: 11, name: "JECRC Foundation", branch: "AI & Machine Learning", type: "Private", bType: "AI_DS", rank: 11 },
         { id: 12, name: "Poornima College of Engg", branch: "Computer Science (CSE)", type: "Private", bType: "CSE_IT", rank: 12 },
-        // Average Govt & Core
         { id: 13, name: "Engineering College Bikaner", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 13 },
         { id: 14, name: "Engineering College Ajmer", branch: "Computer Science (CSE)", type: "Govt", bType: "CSE_IT", rank: 14 },
         { id: 15, name: "RTU Kota", branch: "Electrical Engineering", type: "Govt", bType: "CORE", rank: 15 },
@@ -298,7 +294,7 @@ const ChoiceFillingGenerator = () => {
       });
 
       filtered.sort((a, b) => a.rank - b.rank);
-      setGeneratedList(filtered.slice(0, 15)); // Gives top 15 matching
+      setGeneratedList(filtered.slice(0, 15)); 
       setLoading(false);
       toast.success("✅ Ideal Preference List Generated!");
     }, 1000);
@@ -607,7 +603,8 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
                     <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
                   </div>
 
-                  <Link to={`/book/${p.user._id}`} className="cc-btn primary">
+                  {/* 🚀 NEW: URL में college ID जोड़ दिया गया है ताकि सही प्रोफाइल खुले */}
+                  <Link to={`/book/${p.user._id}?college=${p.college?._id || ''}`} className="cc-btn primary">
                     🚀 Book Session
                   </Link>
                 </div>
@@ -714,7 +711,14 @@ const MyBookings = ({ seniors }) => {
     const status = b.status?.toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
     
-    const seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
+    // 🚀 NEW: सही कॉलेज का अवतार ढूँढने का लॉजिक
+    let seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id && s.college?._id === (b.profile?.college?._id || b.profile?.college));
+    
+    // अगर कोई पुराना डेटा है जहाँ कॉलेज सेव नहीं था, तो जो भी पहली प्रोफाइल मिले उसे ले लें
+    if (!seniorProfile) {
+        seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
+    }
+
     const seniorName = b.senior?.name || 'Senior';
     const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
     const finalAvatar = seniorProfile?.avatar || b.profile?.avatar || fallbackImage;

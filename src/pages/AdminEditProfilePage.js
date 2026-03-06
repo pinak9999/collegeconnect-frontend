@@ -7,6 +7,10 @@ function AdminEditProfilePage() {
   const navigate = useNavigate();
   const { userId } = useParams();
 
+  // 🚀 BOLD: State for tracking multiple profiles
+  const [allUserProfiles, setAllUserProfiles] = useState([]);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
+
   const [formData, setFormData] = useState({
     college: "",
     branch: "Not Set",
@@ -27,8 +31,47 @@ function AdminEditProfilePage() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [allColleges, setAllColleges] = useState([]);
 
+  // 🚀 BOLD: Function to populate form when a specific college profile is clicked
+  const populateForm = (profile) => {
+    setFormData({
+      college: profile.college ? profile.college._id : "",
+      branch: profile.branch || "Not Set",
+      year: profile.year || "Not Set",
+      bio: profile.bio || "",
+      price_per_session: profile.price_per_session || 0,
+      session_duration_minutes: profile.session_duration_minutes || 20,
+    });
+    setCurrentAvatar(profile.avatar || "https://via.placeholder.com/100");
+    if (profile.tags) {
+      setSelectedTags(profile.tags.map((t) => t._id));
+    } else {
+      setSelectedTags([]);
+    }
+    setCurrentIdCard(profile.id_card_url || null);
+    setIsCreatingNew(false);
+  };
+
+  // 🚀 BOLD: Function to reset form for a new college profile
+  const handleAddNew = () => {
+    setFormData({
+      college: "",
+      branch: "Not Set",
+      year: "Not Set",
+      bio: "",
+      price_per_session: 0,
+      session_duration_minutes: 20,
+    });
+    setCurrentAvatar("https://via.placeholder.com/100");
+    setSelectedTags([]);
+    setCurrentIdCard(null);
+    setImageFile(null);
+    setIdCardFile(null);
+    setIsCreatingNew(true);
+  };
+
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -37,27 +80,7 @@ function AdminEditProfilePage() {
           return;
         }
 
-        const profileRes = await axios.get(
-          `https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`,
-          { headers: { "x-auth-token": token } }
-        );
-
-        setFormData({
-          college: profileRes.data.college ? profileRes.data.college._id : "",
-          branch: profileRes.data.branch || "Not Set",
-          year: profileRes.data.year || "Not Set",
-          bio: profileRes.data.bio || "",
-          price_per_session: profileRes.data.price_per_session || 0,
-          session_duration_minutes:
-            profileRes.data.session_duration_minutes || 20,
-        });
-
-        if (profileRes.data.avatar) setCurrentAvatar(profileRes.data.avatar);
-        if (profileRes.data.tags)
-          setSelectedTags(profileRes.data.tags.map((t) => t._id));
-        if (profileRes.data.id_card_url)
-          setCurrentIdCard(profileRes.data.id_card_url);
-
+        // Fetch Tags and Colleges parallelly
         const tagsRes = await axios.get(
           "https://collegeconnect-backend-mrkz.onrender.com/api/tags",
           { headers: { "x-auth-token": token } }
@@ -69,6 +92,31 @@ function AdminEditProfilePage() {
           { headers: { "x-auth-token": token } }
         );
         setAllColleges(collegesRes.data);
+
+        // Fetch user profiles
+        try {
+          const profileRes = await axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`,
+            { headers: { "x-auth-token": token } }
+          );
+
+          // 🚀 BOLD: Ab data array mein aayega
+          const profiles = profileRes.data;
+          if (profiles && profiles.length > 0) {
+            setAllUserProfiles(profiles);
+            populateForm(profiles[0]); // By default pehla profile load karein
+          } else {
+            handleAddNew();
+          }
+        } catch (profileErr) {
+          // Agar profile nahi milti (404), to naya create karne ka option dein
+          if (profileErr.response && profileErr.response.status === 404) {
+            setAllUserProfiles([]);
+            handleAddNew();
+          } else {
+            throw profileErr; // Agar koi aur error hai to catch block me bhej dein
+          }
+        }
 
         setLoading(false);
       } catch (err) {
@@ -92,6 +140,11 @@ function AdminEditProfilePage() {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!formData.college) {
+      toast.error("Please select a college!");
+      return;
+    }
+
     const toastId = toast.loading("Saving profile...");
     const data = new FormData();
     data.append("college", formData.college);
@@ -135,7 +188,28 @@ function AdminEditProfilePage() {
   return (
     <div style={mainWrapper}>
       <form style={formBox} onSubmit={onSubmitHandler}>
-        <h2 style={title}>🧩 Edit Senior Profile</h2>
+        <h2 style={title}>🧩 Manage Senior Profiles</h2>
+
+        {/* 🚀 BOLD: Profile Navigation Tabs */}
+        <div style={tabsWrapper}>
+          {allUserProfiles.map((p, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => populateForm(p)}
+              style={tabStyle(formData.college === p.college?._id && !isCreatingNew)}
+            >
+              🏫 {p.college?.name || "Unknown"}
+            </button>
+          ))}
+          <button 
+            type="button" 
+            onClick={handleAddNew} 
+            style={tabStyleAdd(isCreatingNew)}
+          >
+            ➕ Add New College
+          </button>
+        </div>
 
         {/* Profile Avatar */}
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
@@ -148,7 +222,7 @@ function AdminEditProfilePage() {
         <div style={sectionBox}>
           <label style={label}>Upload ID Card (for verification)</label>
           <input type="file" onChange={onIdCardFileChange} style={fileInput} />
-          {currentIdCard && (
+          {currentIdCard && !isCreatingNew && (
             <a
               href={currentIdCard}
               target="_blank"
@@ -168,6 +242,7 @@ function AdminEditProfilePage() {
             value={formData.college}
             onChange={onChangeHandler}
             style={dropdown}
+            disabled={!isCreatingNew} // 🚀 BOLD: Agar edit kar rahe hain to college disable rakhein
           >
             <option value="">Select a College</option>
             {allColleges.map((c) => (
@@ -176,6 +251,11 @@ function AdminEditProfilePage() {
               </option>
             ))}
           </select>
+          {!isCreatingNew && (
+            <small style={{ color: "#ef4444", marginTop: "5px" }}>
+              * To assign a different college, click on "Add New College" tab above.
+            </small>
+          )}
         </div>
 
         {/* Branch Input */}
@@ -263,7 +343,7 @@ function AdminEditProfilePage() {
         </div>
 
         <button type="submit" style={btnGradient}>
-          💾 Save Profile
+          💾 {isCreatingNew ? "Create Profile" : "Save Changes"}
         </button>
       </form>
     </div>
@@ -297,6 +377,42 @@ const title = {
   fontWeight: 700,
   marginBottom: "15px",
 };
+
+// 🚀 BOLD: Tabs Styles
+const tabsWrapper = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "8px",
+  marginBottom: "20px",
+  padding: "10px",
+  background: "#f1f5f9",
+  borderRadius: "12px",
+  justifyContent: "center"
+};
+
+const tabStyle = (isActive) => ({
+  background: isActive ? "#2563eb" : "#fff",
+  color: isActive ? "#fff" : "#334155",
+  border: isActive ? "none" : "1px solid #cbd5e1",
+  padding: "6px 12px",
+  borderRadius: "8px",
+  fontSize: "0.85rem",
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "all 0.2s",
+});
+
+const tabStyleAdd = (isActive) => ({
+  background: isActive ? "#10b981" : "#e2e8f0",
+  color: isActive ? "#fff" : "#0f172a",
+  border: "none",
+  padding: "6px 12px",
+  borderRadius: "8px",
+  fontSize: "0.85rem",
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "all 0.2s",
+});
 
 const label = { fontWeight: 600, color: "#333", marginBottom: "5px" };
 const formGroup = { marginBottom: "15px", display: "flex", flexDirection: "column" };
