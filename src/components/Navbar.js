@@ -158,7 +158,7 @@ const navbarStyles = `
     
   }
   .brand-logo { font-size: 1.90rem; }
-  .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
+  .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 12px;}
   .nav-btn { padding: 7px 0px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 160px; }
   .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
   .scrolling-text { animation-duration: 18s; } 
