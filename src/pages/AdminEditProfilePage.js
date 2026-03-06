@@ -10,10 +10,12 @@ function AdminEditProfilePage() {
   // 🚀 BOLD: State for tracking multiple profiles
   const [allUserProfiles, setAllUserProfiles] = useState([]);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  // 🚀 NEW: Track which profile ID is currently selected for editing
+  const [selectedProfileId, setSelectedProfileId] = useState(null);
 
   const [formData, setFormData] = useState({
     college: "",
-    display_name: "", // 🚀 NEW: Alias name state
+    display_name: "", // Alias name state
     branch: "Not Set",
     year: "Not Set",
     bio: "",
@@ -34,9 +36,10 @@ function AdminEditProfilePage() {
 
   // 🚀 BOLD: Function to populate form when a specific college profile is clicked
   const populateForm = (profile) => {
+    setSelectedProfileId(profile._id); // Keep track of current ID
     setFormData({
       college: profile.college ? profile.college._id : "",
-      display_name: profile.display_name || "", // 🚀 NEW: Load alias name
+      display_name: profile.display_name || "",
       branch: profile.branch || "Not Set",
       year: profile.year || "Not Set",
       bio: profile.bio || "",
@@ -55,9 +58,10 @@ function AdminEditProfilePage() {
 
   // 🚀 BOLD: Function to reset form for a new college profile
   const handleAddNew = () => {
+    setSelectedProfileId(null);
     setFormData({
       college: "",
-      display_name: "", // 🚀 NEW: Reset alias name
+      display_name: "",
       branch: "Not Set",
       year: "Not Set",
       bio: "",
@@ -71,6 +75,45 @@ function AdminEditProfilePage() {
     setIdCardFile(null);
     setIsCreatingNew(true);
   };
+
+  // 🔥 NEW: DELETE PROFILE FUNCTION
+  const handleDeleteProfile = async (profileId, collegeName) => {
+    // 1. Ask for confirmation
+    if (!window.confirm(`Are you sure you want to delete the profile for "${collegeName || 'Unknown College'}"? This cannot be undone.`)) {
+      return;
+    }
+
+    const toastId = toast.loading("Deleting profile...");
+    try {
+      const token = localStorage.getItem("token");
+      // 2. Call Backend API
+      await axios.delete(
+        `https://collegeconnect-backend-mrkz.onrender.com/api/profile/${profileId}`,
+        { headers: { "x-auth-token": token } }
+      );
+
+      toast.dismiss(toastId);
+      toast.success(`Profile for ${collegeName} deleted! 🗑️`);
+
+      // 3. Update local state to remove the deleted profile from tabs immediately
+      const updatedProfiles = allUserProfiles.filter(p => p._id !== profileId);
+      setAllUserProfiles(updatedProfiles);
+
+      // 4. If we deleted the currently viewed profile, reset the form
+      if (selectedProfileId === profileId) {
+        if (updatedProfiles.length > 0) {
+          populateForm(updatedProfiles[0]);
+        } else {
+          handleAddNew();
+        }
+      }
+
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.response?.data?.msg || "Error deleting profile!");
+    }
+  };
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -151,7 +194,7 @@ function AdminEditProfilePage() {
     const toastId = toast.loading("Saving profile...");
     const data = new FormData();
     data.append("college", formData.college);
-    data.append("display_name", formData.display_name); // 🚀 NEW: Send display_name to backend
+    data.append("display_name", formData.display_name);
     data.append("branch", formData.branch);
     data.append("year", formData.year);
     data.append("bio", formData.bio);
@@ -175,7 +218,16 @@ function AdminEditProfilePage() {
       );
       toast.dismiss(toastId);
       toast.success("Profile Saved Successfully!");
-      navigate("/admin-dashboard");
+      // Refresh list after save
+       const profileRes = await axios.get(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/profile/user/${userId}`,
+            { headers: { "x-auth-token": token } }
+          );
+        setAllUserProfiles(profileRes.data);
+         // Find the newly saved profile to keep it selected
+        const savedProfile = profileRes.data.find(p => p.college?._id === formData.college);
+        if(savedProfile) populateForm(savedProfile);
+
     } catch (err) {
       toast.dismiss(toastId);
       toast.error("Error saving profile!");
@@ -194,18 +246,37 @@ function AdminEditProfilePage() {
       <form style={formBox} onSubmit={onSubmitHandler}>
         <h2 style={title}>🧩 Manage Senior Profiles</h2>
 
-        {/* 🚀 BOLD: Profile Navigation Tabs */}
+        {/* 🚀 BOLD: Profile Navigation Tabs with Delete option */}
         <div style={tabsWrapper}>
-          {allUserProfiles.map((p, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => populateForm(p)}
-              style={tabStyle(formData.college === p.college?._id && !isCreatingNew)}
-            >
-              🏫 {p.college?.name || "Unknown"}
-            </button>
-          ))}
+          {allUserProfiles.length === 0 && !isCreatingNew && (
+             <p style={{color: '#666', fontSize: '0.9rem', width: '100%', textAlign: 'center'}}>No profiles found. Click 'Add New' to start.</p>
+          )}
+          {allUserProfiles.map((p, idx) => {
+             const isActive = formData.college === p.college?._id && !isCreatingNew;
+             return (
+              <div key={p._id} style={tabContainerStyle(isActive)}>
+                 {/* Tab Button to load profile */}
+                <button
+                  type="button"
+                  onClick={() => populateForm(p)}
+                  style={tabStyle(isActive)}
+                >
+                  🏫 {p.college?.name || "Unknown College"}
+                  {p.display_name && <span style={{fontSize:'0.75em', display:'block', opacity: 0.8}}>({p.display_name})</span>}
+                </button>
+                 {/* 🔥 Delete Button */}
+                <button 
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleDeleteProfile(p._id, p.college?.name); }}
+                    style={deleteButtonStyle(isActive)}
+                    title="Delete this profile"
+                >
+                  🗑️
+                </button>
+              </div>
+            );
+          })}
+
           <button 
             type="button" 
             onClick={handleAddNew} 
@@ -257,7 +328,7 @@ function AdminEditProfilePage() {
           </select>
           {!isCreatingNew && (
             <small style={{ color: "#ef4444", marginTop: "5px" }}>
-              * To assign a different college, click on "Add New College" tab above.
+              * To change college, delete this profile and create a new one.
             </small>
           )}
         </div>
@@ -410,17 +481,43 @@ const tabsWrapper = {
   justifyContent: "center"
 };
 
-const tabStyle = (isActive) => ({
+// 🔥 NEW: Container for Tab + Delete Button
+const tabContainerStyle = (isActive) => ({
+  display: 'flex',
+  alignItems: 'center',
   background: isActive ? "#2563eb" : "#fff",
-  color: isActive ? "#fff" : "#334155",
   border: isActive ? "none" : "1px solid #cbd5e1",
-  padding: "6px 12px",
   borderRadius: "8px",
+  paddingRight: '5px', // space for delete button
+  transition: "all 0.2s",
+});
+
+const tabStyle = (isActive) => ({
+  background: 'transparent',
+  color: isActive ? "#fff" : "#334155",
+  border: "none",
+  padding: "6px 12px",
   fontSize: "0.85rem",
   fontWeight: 600,
   cursor: "pointer",
-  transition: "all 0.2s",
+  textAlign: 'left',
 });
+
+// 🔥 NEW: Delete Button Style
+const deleteButtonStyle = (isActive) => ({
+  background: 'transparent',
+  border: 'none',
+  color: isActive ? '#ffcccc' : '#ef4444', // Lighter red if active background
+  cursor: 'pointer',
+  fontSize: '1rem',
+  padding: '4px 8px',
+  borderRadius: '50%',
+  transition: 'background 0.2s',
+  ':hover': {
+      background: 'rgba(255,0,0,0.1)'
+  }
+});
+
 
 const tabStyleAdd = (isActive) => ({
   background: isActive ? "#10b981" : "#e2e8f0",
