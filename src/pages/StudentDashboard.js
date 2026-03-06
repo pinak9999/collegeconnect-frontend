@@ -122,23 +122,19 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .hero-premium::after { content: '🚀'; font-size: 120px; position: absolute; right: 10%; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); }
 .hero-premium h1 { font-size: 2.2rem; font-weight: 800; margin: 0 0 10px 0; position: relative; z-index: 2; }
 .hero-premium p { font-size: 1.1rem; font-weight: 500; margin: 0; opacity: 0.95; line-height: 1.5; position: relative; z-index: 2; }
-
-/* 🚀 Premium Search Section (Desktop) */
-.search-section { background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
-.search-bar-modern { display: flex; align-items: center; background: rgba(255,255,255,0.5); border: 2px solid var(--stroke); border-radius: var(--radius-pill); padding: 14px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
+.search-section { background: var(--card-bg); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
+.search-bar-modern { display: flex; align-items: center; background: rgba(255,255,255,0.5); border: 1px solid var(--stroke); border-radius: var(--radius-pill); padding: 12px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
 .search-bar-modern:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-light); background: var(--card-bg); }
-.search-bar-modern input { border: none; background: transparent; width: 100%; padding: 4px 8px; font-family: inherit; font-size: 1.05rem; color: var(--txt-main); font-weight: 500; }
-.search-icon { font-size: 1.3rem; color: var(--brand-primary); flex-shrink: 0; }
+.search-bar-modern input { border: none; background: transparent; width: 100%; padding: 4px 8px; font-family: inherit; font-size: 1rem; color: var(--txt-main); }
+.search-icon { font-size: 1.2rem; color: var(--brand-primary); flex-shrink: 0; }
 .filter-dropdowns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; width: 100%; }
-.cc-select { width: 100%; max-width: 100%; box-sizing: border-box; appearance: none; border: 2px solid var(--stroke); background: var(--card-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; background-size: 16px; color: var(--txt-main); border-radius: var(--radius-md); padding: 14px 16px; font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.cc-select:focus { border-color: var(--brand-primary); outline: none; box-shadow: 0 0 0 3px var(--brand-light); }
-
-.tags-scroll-container { display: flex; gap: 12px; overflow-x: auto; padding: 20px 0 4px 0; scrollbar-width: none; width: 100%; box-sizing: border-box; }
+.cc-select { width: 100%; max-width: 100%; box-sizing: border-box; appearance: none; border: 1px solid var(--stroke); background: var(--card-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; background-size: 16px; color: var(--txt-main); border-radius: var(--radius-md); padding: 14px 16px; font-family: inherit; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: border-color 0.2s; }
+.cc-select:focus { border-color: var(--brand-primary); outline: none; }
+.tags-scroll-container { display: flex; gap: 12px; overflow-x: auto; padding: 16px 0 4px 0; scrollbar-width: none; width: 100%; box-sizing: border-box; }
 .tags-scroll-container::-webkit-scrollbar { display: none; }
-.tag-chip { flex-shrink: 0; padding: 10px 20px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); background: var(--card-bg); color: var(--txt-muted); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.tag-chip { flex-shrink: 0; padding: 8px 18px; border-radius: var(--radius-pill); border: 1px solid var(--stroke); background: var(--card-bg); color: var(--txt-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .tag-chip:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 .tag-chip.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); box-shadow: 0 4px 12px rgba(226, 55, 68, 0.25); }
-
 .grid-style-seniors { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 10px; }
 .senior-card-modern { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--stroke); padding: 24px; box-shadow: var(--shadow-card); transition: all 0.3s ease; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
 .senior-card-modern:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: rgba(226, 55, 68, 0.3); }
@@ -194,7 +190,7 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
 .b-nav-icon { font-size: 1.35rem; }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES (✨ PREMIUM UI APPLIED HERE ✨)
+   📱 MOBILE RESPONSIVE FIXES 
    ========================================= */
 @media (max-width: 768px) {
   .desktop-tabs { display: none; }
@@ -211,36 +207,12 @@ body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: an
   .choice-header { padding: 24px 16px; }
   .choice-header h2 { font-size: 1.5rem; }
   .p-details h4 { font-size: 0.95rem; }
-
-  /* 🚀 BOLD: PREMIUM MOBILE SEARCH UI FIXES */
-  .search-section { 
-    padding: 20px; 
-    margin-bottom: 24px; 
-    background: var(--card-bg); 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.06); 
-    border: 1px solid var(--stroke); 
-    border-radius: 20px;
-  }
-  .search-bar-modern { 
-    background: #f8fafc; 
-    border-radius: 14px; 
-    padding: 12px 18px; 
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03); 
-    border: 1.5px solid #e2e8f0;
-  }
-  .search-bar-modern input { font-size: 1rem; }
-  .filter-dropdowns { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; width: 100%; }
-  .cc-select { 
-    background-color: #f8fafc; 
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03); 
-    border-radius: 12px; 
-    border: 1.5px solid #e2e8f0;
-    padding: 14px 16px;
-    font-size: 0.95rem;
-  }
-  .tags-scroll-container { padding: 12px 0 0 0; gap: 10px; }
-  .tag-chip { font-size: 0.85rem; padding: 10px 18px; border-radius: 12px; }
-
+  .search-section { padding: 0; margin-bottom: 24px; background: transparent; box-shadow: none; border: none; }
+  .search-bar-modern { background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-soft); }
+  .filter-dropdowns { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; width: 100%; }
+  .cc-select { background-color: var(--card-bg); box-shadow: var(--shadow-soft); border-radius: 12px; }
+  .tags-scroll-container { padding: 8px 0; }
+  .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
   .grid-style-seniors { gap: 16px; }
   .senior-card-modern { padding: 20px; }
   .card-header-flex { flex-direction: row; text-align: left; align-items: center; }
@@ -548,8 +520,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
         (!selectedCollege || x.college?._id === selectedCollege) &&
         (!selectedTag || x.tags?.some((t) => t._id === selectedTag)) &&
         (x.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
-         x.display_name?.toLowerCase().includes(search.toLowerCase()) ||
-         x.college?.name?.toLowerCase().includes(search.toLowerCase()))
+          x.college?.name?.toLowerCase().includes(search.toLowerCase()))
     )
     .sort((a, b) => {
       if (sortBy === "price_asc") return (a.price_per_session ?? 0) - (b.price_per_session ?? 0);
@@ -573,8 +544,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
         <div className="filter-dropdowns">
           <select className="cc-select" value={selectedCollege} onChange={(e) => setSelectedCollege(e.target.value)}>
             <option value="">🎓 All Colleges</option>
-            {/* 🚀 BOLD: Colleges mapped alphabetically (A-Z) */}
-            {[...colleges].sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
+            {colleges.map((c) => (
               <option key={c._id} value={c._id}>{c.name}</option>
             ))}
           </select>
@@ -602,7 +572,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : filtered.length > 0
           ? filtered.map((p) => {
-              const seniorName = p.display_name || p.user?.name || 'Senior'; 
+              const seniorName = p.user?.name || 'Senior';
               const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
               const finalPrice = (p.price_per_session || 0) + platformFee;
 
@@ -633,6 +603,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
                     <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
                   </div>
 
+                  {/* 🚀 NEW: URL में college ID जोड़ दिया गया है ताकि सही प्रोफाइल खुले */}
                   <Link to={`/book/${p.user._id}?college=${p.college?._id || ''}`} className="cc-btn primary">
                     🚀 Book Session
                   </Link>
@@ -740,13 +711,15 @@ const MyBookings = ({ seniors }) => {
     const status = b.status?.toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
     
+    // 🚀 NEW: सही कॉलेज का अवतार ढूँढने का लॉजिक
     let seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id && s.college?._id === (b.profile?.college?._id || b.profile?.college));
     
+    // अगर कोई पुराना डेटा है जहाँ कॉलेज सेव नहीं था, तो जो भी पहली प्रोफाइल मिले उसे ले लें
     if (!seniorProfile) {
         seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
     }
 
-    const seniorName = seniorProfile?.display_name || b.senior?.name || 'Senior'; 
+    const seniorName = b.senior?.name || 'Senior';
     const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
     const finalAvatar = seniorProfile?.avatar || b.profile?.avatar || fallbackImage;
     const yearText = getYearSuffix(b.profile?.year);
