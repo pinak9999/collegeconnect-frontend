@@ -138,33 +138,41 @@ function AIMatchmaker() {
             {/* Results Grid */}
             {matches.length > 0 && (
                 <div className="ai-results-grid">
-                    {matches.map((profile, idx) => (
-                        <div key={idx} className="ai-card">
-                            
-                            {/* ✨ AI's Explanation (The Magic part) */}
-                            <div className="ai-reason-box">
-                                <span style={{fontSize: '1.2rem'}}>💡</span>
-                                <span>{profile.aiReason}</span>
-                            </div>
+                    {matches.map((profile, idx) => {
+                        // 🚀 NEW LOGIC: Use display_name (alias) if available, otherwise fallback to original name
+                        const displayName = profile.display_name || profile.user?.name || 'Senior';
+                        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=e0e7ff&color=4f46e5`;
 
-                            <div className="ai-card-header">
-                                <img 
-                                    src={profile.avatar || `https://ui-avatars.com/api/?name=${profile.user?.name || 'S'}&background=e0e7ff&color=4f46e5`} 
-                                    alt="Senior" 
-                                    className="ai-avatar" 
-                                />
-                                <div className="ai-info">
-                                    <h3>{profile.user?.name}</h3>
-                                    <p>🏛️ {profile.college?.name}</p>
-                                    <p>📚 {profile.branch || 'B.Tech'}</p>
+                        return (
+                            <div key={idx} className="ai-card">
+                                
+                                {/* ✨ AI's Explanation (The Magic part) */}
+                                <div className="ai-reason-box">
+                                    <span style={{fontSize: '1.2rem'}}>💡</span>
+                                    <span>{profile.aiReason}</span>
                                 </div>
-                            </div>
 
-                            <Link to={`/book/${profile.user?._id}`} className="ai-book-btn">
-                                🚀 Book Session (₹{profile.price_per_session + 20})
-                            </Link>
-                        </div>
-                    ))}
+                                <div className="ai-card-header">
+                                    <img 
+                                        src={profile.avatar || fallbackAvatar} 
+                                        alt={displayName} 
+                                        className="ai-avatar" 
+                                    />
+                                    <div className="ai-info">
+                                        {/* 🚀 Render the Alias Name here */}
+                                        <h3>{displayName}</h3>
+                                        <p>🏛️ {profile.college?.name}</p>
+                                        <p>📚 {profile.branch || 'B.Tech'}</p>
+                                    </div>
+                                </div>
+
+                                {/* 🚀 UPDATED LINK: ?college= ID zaroor bhejein taaki booking page ko sahi alias aur data mile */}
+                                <Link to={`/book/${profile.user?._id}?college=${profile.college?._id || ''}`} className="ai-book-btn">
+                                    🚀 Book Session (₹{profile.price_per_session + 20})
+                                </Link>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>
