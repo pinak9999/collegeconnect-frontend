@@ -173,7 +173,7 @@ const navbarStyles = `
 
     
   }
-  .nav-actions { gap: 8px;             margin-top: 10px;   padding-bottom: 15px; }
+  .nav-actions { gap: 8px;  margin-top: 10px; padding-bottom: 15px; margin-left: 2px;}
   .nav-btn { padding: 8px 10px; font-size: 0.85rem; }
 }
 `;
