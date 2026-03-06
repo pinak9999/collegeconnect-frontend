@@ -1,9 +1,193 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
+
+// ======================================
+// 🚀 Premium Login Page CSS (Glassmorphism & Animations)
+// ======================================
+const loginStyles = `
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+.login-page-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  /* 🌟 Premium Gradient Background */
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 50%, #ffb199 100%);
+  background-size: 200% 200%;
+  animation: gradientBG 10s ease infinite;
+  padding: 20px;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-card {
+  /* 🪟 Glassmorphism Effect */
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeUp 0.6s ease-out forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #4f46e5, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.login-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+}
+.google-btn-wrapper:hover {
+  transform: scale(1.02);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid #e2e8f0;
+}
+.divider:not(:empty)::before { margin-right: 15px; }
+.divider:not(:empty)::after { margin-left: 15px; }
+
+.form-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #0f172a;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #ec4899;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.1);
+}
+
+.form-input::placeholder { color: #94a3b8; }
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #4f46e5, #ec4899);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(236, 72, 153, 0.4);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.extra-links {
+  margin-top: 24px;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.link-text {
+  color: #4f46e5;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link-text:hover { color: #ec4899; }
+
+/* 📱 Mobile Responsiveness */
+@media (max-width: 480px) {
+  .login-card { padding: 30px 20px; border-radius: 20px; }
+  .login-title { font-size: 1.8rem; }
+  .form-input { padding: 12px 14px; font-size: 0.95rem; }
+  .login-btn { padding: 12px; font-size: 1rem; }
+}
+`;
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -11,18 +195,6 @@ function LoginPage() {
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [hover, setHover] = useState(false);
-  const [focusInput, setFocusInput] = useState(null);
-  const [cardHover, setCardHover] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // ✅ Handle responsiveness safely
-  useEffect(() => {
-    const checkScreen = () => setIsMobile(window.innerWidth < 600);
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
 
   const onChangeHandler = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -81,160 +253,44 @@ function LoginPage() {
   const handleGoogleLoginError = () =>
     toast.error("Google login failed. Please try again.");
 
-  // ✅ Inline styles (Vercel safe)
-  const styles = {
-    page: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      background:
-        "linear-gradient(135deg, #ffd5d5c2 0%, #d9e5ff 50%, #dedff8 100%)",
-      fontFamily: "'Poppins', sans-serif",
-      padding: isMobile ? "1rem" : "2rem",
-      transition: "all 0.3s ease",
-    },
-    card: {
-      background: "rgba(251, 247, 247, 0.87)",
-      padding: isMobile ? "1.5rem" : "2.5rem",
-      borderRadius: "1.5rem",
-      width: isMobile ? "90%" : "400px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-      textAlign: "center",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      transform: "translateY(0px)",
-    },
-    cardHover: {
-      transform: "translateY(-6px)",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-    },
-    title: {
-      fontSize: isMobile ? "1.6rem" : "1.9rem",
-      fontWeight: "700",
-      color: "#1e3a8a",
-      marginBottom: "0.5rem",
-    },
-    subtitle: {
-      color: "#555",
-      fontSize: isMobile ? "0.9rem" : "1rem",
-      marginBottom: "1.8rem",
-    },
-    formGroup: {
-      textAlign: "left",
-      marginBottom: "1.2rem",
-    },
-    label: {
-      fontSize: "0.9rem",
-      color: "#333",
-      fontWeight: "500",
-      marginBottom: "0.4rem",
-      display: "block",
-    },
-    input: {
-      width: "100%",
-      padding: "0.8rem",
-      border: "1.8px solid #ddd",
-      borderRadius: "12px",
-      fontSize: "0.95rem",
-      outline: "none",
-      transition: "all 0.3s ease",
-      boxSizing: "border-box",
-    },
-    inputFocus: {
-      borderColor: "#2563eb",
-      boxShadow: "0 0 8px rgba(37,99,235,0.4)",
-    },
-    button: {
-      width: "100%",
-      padding: "0.9rem",
-      background: "linear-gradient(45deg, #2563eb, #1e40af)",
-      color: "#fff",
-      border: "none",
-      borderRadius: "12px",
-      fontSize: "1rem",
-      fontWeight: "600",
-      cursor: "pointer",
-      marginTop: "0.5rem",
-      transition: "transform 0.2s, box-shadow 0.2s",
-    },
-    buttonHover: {
-      transform: "translateY(-2px)",
-      boxShadow: "0 8px 15px rgba(37,99,235,0.4)",
-    },
-    divider: {
-      display: "flex",
-      alignItems: "center",
-      margin: "1.5rem 0",
-      color: "#777",
-    },
-    dividerLine: {
-      flex: 1,
-      borderTop: "1px solid #ccc",
-    },
-    dividerText: {
-      padding: "0 10px",
-      fontSize: "0.9rem",
-    },
-    extraLinks: {
-      marginTop: "1.2rem",
-      fontSize: "0.9rem",
-      color: "#555",
-    },
-    link: {
-      color: "#2563eb",
-      fontWeight: "500",
-      textDecoration: "none",
-    },
-  };
-
   return (
-    <div style={styles.page}>
-      <div
-        style={{ ...styles.card, ...(cardHover ? styles.cardHover : {}) }}
-        onMouseEnter={() => setCardHover(true)}
-        onMouseLeave={() => setCardHover(false)}
-      >
-        <h2 style={styles.title}>Welcome Back 👋</h2>
-        <p style={styles.subtitle}>
-          Sign in to continue your journey with <b>Reap Campus Connect</b>
+    <div className="login-page-bg">
+      <style>{loginStyles}</style>
+      
+      <div className="login-card">
+        <h2 className="login-title">Welcome Back 👋</h2>
+        <p className="login-subtitle">
+          Sign in to continue your journey with <b>CampusConnect</b>
         </p>
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="google-btn-wrapper">
           <GoogleLogin
             onSuccess={handleGoogleLoginSuccess}
             onError={handleGoogleLoginError}
             theme="filled_black"
             size="large"
+            shape="pill"
           />
         </div>
 
-        <div style={styles.divider}>
-          <hr style={styles.dividerLine} />
-          <span style={styles.dividerText}>OR</span>
-          <hr style={styles.dividerLine} />
-        </div>
+        <div className="divider">OR CONTINUE WITH EMAIL</div>
 
         <form onSubmit={onSubmitHandler}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email Address</label>
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="e.g. student@college.edu"
               value={formData.email}
               onChange={onChangeHandler}
               required
-              style={{
-                ...styles.input,
-                ...(focusInput === "email" ? styles.inputFocus : {}),
-              }}
-              onFocus={() => setFocusInput("email")}
-              onBlur={() => setFocusInput(null)}
+              className="form-input"
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Password</label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
               name="password"
@@ -242,33 +298,22 @@ function LoginPage() {
               value={formData.password}
               onChange={onChangeHandler}
               required
-              style={{
-                ...styles.input,
-                ...(focusInput === "password" ? styles.inputFocus : {}),
-              }}
-              onFocus={() => setFocusInput("password")}
-              onBlur={() => setFocusInput(null)}
+              className="form-input"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={{ ...styles.button, ...(hover ? styles.buttonHover : {}) }}
-          >
-            {loading ? "Logging in..." : "Login"}
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "⏳ Logging in..." : "🚀 Secure Login"}
           </button>
 
-          <div style={styles.extraLinks}>
-            <Link to="/forgot-password" style={styles.link}>
+          <div className="extra-links">
+            <Link to="/forgot-password" className="link-text" style={{ display: 'block', marginBottom: '12px' }}>
               Forgot Password?
             </Link>
-            <p style={{ marginTop: "0.7rem" }}>
+            <p style={{ margin: 0 }}>
               Don’t have an account?{" "}
-              <Link to="/register" style={styles.link}>
-                Register
+              <Link to="/register" className="link-text">
+                Create one now
               </Link>
             </p>
           </div>

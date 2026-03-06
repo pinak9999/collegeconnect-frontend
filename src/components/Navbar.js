@@ -59,6 +59,7 @@ const navbarStyles = `
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
+  margin-right:5px;
 }
 .brand-text {
   color: #f8f9fa;
