@@ -132,12 +132,13 @@ const navbarStyles = `
    📱 STRICT MOBILE RESPONSIVE FIX (LOCKED HEIGHT)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 12px 0; margin-top: -25px;}
+  .main-nav { padding: 12px 0; margin-top: 9px;}
   .nav-container {
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 12px; /* Fixed gap between logo and buttons */
+    margin-top: 15px;
   }
   .brand-logo { 
     font-size: 1.6rem; 
