@@ -922,44 +922,43 @@ const StudentDashboard = () => {
     fetchAll();
   }, []);
 
-  // 🚀 FOMO Notification Logic
+ // 🚀 FOMO Notification Logic (100% Random & Bug-Free)
   useEffect(() => {
-    const fomoNames = ["Rahul from Jaipur", "Priya from Kota", "Amit from Udaipur", "Neha from Delhi", "Vikas from Jodhpur"];
-    const fomoColleges = ["MBM Jodhpur", "RTU Kota", "CTAE Udaipur", "SKIT Jaipur"];
+    const names = ["Rahul", "Priya", "Amit", "Neha", "Vikas", "Anjali", "Ravi", "Sneha", "Karan", "Pooja", "Aman", "Shruti", "Sandeep", "Kavita", "Mohit", "Deepak", "Riya"];
+    const cities = ["Jaipur", "Kota", "Udaipur", "Delhi", "Jodhpur", "Bikaner", "Ajmer", "Alwar", "Sikar", "Bhilwara", "Indore", "Pune", "Gurgaon"];
+    const fomoColleges = ["MBM Jodhpur", "RTU Kota", "CTAE Udaipur", "SKIT Jaipur", "JECRC Foundation", "Poornima College", "Arya College", "EC Bikaner", "EC Ajmer"];
+
+    let timerId;
 
     const triggerFomo = () => {
-      const randomName = fomoNames[Math.floor(Math.random() * fomoNames.length)];
+      // 🚀 हर बार बिल्कुल नया रैंडम डेटा जनरेट होगा
+      const randomName = names[Math.floor(Math.random() * names.length)];
+      const randomCity = cities[Math.floor(Math.random() * cities.length)];
       const randomCollege = fomoColleges[Math.floor(Math.random() * fomoColleges.length)];
-      const randomTime = Math.floor(Math.random() * 5) + 1; // 1 to 5 mins
+      const randomTime = Math.floor(Math.random() * 5) + 1; // 1 से 5 मिनट
       
       setFomoData({
-        text: `🔥 ${randomName} just booked a session with a Senior from ${randomCollege}!`,
+        text: `🔥 ${randomName} from ${randomCity} just booked a session with a Senior from ${randomCollege}!`,
         time: `${randomTime} mins ago`,
-        img: `https://ui-avatars.com/api/?name=${encodeURIComponent(randomName)}&background=e23744&color=fff`
+        img: `https://ui-avatars.com/api/?name=${randomName}&background=e23744&color=fff&bold=true`
       });
 
       setShowFomo(true);
       
-      // Hide popup after 5 seconds
+      // 5 सेकंड बाद पॉपअप को स्मूथली छुपा दें
       setTimeout(() => {
         setShowFomo(false);
       }, 5000);
+
+      // अगला पॉपअप ठीक 2 मिनट (120 सेकंड) बाद लाएँ
+      timerId = setTimeout(triggerFomo, 120000);
     };
 
-    // Trigger pehla popup 15 seconds ke baad
-    const firstTimeout = setTimeout(() => {
-      triggerFomo();
-      
-      // Uske baad har 2 min (120 seconds) mein trigger karo
-      setInterval(() => {
-        triggerFomo();
-      }, 120000);
+    // पहला पॉपअप 15 सेकंड बाद
+    timerId = setTimeout(triggerFomo, 15000);
 
-    }, 15000);
-
-    return () => {
-      clearTimeout(firstTimeout);
-    };
+    // 🧹 Cleanup: जब यूजर दूसरे पेज पर जाए तो बैकग्राउंड टाइमर को रोक दें
+    return () => clearTimeout(timerId);
   }, []);
 
   return (
