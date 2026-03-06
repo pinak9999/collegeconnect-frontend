@@ -48,7 +48,7 @@ const globalStyles = `
 }
 
 * { outline: none; box-sizing: border-box; }
-body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: 'Poppins', sans-serif; -webkit-font-smoothing: antialiased;     margin-top: -7px;}
 
 .page-bg { 
   min-height: 100vh; 
