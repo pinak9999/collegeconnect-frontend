@@ -256,16 +256,17 @@ function BookingPage() {
         const singleProfileData = res.data;
         const allProfilesData = allProfilesRes.data;
 
-        // 🚀 NEW: matching profile dhoondte waqt bhi college match karein
+        // 🚀 UPDATE: matching profile dhoondte waqt target college match karein
         const matchingProfileFromAll = allProfilesData.find(
           (p) => p.user?._id === userId && (!targetCollegeId || p.college?._id === targetCollegeId)
-        ) || allProfilesData.find((p) => p.user?._id === userId); // Fallback to any profile of this senior
+        ) || allProfilesData.find((p) => p.user?._id === userId); 
 
         const combinedProfile = {
           ...singleProfileData,
           ...matchingProfileFromAll,
           user: singleProfileData.user || matchingProfileFromAll.user,
           college: singleProfileData.college || matchingProfileFromAll.college,
+          display_name: singleProfileData.display_name || matchingProfileFromAll.display_name, // 🚀 NEW: Add display_name
         };
 
         setProfile(combinedProfile);
@@ -374,7 +375,7 @@ function BookingPage() {
         amount: order.amount, 
         currency: order.currency || "INR",
         name: "CampusConnect",
-        description: `Booking with ${profile.user ? profile.user.name : "Senior"}`,
+        description: `Booking with ${profile.display_name || (profile.user ? profile.user.name : "Senior")}`,
         order_id: order.id,
         handler: async function (response) {
           const verifyToastId = toast.loading("Verifying payment...");
@@ -431,6 +432,9 @@ function BookingPage() {
       </div>
     );
 
+  // 🚀 ALIAS LOGIC: Student को कौन सा नाम दिखाना है
+  const displayNameToShow = profile.display_name || profile.user?.name || "Senior";
+
   // --- FINAL JSX (Premium Zomato-Style, NO FOOTER) ---
   return (
     <div className="page-container">
@@ -445,10 +449,10 @@ function BookingPage() {
           <div className="premium-card profile-header">
             <img
               src={profile.avatar || "https://ui-avatars.com/api/?name=Senior&background=e23744&color=fff&size=150&bold=true"}
-              alt={profile.user?.name || "Senior"}
+              alt={displayNameToShow}
               className="avatar"
             />
-            <h2 className="profile-name">{profile.user?.name} <span className="verified-icon">✔</span></h2>
+            <h2 className="profile-name">{displayNameToShow} <span className="verified-icon">✔</span></h2>
             <p className="profile-college">{profile.college?.name || "Premium Mentor"}</p>
             <p className="profile-branch">{profile.branch} ({profile.year})</p>
           </div>

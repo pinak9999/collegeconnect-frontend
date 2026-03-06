@@ -13,6 +13,7 @@ function AdminEditProfilePage() {
 
   const [formData, setFormData] = useState({
     college: "",
+    display_name: "", // 🚀 NEW: Alias name state
     branch: "Not Set",
     year: "Not Set",
     bio: "",
@@ -35,6 +36,7 @@ function AdminEditProfilePage() {
   const populateForm = (profile) => {
     setFormData({
       college: profile.college ? profile.college._id : "",
+      display_name: profile.display_name || "", // 🚀 NEW: Load alias name
       branch: profile.branch || "Not Set",
       year: profile.year || "Not Set",
       bio: profile.bio || "",
@@ -55,6 +57,7 @@ function AdminEditProfilePage() {
   const handleAddNew = () => {
     setFormData({
       college: "",
+      display_name: "", // 🚀 NEW: Reset alias name
       branch: "Not Set",
       year: "Not Set",
       bio: "",
@@ -148,6 +151,7 @@ function AdminEditProfilePage() {
     const toastId = toast.loading("Saving profile...");
     const data = new FormData();
     data.append("college", formData.college);
+    data.append("display_name", formData.display_name); // 🚀 NEW: Send display_name to backend
     data.append("branch", formData.branch);
     data.append("year", formData.year);
     data.append("bio", formData.bio);
@@ -256,6 +260,22 @@ function AdminEditProfilePage() {
               * To assign a different college, click on "Add New College" tab above.
             </small>
           )}
+        </div>
+
+        {/* 🚀 NEW: Display Name (Alias) Input */}
+        <div style={formGroup}>
+          <label style={label}>Display Name (For Students)</label>
+          <input
+            type="text"
+            name="display_name"
+            value={formData.display_name}
+            onChange={onChangeHandler}
+            placeholder="e.g. Rahul (Leave blank to use original)"
+            style={input}
+          />
+          <small style={{ color: "#6b7280", marginTop: "4px", fontSize: "0.85rem" }}>
+            *If left blank, the senior's original user name will be shown.
+          </small>
         </div>
 
         {/* Branch Input */}

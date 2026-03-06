@@ -520,7 +520,8 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
         (!selectedCollege || x.college?._id === selectedCollege) &&
         (!selectedTag || x.tags?.some((t) => t._id === selectedTag)) &&
         (x.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          x.college?.name?.toLowerCase().includes(search.toLowerCase()))
+         x.display_name?.toLowerCase().includes(search.toLowerCase()) ||
+         x.college?.name?.toLowerCase().includes(search.toLowerCase()))
     )
     .sort((a, b) => {
       if (sortBy === "price_asc") return (a.price_per_session ?? 0) - (b.price_per_session ?? 0);
@@ -572,7 +573,8 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : filtered.length > 0
           ? filtered.map((p) => {
-              const seniorName = p.user?.name || 'Senior';
+              // 🚀 ALIAS LOGIC ADDED HERE
+              const seniorName = p.display_name || p.user?.name || 'Senior'; 
               const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
               const finalPrice = (p.price_per_session || 0) + platformFee;
 
@@ -603,7 +605,6 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
                     <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
                   </div>
 
-                  {/* 🚀 NEW: URL में college ID जोड़ दिया गया है ताकि सही प्रोफाइल खुले */}
                   <Link to={`/book/${p.user._id}?college=${p.college?._id || ''}`} className="cc-btn primary">
                     🚀 Book Session
                   </Link>
@@ -711,15 +712,14 @@ const MyBookings = ({ seniors }) => {
     const status = b.status?.toLowerCase();
     const disputeTagClass = getDisputeTagClass(dispute);
     
-    // 🚀 NEW: सही कॉलेज का अवतार ढूँढने का लॉजिक
     let seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id && s.college?._id === (b.profile?.college?._id || b.profile?.college));
     
-    // अगर कोई पुराना डेटा है जहाँ कॉलेज सेव नहीं था, तो जो भी पहली प्रोफाइल मिले उसे ले लें
     if (!seniorProfile) {
         seniorProfile = seniors.find((s) => s.user?._id === b.senior?._id);
     }
 
-    const seniorName = b.senior?.name || 'Senior';
+    // 🚀 ALIAS LOGIC ADDED HERE
+    const seniorName = seniorProfile?.display_name || b.senior?.name || 'Senior'; 
     const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
     const finalAvatar = seniorProfile?.avatar || b.profile?.avatar || fallbackImage;
     const yearText = getYearSuffix(b.profile?.year);
