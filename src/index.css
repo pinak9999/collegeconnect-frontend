@@ -1,14 +1,10 @@
 /* ✅ Base Reset and Global Styling */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* 🚀 UNIVERSAL RESET: यह लाइन किसी भी अनचाहे सफ़ेद गैप को खत्म कर देगी */
-* {
+/* 🚀 SAFE RESET: सिर्फ ऊपर का सफ़ेद गैप हटाएगा, लेआउट नहीं बिगाड़ेगा */
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
   width: 100%;
   font-family: 'Poppins', sans-serif;
   scroll-behavior: smooth;
@@ -16,9 +12,16 @@ html, body {
   overflow-x: hidden; /* Prevent unwanted horizontal scroll */
 }
 
+/* यह ब्लॉक Margin Collapse (सफ़ेद गैप) को हमेशा के लिए रोकेगा */
 #root {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box; /* Safe box-sizing */
 }
 
 /* ✅ Make container responsive and centered */
