@@ -77,8 +77,8 @@ function HomePage() {
 
   };
   const sectionTitle = {
-    fontSize: isMobile ? "1.8rem" : "2.4rem",
-    fontWeight: 700,
+    fontSize: isMobile ? "1.7rem" : "2.4rem",
+    fontWeight: 800,
     color: primaryColor,
     margin: "0 0 15px 0",
   };

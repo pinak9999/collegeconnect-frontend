@@ -106,8 +106,8 @@ function AIMatchmaker() {
             <style>{aiStyles}</style>
 
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                <h2 style={{ fontSize: '2rem', color: '#1e293b', fontWeight: 800, margin: '0 0 10px 0' }}>
-                    <span style={{background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>AI</span> Mentor Matchmaker
+                <h2 style={{ fontSize: '2rem', color: '#1e293b', fontWeight: 800, margin: '0 0 10px 0' , marginleft: "10px" }}>
+                    <span style={{background: 'linear-gradient(135deg, #ffa851, #ff5454)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>AI</span> Mentor Matchmaker
                 </h2>
                 <p style={{ color: '#64748b', fontSize: '1.05rem', margin: 0 }}>Describe your situation, and our AI will find the perfect senior for you.</p>
             </div>
