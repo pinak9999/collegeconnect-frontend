@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Navbar CSS (Mobile Break Line Fixed)
+// 🚀 Premium Navbar CSS (Mobile Alignment Fixed 100%)
 // ======================================
 const navbarStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -24,10 +24,9 @@ const navbarStyles = `
   padding: 12px 0;
 }
 
-/* 🔥 Image ke hisaab se navabar ka color change kiya gaya hai */
+/* 🔥 Gradient Background */
 .main-nav.dashboard-bg,
 .main-nav.default-bg {
-  /* Dark Purple/Navy Gradient as seen in the image */
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
 }
 
@@ -51,15 +50,14 @@ const navbarStyles = `
   align-items: center;
   gap: 8px;
   letter-spacing: -0.5px;
-  white-space: nowrap; /* 🔥 FIX: यह टेक्स्ट को टूटने (break) से रोकेगा */
-  padding-top: 15px;
+  white-space: nowrap; 
 }
 .brand-highlight {
   background: linear-gradient(90deg, #00E0FF, #60A5FA, #38BDF8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
-  margin-right:5px;
+  margin-right: 5px;
 }
 .brand-text {
   color: #f8f9fa;
@@ -71,7 +69,6 @@ const navbarStyles = `
   display: flex;
   align-items: center;
   gap: 12px;
-
 }
 
 .nav-btn {
@@ -88,38 +85,24 @@ const navbarStyles = `
   align-items: center;
   gap: 6px;
   font-family: inherit;
-  white-space: nowrap; /* 🔥 FIX: Butons ka text bhi nahi tutega */
+  white-space: nowrap; 
 }
 .nav-btn:active { transform: scale(0.96); }
 
 /* Specific Button Styles */
-.btn-dashboard {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
+.btn-dashboard { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
 .btn-dashboard:hover { box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); transform: translateY(-2px); }
 
-.btn-logout {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
+.btn-logout { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
 .btn-logout:hover { box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4); transform: translateY(-2px); }
 
-.btn-register {
-  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-}
+.btn-register { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25); }
 .btn-register:hover { box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4); transform: translateY(-2px); }
 
-.btn-login {
-  background: linear-gradient(135deg, #10b981, #059669);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-}
+.btn-login { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
 .btn-login:hover { box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
 
-
 /* --- Scrolling Tagline (Marquee) --- */
-/* 🔥 Image ke hisaab se pinkish-purple color match kiya gaya hai */
 .scrolling-bar {
   background: linear-gradient(90deg, #f43f5e 0%, #d946ef 50%, #8b5cf6 100%);
   color: #ffffff;
@@ -147,34 +130,44 @@ const navbarStyles = `
 }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES
+   📱 MOBILE RESPONSIVE FIXES (PERFECT ALIGNMENT)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 0px 0; }
+  .main-nav { padding: 12px 0; }
   .nav-container {
-    flex-direction: column;
-    justify-content: center;
-    gap: 0px;
-                    margin-top: -9px;
-    
+    flex-direction: row; /* 🔥 Fix: Logo aur Buttons ek hi line mein rahenge */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
   }
-  .brand-logo { font-size: 1.90rem; }
-  .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 12px;}
-  .nav-btn { padding: 7px 0px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 112px; }
-  .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
+  .brand-logo { 
+    font-size: 1.3rem; /* Logo chota kiya */
+    padding-top: 0;
+  }
+  .nav-actions { 
+    width: auto; 
+    justify-content: flex-end; 
+    flex-wrap: nowrap; 
+    gap: 8px; 
+    margin-top: 0; 
+  }
+  .nav-btn { 
+    padding: 7px 12px; 
+    font-size: 0.8rem; 
+    max-width: none; 
+    flex: none; 
+  }
+  .scrolling-bar { font-size: 0.75rem; padding: 6px 0; }
   .scrolling-text { animation-duration: 18s; } 
 }
 
-/* 🔥 EXTRA SMALL DEVICES (320px like old iPhones/Androids) FIX */
-@media (max-width: 400px) {
-  .brand-logo { 
-    font-size: 1.59rem; /* Font chota kiya taki screen se bahar na jaye */
-    gap: 5px;
-
-    
-  }
-  .nav-actions { gap: 8px;  margin-top: 10px; padding-bottom: 15px; margin-left: 13px;}
-  .nav-btn { padding: 8px 10px; font-size: 0.85rem; }
+/* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) */
+@media (max-width: 380px) {
+  .nav-container { padding: 0 10px; }
+  .brand-logo { font-size: 1.15rem; gap: 4px; }
+  .nav-actions { gap: 6px; }
+  .nav-btn { padding: 6px 8px; font-size: 0.7rem; gap: 4px; }
 }
 `;
 
@@ -212,7 +205,7 @@ function Navbar() {
         <nav className={`main-nav ${isDashboard ? 'dashboard-bg' : 'default-bg'}`}>
           <div className="nav-container">
             
-            {/* Logo */}
+            {/* Logo (Left Side) */}
             <Link to="/" className="brand-logo">
               <span>🚀</span>
               <span>
@@ -221,7 +214,7 @@ function Navbar() {
               </span>
             </Link>
 
-            {/* Actions / Buttons */}
+            {/* Actions / Buttons (Right Side) */}
             <div className="nav-actions">
               {auth.isAuthenticated && auth.user ? (
                 <>
