@@ -171,8 +171,8 @@ const navbarStyles = `
 
 /* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) */
 @media (max-width: 400px) {
-  .nav-container { padding: 0 12px; gap: 14px; }
-  .brand-logo { font-size: 1.6rem; margin-right: 4px ;        margin-top: -10px;
+  .nav-container { padding: 0 12px; gap: 4px; }
+  .brand-logo { font-size: 1.7rem; margin-right: 4px ;        margin-top: -10px;
  }
   .nav-btn { padding: 8px 12px; font-size: 0.85rem; max-width: 140px; }
 }
