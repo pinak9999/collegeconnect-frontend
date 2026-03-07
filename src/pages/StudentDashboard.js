@@ -561,7 +561,7 @@ const CollegePredictor = () => {
 };
 
 // ===============================
-// 🎓 Component 3: FindSenior 
+// 🎓 Component 3: FindSenior (Alias / Display Name Fix)
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
   const [search, setSearch] = useState("");
@@ -574,8 +574,10 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
       (x) =>
         (!selectedCollege || x.college?._id === selectedCollege) &&
         (!selectedTag || x.tags?.some((t) => t._id === selectedTag)) &&
+        // 🚀 सर्च में भी display_name काम करे, इसलिए इसे जोड़ा गया है
         (x.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          x.college?.name?.toLowerCase().includes(search.toLowerCase()))
+         x.display_name?.toLowerCase().includes(search.toLowerCase()) || 
+         x.college?.name?.toLowerCase().includes(search.toLowerCase()))
     )
     .sort((a, b) => {
       if (sortBy === "price_asc") return (a.price_per_session ?? 0) - (b.price_per_session ?? 0);
@@ -627,7 +629,9 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : filtered.length > 0
           ? filtered.map((p) => {
-              const seniorName = p.user?.name || 'Senior';
+              // 🚀 FIX 1: सबसे पहले display_name चेक करेगा, अगर नहीं है तब असली नाम दिखाएगा
+              const seniorName = p.display_name || p.user?.name || 'Senior';
+              
               const fallbackImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(seniorName)}&background=e23744&color=fff&size=150&bold=true`;
               const finalPrice = (p.price_per_session || 0) + platformFee;
 
@@ -638,6 +642,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
                       <img src={p.avatar || fallbackImage} alt={seniorName} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }} />
                     </div>
                     <div className="info-box">
+                      {/* 🚀 यहाँ अब फेक/अलियास नाम रेंडर होगा */}
                       <h3 className="name-text">{seniorName} <span className="verified-tick">✔</span></h3>
                       <p className="college-text">{p.college?.name || "Premium Mentor"}</p>
                       
@@ -650,15 +655,16 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
                     </div>
                   </div>
 
-<p className="bio-text">
-  {p.bio ? (p.bio.length > 70 ? p.bio.substring(0, 70) + "..." : p.bio) : `Expert senior from ${p.college?.name || "top college"} ready to guide you.`}
-</p>
+                  <p className="bio-text">
+                    {p.bio ? (p.bio.length > 70 ? p.bio.substring(0, 70) + "..." : p.bio) : `Expert senior from ${p.college?.name || "top college"} ready to guide you.`}
+                  </p>
                   <div className="price-session-row">
                     <span className="price-badge">₹{finalPrice}</span>
                     <span className="duration-badge">{p.session_duration_minutes || 20} min</span>
                   </div>
 
-                  <Link to={`/book/${p.user._id}`} className="cc-btn primary">
+                  {/* 🚀 FIX 2: लिंक में ?college=ID जोड़ दिया ताकि बुकिंग पेज को सही डाटा मिले */}
+                  <Link to={`/book/${p.user._id}?college=${p.college?._id || ''}`} className="cc-btn primary">
                     🚀 Book Session
                   </Link>
                 </div>
@@ -680,7 +686,6 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
     </div>
   );
 };
-
 // ===============================
 // 📘 Component 4: MyBookings 
 // ===============================
