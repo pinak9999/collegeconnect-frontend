@@ -216,7 +216,7 @@ function Navbar() {
               <span>🚀</span>
               <span>
                 <span className="brand-highlight">Reap</span>
-                <span className="brand-text">CampusConnect</span>
+                <span className="brand-text"> CampusConnect</span>
               </span>
             </Link>
 
