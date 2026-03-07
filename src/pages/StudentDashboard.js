@@ -632,7 +632,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
         </div>
       </div>
 
-      <h3 style={{fontSize: '1.4rem', margin: '30px 0 20px 0', fontWeight: 800}}>Recommended Mentors</h3>
+      <h3 style={{fontSize: '1.4rem', margin: '30px 0 20px 0', fontWeight: 800}}>Verified College Seniors</h3>
 
       <div className="grid-style-seniors">
         {loading
