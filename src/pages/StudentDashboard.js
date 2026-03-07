@@ -258,37 +258,58 @@ body {
   
   /* 4. Search & Filters को पतला किया */
   .search-section { padding: 0; margin-bottom: 20px; background: transparent; box-shadow: none; border: none; }
-  .search-bar-modern { padding: 8px 14px; border-radius: 10px; }
+  .search-bar-modern { padding: 8px 14px; border-radius: 10px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
   .search-bar-modern input { font-size: 0.9rem; padding: 2px 6px; }
   .search-icon { font-size: 1.1rem; }
-  
   .filter-dropdowns { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; width: 100%; }
-  .cc-select { padding: 8px 12px; font-size: 0.85rem; border-radius: 8px; background-size: 12px; }
+  .cc-select { padding: 8px 12px; font-size: 0.85rem; border-radius: 8px; background-size: 12px; background-color: var(--card-bg); box-shadow: var(--shadow-soft); }
   
   /* 5. Tags को छोटा किया */
   .tags-scroll-container { padding: 6px 0; gap: 8px; }
-  .tag-chip { font-size: 0.75rem; padding: 6px 14px; }
+  .tag-chip { font-size: 0.75rem; padding: 6px 14px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
   
-  /* 6. Senior Cards */
+  /* 6. Senior Cards (Home Page) */
   .grid-style-seniors { gap: 12px; }
   .senior-card-modern { padding: 16px; border-radius: 12px; }
-  .card-header-flex { gap: 12px; margin-bottom: 12px; }
-  .avatar-box { width: 65px; height: 65px; }
+  .card-header-flex { gap: 12px; margin-bottom: 12px; flex-direction: row; align-items: center; }
+  .avatar-box { width: 65px; height: 65px; margin-bottom: 0; }
   .name-text { font-size: 1.1rem; }
   .college-text { font-size: 0.8rem; margin-bottom: 4px; }
   .bio-text { font-size: 0.8rem; padding: 8px; margin-bottom: 12px; }
   .price-badge { font-size: 1rem; padding: 4px 10px; }
   .cc-btn { padding: 10px; font-size: 0.95rem; }
 
-  /* 7. Other Adjustments */
-  .predictor-header { padding: 20px 12px; margin-bottom: 16px; }
-  .predictor-header h2 { font-size: 1.3rem; }
-  .choice-header { padding: 20px 12px; margin-bottom: 16px; }
-  .choice-header h2 { font-size: 1.3rem; }
+  /* 7. Other Tabs Adjustments */
+  .predictor-header, .choice-header { padding: 20px 12px; margin-bottom: 16px; }
+  .predictor-header h2, .choice-header h2 { font-size: 1.3rem; }
   .p-details h4 { font-size: 0.9rem; }
   .fomo-popup { bottom: 75px; left: 10px; right: 10px; max-width: none; width: auto; padding: 8px 12px; }
   .fomo-popup img { width: 32px; height: 32px; }
   .fomo-popup .fomo-text { font-size: 0.75rem; }
+
+  /* 🚀 8. NEW: BOOKINGS PAGE SLEEK UI FIXES */
+  .page-wrapper h2 { font-size: 1.4rem !important; margin-bottom: 16px !important; }
+  .page-wrapper h3 { font-size: 1.1rem !important; margin-bottom: 12px !important; margin-top: 20px !important; }
+  
+  .booking-card-modern { padding: 14px; border-radius: 12px; margin-bottom: 14px; }
+  
+  /* Profile और Status को एक ही लाइन में लाया ताकि वर्टिकल स्पेस बचे */
+  .booking-top-row { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; }
+  .booking-profile-flex { flex-direction: row; gap: 10px; width: auto; flex: 1; } 
+  .booking-avatar { width: 50px; height: 50px; }
+  .booking-name { font-size: 1.05rem; margin-bottom: 2px; }
+  .booking-college { font-size: 0.75rem; line-height: 1.2; }
+  .booking-year-tag { font-size: 0.65rem; padding: 2px 8px; margin-top: 4px; }
+  
+  .status-column { flex-direction: column; align-items: flex-end; width: auto; gap: 6px; }
+  .booking-status { padding: 4px 8px; font-size: 0.65rem; border-radius: 6px; text-align: center; }
+  
+  .info-alert-box { padding: 8px 12px; font-size: 0.75rem; align-items: flex-start; border-radius: 8px; margin-bottom: 12px; }
+  .rating-prompt-box { padding: 12px; margin-bottom: 12px; }
+  
+  /* Buttons को पतला और साथ-साथ किया */
+  .booking-actions { flex-direction: row; gap: 8px; margin-top: 10px; }
+  .btn-outline, .cc-btn.primary { flex: 1; padding: 8px; font-size: 0.85rem; border-radius: 8px; }
 }
 `;
 
