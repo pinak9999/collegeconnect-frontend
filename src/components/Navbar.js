@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Navbar CSS (Mobile Overlap 100% Fixed)
+// 🚀 Premium Navbar CSS (Stacked Mobile UI - Logo Up, Buttons Down)
 // ======================================
 const navbarStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -128,54 +128,52 @@ const navbarStyles = `
 }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES (PERFECT ALIGNMENT)
+   📱 MOBILE RESPONSIVE FIXES (STACKED UI)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 10px 0; }
+  .main-nav { 
+    padding: 16px 0; 
+  }
   .nav-container {
-    flex-direction: row; 
-    justify-content: space-between;
+    flex-direction: column; /* 🔥 Logo upar, Buttons niche */
+    justify-content: center;
     align-items: center;
-    padding: 0 12px;
-    gap: 5px;
+    padding: 0 16px;
+    gap: 16px; /* Logo aur buttons ke beech perfectly balanced space */
   }
+  
   .brand-logo { 
-    font-size: 1.2rem;
+    font-size: 1.6rem; /* Pura naam ache se dikhega */
     padding-top: 0;
-    flex-shrink: 1; /* Text chota hone dega */
-    overflow: hidden;
   }
-  .brand-highlight, .brand-text { font-size: 1.2rem; }
+  .brand-highlight { display: inline; } /* 'Reap' word wapas la diya */
   
   .nav-actions { 
-    width: auto; 
-    justify-content: flex-end; 
+    width: 100%; 
+    justify-content: center; 
     flex-wrap: nowrap; 
-    gap: 8px; 
+    gap: 12px; 
     margin-top: 0; 
-    flex-shrink: 0; /* Buttons kabhi pichkenge nahi */
   }
+  
   .nav-btn { 
-    padding: 7px 12px; 
-    font-size: 0.8rem; 
-    border-radius: 8px; /* Mobile par pill-shape hata diya taaki space bache */
+    flex: 1; /* 🔥 Dono buttons 50-50% width lenge */
+    max-width: 160px; /* Buttons zyada failyenge nahi */
+    justify-content: center; /* Text ekdum center mein */
+    padding: 10px 16px; 
+    font-size: 0.9rem; 
+    border-radius: 12px; /* Thoda modern curve diya hai */
   }
+  
   .scrolling-bar { font-size: 0.75rem; padding: 6px 0; }
   .scrolling-text { animation-duration: 18s; } 
 }
 
-/* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) - THE MAGIC TRICK */
+/* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) */
 @media (max-width: 400px) {
-  .nav-container { padding: 0 8px; gap: 4px; }
-  
-  /* MAGIC: Choti screen par 'Reap' word hide kar diya taki buttons aa sakein */
-  .brand-highlight { display: none; } 
-  
-  .brand-logo { font-size: 1.1rem; gap: 4px; }
-  .brand-text { font-size: 1.1rem; }
-  
-  .nav-actions { gap: 6px; }
-  .nav-btn { padding: 6px 10px; font-size: 0.75rem; gap: 3px; }
+  .nav-container { padding: 0 12px; gap: 14px; }
+  .brand-logo { font-size: 1.4rem; }
+  .nav-btn { padding: 8px 12px; font-size: 0.85rem; max-width: 140px; }
 }
 `;
 
@@ -213,7 +211,7 @@ function Navbar() {
         <nav className={`main-nav ${isDashboard ? 'dashboard-bg' : 'default-bg'}`}>
           <div className="nav-container">
             
-            {/* Logo (Left Side) */}
+            {/* Logo (Top on Mobile) */}
             <Link to="/" className="brand-logo">
               <span>🚀</span>
               <span>
@@ -222,7 +220,7 @@ function Navbar() {
               </span>
             </Link>
 
-            {/* Actions / Buttons (Right Side) */}
+            {/* Actions / Buttons (Bottom on Mobile) */}
             <div className="nav-actions">
               {auth.isAuthenticated && auth.user ? (
                 <>
