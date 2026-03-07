@@ -153,7 +153,7 @@ const navbarStyles = `
     justify-content: center; 
     flex-wrap: nowrap; 
     gap: 12px; 
-    margin-top: 0; 
+    margin-right: -8px; 
   }
   
   .nav-btn { 
@@ -172,7 +172,7 @@ const navbarStyles = `
 /* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) */
 @media (max-width: 400px) {
   .nav-container { padding: 0 12px; gap: 14px; }
-  .brand-logo { font-size: 1.6rem;  }
+  .brand-logo { font-size: 1.6rem; margin-right: 9px  }
   .nav-btn { padding: 8px 12px; font-size: 0.85rem; max-width: 140px; }
 }
 `;
