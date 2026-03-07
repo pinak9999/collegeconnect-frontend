@@ -27,7 +27,7 @@ const navbarStyles = `
 /* 🔥 Gradient Background */
 .main-nav.dashboard-bg,
 .main-nav.default-bg {
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+  background: linear-gradient(135deg,#312e81 0%, #4f46e5 100%); 
 }
 
 /* --- Inner Layout --- */
