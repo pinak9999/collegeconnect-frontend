@@ -153,7 +153,7 @@ const navbarStyles = `
     justify-content: center; 
     flex-wrap: nowrap; 
     gap: 12px; 
-    margin-right: -8px; 
+    margin-right: 0px; 
   }
   
   .nav-btn { 
