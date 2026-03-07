@@ -15,7 +15,7 @@ function Footer({ loading }) {
 
   const handleComingSoon = (e) => {
     e.preventDefault();
-    alert("🚀 This page is currently under construction. Coming soon!");
+    alert("🚀Need Help? We're here for you.📧 davepinak0@gmail.com 📞 +917665054856")
   };
 
   const linksMap = {
