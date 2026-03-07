@@ -234,51 +234,61 @@ body {
   margin-top: 4px;
   display: block;
 }
-
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES 
+   📱 MOBILE RESPONSIVE FIXES (SLEEK & COMPACT UI)
    ========================================= */
 @media (max-width: 768px) {
   .desktop-tabs { display: none; }
   .bottom-nav { display: flex; }
-  footer { padding-bottom: 90px !important; }
-  .main-container { padding: 12px; padding-bottom: 0px; overflow-x: hidden; }
-  .top-header { gap: 10px; flex-wrap: wrap; }
-  .brand-title { font-size: 1.35rem; } 
-  .theme-btn { padding: 6px 12px; font-size: 0.8rem; }
-  .hero-premium { padding: 24px 20px; border-radius: 16px; margin-bottom: 20px; }
-  .hero-premium h1 { font-size: 1.6rem; }
-  .predictor-header { padding: 24px 16px; }
-  .predictor-header h2 { font-size: 1.5rem; }
-  .choice-header { padding: 24px 16px; }
-  .choice-header h2 { font-size: 1.5rem; }
-  .p-details h4 { font-size: 0.95rem; }
-  .search-section { padding: 0; margin-bottom: 24px; background: transparent; box-shadow: none; border: none; }
-  .search-bar-modern { background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-soft); }
-  .filter-dropdowns { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; width: 100%; }
-  .cc-select { background-color: var(--card-bg); box-shadow: var(--shadow-soft); border-radius: 12px; }
-  .tags-scroll-container { padding: 8px 0; }
-  .tag-chip { font-size: 0.85rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
-  .grid-style-seniors { gap: 16px; }
-  .senior-card-modern { padding: 20px; }
-  .card-header-flex { flex-direction: row; text-align: left; align-items: center; }
-  .avatar-box { width: 80px; height: 80px; margin-bottom: 0; }
-  .name-text { font-size: 1.2rem; }
-  .booking-top-row { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .booking-profile-flex { flex-direction: row; align-items: center; width: 100%; } 
-  .status-column { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; }
-  .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
-  .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
-  .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
+  footer { padding-bottom: 80px !important; }
   
-  /* Mobile mein FOMO thoda adjust karein */
-  .fomo-popup {
-    bottom: 90px;
-    left: 10px;
-    right: 10px;
-    max-width: none;
-    width: auto;
-  }
+  /* 1. Container Padding कम की */
+  .main-container { padding: 10px; padding-bottom: 0px; overflow-x: hidden; }
+  
+  /* 2. Top Header Compact */
+  .top-header { margin-bottom: 12px; padding: 5px 0; }
+  .brand-title { font-size: 1.2rem; } 
+  .theme-btn { padding: 4px 10px; font-size: 0.75rem; }
+  
+  /* 3. Hero Banner (Red Box) को Sleek बनाया */
+  .hero-premium { padding: 16px 15px; border-radius: 12px; margin-bottom: 16px; }
+  .hero-premium h1 { font-size: 1.3rem; margin-bottom: 4px; }
+  .hero-premium p { font-size: 0.85rem; line-height: 1.3; }
+  .hero-premium::after { font-size: 80px; bottom: -10px; right: 5%; }
+  
+  /* 4. Search & Filters को पतला किया */
+  .search-section { padding: 0; margin-bottom: 20px; background: transparent; box-shadow: none; border: none; }
+  .search-bar-modern { padding: 8px 14px; border-radius: 10px; }
+  .search-bar-modern input { font-size: 0.9rem; padding: 2px 6px; }
+  .search-icon { font-size: 1.1rem; }
+  
+  .filter-dropdowns { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; width: 100%; }
+  .cc-select { padding: 8px 12px; font-size: 0.85rem; border-radius: 8px; background-size: 12px; }
+  
+  /* 5. Tags को छोटा किया */
+  .tags-scroll-container { padding: 6px 0; gap: 8px; }
+  .tag-chip { font-size: 0.75rem; padding: 6px 14px; }
+  
+  /* 6. Senior Cards */
+  .grid-style-seniors { gap: 12px; }
+  .senior-card-modern { padding: 16px; border-radius: 12px; }
+  .card-header-flex { gap: 12px; margin-bottom: 12px; }
+  .avatar-box { width: 65px; height: 65px; }
+  .name-text { font-size: 1.1rem; }
+  .college-text { font-size: 0.8rem; margin-bottom: 4px; }
+  .bio-text { font-size: 0.8rem; padding: 8px; margin-bottom: 12px; }
+  .price-badge { font-size: 1rem; padding: 4px 10px; }
+  .cc-btn { padding: 10px; font-size: 0.95rem; }
+
+  /* 7. Other Adjustments */
+  .predictor-header { padding: 20px 12px; margin-bottom: 16px; }
+  .predictor-header h2 { font-size: 1.3rem; }
+  .choice-header { padding: 20px 12px; margin-bottom: 16px; }
+  .choice-header h2 { font-size: 1.3rem; }
+  .p-details h4 { font-size: 0.9rem; }
+  .fomo-popup { bottom: 75px; left: 10px; right: 10px; max-width: none; width: auto; padding: 8px 12px; }
+  .fomo-popup img { width: 32px; height: 32px; }
+  .fomo-popup .fomo-text { font-size: 0.75rem; }
 }
 `;
 
