@@ -145,36 +145,41 @@ const navbarStyles = `
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-100%, 0, 0); }
 }
-
 /* =========================================
-   📱 MOBILE RESPONSIVE FIXES
+   📱 MOBILE RESPONSIVE FIXES FOR NAVBAR
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 0px 0; }
-  .nav-container {
-    flex-direction: column;
-    justify-content: center;
-    gap: 0px;
-                    margin-top: -9px;
-    
+  /* 1. Navbar Container को सही करें */
+  .navbar-container { /* आपकी क्लास का नाम अलग हो सकता है */
+    display: flex;
+    justify-content: space-between; /* लोगो और बटन्स को अलग-अलग कोनों में रखेगा */
+    align-items: center; /* सब कुछ वर्टिकली सेंटर में रहेगा */
+    padding: 10px 16px; /* टॉप-बॉटम और लेफ्ट-राईट पैडिंग */
+    width: 100%;
+    box-sizing: border-box;
   }
-  .brand-logo { font-size: 1.90rem; }
-  .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 12px;}
-  .nav-btn { padding: 7px 0px; font-size: 0.9rem; flex: 1; justify-content: center; max-width: 112px; }
-  .scrolling-bar { font-size: 0.8rem; padding: 6px 0; }
-  .scrolling-text { animation-duration: 18s; } 
-}
 
-/* 🔥 EXTRA SMALL DEVICES (320px like old iPhones/Androids) FIX */
-@media (max-width: 400px) {
-  .brand-logo { 
-    font-size: 1.59rem; /* Font chota kiya taki screen se bahar na jaye */
-    gap: 5px;
-
-    
+  /* 2. Logo को थोड़ा छोटा करें (वैकल्पिक) */
+  .navbar-logo {
+    max-width: 140px; /* लोगो को स्क्रीन के हिसाब से एडजस्ट करें */
   }
-  .nav-actions { gap: 8px;  margin-top: 10px; padding-bottom: 15px; margin-left: 13px;}
-  .nav-btn { padding: 8px 10px; font-size: 0.85rem; }
+
+  /* 3. Buttons Container को अलाइन करें */
+  .navbar-buttons-wrapper { /* वह डिव जिसके अंदर Login/Register बटन्स हैं */
+    display: flex;
+    align-items: center;
+    gap: 12px; /* बटन्स के बीच में परफेक्ट स्पेसिंग */
+  }
+
+  /* 4. Butons को स्लीक और एक साइज़ का बनाएं */
+  .navbar-btn-login, .navbar-btn-register { /* आपके बटन्स की क्लास का नाम इस्तेमाल करें */
+    padding: 6px 14px; /* बटन्स को थोड़ा पतला और चौड़ा करें */
+    font-size: 0.85rem; /* फॉन्ट साइज़ थोड़ा छोटा करें */
+    border-radius: 8px; /* किनारों को गोल करें */
+    font-weight: 600;
+    white-space: nowrap; /* टेक्स्ट को अगली लाइन में जाने से रोकेगा */
+    text-align: center;
+  }
 }
 `;
 
