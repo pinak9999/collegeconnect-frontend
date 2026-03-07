@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Navbar CSS (Mobile Alignment Fixed 100%)
+// 🚀 Premium Navbar CSS (Mobile Overlap 100% Fixed)
 // ======================================
 const navbarStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -57,7 +57,7 @@ const navbarStyles = `
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
-  margin-right: 5px;
+  margin-right: 2px;
 }
 .brand-text {
   color: #f8f9fa;
@@ -116,14 +116,12 @@ const navbarStyles = `
   letter-spacing: 0.3px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
-
 .scrolling-text {
   display: inline-block;
   padding-left: 100%;
   animation: scrollMarquee 22s linear infinite;
   will-change: transform;
 }
-
 @keyframes scrollMarquee {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-100%, 0, 0); }
@@ -133,41 +131,51 @@ const navbarStyles = `
    📱 MOBILE RESPONSIVE FIXES (PERFECT ALIGNMENT)
    ========================================= */
 @media (max-width: 768px) {
-  .main-nav { padding: 12px 0; }
+  .main-nav { padding: 10px 0; }
   .nav-container {
-    flex-direction: row; /* 🔥 Fix: Logo aur Buttons ek hi line mein rahenge */
+    flex-direction: row; 
     justify-content: space-between;
     align-items: center;
-    padding: 0 14px;
-    gap: 10px;
+    padding: 0 12px;
+    gap: 5px;
   }
   .brand-logo { 
-    font-size: 1.3rem; /* Logo chota kiya */
+    font-size: 1.2rem;
     padding-top: 0;
+    flex-shrink: 1; /* Text chota hone dega */
+    overflow: hidden;
   }
+  .brand-highlight, .brand-text { font-size: 1.2rem; }
+  
   .nav-actions { 
     width: auto; 
     justify-content: flex-end; 
     flex-wrap: nowrap; 
     gap: 8px; 
     margin-top: 0; 
+    flex-shrink: 0; /* Buttons kabhi pichkenge nahi */
   }
   .nav-btn { 
     padding: 7px 12px; 
     font-size: 0.8rem; 
-    max-width: none; 
-    flex: none; 
+    border-radius: 8px; /* Mobile par pill-shape hata diya taaki space bache */
   }
   .scrolling-bar { font-size: 0.75rem; padding: 6px 0; }
   .scrolling-text { animation-duration: 18s; } 
 }
 
-/* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) */
-@media (max-width: 380px) {
-  .nav-container { padding: 0 10px; }
-  .brand-logo { font-size: 1.15rem; gap: 4px; }
+/* 🔥 EXTRA SMALL DEVICES (like 360px Androids / older iPhones) - THE MAGIC TRICK */
+@media (max-width: 400px) {
+  .nav-container { padding: 0 8px; gap: 4px; }
+  
+  /* MAGIC: Choti screen par 'Reap' word hide kar diya taki buttons aa sakein */
+  .brand-highlight { display: none; } 
+  
+  .brand-logo { font-size: 1.1rem; gap: 4px; }
+  .brand-text { font-size: 1.1rem; }
+  
   .nav-actions { gap: 6px; }
-  .nav-btn { padding: 6px 8px; font-size: 0.7rem; gap: 4px; }
+  .nav-btn { padding: 6px 10px; font-size: 0.75rem; gap: 3px; }
 }
 `;
 
@@ -209,7 +217,7 @@ function Navbar() {
             <Link to="/" className="brand-logo">
               <span>🚀</span>
               <span>
-                <span className="brand-highlight">Reap </span>
+                <span className="brand-highlight">Reap</span>
                 <span className="brand-text">CampusConnect</span>
               </span>
             </Link>
