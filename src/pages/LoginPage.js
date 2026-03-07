@@ -311,7 +311,7 @@ function LoginPage() {
             <input
               type="email"
               name="email"
-              placeholder="e.g. student@college.edu"
+              placeholder="e.g. xyz@gmail.com"
               value={formData.email}
               onChange={onChangeHandler}
               required

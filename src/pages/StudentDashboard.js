@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 // ======================================
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
   --bg-color: #fbc2eb;
@@ -75,6 +76,23 @@ body {
 .theme-btn { background: var(--card-bg); border: 1px solid var(--stroke); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; color: var(--txt-main); font-weight: 600; font-size: 0.85rem; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 6px; transition: all 0.2s; white-space: nowrap; }
 .theme-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
+/* --- 🕵️‍♂️ NEW: CAMPUS SECRETS (HACKER UI) --- */
+.secrets-container { background: #0a0a0a; border-radius: var(--radius-lg); padding: 30px; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.8); position: relative; overflow: hidden; font-family: 'Share Tech Mono', monospace; color: #00ff41; margin-bottom: 24px; }
+.secrets-container::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); pointer-events: none; z-index: 1; }
+.glitch-header { font-size: 1.8rem; font-weight: bold; color: #ff003c; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 2px; text-shadow: 2px 0 #00ffff, -2px 0 #00ff41; animation: glitchText 3s infinite linear; position: relative; z-index: 2; }
+@keyframes glitchText { 0% { text-shadow: 2px 0 #00ffff, -2px 0 #00ff41; } 50% { text-shadow: -2px 0 #00ffff, 2px 0 #00ff41; } 100% { text-shadow: 2px 0 #00ffff, -2px 0 #00ff41; } }
+.secret-select { width: 100%; background: #111; color: #00ff41; border: 1px solid #00ff41; padding: 14px; font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; border-radius: 8px; outline: none; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2); cursor: pointer; position: relative; z-index: 2; }
+.secret-select option { background: #0a0a0a; }
+.typing-effect { overflow: hidden; white-space: nowrap; border-right: 2px solid #00ff41; animation: typing 2s steps(40, end), blink-caret .75s step-end infinite; position: relative; z-index: 2; }
+@keyframes typing { from { width: 0 } to { width: 100% } }
+@keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #00ff41; } }
+.data-box { background: rgba(0, 255, 65, 0.05); border-left: 3px solid #00ff41; padding: 20px; margin-top: 20px; animation: fadeIn 0.5s ease-in; position: relative; z-index: 2; }
+.data-line { margin: 12px 0; font-size: 1.1rem; line-height: 1.6; color: #e0e0e0; }
+.blur-txt { background: #333; color: transparent; text-shadow: 0 0 10px rgba(255,255,255,0.5); border-radius: 4px; padding: 0 6px; letter-spacing: 2px; user-select: none; cursor: not-allowed; animation: pulseBlur 2s infinite; }
+@keyframes pulseBlur { 0%, 100% { opacity: 0.8; } 50% { opacity: 0.4; } }
+.secret-cta { background: #ff003c; color: white; border: none; padding: 16px; width: 100%; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.1rem; border-radius: 8px; margin-top: 25px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255, 0, 60, 0.5); transition: all 0.2s; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;}
+.secret-cta:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(255, 0, 60, 0.8); }
+
 /* --- 🎯 PREDICTOR CSS --- */
 .predictor-header { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: var(--radius-lg); padding: 30px 20px; margin-bottom: 24px; color: white; text-align: center; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2); }
 .predictor-header h2 { margin: 0 0 8px 0; font-size: 1.8rem; font-weight: 800; }
@@ -128,7 +146,7 @@ body {
 .search-section { background: var(--card-bg); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--stroke); margin-bottom: 24px; }
 .search-bar-modern { display: flex; align-items: center; background: rgba(255,255,255,0.5); border: 1px solid var(--stroke); border-radius: var(--radius-pill); padding: 12px 20px; transition: all 0.3s; width: 100%; box-sizing: border-box; }
 .search-bar-modern:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 4px var(--brand-light); background: var(--card-bg); }
-.search-bar-modern input { border: none; background: transparent; width: 100%; padding: 4px 8px; font-family: inherit; font-size: 1rem; color: var(--txt-main); }
+.search-bar-modern input { border: none; background: transparent; width: 100%; padding: 4px 8px; font-family: inherit; font-size: 1rem; color: var(--txt-main); outline: none;}
 .search-icon { font-size: 1.2rem; color: var(--brand-primary); flex-shrink: 0; }
 .filter-dropdowns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; width: 100%; }
 .cc-select { width: 100%; max-width: 100%; box-sizing: border-box; appearance: none; border: 1px solid var(--stroke); background: var(--card-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center; background-size: 16px; color: var(--txt-main); border-radius: var(--radius-md); padding: 14px 16px; font-family: inherit; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: border-color 0.2s; }
@@ -181,59 +199,23 @@ body {
 .btn-outline { background: transparent; border: 1px solid var(--stroke); color: var(--txt-main); width: auto; padding: 12px 24px; }
 .btn-outline.danger { color: #d32f2f; border-color: #ffcdd2; background: #ffebee; }
 
-/* --- Desktop Nav / Bottom Nav Mobile --- */
-.desktop-tabs { display: flex; gap: 12px; margin-bottom: 24px; background: var(--card-bg); padding: 8px; border-radius: var(--radius-pill); box-shadow: var(--shadow-card); width: max-content; border: 1px solid var(--stroke); }
-.d-tab { text-decoration: none; color: var(--txt-muted); font-weight: 600; padding: 10px 24px; border-radius: var(--radius-pill); transition: all 0.3s; font-size: 0.95rem; }
+/* --- Navigation & Tabs (Now 5 Tabs) --- */
+.desktop-tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--card-bg); padding: 8px; border-radius: var(--radius-pill); box-shadow: var(--shadow-card); width: max-content; border: 1px solid var(--stroke); overflow-x: auto; }
+.d-tab { text-decoration: none; color: var(--txt-muted); font-weight: 600; padding: 10px 20px; border-radius: var(--radius-pill); transition: all 0.3s; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .d-tab.active { background: var(--brand-primary); color: white; box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3); }
 
-/* 🔥 Mobile Bottom Nav - 4 Tabs perfectly aligned */
+/* Mobile Bottom Nav (5 Tabs) */
 .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 -10px 25px rgba(0,0,0,0.05); border-top: 1px solid var(--stroke); z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
-.b-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; text-decoration: none; color: var(--txt-muted); font-size: 0.7rem; font-weight: 600; gap: 4px; transition: color 0.2s; }
+.b-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; text-decoration: none; color: var(--txt-muted); font-size: 0.65rem; font-weight: 600; gap: 4px; transition: color 0.2s; }
 .b-nav-item.active { color: var(--brand-primary); }
-.b-nav-icon { font-size: 1.35rem; }
+.b-nav-icon { font-size: 1.25rem; }
 
 /* 🔥 FOMO Notification Popup CSS */
-.fomo-popup {
-  position: fixed;
-  bottom: 80px; /* Thoda upar rakha hai taki bottom nav se clash na kare */
-  left: 20px;
-  background: var(--card-bg);
-  border-left: 4px solid var(--price-green);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  border-radius: 8px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 1000;
-  max-width: 320px;
-  transform: translateX(-150%);
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.fomo-popup.show {
-  transform: translateX(0);
-}
-
-.fomo-popup img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.fomo-popup .fomo-text {
-  font-size: 0.85rem;
-  color: var(--txt-main);
-  line-height: 1.3;
-}
-
-.fomo-popup .fomo-time {
-  font-size: 0.7rem;
-  color: var(--txt-muted);
-  margin-top: 4px;
-  display: block;
-}
+.fomo-popup { position: fixed; bottom: 80px; left: 20px; background: var(--card-bg); border-left: 4px solid var(--price-green); box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; z-index: 1000; max-width: 320px; transform: translateX(-150%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.fomo-popup.show { transform: translateX(0); }
+.fomo-popup img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.fomo-popup .fomo-text { font-size: 0.85rem; color: var(--txt-main); line-height: 1.3; }
+.fomo-popup .fomo-time { font-size: 0.7rem; color: var(--txt-muted); margin-top: 4px; display: block; }
 
 /* =========================================
    📱 MOBILE RESPONSIVE FIXES 
@@ -270,15 +252,7 @@ body {
   .info-alert-box { padding: 10px 12px; align-items: flex-start; font-size: 0.85rem; }
   .booking-actions { display: flex; flex-direction: row; gap: 10px; width: 100%; }
   .btn-outline, .cc-btn.primary { flex: 1; padding: 10px; font-size: 0.9rem; text-align: center; justify-content: center; }
-  
-  /* Mobile mein FOMO thoda adjust karein */
-  .fomo-popup {
-    bottom: 90px;
-    left: 10px;
-    right: 10px;
-    max-width: none;
-    width: auto;
-  }
+  .fomo-popup { bottom: 90px; left: 10px; right: 10px; max-width: none; width: auto; }
 }
 `;
 
@@ -306,6 +280,100 @@ const SkeletonCard = () => (
     <div style={{ width: '100%', height: '40px', background: 'var(--stroke)', borderRadius: '12px', marginTop: 'auto' }} />
   </div>
 );
+
+// ===============================
+// 🕵️‍♂️ NEW Component: Campus Secrets (The FOMO Hack)
+// ===============================
+const CampusSecrets = ({ colleges, seniors }) => {
+  const [selectedCol, setSelectedCol] = useState("");
+  const [decrypting, setDecrypting] = useState(false);
+  const [showData, setShowData] = useState(false);
+  const [seniorMatch, setSeniorMatch] = useState(null);
+
+  const handleSelect = (e) => {
+    const cid = e.target.value;
+    setSelectedCol(cid);
+    setShowData(false);
+    
+    if (!cid) return;
+
+    setDecrypting(true);
+    // Us college ka ek random senior dhoondho (taaki button uski profile par le jaye)
+    const collegeSeniors = seniors.filter(s => s.college?._id === cid);
+    const match = collegeSeniors.length > 0 ? collegeSeniors[0] : seniors[0];
+    setSeniorMatch(match);
+
+    // Fake Decryption Delay (2.5 seconds ki suspense building)
+    setTimeout(() => {
+      setDecrypting(false);
+      setShowData(true);
+    }, 2500); 
+  };
+
+  const selectedCollegeName = colleges.find(c => c._id === selectedCol)?.name || "The College";
+
+  return (
+    <div className="page-wrapper">
+      <div className="secrets-container">
+        <div className="glitch-header">⚠ SYSTEM_BREACH_DETECTED</div>
+        <p style={{ color: '#00ff41', marginBottom: '20px', fontSize: '1rem', opacity: 0.9, position: 'relative', zIndex: 2 }}>
+          Accessing classified student reviews and hidden ground reality. Select target below:
+        </p>
+
+        <select className="secret-select" value={selectedCol} onChange={handleSelect}>
+          <option value="">[ SELECT TARGET COLLEGE ]</option>
+          {colleges.map((c) => (
+            <option key={c._id} value={c._id}>{c.name}</option>
+          ))}
+        </select>
+
+        {decrypting && (
+          <div style={{ marginTop: '20px' }}>
+            <p className="typing-effect">&gt; Bypassing firewall...</p>
+            <p className="typing-effect" style={{animationDelay: '0.8s'}}>&gt; Extracting actual placement data...</p>
+            <p className="typing-effect" style={{animationDelay: '1.5s'}}>&gt; Decrypting student reality...</p>
+          </div>
+        )}
+
+        {showData && (
+          <div className="data-box">
+            <h3 style={{ borderBottom: '1px dashed #00ff41', paddingBottom: '10px', marginTop: 0 }}>📁 FILE: {selectedCollegeName.toUpperCase()}</h3>
+            
+            <div className="data-line">
+              <span style={{ color: '#ff003c' }}>[WARNING]:</span> The data below contradicts the official website brochure.
+            </div>
+
+            <div className="data-line">
+              <strong>OFFICIAL PLACEMENT:</strong> 85% Placed <br/>
+              <strong>ACTUAL GROUND REALITY:</strong> Only <span className="blur-txt">████%</span> placed in core tech roles. The rest are in mass recruitment or BPO.
+            </div>
+
+            <div className="data-line">
+              <strong>ATTENDANCE POLICY:</strong> 75% Mandatory <br/>
+              <strong>STUDENT SECRET:</strong> You can actually bypass it if you <span className="blur-txt">████████████</span>.
+            </div>
+
+            <div className="data-line">
+              <strong>HOSTEL FOOD RATING:</strong> <span className="blur-txt">██</span> / 10 <br/>
+              <em>"Don't eat the mess food on Wednesdays..."</em>
+            </div>
+
+            {seniorMatch && (
+              <Link to={`/book/${seniorMatch.user?._id}?college=${selectedCol}`} className="secret-cta">
+                🔓 Unlock Full Classified Report with {seniorMatch.user?.name}
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
+      
+      <p style={{textAlign: 'center', color: 'var(--txt-muted)', fontSize: '0.85rem'}}>
+        *This is a simulated experience based on anonymous student feedback. To know the exact truth, consult our verified seniors.
+      </p>
+    </div>
+  );
+};
+
 
 // ===============================
 // 📋 Component 1: Choice Filling Generator 
@@ -561,7 +629,7 @@ const CollegePredictor = () => {
 };
 
 // ===============================
-// 🎓 Component 3: FindSenior 
+// 🎓 Component 3: FindSenior (ALL LOGIC RESTORED 100%)
 // ===============================
 const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
   const [search, setSearch] = useState("");
@@ -682,7 +750,7 @@ const FindSenior = ({ seniors, loading, colleges, tags, platformFee }) => {
 };
 
 // ===============================
-// 📘 Component 4: MyBookings 
+// 📘 Component 4: MyBookings (ALL LOGIC RESTORED 100%)
 // ===============================
 const MyBookings = ({ seniors }) => {
   const [bookings, setBookings] = useState([]);
@@ -874,8 +942,9 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   );
 };
 
+
 // ===============================
-// 🌈 Main Dashboard Shell (With FOMO & 4 Tabs)
+// 🌈 Main Dashboard Shell (With FOMO & 5 Tabs)
 // ===============================
 const StudentDashboard = () => {
   const location = useLocation();
@@ -922,20 +991,19 @@ const StudentDashboard = () => {
     fetchAll();
   }, []);
 
- // 🚀 FOMO Notification Logic (100% Random & Bug-Free)
+  // 🚀 FOMO Notification Logic
   useEffect(() => {
-    const names = ["Rahul", "Priya", "Amit", "Neha", "Vikas", "Anjali", "Ravi", "Sneha", "Karan", "Pooja", "Aman", "Shruti", "Sandeep", "Kavita", "Mohit", "Deepak", "Riya"];
-    const cities = ["Jaipur", "Kota", "Udaipur", "Delhi", "Jodhpur", "Bikaner", "Ajmer", "Alwar", "Sikar", "Bhilwara", "Indore", "Pune", "Gurgaon"];
-    const fomoColleges = ["MBM Jodhpur", "RTU Kota", "CTAE Udaipur", "SKIT Jaipur", "JECRC Foundation", "Poornima College", "Arya College", "EC Bikaner", "EC Ajmer"];
+    const names = ["Rahul", "Priya", "Amit", "Neha", "Vikas", "Anjali", "Ravi", "Sneha", "Karan", "Pooja"];
+    const cities = ["Jaipur", "Kota", "Udaipur", "Delhi", "Jodhpur", "Bikaner", "Ajmer"];
+    const fomoColleges = ["MBM Jodhpur", "RTU Kota", "CTAE Udaipur", "SKIT Jaipur"];
 
     let timerId;
 
     const triggerFomo = () => {
-      // 🚀 हर बार बिल्कुल नया रैंडम डेटा जनरेट होगा
       const randomName = names[Math.floor(Math.random() * names.length)];
       const randomCity = cities[Math.floor(Math.random() * cities.length)];
       const randomCollege = fomoColleges[Math.floor(Math.random() * fomoColleges.length)];
-      const randomTime = Math.floor(Math.random() * 5) + 1; // 1 से 5 मिनट
+      const randomTime = Math.floor(Math.random() * 5) + 1; 
       
       setFomoData({
         text: `🔥 ${randomName} from ${randomCity} just booked a session with a Senior from ${randomCollege}!`,
@@ -944,20 +1012,11 @@ const StudentDashboard = () => {
       });
 
       setShowFomo(true);
-      
-      // 5 सेकंड बाद पॉपअप को स्मूथली छुपा दें
-      setTimeout(() => {
-        setShowFomo(false);
-      }, 5000);
-
-      // अगला पॉपअप ठीक 2 मिनट (120 सेकंड) बाद लाएँ
+      setTimeout(() => setShowFomo(false), 5000);
       timerId = setTimeout(triggerFomo, 120000);
     };
 
-    // पहला पॉपअप 15 सेकंड बाद
     timerId = setTimeout(triggerFomo, 15000);
-
-    // 🧹 Cleanup: जब यूजर दूसरे पेज पर जाए तो बैकग्राउंड टाइमर को रोक दें
     return () => clearTimeout(timerId);
   }, []);
 
@@ -975,16 +1034,20 @@ const StudentDashboard = () => {
           </button>
         </div>
 
-        {/* 💻 Desktop Navigation */}
+        {/* 💻 Desktop Navigation (NOW 5 TABS) */}
         <div className="desktop-tabs">
           <Link to="/student-dashboard" className={`d-tab ${currentPath === "/student-dashboard" ? "active" : ""}`}>
-            ✨ Find Seniors
+            ✨ Seniors
+          </Link>
+          {/* 🔥 The Secret Tab Highlighted in Red */}
+          <Link to="/student-dashboard/secrets" className={`d-tab ${currentPath.includes("/secrets") ? "active" : ""}`} style={{color: currentPath.includes("/secrets") ? '#fff' : '#ff003c'}}>
+            🕵️‍♂️ Secrets
           </Link>
           <Link to="/student-dashboard/predictor" className={`d-tab ${currentPath.includes("/predictor") ? "active" : ""}`}>
             🎯 Predictor
           </Link>
           <Link to="/student-dashboard/choice-filling" className={`d-tab ${currentPath.includes("/choice-filling") ? "active" : ""}`}>
-            📋 Choice Filling
+            📋 Choices
           </Link>
           <Link to="/student-dashboard/bookings" className={`d-tab ${currentPath.includes("/bookings") ? "active" : ""}`}>
             📘 Bookings
@@ -993,17 +1056,22 @@ const StudentDashboard = () => {
 
         <Routes>
           <Route path="/" element={<FindSenior seniors={seniors} loading={loading} colleges={colleges} tags={tags} platformFee={platformFee} />} />
+          <Route path="/secrets" element={<CampusSecrets colleges={colleges} seniors={seniors} />} />
           <Route path="/predictor" element={<CollegePredictor />} />
           <Route path="/choice-filling" element={<ChoiceFillingGenerator />} />
           <Route path="/bookings" element={<MyBookings seniors={seniors} />} />
         </Routes>
       </div>
 
-      {/* 📱 Mobile Bottom Nav */}
+      {/* 📱 Mobile Bottom Nav (NOW 5 TABS) */}
       <div className="bottom-nav">
         <Link to="/student-dashboard" className={`b-nav-item ${currentPath === "/student-dashboard" ? "active" : ""}`}>
           <span className="b-nav-icon">🏫</span>
           Seniors
+        </Link>
+        <Link to="/student-dashboard/secrets" className={`b-nav-item ${currentPath.includes("/secrets") ? "active" : ""}`} style={{color: currentPath.includes("/secrets") ? '#ff003c' : ''}}>
+          <span className="b-nav-icon">🕵️‍♂️</span>
+          Secrets
         </Link>
         <Link to="/student-dashboard/predictor" className={`b-nav-item ${currentPath.includes("/predictor") ? "active" : ""}`}>
           <span className="b-nav-icon">🎯</span>
