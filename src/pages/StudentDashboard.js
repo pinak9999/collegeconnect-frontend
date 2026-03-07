@@ -237,80 +237,83 @@ body {
 /* =========================================
    📱 MOBILE RESPONSIVE FIXES (SLEEK & COMPACT UI)
    ========================================= */
+/* =========================================
+   📱 MOBILE RESPONSIVE FIXES (SLEEK & COMPACT UI)
+   ========================================= */
 @media (max-width: 768px) {
   .desktop-tabs { display: none; }
   .bottom-nav { display: flex; }
   footer { padding-bottom: 80px !important; }
   
-  /* 1. Container Padding कम की */
-  .main-container { padding: 10px; padding-bottom: 0px; overflow-x: hidden; }
+  /* 1. Container & Top Header */
+  .main-container { padding: 12px; padding-bottom: 0px; overflow-x: hidden; }
+  .top-header { margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 12px;}
+  .brand-title { font-size: 1.25rem; letter-spacing: -0.5px;} 
+  .theme-btn { padding: 6px 12px; font-size: 0.75rem; }
   
-  /* 2. Top Header Compact */
-  .top-header { margin-bottom: 12px; padding: 5px 0; }
-  .brand-title { font-size: 1.2rem; } 
-  .theme-btn { padding: 4px 10px; font-size: 0.75rem; }
-  
-  /* 3. Hero Banner (Red Box) को Sleek बनाया */
-  .hero-premium { padding: 16px 15px; border-radius: 12px; margin-bottom: 16px; }
-  .hero-premium h1 { font-size: 1.3rem; margin-bottom: 4px; }
-  .hero-premium p { font-size: 0.85rem; line-height: 1.3; }
-  .hero-premium::after { font-size: 80px; bottom: -10px; right: 5%; }
-  
-  /* 4. Search & Filters को पतला किया */
+  /* 2. Hero Banner & Search */
+  .hero-premium { padding: 20px 16px; border-radius: 16px; margin-bottom: 16px; }
+  .hero-premium h1 { font-size: 1.4rem; margin-bottom: 6px; }
+  .hero-premium p { font-size: 0.85rem; line-height: 1.4; }
   .search-section { padding: 0; margin-bottom: 20px; background: transparent; box-shadow: none; border: none; }
-  .search-bar-modern { padding: 8px 14px; border-radius: 10px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
-  .search-bar-modern input { font-size: 0.9rem; padding: 2px 6px; }
-  .search-icon { font-size: 1.1rem; }
-  .filter-dropdowns { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; width: 100%; }
-  .cc-select { padding: 8px 12px; font-size: 0.85rem; border-radius: 8px; background-size: 12px; background-color: var(--card-bg); box-shadow: var(--shadow-soft); }
+  .search-bar-modern { padding: 10px 16px; border-radius: 12px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
+  .search-bar-modern input { font-size: 0.95rem; padding: 2px 6px; }
+  .filter-dropdowns { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .cc-select { padding: 10px 14px; font-size: 0.85rem; border-radius: 10px; background-color: var(--card-bg); box-shadow: var(--shadow-soft); }
+  .tags-scroll-container { padding: 8px 0; gap: 8px; }
+  .tag-chip { font-size: 0.8rem; padding: 8px 16px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
   
-  /* 5. Tags को छोटा किया */
-  .tags-scroll-container { padding: 6px 0; gap: 8px; }
-  .tag-chip { font-size: 0.75rem; padding: 6px 14px; background: var(--card-bg); box-shadow: var(--shadow-soft); }
-  
-  /* 6. Senior Cards (Home Page) */
-  .grid-style-seniors { gap: 12px; }
-  .senior-card-modern { padding: 16px; border-radius: 12px; }
+  /* 3. Senior Cards (Home) */
+  .grid-style-seniors { gap: 16px; }
+  .senior-card-modern { padding: 16px; border-radius: 16px; }
   .card-header-flex { gap: 12px; margin-bottom: 12px; flex-direction: row; align-items: center; }
-  .avatar-box { width: 65px; height: 65px; margin-bottom: 0; }
-  .name-text { font-size: 1.1rem; }
+  .avatar-box { width: 55px; height: 55px; margin-bottom: 0; border-width: 2px; }
+  .name-text { font-size: 1.15rem; }
   .college-text { font-size: 0.8rem; margin-bottom: 4px; }
-  .bio-text { font-size: 0.8rem; padding: 8px; margin-bottom: 12px; }
-  .price-badge { font-size: 1rem; padding: 4px 10px; }
-  .cc-btn { padding: 10px; font-size: 0.95rem; }
+  .bio-text { font-size: 0.8rem; padding: 10px; margin-bottom: 14px; line-height: 1.4;}
+  .price-badge { font-size: 1.05rem; padding: 6px 12px; }
+  .cc-btn { padding: 12px; font-size: 0.95rem; border-radius: 10px;}
 
-  /* 7. Other Tabs Adjustments */
-  .predictor-header, .choice-header { padding: 20px 12px; margin-bottom: 16px; }
+  /* 🚀 4. NEW: BOOKINGS PAGE PREMIUM UI FIXES */
+  
+  /* Headings को क्लीन और छोटा किया */
+  .page-wrapper h2 { font-size: 1.35rem !important; margin: 10px 0 15px 0 !important; display: flex; align-items: center; gap: 8px; font-weight: 800 !important;}
+  .page-wrapper h3 { font-size: 0.9rem !important; margin: 20px 0 12px 0 !important; color: var(--txt-muted) !important; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px dashed var(--stroke); padding-bottom: 8px; font-weight: 700 !important;}
+  
+  .booking-card-modern { padding: 16px; border-radius: 16px; margin-bottom: 16px; border: 1px solid var(--stroke); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+  
+  /* Profile और Status को एकदम सही एलाइन किया */
+  .booking-top-row { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+  
+  .booking-profile-flex { flex-direction: row; gap: 12px; align-items: center; width: 70%; } 
+  .booking-avatar { width: 48px; height: 48px; border-width: 2px; }
+  
+  .booking-name { font-size: 1.05rem; margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+  .booking-college { font-size: 0.75rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;}
+  .booking-year-tag { font-size: 0.65rem; padding: 3px 8px; margin-top: 4px; border-radius: 6px; }
+  
+  /* Status Badge को राईट साइड में शिफ्ट किया */
+  .status-column { flex-direction: column; align-items: flex-end; width: 30%; gap: 6px; }
+  .booking-status { padding: 5px 8px; font-size: 0.65rem; border-radius: 6px; text-align: center; font-weight: 800; letter-spacing: 0.5px;}
+  
+  /* Info Alert Box को स्लीक बनाया */
+  .info-alert-box { padding: 10px 12px; font-size: 0.75rem; align-items: flex-start; border-radius: 10px; margin-bottom: 12px; line-height: 1.4;}
+  .rating-prompt-box { padding: 16px; margin-bottom: 12px; border-radius: 12px;}
+  
+  /* 🔥 Buttons को एकदम बराबर (50-50) और स्लीक किया */
+  .booking-actions { flex-direction: row; gap: 10px; margin-top: 12px; flex-wrap: nowrap !important; }
+  .booking-actions .cc-btn { flex: 1; padding: 10px; font-size: 0.85rem; border-radius: 10px; justify-content: center; }
+
+  /* 5. Others */
+  .predictor-header, .choice-header { padding: 20px 16px; margin-bottom: 16px; }
   .predictor-header h2, .choice-header h2 { font-size: 1.3rem; }
-  .p-details h4 { font-size: 0.9rem; }
-  .fomo-popup { bottom: 75px; left: 10px; right: 10px; max-width: none; width: auto; padding: 8px 12px; }
-  .fomo-popup img { width: 32px; height: 32px; }
-  .fomo-popup .fomo-text { font-size: 0.75rem; }
-
-  /* 🚀 8. NEW: BOOKINGS PAGE SLEEK UI FIXES */
-  .page-wrapper h2 { font-size: 1.4rem !important; margin-bottom: 16px !important; }
-  .page-wrapper h3 { font-size: 1.1rem !important; margin-bottom: 12px !important; margin-top: 20px !important; }
-  
-  .booking-card-modern { padding: 14px; border-radius: 12px; margin-bottom: 14px; }
-  
-  /* Profile और Status को एक ही लाइन में लाया ताकि वर्टिकल स्पेस बचे */
-  .booking-top-row { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; }
-  .booking-profile-flex { flex-direction: row; gap: 10px; width: auto; flex: 1; } 
-  .booking-avatar { width: 50px; height: 50px; }
-  .booking-name { font-size: 1.05rem; margin-bottom: 2px; }
-  .booking-college { font-size: 0.75rem; line-height: 1.2; }
-  .booking-year-tag { font-size: 0.65rem; padding: 2px 8px; margin-top: 4px; }
-  
-  .status-column { flex-direction: column; align-items: flex-end; width: auto; gap: 6px; }
-  .booking-status { padding: 4px 8px; font-size: 0.65rem; border-radius: 6px; text-align: center; }
-  
-  .info-alert-box { padding: 8px 12px; font-size: 0.75rem; align-items: flex-start; border-radius: 8px; margin-bottom: 12px; }
-  .rating-prompt-box { padding: 12px; margin-bottom: 12px; }
-  
-  /* Buttons को पतला और साथ-साथ किया */
-  .booking-actions { flex-direction: row; gap: 8px; margin-top: 10px; }
-  .btn-outline, .cc-btn.primary { flex: 1; padding: 8px; font-size: 0.85rem; border-radius: 8px; }
-}
+  .p-details h4 { font-size: 0.95rem; }
+  .fomo-popup { bottom: 85px; left: 10px; right: 10px; max-width: none; width: auto; padding: 10px 14px; border-radius: 12px;}
+  .fomo-popup img { width: 36px; height: 36px; }
+  .fomo-popup .fomo-text { font-size: 0.8rem; }
+}git add .
+git commit -m "update project"
+git push origin main
 `;
 
 const StarIcon = ({ filled, size = 18, isClickable = false }) => (
@@ -825,7 +828,7 @@ const MyBookings = ({ seniors }) => {
         </div>
 
         {status === "confirmed" && (
-          <div className="info-alert-box">ℹ️ The senior will contact you on your phone within 6 hours.</div>
+          <div className="info-alert-box">ℹ️ The senior will contact you on your phone within 12 hours.</div>
         )}
 
         {status === "completed" && !b.rated && (

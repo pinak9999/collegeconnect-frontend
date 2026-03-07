@@ -177,7 +177,7 @@ function BookingSuccessPage() {
         {/* 🥳 Message Section */}
         <h2 style={styles.heading}>Booking Confirmed!</h2>
         <p style={styles.message}>
-          The Senior will contact you within <b>6 hours</b>.
+          The Senior will contact you within <b>12 hours</b>.
         </p>
         <p style={styles.note}>
           कृपया अपनी <b>My Bookings</b> सेक्शन (जो <b>Student Dashboard</b> में है)
