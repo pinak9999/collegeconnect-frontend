@@ -406,31 +406,92 @@ function BookingPage() {
       toast.error("Error creating order. " + errorMsg);
     }
   };
+// --- PREMIUM LOADING / ERROR STATES ---
+  if (loading) {
+    const skeletonCss = `
+      .skeleton-card-modern {
+        background: #fff;
+        border-radius: 24px;
+        padding: 40px 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        border: 1px solid #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 420px;
+        margin: 40px auto;
+      }
+      .shimmer {
+        background: #f6f7f8;
+        background-image: linear-gradient(90deg, #f6f7f8 0px, #edeef1 40px, #f6f7f8 80px);
+        background-size: 600px;
+        animation: shimmer 1.5s infinite linear;
+      }
+      @keyframes shimmer {
+        0% { background-position: -300px; }
+        100% { background-position: 300px; }
+      }
+      .skel-avatar { width: 110px; height: 110px; border-radius: 50%; margin-bottom: 20px; }
+      .skel-title { width: 60%; height: 24px; border-radius: 8px; margin-bottom: 12px; }
+      .skel-subtitle { width: 40%; height: 16px; border-radius: 8px; margin-bottom: 30px; }
+      .skel-box { width: 100%; height: 70px; border-radius: 16px; margin-bottom: 15px; }
+      .skel-btn { width: 100%; height: 55px; border-radius: 16px; margin-top: 15px; }
+      .loading-glow {
+        margin-top: 20px; font-size: 1rem; font-weight: 700; color: #e23744; text-align: center;
+        animation: pulseText 1.5s infinite;
+      }
+      @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    `;
 
-  // --- LOADING / ERROR STATES ---
-  if (loading)
     return (
       <div className="page-container">
         <style>{bookingStyles}</style>
-        <div className="status-container"><h2>⏳ Loading Profile...</h2></div>
+        <style>{skeletonCss}</style>
+        <div className="skeleton-card-modern">
+          {/* Skeleton Structure */}
+          <div className="shimmer skel-avatar"></div>
+          <div className="shimmer skel-title"></div>
+          <div className="shimmer skel-subtitle"></div>
+          <div className="shimmer skel-box" style={{ height: '90px' }}></div>
+          <div className="shimmer skel-box"></div>
+          <div className="shimmer skel-btn"></div>
+          
+          <div className="loading-glow">✨ Fetching Mentor Details...</div>
+        </div>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className="page-container">
         <style>{bookingStyles}</style>
-        <div className="status-container"><h2 className="error-text">❌ {error}</h2></div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh', padding: '20px' }}>
+          <div style={{ background: '#fff', padding: '40px 30px', borderRadius: '24px', textAlign: 'center', boxShadow: '0 15px 40px rgba(0,0,0,0.08)', maxWidth: '400px', width: '100%', border: '1px solid #ffebee' }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '15px' }}>⚠️</div>
+            <h2 style={{ color: '#e23744', margin: '0 0 10px 0', fontSize: '1.5rem', fontWeight: 800 }}>Oops! Error Occurred</h2>
+            <p style={{ color: '#696969', margin: 0, fontSize: '0.95rem' }}>{error}</p>
+          </div>
+        </div>
       </div>
     );
+  }
 
-  if (!profile)
+  if (!profile) {
     return (
       <div className="page-container">
         <style>{bookingStyles}</style>
-        <div className="status-container"><h2>Profile not found.</h2></div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh', padding: '20px' }}>
+          <div style={{ background: '#fff', padding: '40px 30px', borderRadius: '24px', textAlign: 'center', boxShadow: '0 15px 40px rgba(0,0,0,0.08)', maxWidth: '400px', width: '100%' }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '15px' }}>🕵️‍♂️</div>
+            <h2 style={{ color: '#1c1c1c', margin: '0 0 10px 0', fontSize: '1.5rem', fontWeight: 800 }}>Profile Not Found</h2>
+            <p style={{ color: '#696969', margin: 0, fontSize: '0.95rem', lineHeight: '1.5' }}>The mentor you are looking for might have updated their profile or doesn't exist anymore.</p>
+          </div>
+        </div>
       </div>
     );
+  }
 
   // 🚀 ALIAS LOGIC: Student को कौन सा नाम दिखाना है
   const displayNameToShow = profile.display_name || profile.user?.name || "Senior";
