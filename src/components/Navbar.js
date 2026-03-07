@@ -214,7 +214,7 @@ function Navbar() {
             
             {/* Logo (Top on Mobile) */}
             <Link to="/" className="brand-logo">
-              <span>🚀</span>
+             
               <span>
                 <span className="brand-highlight">Reap</span>
                 <span className="brand-text"> CampusConnect</span>
