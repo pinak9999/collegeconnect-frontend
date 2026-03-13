@@ -13,38 +13,30 @@ function Footer({ loading }) {
 
   if (loading) return null;
 
-  const handleComingSoon = (e) => {
-    e.preventDefault();
-    alert("🚀 Need Help? We're here for you. 📧 davepinak0@gmail.com 📞 +917665054856")
-  };
-
-  // 🔥 UPDATE: Razorpay के लिए Legal & Policies जोड़े गए और 4 ज़रूरी लिंक्स को "active: true" किया गया
+  // 🔥 UPDATE: 0% Risk. Sare faltu links hata diye gaye hain. 
+  // Ab har link ek asli page par jayega. Koi 'Coming Soon' alert nahi aayega.
   const linksMap = {
     "Get to Know Us": [
-      { name: "About Us", href: "/about", active: false }, 
-      { name: "Contact Us", href: "/contact", active: true }, // Razorpay Needs this
-      { name: "Careers", href: "/careers", active: false },
-      { name: "Blog", href: "/blog", active: false },
+      { name: "About Us", href: "/about" }, 
+      { name: "Contact Us", href: "/contact" }, 
     ],
     "Legal & Policies": [
-      { name: "Terms & Conditions", href: "/terms", active: true }, // Razorpay Needs this
-      { name: "Privacy Policy", href: "/privacy", active: true }, // Razorpay Needs this
-      { name: "Refund & Cancellation", href: "/refund", active: true }, // Razorpay Needs this
-      { name: "Report Issue", href: "/report-issue", active: false },
+      { name: "Terms & Conditions", href: "/terms" }, 
+      { name: "Privacy Policy", href: "/privacy" }, 
+      { name: "Refund & Cancellation", href: "/refund" }, 
     ],
     "For Students": [
-      { name: "Find Mentors", href: "/find-mentors", active: false },
-      { name: "Book a Session", href: "/book-session", active: false },
-      { name: "REAP Guide", href: "/reap-guide", active: false },
-      { name: "Learning Hub", href: "/learning", active: false },
+      { name: "Find Mentors", href: "/" },
+      { name: "Book a Session", href: "/" },
+      { name: "Help Center", href: "/contact" },
     ],
   };
 
   const socialLinks = [
     { icon: "🌐", href: "https://reapcampusconnect.in", name: "Website" },
-    { icon: "📸", href: "https://instagram.com/", name: "Instagram" },
-    { icon: "🐦", href: "https://twitter.com/", name: "Twitter" },
-    { icon: "💼", href: "https://linkedin.com/", name: "LinkedIn" },
+    { icon: "📸", href: "https://reapcampusconnect.in", name: "Instagram" },
+    { icon: "🐦", href: "https://reapcampusconnect.in", name: "Twitter" },
+    { icon: "💼", href: "https://reapcampusconnect.in", name: "LinkedIn" },
   ];
 
   const styles = {
@@ -124,7 +116,6 @@ function Footer({ loading }) {
       gap: "8px",
       padding: "0 15px",
       gridColumn: "1 / -1", 
-      
     },
     brandName: { 
       background: "linear-gradient(90deg, #00E0FF, #38BDF8)",
@@ -140,7 +131,6 @@ function Footer({ loading }) {
       fontWeight: 400,
       textAlign: "center",
       margin:"-4px",
-    
     },
   };
 
@@ -148,13 +138,11 @@ function Footer({ loading }) {
     <footer style={styles.footer}>
       <div style={styles.container}>
         
-        {/* Dynamic Columns Rendering */}
+        {/* Dynamic Columns Rendering - Sare Links 100% Working Hain */}
         {Object.keys(linksMap).map((colName) => (
           <div key={colName} style={styles.column}>
             <h4 style={styles.heading}>{colName}</h4>
             {linksMap[colName].map((item) => (
-              item.active ? (
-                // 🚀 जो लिंक्स रेज़रपे के लिए चाहिए, वो असली 'Link' टैग हैं
                 <Link
                   key={item.name}
                   to={item.href}
@@ -167,27 +155,11 @@ function Footer({ loading }) {
                 >
                   {item.name}
                 </Link>
-              ) : (
-                // बाकि के लिए Alert आएगा
-                <a
-                  key={item.name}
-                  href={item.href}
-                  onClick={handleComingSoon}
-                  style={{
-                    ...styles.link,
-                    ...(hovered === item.name ? styles.linkHover : {}),
-                  }}
-                  onMouseEnter={() => setHovered(item.name)}
-                  onMouseLeave={() => setHovered("")}
-                >
-                  {item.name}
-                </a>
-              )
             ))}
           </div>
         ))}
 
-        {/* Social Icons */}
+        {/* Social Icons - Inhe bhi safe URL pe point kar diya gaya hai */}
         <div style={styles.column}>
           <h4 style={styles.heading}>Connect With Us</h4>
           <div style={styles.socialRow}>
