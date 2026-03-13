@@ -343,7 +343,7 @@ function LoginPage() {
             <p style={{ margin: 0 }}>
               Don’t have an account?{" "}
               <Link to="/register" className="link-text">
-                Create one now
+               Register
               </Link>
             </p>
           </div>

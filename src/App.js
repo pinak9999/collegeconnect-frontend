@@ -7,7 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import MobileNumberModal from './components/MobileNumberModal';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import AboutPage from './pages/AboutPage';
 // 🔹 Pages
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
@@ -30,6 +30,12 @@ import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminManageTags from './pages/AdminManageTags';
 import AdminManageColleges from './pages/AdminManageColleges';
 import AdminManageDisputes from './pages/AdminManageDisputes';
+
+// 🚀 NEW: Legal & Policy Pages for Razorpay Approval
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import RefundPage from './pages/RefundPage';
+import ContactPage from './pages/ContactPage';
 
 // 🔹 ❗ सिर्फ VideoCallPage (Analytics हटा दिया गया है)
 import VideoCallPage from './pages/VideoCallPage';
@@ -155,7 +161,13 @@ function AppLayout() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-
+          
+          {/* 🚀 NEW: Razorpay Legal Routes */}
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/refund" element={<RefundPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+<Route path="/about" element={<AboutPage />} />
           {/* STUDENT ROUTES */}
           <Route
             path="/student-dashboard/*"

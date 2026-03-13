@@ -63,7 +63,7 @@ function HowItWorks() {
             </div>
             <h3>Get Insights</h3>
             <p className="step-desc">
-              Connect with the senior and learn everything about the college.
+              Get Career Mentorship and learn everything about the college.
             </p>
             <ul className="step-list">
               <li><span className="check-icon">✔</span> Ask Questions</li>
