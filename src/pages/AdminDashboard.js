@@ -233,6 +233,34 @@ function AdminDashboard() {
     });
   };
 
+  // 🚀 NEW: UPI UTR Approve Handler (Pura Modal use karke)
+  const approveBookingHandler = (bookingId) => {
+    setModalState({
+      isOpen: true,
+      title: "Confirm UTR Payment",
+      message: "क्या आपने बैंक खाते में पेमेंट चेक कर लिया है? 'Confirm' दबाते ही बुकिंग अप्रूव हो जाएगी और ईमेल चला जाएगा।",
+      onConfirm: async () => {
+        setModalState({ ...modalState, isOpen: false });
+        const toastId = toast.loading("Approving & Sending Emails...");
+        try {
+          const token = localStorage.getItem("token");
+          const res = await axios.put(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/payment/approve/${bookingId}`,
+            {},
+            { headers: { "x-auth-token": token } }
+          );
+          // State me live update (Pending se Confirmed kar dega bina page reload ke)
+          setBookings((prev) => prev.map((b) => (b._id === bookingId ? res.data.booking : b)));
+          toast.dismiss(toastId);
+          toast.success("Booking Approved Successfully! 🎉");
+        } catch (err) {
+          toast.dismiss(toastId);
+          toast.error(err.response?.data?.msg || "Approval failed");
+        }
+      },
+    });
+  };
+
   const students = users.filter((u) => !u.isSenior && u.role !== "Admin");
   
   // 🚀 UPDATE: एक सीनियर के मल्टीपल कॉलेज सपोर्ट के लिए .filter() इस्तेमाल किया गया
@@ -405,11 +433,13 @@ function AdminDashboard() {
             </button>
             <button
               onClick={() => setBookingView("disputed")}
-              style={{
-                ...subTab(bookingView === "disputed"),
-                ...(bookingView !== 'disputed' && disputedBookings.length > 0 ? disputeTabAlert : {}),
-                ...(bookingView === 'disputed' && disputedBookings.length > 0 ? disputeTabActive : {})
-              }}
+              style={
+                {
+                  ...subTab(bookingView === "disputed"),
+                  ...(bookingView !== 'disputed' && disputedBookings.length > 0 ? disputeTabAlert : {}),
+                  ...(bookingView === 'disputed' && disputedBookings.length > 0 ? disputeTabActive : {})
+                }
+              }
             >
               Disputes ({disputedBookings.length}) ⚠
             </button>
@@ -429,7 +459,9 @@ function AdminDashboard() {
                       ...userCard,
                       background: b.dispute_status === "Pending" ? "#fff7ed" : "white",
                       borderLeft:
-                        b.dispute_status === "Pending"
+                        b.status === "Pending Verification" // 🔥 NEW: Pending UPI ke liye alag color
+                          ? "5px solid #e23744"
+                          : b.dispute_status === "Pending"
                           ? "5px solid #f97316"
                           : "5px solid #22c55e",
                     }}
@@ -444,6 +476,19 @@ function AdminDashboard() {
                     <p style={{ color: "#2563eb", fontWeight: 600 }}>
                       ₹{b.amount_paid} — {b.status}
                     </p>
+                    
+                    {/* 🚀 NEW: UTR Approval UI */}
+                    {b.status === "Pending Verification" && (
+                      <div style={{ marginTop: "10px", padding: "10px", background: "#fcebed", borderRadius: "8px", border: "1px dashed #e23744" }}>
+                        <p style={{ margin: "0 0 8px 0", color: "#e23744", fontWeight: "bold", fontFamily: "monospace", fontSize: "1.1rem" }}>
+                          UTR: {b.utr_number}
+                        </p>
+                        <button style={{...btnGreen, width: "100%"}} onClick={() => approveBookingHandler(b._id)}>
+                          Verify & Approve ✓
+                        </button>
+                      </div>
+                    )}
+
                     <p style={{ color: "#ef4444", fontWeight: 700, minHeight: '1.2em' }}>
                       {b.dispute_status === "Pending"
                         ? "⚠ Dispute Pending"
