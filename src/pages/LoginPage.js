@@ -288,7 +288,7 @@ function LoginPage() {
       <style>{loginStyles}</style>
       
       <div className="login-card">
-        <h2 className="login-title">Welcome <span>Back</span> 👋</h2>
+        <h2 className="login-title">Welcome <span>Back</span></h2>
         <p className="login-subtitle">
           Sign in to continue your journey with <b>CampusConnect</b>
         </p>
