@@ -51,7 +51,7 @@ export default function MobileNumberModal() {
         
         {/* ⭐⭐⭐ आपकी Warning यहाँ है ⭐⭐⭐ */}
         <div style={styles.warning}>
-          "मोबाइल नंबर सही होना चाहिये, सीनियर आपसे इसी नंबर पर कॉल पर बात कर पायेगा।"
+          "मोबाइल नंबर सही होना चाहिये, सीनियर आपसे इसी नंबर पर कॉल पर बात कर पाएंगे।"
         </div>
         
         <form onSubmit={handleSubmit}>
