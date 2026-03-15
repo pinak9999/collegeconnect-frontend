@@ -6,16 +6,24 @@ import toast from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
 
 // ======================================
-// 🚀 Premium Zomato-Style Login Page CSS
+// 🚀 Ultra-Premium 2026 Login Page CSS
 // ======================================
 const loginStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --zomato-red: #e23744;
-  --zomato-hover: #cb202d;
-  --zomato-gradient: linear-gradient(135deg, #e23744 0%, #ff5e6b 100%);
-  --zomato-light: #fcebed;
+  --primary-red: #e23744;
+  --primary-hover: #cb202d;
+  --bg-gradient: linear-gradient(135deg, #f6f8fb 0%, #e5ebf4 100%);
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --input-bg: #f8fafc;
+  --input-border: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .login-page-bg {
@@ -24,112 +32,126 @@ const loginStyles = `
   align-items: center;
   justify-content: center;
   font-family: 'Poppins', sans-serif;
-  background: #fdfdfd;
+  background: var(--bg-gradient);
   position: relative;
   overflow: hidden;
   padding: 20px;
 }
 
-/* ✨ Premium Animated Background Blobs (Zomato Vibe) */
-.login-page-bg::before, .login-page-bg::after {
-  content: '';
+/* ✨ Premium Floating Orbs Background */
+.orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
   z-index: 0;
-  animation: floatBlobs 8s ease-in-out infinite alternate;
+  animation: float 10s ease-in-out infinite alternate;
 }
 
-.login-page-bg::before {
-  width: 400px; height: 400px;
-  background: rgba(226, 55, 68, 0.08); /* Light Zomato Red */
-  top: -100px; left: -100px;
+.orb-1 {
+  width: 450px; height: 450px;
+  background: rgba(226, 55, 68, 0.12);
+  top: -150px; left: -150px;
 }
 
-.login-page-bg::after {
+.orb-2 {
   width: 350px; height: 350px;
-  background: rgba(255, 94, 107, 0.06);
+  background: rgba(139, 92, 246, 0.08); /* Subtle Purple glow for contrast */
   bottom: -100px; right: -100px;
-  animation-delay: 4s;
+  animation-delay: -5s;
 }
 
-@keyframes floatBlobs {
-  0% { transform: translateY(0px) scale(1); }
-  100% { transform: translateY(30px) scale(1.1); }
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 50px) scale(1.1); }
 }
 
+/* 🏢 The Glassmorphism Card */
 .login-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 55, 68, 0.15);
-  border-radius: 24px;
-  padding: 40px;
+  background: var(--card-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 28px;
+  padding: 45px 35px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
   text-align: center;
-  animation: fadeUp 0.6s ease-out forwards;
   position: relative;
   z-index: 1;
 }
 
-.login-card:hover {
-  box-shadow: 0 25px 50px rgba(226, 55, 68, 0.08);
+/* 🚀 Staggered Animation Classes */
+.animate-item {
+  opacity: 0;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes slideUpFade {
+  0% { opacity: 0; transform: translateY(25px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .login-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   margin-bottom: 8px;
-  color: #1c1c1c;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
 }
 
 .login-title span {
-  background: var(--zomato-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary-red);
 }
 
 .login-subtitle {
-  color: #696969;
+  color: var(--text-muted);
   font-size: 0.95rem;
   font-weight: 500;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
+  line-height: 1.5;
 }
 
+/* 🌐 Perfect Alignment for Google Button */
 .google-btn-wrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
-  transition: transform 0.2s;
-}
-.google-btn-wrapper:hover {
-  transform: scale(1.02);
+  align-items: center;
+  width: 100%;
+  margin-bottom: 25px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.google-btn-wrapper:hover {
+  transform: translateY(-2px);
+}
+
+.google-btn-wrapper > div {
+  width: 100% !important; /* Forces Google button to take full width */
+  display: flex;
+  justify-content: center;
+}
+
+/* ➖ Modern Divider */
 .divider {
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 20px 0;
-  color: #a0a0a0;
-  font-size: 0.9rem;
+  margin: 0 0 25px 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 1px;
 }
 .divider::before, .divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1.5px solid #e8e8e8;
+  border-bottom: 1px solid #cbd5e1;
 }
 .divider:not(:empty)::before { margin-right: 15px; }
 .divider:not(:empty)::after { margin-left: 15px; }
 
+/* 📝 Form Elements */
 .form-group {
   text-align: left;
   margin-bottom: 20px;
@@ -137,52 +159,59 @@ const loginStyles = `
 
 .form-label {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1c1c1c;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dark);
   margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 15px 16px;
   border-radius: 14px;
-  border: 2px solid #e8e8e8;
-  background: #fdfdfd;
+  border: 2px solid var(--input-border);
+  background: var(--input-bg);
   font-size: 1rem;
   font-family: inherit;
-  color: #1c1c1c;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--zomato-red);
+  border-color: var(--primary-red);
   background: #ffffff;
-  box-shadow: 0 0 0 4px var(--zomato-light);
+  box-shadow: 0 0 0 4px rgba(226, 55, 68, 0.1);
 }
 
-.form-input::placeholder { color: #a0a0a0; }
+.form-input::placeholder { 
+  color: #94a3b8; 
+  font-weight: 400;
+}
 
+/* 🖱️ Action Button */
 .login-btn {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
+  margin-top: 10px;
   border-radius: 14px;
   border: none;
-  background: var(--zomato-gradient);
+  background: linear-gradient(135deg, #e23744 0%, #ff5e6b 100%);
   color: white;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(226, 55, 68, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 20px rgba(226, 55, 68, 0.2);
 }
 
 .login-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(226, 55, 68, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(226, 55, 68, 0.3);
 }
 
 .login-btn:active:not(:disabled) {
@@ -190,32 +219,37 @@ const loginStyles = `
 }
 
 .login-btn:disabled {
-  opacity: 0.7;
+  background: #94a3b8;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
+/* 🔗 Links */
 .extra-links {
-  margin-top: 24px;
-  font-size: 0.9rem;
-  color: #696969;
+  margin-top: 25px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
 .link-text {
-  color: var(--zomato-red);
+  color: var(--primary-red);
   font-weight: 700;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  position: relative;
 }
 
-.link-text:hover { color: var(--zomato-hover); }
+.link-text:hover { 
+  color: var(--primary-hover); 
+}
 
 /* 📱 Mobile Responsiveness */
 @media (max-width: 480px) {
-  .login-card { padding: 30px 20px; border-radius: 20px; }
-  .login-title { font-size: 1.8rem; }
-  .form-input { padding: 12px 14px; font-size: 0.95rem; }
-  .login-btn { padding: 12px; font-size: 1rem; }
+  .login-card { padding: 35px 20px; border-radius: 24px; }
+  .login-title { font-size: 2rem; }
+  .form-input { padding: 14px; font-size: 0.95rem; }
+  .login-btn { padding: 15px; font-size: 1.05rem; }
 }
 `;
 
@@ -286,32 +320,47 @@ function LoginPage() {
   return (
     <div className="login-page-bg">
       <style>{loginStyles}</style>
-      
-      <div className="login-card">
-        <h2 className="login-title">Welcome <span>Back</span> 👋</h2>
-        <p className="login-subtitle">
-          Sign in to continue your journey with <b>CampusConnect</b>
-        </p>
 
-        <div className="google-btn-wrapper">
+      {/* Floating Background Orbs */}
+      <div className="orb orb-1"></div>
+      <div className="orb orb-2"></div>
+
+      <div className="login-card">
+        
+        {/* Animated Item 1: Title */}
+        <div className="animate-item" style={{ animationDelay: '0.1s' }}>
+          <h2 className="login-title">Welcome <span>Back</span> 👋</h2>
+          <p className="login-subtitle">
+            Sign in to continue your journey with <b>CampusConnect</b>
+          </p>
+        </div>
+
+        {/* Animated Item 2: Google Button */}
+        <div className="animate-item google-btn-wrapper" style={{ animationDelay: '0.2s' }}>
           <GoogleLogin
             onSuccess={handleGoogleLoginSuccess}
             onError={handleGoogleLoginError}
-            theme="filled_black"
+            theme="outline"
             size="large"
-            shape="pill"
+            shape="rectangular"
+            width="100%"
           />
         </div>
 
-        <div className="divider">OR CONTINUE WITH EMAIL</div>
+        {/* Animated Item 3: Divider */}
+        <div className="animate-item divider" style={{ animationDelay: '0.3s' }}>
+          OR CONTINUE WITH EMAIL
+        </div>
 
         <form onSubmit={onSubmitHandler}>
-          <div className="form-group">
+          
+          {/* Animated Item 4: Email Input */}
+          <div className="animate-item form-group" style={{ animationDelay: '0.4s' }}>
             <label className="form-label">Email Address</label>
             <input
               type="email"
               name="email"
-              placeholder="e.g. xyz@gmail.com"
+              placeholder="e.g. hello@campusconnect.com"
               value={formData.email}
               onChange={onChangeHandler}
               required
@@ -319,12 +368,13 @@ function LoginPage() {
             />
           </div>
 
-          <div className="form-group">
+          {/* Animated Item 5: Password Input */}
+          <div className="animate-item form-group" style={{ animationDelay: '0.5s' }}>
             <label className="form-label">Password</label>
             <input
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Enter your secure password"
               value={formData.password}
               onChange={onChangeHandler}
               required
@@ -332,21 +382,25 @@ function LoginPage() {
             />
           </div>
 
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "⏳ Logging in..." : "🚀 Secure Login"}
-          </button>
+          {/* Animated Item 6: Button & Links */}
+          <div className="animate-item" style={{ animationDelay: '0.6s' }}>
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? "⏳ Authenticating..." : "Secure Login →"}
+            </button>
 
-          <div className="extra-links">
-            <Link to="/forgot-password" className="link-text" style={{ display: 'block', marginBottom: '12px' }}>
-              Forgot Password?
-            </Link>
-            <p style={{ margin: 0 }}>
-              Don’t have an account?{" "}
-              <Link to="/register" className="link-text">
-               Register
+            <div className="extra-links">
+              <Link to="/forgot-password" className="link-text" style={{ display: 'block', marginBottom: '15px' }}>
+                Forgot Password?
               </Link>
-            </p>
+              <p style={{ margin: 0 }}>
+                Don’t have an account?{" "}
+                <Link to="/register" className="link-text" style={{textDecoration: 'underline'}}>
+                  Register Here
+                </Link>
+              </p>
+            </div>
           </div>
+
         </form>
       </div>
     </div>
