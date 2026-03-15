@@ -27,7 +27,6 @@ function HomePage() {
     );
     fadeElements.forEach((el) => observer.observe(el));
 
-    // ✅ FIX: yahan se <AIMatchmaker /> hata diya hai
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", resizeHandler);
@@ -42,59 +41,68 @@ function HomePage() {
   const darkText = "#111827"; 
   const lightText = "#4B5563"; 
 
+  // 🚀 फिक्स: हीरो सेक्शन की टाइपोग्राफी मोबाइल के लिए परफेक्ट कर दी गई है
   const heroTitle = {
-    fontSize: isMobile ? "2.2rem" : "3rem",
+    fontSize: isMobile ? "1.6rem" : "3rem", // 2.2rem से घटाकर 1.6rem किया (मोबाइल के लिए बेस्ट)
     fontWeight: 800,
-    margin: "0 0 20px 0",
+    margin: isMobile ? "0 0 12px 0" : "0 0 20px 0",
     lineHeight: 1.3,
     textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+    padding: isMobile ? "0 10px" : "0", // किनारों से ना चिपके
   };
+  
   const heroDesc = {
-    fontSize: isMobile ? "1rem" : "1.2rem",
+    fontSize: isMobile ? "0.9rem" : "1.2rem", // थोड़ा छोटा किया
     color: "rgba(255, 255, 255, 0.95)",
-    marginBottom: "40px",
     maxWidth: 600,
-    margin: "0 auto 40px auto",
+    margin: isMobile ? "0 auto 25px auto" : "0 auto 40px auto", // गैप कम किया
+    lineHeight: 1.5,
+    padding: isMobile ? "0 15px" : "0",
   };
+  
   const ctaBtn = {
     background: "#ffffff",
     color: primaryColor,
     fontWeight: 700,
-    padding: isMobile ? "14px 30px" : "16px 40px",
+    padding: isMobile ? "12px 28px" : "16px 40px", // मोबाइल पर बटन थोड़ा कॉम्पैक्ट
     borderRadius: 50,
-    fontSize: isMobile ? "1rem" : "1.1rem",
+    fontSize: isMobile ? "0.95rem" : "1.1rem",
     textDecoration: "none",
     boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
     transition: "all 0.25s ease",
     display: "inline-block",
   };
+  
   const sectionBase = {
-    padding: isMobile ? "60px 20px" : "90px 25px",
+    padding: isMobile ? "50px 15px" : "90px 25px", // मोबाइल पर पैडिंग कम की
     textAlign: "center",
     opacity: 0,
     transform: "translateY(40px)",
     transition: "all 1s ease",
-
   };
+  
   const sectionTitle = {
-    fontSize: isMobile ? "1.7rem" : "2.4rem",
+    fontSize: isMobile ? "1.5rem" : "2.4rem", // सेक्शन टाइटल्स भी मोबाइल फ्रेंडली
     fontWeight: 800,
     color: primaryColor,
     margin: "0 0 15px 0",
   };
+  
   const sectionDesc = {
     color: lightText,
-    margin: "0 auto 40px auto",
-    fontSize: isMobile ? "1rem" : "1.1rem",
+    margin: "0 auto 30px auto",
+    fontSize: isMobile ? "0.95rem" : "1.1rem",
     maxWidth: 800,
-    lineHeight: 1.7,
+    lineHeight: 1.6,
+    padding: isMobile ? "0 10px" : "0",
   };
+  
   const gridStyle = {
     display: "grid",
     gridTemplateColumns: isMobile
       ? "repeat(auto-fit, minmax(280px, 1fr))"
       : "repeat(auto-fit, minmax(320px, 1fr))",
-    gap: isMobile ? "25px" : "35px",
+    gap: isMobile ? "20px" : "35px",
     maxWidth: 1200,
     margin: "0 auto",
   };
@@ -117,7 +125,8 @@ function HomePage() {
           background: gradient,
           color: "white",
           textAlign: "center",
-          padding: isMobile ? "80px 20px" : "120px 20px",
+          // 🚀 फिक्स: मोबाइल पर टॉप/बॉटम पैडिंग 80px से 50px कर दी
+          padding: isMobile ? "50px 15px" : "120px 20px",
           position: "relative",
         }}
         className="fade-in-up"
@@ -137,7 +146,7 @@ function HomePage() {
         </Link>
       </section>
 
-      {/* 🤖 AI MATCHMAKER SECTION (✅ FIX: Yahan add kiya hai) */}
+      {/* 🤖 AI MATCHMAKER SECTION */}
       <section className="fade-in-up" style={{ padding: isMobile ? "40px 10px" : "60px 20px", background: "rgb(234 235 253)" }}>
         <AIMatchmaker />
       </section>
@@ -188,39 +197,34 @@ function HomePage() {
           ))}
         </div>
       </section>
-{/* 🗺️ MAP */}
+
+      {/* 🗺️ MAP */}
       <section className="fade-in-up" style={{ 
         ...sectionBase, 
-        /* 🔥 यहाँ मैंने बैकग्राउंड को एक प्रीमियम ग्रेडिएंट में बदल दिया है */
         background: "linear-gradient(rgb(201 209 255) 0%, rgb(243 209 235) 100%)",
-        paddingBottom: "80px" // नीचे से थोड़ा स्पेस देने के लिए
+        paddingBottom: isMobile ? "50px" : "80px"
       }}>
-        <h2 style={{ 
-          ...sectionTitle, 
-          color: "#2e1065" /* हेडिंग को थोड़ा डार्क पर्पल किया ताकि और अच्छा लगे */ 
-        }}>
+        <h2 style={{ ...sectionTitle, color: "#2e1065" }}>
           🗺️ Find Colleges on the Map
         </h2>
         
-        <p style={{ 
-          ...sectionDesc, 
-          color: "#4b5563" 
-        }}>
+        <p style={{ ...sectionDesc, color: "#4b5563" }}>
           Visually explore the locations of all major REAP colleges across Rajasthan.
         </p>
 
         <div style={{ 
           maxWidth: 1100, 
           margin: "0 auto", 
-          borderRadius: '24px', // थोड़ा और गोल किया है 
+          borderRadius: '24px',
           overflow: 'hidden', 
-          boxShadow: "0 20px 40px rgba(0,0,0,0.1)", // कार्ड की शैडो को थोड़ा और 3D बनाया है
-          padding: "10px", // CollegeMap के फ्रेम के लिए जगह
+          boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+          padding: "10px", 
         }}>
           <CollegeMap />
         </div>
       </section>
 
+      {/* FEATURED SENIORS */}
       <section
         className="fade-in-up"
         style={{
@@ -234,19 +238,18 @@ function HomePage() {
         </div>
       </section>
 
-     {/* 💡 HOW IT WORKS (Zomato Style Integration) */}
+     {/* 💡 HOW IT WORKS */}
       <section 
         className="fade-in-up" 
         style={{ 
           opacity: 0, 
           transform: "translateY(40px)",
           transition: "all 1s ease",
-            background: "linear-gradient(rgb(232 232 255) 0%, rgb(197 220 255) 100%);", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
-          padding: isMobile ? "60px 20px" : "90px 20px", 
-          textAlign: "center" /* टेक्स्ट को बीच में रखने के लिए */
+          background: "linear-gradient(rgb(232 232 255) 0%, rgb(197 220 255) 100%)",
+          padding: isMobile ? "50px 15px" : "90px 20px", 
+          textAlign: "center"
         }}
       >
-        {/* 👇 आपकी हेडिंग और पैराग्राफ वापस आ गए */}
         <h2 style={sectionTitle}>💡 How It Works</h2>
         <p style={sectionDesc}>
           Just register, choose your preferred senior, and book a call. Real advice. Real
@@ -265,15 +268,15 @@ function HomePage() {
           background: gradient, 
           color: "#fff",
           textAlign: "center",
-          padding: isMobile ? "70px 20px" : "90px 20px",
+          padding: isMobile ? "50px 15px" : "90px 20px",
           transition: "all 1s ease",
         }}
       >
         <h2
           style={{
-            fontSize: isMobile ? "1.6rem" : "2rem",
+            fontSize: isMobile ? "1.4rem" : "2rem",
             fontWeight: 700,
-            marginBottom: "30px",
+            marginBottom: isMobile ? "20px" : "30px",
             textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
           }}
         >
