@@ -4,10 +4,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Checkout Page CSS (Center Aligned + Animations)
+// 🚀 Premium Checkout Page CSS (Mobile Optimized & Compact)
 // ======================================
 const checkoutStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
 
 .checkout-wrapper {
   min-height: 100vh;
@@ -16,75 +20,74 @@ const checkoutStyles = `
   align-items: center;
   background: #f8fafc;
   font-family: 'Poppins', sans-serif;
-  padding: 20px;
+  padding: 15px; /* Padding kam ki gayi hai */
 }
 
 .checkout-card {
   background: white;
   width: 100%;
-  max-width: 420px;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  padding: 40px 30px;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 25px 20px; /* Card ki padding compact ki gayi hai */
   text-align: center;
   border: 1px solid #e2e8f0;
-  /* 🔥 पेज खुलते ही एक स्मूथ स्लाइड एनीमेशन */
-  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideUpFade {
-  0% { transform: translateY(40px); opacity: 0; }
+  0% { transform: translateY(30px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 
 .checkout-header h2 {
   color: #1c1c1c;
   font-weight: 800;
-  font-size: 1.6rem;
-  margin-bottom: 5px;
+  font-size: 1.4rem; /* Size chota kiya */
+  margin-bottom: 4px;
 }
 
 .checkout-header p {
   color: #64748b;
-  font-size: 0.95rem;
-  margin-bottom: 25px;
+  font-size: 0.85rem; /* Size chota kiya */
+  margin-bottom: 15px; /* Margin kam kiya */
 }
 
 .amount-badge {
   background: #fcebed;
   color: #e23744;
-  font-size: 2rem;
+  font-size: 1.6rem; /* Size chota kiya */
   font-weight: 800;
-  padding: 10px 20px;
-  border-radius: 16px;
+  padding: 6px 18px; /* Padding compact ki */
+  border-radius: 12px;
   display: inline-block;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   border: 2px dashed #fca5a5;
 }
 
 .qr-box {
   background: #ffffff;
-  padding: 15px;
-  border-radius: 16px;
+  padding: 10px; /* Padding compact ki */
+  border-radius: 14px;
   border: 2px solid #e2e8f0;
   display: inline-block;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .qr-box img {
-  width: 200px;
-  height: 200px;
+  width: 160px; /* QR code ka size perfect kiya */
+  height: 160px;
   object-fit: contain;
 }
 
 .upi-id-text {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #475569;
   font-weight: 600;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   background: #f1f5f9;
-  padding: 8px 15px;
+  padding: 6px 14px;
   border-radius: 50px;
   display: inline-block;
 }
@@ -99,42 +102,42 @@ const checkoutStyles = `
 
 .utr-section label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #1c1c1c;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .utr-input {
   width: 100%;
-  padding: 16px;
+  padding: 12px 14px; /* Padding perfect ki */
   border: 2px solid #cbd5e1;
-  border-radius: 12px;
-  font-size: 1.1rem;
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: 700;
   font-family: inherit;
   letter-spacing: 2px;
   text-align: center;
   transition: all 0.3s;
   outline: none;
-  margin-bottom: 20px;
+  margin-bottom: 15px; /* Margin kam kiya */
 }
 
 .utr-input:focus {
   border-color: #e23744;
-  box-shadow: 0 0 0 4px #fcebed;
+  box-shadow: 0 0 0 3px #fcebed;
 }
 
 .submit-btn {
   width: 100%;
-  padding: 18px;
+  padding: 14px; /* Button padding compact ki */
   background: #1c1c1c;
   color: white;
   border: none;
-  border-radius: 14px;
-  font-size: 1.1rem;
+  border-radius: 12px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
@@ -144,7 +147,7 @@ const checkoutStyles = `
 .submit-btn:hover {
   background: #000;
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
 .submit-btn:disabled {
@@ -159,8 +162,8 @@ const checkoutStyles = `
   border: none;
   color: #64748b;
   font-weight: 600;
-  font-size: 0.9rem;
-  margin-top: 20px;
+  font-size: 0.85rem;
+  margin-top: 15px; /* Margin kam kiya */
   cursor: pointer;
   text-decoration: underline;
   display: block;
@@ -181,12 +184,12 @@ function Checkout() {
 
   const bookingData = location.state;
 
-  // 🚀 मैजिक यहाँ है: पेज खुलते ही एक स्मूथ स्क्रॉल के साथ टॉप पर ले जाएगा
+  // 🚀 स्मूथ स्क्रॉल टू टॉप
   useEffect(() => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "smooth", // एकदम मक्खन की तरह ऊपर जाएगा
+      behavior: "smooth",
     });
   }, []);
 
@@ -205,7 +208,7 @@ function Checkout() {
   // 🎯 DYNAMIC QR CODE LOGIC (Apni UPI ID yahan dalein)
   const MY_UPI_ID = "davepinak0@okicici"; 
   const upiLink = `upi://pay?pa=${MY_UPI_ID}&pn=ReapCampusConnect&am=${amount}&cu=INR&tn=Booking_${seniorName.replace(/\s+/g, '')}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
 
   const handleUPISubmit = async () => {
     if (utr.trim().length < 12) {
