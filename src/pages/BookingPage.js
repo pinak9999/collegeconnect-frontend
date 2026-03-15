@@ -5,8 +5,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Booking Page CSS (Enhanced with Coupon UI)
-// (CSS BILKUL BHI CHANGE NAHI KI HAI)
+// 🚀 Premium Booking Page CSS (Original + UPI Modal)
 // ======================================
 const bookingStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -90,6 +89,20 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); col
 .status-container { flex: 1; display: flex; justify-content: center; align-items: center; min-height: 60vh; }
 .error-text { color: var(--primary-color); font-weight: 600; font-size: 1.2rem; }
 
+/* --- 🔥 NEW: UPI Modal CSS --- */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
+.modal-content { background: white; padding: 30px 24px; border-radius: 24px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); position: relative; animation: popIn 0.4s ease; }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.close-btn { position: absolute; top: 15px; right: 15px; background: var(--primary-light); color: var(--primary-color); border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.close-btn:hover { background: var(--primary-color); color: white; }
+.qr-container { background: #f8fafc; padding: 15px; border-radius: 16px; border: 2px dashed #cbd5e1; margin: 20px 0; display: inline-block; }
+.qr-image { width: 220px; height: 220px; object-fit: contain; }
+.utr-input { width: 100%; padding: 14px; border: 2px solid #cbd5e1; border-radius: 12px; margin-bottom: 20px; font-size: 1rem; text-align: center; letter-spacing: 2px; font-weight: 700; font-family: inherit; transition: 0.3s; }
+.utr-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--primary-light); }
+.submit-utr-btn { width: 100%; padding: 16px; background: #1c1c1c; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+.submit-utr-btn:hover { background: #000; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+.submit-utr-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+
 @media (max-width: 900px) {
   .layout-container { flex-direction: column; padding: 20px 16px; gap: 24px; }
   .sidebar { width: 100%; position: relative; top: 0; }
@@ -110,12 +123,13 @@ function BookingPage() {
   const queryParams = new URLSearchParams(location.search);
   const targetCollegeId = queryParams.get("college");
 
-  // ⭐ Mock AuthContext (Compile error se bachne ke liye)
+  // ⭐ Mock AuthContext
   const { auth } = {
     auth: {
       user: {
         name: "Mock User",
         email: "mock.user@example.com",
+        _id: "student123"
       },
     },
   };
@@ -129,6 +143,11 @@ function BookingPage() {
   const [coupon, setCoupon] = useState("");
   const [isFree, setIsFree] = useState(false);
   const [couponApplied, setCouponApplied] = useState(false);
+
+  // 🚀 NEW: States for UPI Modal
+  const [showUPIModal, setShowUPIModal] = useState(false);
+  const [utr, setUtr] = useState("");
+  const [submittingUTR, setSubmittingUTR] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -210,15 +229,6 @@ function BookingPage() {
     }
   };
 
-  // 🚀 UPDATE: Razorpay ki jagah Instamojo wala function call kar rahe hain
-  const handleFinalAction = () => {
-    if (isFree) {
-      handleFreeBooking();
-    } else {
-      displayInstamojo(); 
-    }
-  };
-
   const handleFreeBooking = async () => {
     const toastId = toast.loading("Confirming your free session...");
     try {
@@ -239,58 +249,62 @@ function BookingPage() {
     }
   };
 
-  // ==============================================================
-  // 🚀 NEW: Instamojo Payment Handler (Bina Razorpay Ke)
-  // ==============================================================
-  const displayInstamojo = async () => {
+  // 🚀 UPDATE: Instamojo Gateway ki jagah QR Modal open karna hai
+  const handleFinalAction = () => {
     if (!auth.user) {
       toast.error("You must be logged in to book.");
       navigate("/login");
       return;
     }
 
-    // 🛑 CRITICAL HACK: Instamojo page ko redirect karega, 
-    // isliye backend ko data dene ke liye hum booking details LocalStorage me daal rahe hain!
-    const bookingDetails = {
-      senior: profile.user._id,
-      profileId: profile._id,
-      slot_time: new Date(),
-      duration: profile.session_duration_minutes,
-      amount: totalAmount, 
-    };
-    localStorage.setItem("pendingBookingDetails", JSON.stringify(bookingDetails));
-    
-    const toastId = toast.loading("Creating your secure payment link...");
-    try {
-      const token = localStorage.getItem("token");
-      
-      const orderRes = await axios.post(
-        "https://collegeconnect-backend-mrkz.onrender.com/api/payment/order",
-        { 
-          amount: totalAmount,
-          studentName: auth.user.name,
-          studentEmail: auth.user.email
-        },
-        { headers: { "x-auth-token": token } }
-      );
-      
-      toast.dismiss(toastId);
-      
-      // Agar backend se payment_url mil gaya, toh redirect kar do
-      if (orderRes.data && orderRes.data.payment_url) {
-        window.location.href = orderRes.data.payment_url;
-      } else {
-        toast.error("Failed to generate payment link.");
-      }
-      
-    } catch (err) {
-      toast.dismiss(toastId);
-      let errorMsg = err.response ? err.response.data.msg || err.response.data : err.message;
-      toast.error("Error creating order. " + errorMsg);
+    if (isFree) {
+      handleFreeBooking(); // Agar coupon se free ho gaya, toh direct free book karo
+    } else {
+      setShowUPIModal(true); // Varna QR Code Modal dikhao
     }
   };
 
-// --- PREMIUM LOADING / ERROR STATES ---
+  // 🚀 NEW: UTR Submit Function
+  const handleUPISubmit = async () => {
+    if (utr.trim().length < 12) {
+      return toast.error("Please enter a valid 12-digit UTR/Ref Number.");
+    }
+
+    setSubmittingUTR(true);
+    const toastId = toast.loading("Submitting booking for verification...");
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "https://collegeconnect-backend-mrkz.onrender.com/api/payment/upi-submit", 
+        {
+          seniorId: profile.user._id,
+          profileId: profile._id,
+          amount: totalAmount,
+          utrNumber: utr,
+          slot_time: new Date()
+        },
+        { headers: { "x-auth-token": token } }
+      );
+
+      toast.success("Booking Submitted! Awaiting Admin Approval.", { id: toastId });
+      setShowUPIModal(false);
+      navigate("/booking-success"); 
+
+    } catch (err) {
+      toast.error(err.response?.data?.msg || "Submission failed. Try again.", { id: toastId });
+    } finally {
+      setSubmittingUTR(false);
+    }
+  };
+
+  // 🎯 DYNAMIC QR CODE LOGIC
+  // 👉 YAHAN APNI ASLI UPI ID DAALEIN (e.g., yourname@bank)
+  const MY_UPI_ID = "davepinak0@okicici"; 
+  const upiLink = `upi://pay?pa=${MY_UPI_ID}&pn=ReapCampusConnect&am=${totalAmount}&cu=INR&tn=Booking_${profile?.user?.name || "Senior"}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+
+  // --- PREMIUM LOADING / ERROR STATES ---
   if (loading) {
     const skeletonCss = `
       .skeleton-card-modern { background: #fff; border-radius: 24px; padding: 40px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 420px; margin: 40px auto; }
@@ -431,6 +445,45 @@ function BookingPage() {
           </div>
         </div>
       </div>
+
+      {/* 🚀 🔥 THE UPI MODAL (Sirf tab dikhega jab Pay button dabega aur isFree false hoga) 🔥 🚀 */}
+      {showUPIModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-btn" onClick={() => setShowUPIModal(false)}>×</button>
+            
+            <h2 style={{fontSize: '1.4rem', color: '#e23744', marginBottom: '5px', fontWeight: 800}}>Scan to Pay ₹{totalAmount}</h2>
+            <p style={{fontSize: '0.9rem', color: '#666'}}>Use PhonePe, GPay, or Paytm</p>
+            
+            <div className="qr-container">
+              {/* Dynamic QR Code Image - Ad blocker ya network issue se na tute, isliye API based */}
+              <img src={qrCodeUrl} alt="UPI QR Code" className="qr-image" />
+            </div>
+
+            <p style={{fontSize: '0.85rem', color: '#444', marginBottom: '15px', fontWeight: 600}}>
+              Paying to: <span style={{color: '#e23744'}}>{MY_UPI_ID}</span>
+            </p>
+
+            <input 
+              type="text" 
+              className="utr-input" 
+              placeholder="Enter 12-Digit UTR No." 
+              value={utr}
+              onChange={(e) => setUtr(e.target.value.replace(/\D/g, '').slice(0, 12))} // Sirf numbers
+              maxLength={12}
+            />
+
+            <button 
+              className="submit-utr-btn" 
+              onClick={handleUPISubmit}
+              disabled={submittingUTR || utr.length < 12}
+            >
+              {submittingUTR ? "Verifying..." : "Submit UTR & Confirm"}
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
