@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Premium Checkout Page CSS (Center Aligned)
+// 🚀 Premium Checkout Page CSS (Center Aligned + Animations)
 // ======================================
 const checkoutStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -28,12 +28,13 @@ const checkoutStyles = `
   padding: 40px 30px;
   text-align: center;
   border: 1px solid #e2e8f0;
-  animation: slideUp 0.4s ease-out;
+  /* 🔥 पेज खुलते ही एक स्मूथ स्लाइड एनीमेशन */
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes slideUpFade {
+  0% { transform: translateY(40px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
 .checkout-header h2 {
@@ -162,6 +163,8 @@ const checkoutStyles = `
   margin-top: 20px;
   cursor: pointer;
   text-decoration: underline;
+  display: block;
+  width: 100%;
 }
 
 .back-btn:hover {
@@ -176,14 +179,22 @@ function Checkout() {
   const [utr, setUtr] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // BookingPage.js se bheja gaya data nikal rahe hain
   const bookingData = location.state;
 
-  // Agar user direct URL type karke is page par aa jaye bina data ke
+  // 🚀 मैजिक यहाँ है: पेज खुलते ही एक स्मूथ स्क्रॉल के साथ टॉप पर ले जाएगा
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth", // एकदम मक्खन की तरह ऊपर जाएगा
+    });
+  }, []);
+
+  // सिक्योरिटी चेक
   useEffect(() => {
     if (!bookingData || !bookingData.amount) {
       toast.error("Invalid Payment Session!");
-      navigate(-1); // Wapas pichle page par bhej do
+      navigate(-1);
     }
   }, [bookingData, navigate]);
 
@@ -257,7 +268,7 @@ function Checkout() {
             className="utr-input" 
             placeholder="e.g. 312345678901" 
             value={utr}
-            onChange={(e) => setUtr(e.target.value.replace(/\D/g, '').slice(0, 12))} // Sirf 12 numbers allow karega
+            onChange={(e) => setUtr(e.target.value.replace(/\D/g, '').slice(0, 12))}
             maxLength={12}
           />
           
