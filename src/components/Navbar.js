@@ -132,7 +132,7 @@ const navbarStyles = `
    ========================================= */
 @media (max-width: 768px) {
   .main-nav { 
-    padding: 10px 0; 
+    padding: 16px 0; 
   }
   .nav-container {
     flex-direction: column; /* 🔥 Logo upar, Buttons niche */
