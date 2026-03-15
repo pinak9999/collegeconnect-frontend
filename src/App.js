@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useAuth } from './context/AuthContext';
 
 // 🔹 Common Components
+import Checkout from './pages/Checkout'; // (अगर आपने इसे pages फोल्डर में बनाया है)
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import MobileNumberModal from './components/MobileNumberModal';
@@ -167,6 +168,7 @@ function AppLayout() {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/refund" element={<RefundPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/checkout" element={<Checkout />} />
 <Route path="/about" element={<AboutPage />} />
           {/* STUDENT ROUTES */}
           <Route
