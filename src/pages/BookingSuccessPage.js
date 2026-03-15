@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
 
 function BookingSuccessPage() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const [hover, setHover] = useState(false);
+  
+  // 🚀 NEW: Payment Verification States
+  const [verifying, setVerifying] = useState(true);
+  const [verifyError, setVerifyError] = useState("");
+  const location = useLocation();
 
   // 🔝 सबसे ऊपर स्क्रोल करने वाला कोड (Scroll to Top)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" }); // जैसे ही पेज खुलेगा, ये टॉप पर ले जाएगा
+    window.scrollTo({ top: 0, behavior: "instant" }); 
   }, []);
 
   // ✅ Responsive listener
@@ -17,8 +23,62 @@ function BookingSuccessPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🎊 Confetti Animation using Canvas
+  // ==========================================
+  // 🚀 INSTAMOJO PAYMENT VERIFICATION LOGIC
+  // ==========================================
   useEffect(() => {
+    const verifyPayment = async () => {
+      // 1. URL से Instamojo के पैरामीटर्स निकालें
+      const queryParams = new URLSearchParams(location.search);
+      const payment_id = queryParams.get("payment_id");
+      const payment_status = queryParams.get("payment_status");
+      const payment_request_id = queryParams.get("payment_request_id");
+
+      // अगर URL में payment_id नहीं है, मतलब यह 'फ्री बुकिंग' है या सीधा पेज खोला गया है
+      if (!payment_id) {
+        setVerifying(false);
+        return;
+      }
+
+      // अगर पेमेंट फेल हो गया हो
+      if (payment_status && payment_status !== "Credit") {
+        setVerifyError("Payment was not successful. Status: " + payment_status);
+        setVerifying(false);
+        return;
+      }
+
+      try {
+        // 2. LocalStorage से बुकिंग डिटेल्स निकालें जो हमने BookingPage पर सेव की थी
+        const bookingString = localStorage.getItem("pendingBookingDetails");
+        const bookingDetails = bookingString ? JSON.parse(bookingString) : null;
+        const token = localStorage.getItem("token");
+
+        // 3. Backend को वेरीफाई करने और डेटाबेस में सेव करने के लिए भेजें
+        await axios.post(
+          "https://collegeconnect-backend-mrkz.onrender.com/api/payment/verify",
+          { payment_id, payment_request_id, bookingDetails },
+          { headers: { "x-auth-token": token } }
+        );
+
+        // 4. सक्सेस होने पर LocalStorage साफ़ कर दें
+        localStorage.removeItem("pendingBookingDetails");
+        setVerifying(false);
+
+      } catch (err) {
+        console.error("Verification Error:", err);
+        setVerifyError(err.response?.data?.msg || "Payment verification failed!");
+        setVerifying(false);
+      }
+    };
+
+    verifyPayment();
+  }, [location.search]);
+
+
+  // 🎊 Confetti Animation using Canvas (सिर्फ तब चलेगा जब वेरीफाई हो जाए)
+  useEffect(() => {
+    if (verifying || verifyError) return; // जब तक लोडिंग या एरर है, कनफेटी मत चलाओ
+
     const canvas = document.createElement("canvas");
     canvas.style.position = "fixed";
     canvas.style.top = "0";
@@ -61,9 +121,9 @@ function BookingSuccessPage() {
     const animation = setInterval(draw, 20);
     return () => {
       clearInterval(animation);
-      document.body.removeChild(canvas);
+      if(document.body.contains(canvas)) document.body.removeChild(canvas);
     };
-  }, []);
+  }, [verifying, verifyError]);
 
   // 🎨 Inline Styles
   const styles = {
@@ -100,6 +160,17 @@ function BookingSuccessPage() {
       boxShadow: "0 6px 20px rgba(34,197,94,0.4)",
       animation: "pulse 2s infinite ease-in-out",
     },
+    errorCircle: {
+      width: "90px",
+      height: "90px",
+      borderRadius: "50%",
+      background: "linear-gradient(135deg, #ef4444, #dc2626)",
+      margin: "0 auto 1.5rem",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      boxShadow: "0 6px 20px rgba(239,68,68,0.4)",
+    },
     checkmark: {
       fontSize: "2.5rem",
       color: "white",
@@ -110,6 +181,12 @@ function BookingSuccessPage() {
       fontWeight: "700",
       marginBottom: "0.5rem",
       animation: "fadeIn 1.2s ease",
+    },
+    headingError: {
+      fontSize: isMobile ? "1.9rem" : "2.2rem",
+      color: "#dc2626",
+      fontWeight: "700",
+      marginBottom: "0.5rem",
     },
     message: {
       fontSize: isMobile ? "1.1rem" : "1.3rem",
@@ -161,11 +238,47 @@ function BookingSuccessPage() {
         70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(34,197,94,0); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0); }
       }
+      .loader {
+        border: 6px solid #f3f3f3; border-top: 6px solid #3b82f6; border-radius: 50%;
+        width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;
+      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     `;
     document.head.appendChild(style);
-    return () => document.head.removeChild(style);
+    return () => { if(document.head.contains(style)) document.head.removeChild(style); };
   }, []);
 
+  // ⏳ 1. Loading State UI
+  if (verifying) {
+    return (
+      <div style={styles.page}>
+        <div style={styles.card}>
+          <div className="loader"></div>
+          <h2 style={{...styles.heading, color: "#2563eb"}}>Verifying...</h2>
+          <p style={styles.message}>Please wait while we confirm your payment securely.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ❌ 2. Error State UI
+  if (verifyError) {
+    return (
+      <div style={styles.page}>
+        <div style={styles.card}>
+          <div style={styles.errorCircle}>
+            <span style={styles.checkmark}>✖</span>
+          </div>
+          <h2 style={styles.headingError}>Payment Failed</h2>
+          <p style={styles.message}>{verifyError}</p>
+          <p style={styles.note}>If amount was deducted, it will be refunded automatically.</p>
+          <Link to="/student-dashboard" style={styles.button}>🔙 Go to Dashboard</Link>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ 3. Success State UI (Original)
   return (
     <div style={styles.page}>
       <div style={styles.card}>
