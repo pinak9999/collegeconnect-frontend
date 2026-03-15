@@ -329,7 +329,7 @@ function LoginPage() {
         
         {/* Animated Item 1: Title */}
         <div className="animate-item" style={{ animationDelay: '0.1s' }}>
-          <h2 className="login-title">Welcome <span>Back</span> 👋</h2>
+          <h2 className="login-title">Welcome <span>Back</span></h2>
           <p className="login-subtitle">
             Sign in to continue your journey with <b>CampusConnect</b>
           </p>
