@@ -263,7 +263,7 @@ function Checkout() {
         "https://api.cloudinary.com/v1_1/dun5iayt2/image/upload",
         formData
       );
-
+const screenshotUrl = cloudinaryRes.data.secure_url;
       // 🚀 STEP 2: Send Data to Backend
       const token = localStorage.getItem("token");
       await axios.post(
