@@ -36,7 +36,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-
 // 🚀 BOLD: नया कस्टम पॉप-अप (Modal) कॉम्पोनेंट
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, children }) => {
   if (!isOpen) return null;
@@ -233,11 +232,11 @@ function AdminDashboard() {
     });
   };
 
-  // 🚀 NEW: UPI UTR Approve Handler (Pura Modal use karke)
+  // 🚀 NEW: UPI Approve Handler (Cloudinary Screenshot verify karne ke baad)
   const approveBookingHandler = (bookingId) => {
     setModalState({
       isOpen: true,
-      title: "Confirm UTR Payment",
+      title: "Approve Payment ✅",
       message: "क्या आपने बैंक खाते में पेमेंट चेक कर लिया है? 'Confirm' दबाते ही बुकिंग अप्रूव हो जाएगी और ईमेल चला जाएगा।",
       onConfirm: async () => {
         setModalState({ ...modalState, isOpen: false });
@@ -249,13 +248,41 @@ function AdminDashboard() {
             {},
             { headers: { "x-auth-token": token } }
           );
-          // State me live update (Pending se Confirmed kar dega bina page reload ke)
+          // State me live update
           setBookings((prev) => prev.map((b) => (b._id === bookingId ? res.data.booking : b)));
           toast.dismiss(toastId);
           toast.success("Booking Approved Successfully! 🎉");
         } catch (err) {
           toast.dismiss(toastId);
           toast.error(err.response?.data?.msg || "Approval failed");
+        }
+      },
+    });
+  };
+
+  // 🚀 NEW: UPI Reject Handler (Fake Screenshot hone par)
+  const rejectBookingHandler = (bookingId) => {
+    setModalState({
+      isOpen: true,
+      title: "Reject Fake Payment ❌",
+      message: "क्या आप श्योर हैं कि यह पेमेंट फेक/गलत है? 'Confirm' दबाते ही यह बुकिंग रिजेक्ट हो जाएगी।",
+      onConfirm: async () => {
+        setModalState({ ...modalState, isOpen: false });
+        const toastId = toast.loading("Rejecting...");
+        try {
+          const token = localStorage.getItem("token");
+          const res = await axios.put(
+            `https://collegeconnect-backend-mrkz.onrender.com/api/payment/reject/${bookingId}`,
+            {},
+            { headers: { "x-auth-token": token } }
+          );
+          // State me live update
+          setBookings((prev) => prev.map((b) => (b._id === bookingId ? res.data.booking : b)));
+          toast.dismiss(toastId);
+          toast.success("Booking Rejected Successfully! ❌");
+        } catch (err) {
+          toast.dismiss(toastId);
+          toast.error(err.response?.data?.msg || "Rejection failed");
         }
       },
     });
@@ -461,6 +488,8 @@ function AdminDashboard() {
                       borderLeft:
                         b.status === "Pending Verification" // 🔥 NEW: Pending UPI ke liye alag color
                           ? "5px solid #e23744"
+                          : b.status === "Rejected"
+                          ? "5px solid #6b7280" // 🔥 NEW: Rejected ke liye grey line
                           : b.dispute_status === "Pending"
                           ? "5px solid #f97316"
                           : "5px solid #22c55e",
@@ -473,11 +502,11 @@ function AdminDashboard() {
                     )}
                     
                     <p style={userEmail}>Senior: {b.senior?.name}</p>
-                    <p style={{ color: "#2563eb", fontWeight: 600 }}>
+                    <p style={{ color: b.status === "Rejected" ? "#ef4444" : "#2563eb", fontWeight: 600 }}>
                       ₹{b.amount_paid} — {b.status}
                     </p>
                     
-                   {/* 🚀 NEW: Payment Screenshot Approval UI */}
+                    {/* 🚀 NEW: Payment Screenshot Approval & Reject UI */}
                     {b.status === "Pending Verification" && (
                       <div style={{ marginTop: "10px", padding: "10px", background: "#fcebed", borderRadius: "8px", border: "1px dashed #e23744" }}>
                         
@@ -499,9 +528,15 @@ function AdminDashboard() {
                           </p>
                         )}
 
-                        <button style={{...btnGreen, width: "100%"}} onClick={() => approveBookingHandler(b._id)}>
-                          Verify & Approve ✓
-                        </button>
+                        {/* Action Buttons */}
+                        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                          <button style={{...btnGreen, flex: 1}} onClick={() => approveBookingHandler(b._id)}>
+                            Verify ✓
+                          </button>
+                          <button style={{...btnRed, flex: 1}} onClick={() => rejectBookingHandler(b._id)}>
+                            Reject ❌
+                          </button>
+                        </div>
                       </div>
                     )}
 
@@ -713,7 +748,6 @@ const userName = { margin: 0, color: "#111827", fontWeight: 600, fontSize: '1.1r
 const userEmail = { color: "#6b7280", margin: "4px 0", fontSize: '0.9rem' };
 const userPhone = { color: "#2563eb", fontWeight: 500, margin: '4px 0' };
 
-// 🚀 BOLD: नए स्टाइल्स: मल्टीपल कॉलेजों के बैज के लिए
 const collegesWrapper = {
   display: 'flex',
   flexWrap: 'wrap',
