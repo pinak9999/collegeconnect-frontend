@@ -477,12 +477,28 @@ function AdminDashboard() {
                       ₹{b.amount_paid} — {b.status}
                     </p>
                     
-                    {/* 🚀 NEW: UTR Approval UI */}
+                   {/* 🚀 NEW: Payment Screenshot Approval UI */}
                     {b.status === "Pending Verification" && (
                       <div style={{ marginTop: "10px", padding: "10px", background: "#fcebed", borderRadius: "8px", border: "1px dashed #e23744" }}>
-                        <p style={{ margin: "0 0 8px 0", color: "#e23744", fontWeight: "bold", fontFamily: "monospace", fontSize: "1.1rem" }}>
-                          UTR: {b.utr_number}
-                        </p>
+                        
+                        {/* 📸 Payment Screenshot Image */}
+                        {b.payment_screenshot ? (
+                          <div style={{ marginBottom: "10px", textAlign: "center" }}>
+                            <a href={b.payment_screenshot} target="_blank" rel="noopener noreferrer">
+                              <img 
+                                src={b.payment_screenshot} 
+                                alt="Payment Proof" 
+                                style={{ width: "100%", maxHeight: "150px", objectFit: "contain", borderRadius: "6px", border: "1px solid #fda4af", cursor: "pointer" }}
+                              />
+                            </a>
+                            <p style={{ fontSize: "0.75rem", color: "#e23744", marginTop: "4px" }}>Click to enlarge 🔍</p>
+                          </div>
+                        ) : (
+                          <p style={{ margin: "0 0 8px 0", color: "#e23744", fontWeight: "bold", fontSize: "0.9rem" }}>
+                            ⚠️ No Screenshot Uploaded
+                          </p>
+                        )}
+
                         <button style={{...btnGreen, width: "100%"}} onClick={() => approveBookingHandler(b._id)}>
                           Verify & Approve ✓
                         </button>
