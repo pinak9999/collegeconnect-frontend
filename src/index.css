@@ -1,7 +1,8 @@
 /* ✅ Base Reset and Global Styling */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   margin-top: -12px;
@@ -10,7 +11,8 @@ html, body {
   font-family: 'Poppins', sans-serif;
   scroll-behavior: smooth;
   background-color: #fdfdfd;
-  overflow-x: hidden; /* Prevent unwanted horizontal scroll */
+  overflow-x: hidden;
+  /* Prevent unwanted horizontal scroll */
 }
 
 /* ✅ Make container responsive and centered */
@@ -32,10 +34,16 @@ html, body {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
 @keyframes scrollText {
-              0% { transform: translate3d(0, 0, 0); }
-              100% { transform: translate3d(-100%, 0, 0); }
-            }
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
 
 
 .btn-primary {
@@ -64,7 +72,7 @@ html, body {
 
 .hero .subtitle {
   font-size: 1.1rem;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 20px;
 }
 

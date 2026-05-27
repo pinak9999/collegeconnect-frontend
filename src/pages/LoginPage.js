@@ -286,7 +286,7 @@ function LoginPage() {
   return (
     <div className="login-page-bg">
       <style>{loginStyles}</style>
-      
+
       <div className="login-card">
         <h2 className="login-title">Welcome <span>Back</span></h2>
         <p className="login-subtitle">
@@ -343,7 +343,7 @@ function LoginPage() {
             <p style={{ margin: 0 }}>
               Don’t have an account?{" "}
               <Link to="/register" className="link-text">
-               Register
+                Register
               </Link>
             </p>
           </div>

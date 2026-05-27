@@ -207,14 +207,14 @@ function Navbar() {
       <style>{navbarStyles}</style>
 
       <div className="nav-wrapper">
-        
+
         {/* 🚀 Main Navbar */}
         <nav className={`main-nav ${isDashboard ? 'dashboard-bg' : 'default-bg'}`}>
           <div className="nav-container">
-            
+
             {/* Logo (Top on Mobile) */}
             <Link to="/" className="brand-logo">
-             
+
               <span>
                 <span className="brand-highlight">Reap</span>
                 <span className="brand-text"> CampusConnect</span>

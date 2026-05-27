@@ -263,7 +263,7 @@ function RegisterPage() {
       <div className="bg-blob blob-2"></div>
 
       <div className="auth-card">
-        
+
         {/* 1. Headers */}
         <div className="header-section animate-item" style={{ animationDelay: '0.1s' }}>
           <h2 className="auth-title">Create <span>Account</span></h2>
@@ -272,7 +272,7 @@ function RegisterPage() {
 
         {/* 2. Form (Perfect Flexbox Spacing) */}
         <form className="auth-form" onSubmit={onSubmitHandler}>
-          
+
           <div className="input-group animate-item" style={{ animationDelay: '0.2s' }}>
             <label className="input-label">Full Name</label>
             <input
@@ -327,9 +327,9 @@ function RegisterPage() {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="submit-btn animate-item" 
+          <button
+            type="submit"
+            className="submit-btn animate-item"
             style={{ animationDelay: '0.6s' }}
             disabled={loading}
           >

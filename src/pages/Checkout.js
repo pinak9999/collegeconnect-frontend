@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // ======================================
-// 🚀 Ultra-Premium Checkout Page CSS 
+// 🚀 Ultra-Premium Checkout Page CSS (Without UTR)
 // ======================================
 const checkoutStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -18,7 +18,7 @@ const checkoutStyles = `
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f0f4f8; /* Soft premium background */
+  background: #f0f4f8; 
   font-family: 'Poppins', sans-serif;
   padding: 15px;
 }
@@ -31,7 +31,7 @@ const checkoutStyles = `
   box-shadow: 0 15px 35px rgba(0,0,0,0.06);
   padding: 35px 25px;
   display: flex;
-  flex-direction: column; /* Everything strictly stacked */
+  flex-direction: column; 
   align-items: center;
   border: 1px solid #ffffff;
   animation: slideUp 0.5s ease;
@@ -131,33 +131,24 @@ const checkoutStyles = `
   letter-spacing: 0.5px;
 }
 
-.utr-input {
+.file-input {
   width: 100%;
-  padding: 15px;
-  border: 2px solid #e2e8f0;
-  background: #f8fafc;
+  padding: 10px;
+  border: 2px dashed #cbd5e1;
   border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-  text-align: center;
-  letter-spacing: 2px;
-  transition: all 0.3s ease;
-  font-family: inherit;
+  background: #f8fafc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
-.utr-input:focus {
-  outline: none;
-  border-color: #e23744;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(226, 55, 68, 0.1);
-}
-
-.utr-input::placeholder {
-  color: #94a3b8;
-  letter-spacing: normal;
-  font-weight: 500;
-  font-size: 0.95rem;
+.image-preview {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 15px;
 }
 
 .submit-btn {
@@ -208,7 +199,9 @@ function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [utr, setUtr] = useState("");
+  // 📸 States for Image Upload
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const bookingData = location.state;
@@ -237,15 +230,40 @@ function Checkout() {
   const upiLink = `upi://pay?pa=${MY_UPI_ID}&pn=ReapCampusConnect&am=${amount}&cu=INR&tn=Booking_${seniorName.replace(/\s+/g, '')}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
 
+  // 📸 Handle Image Selection & Preview
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); 
+    }
+  };
+
   const handleUPISubmit = async () => {
-    if (utr.trim().length < 12) {
-      return toast.error("Please enter a valid 12-digit UTR/Ref Number.");
+    if (!imageFile) {
+      return toast.error("Please upload the payment screenshot!");
     }
 
     setLoading(true);
-    const toastId = toast.loading("Verifying your payment...");
+    const toastId = toast.loading("Uploading screenshot & verifying...");
 
     try {
+      // 🚀 STEP 1: Upload Image to Cloudinary
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      
+      // ⚠️ IMPORTANT: REPLACE THESE WITH YOUR ACTUAL CLOUDINARY DETAILS
+      formData.append("upload_preset", "YOUR_UPLOAD_PRESET"); 
+      formData.append("cloud_name", "YOUR_CLOUD_NAME"); 
+
+      const cloudinaryRes = await axios.post(
+        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",
+        formData
+      );
+      
+      const screenshotUrl = cloudinaryRes.data.secure_url; 
+
+      // 🚀 STEP 2: Send Data to Backend
       const token = localStorage.getItem("token");
       await axios.post(
         "https://collegeconnect-backend-mrkz.onrender.com/api/payment/upi-submit", 
@@ -253,7 +271,7 @@ function Checkout() {
           seniorId: seniorId,
           profileId: profileId,
           amount: amount,
-          utrNumber: utr,
+          paymentScreenshot: screenshotUrl, // 🔥 Image URL
           slot_time: new Date()
         },
         { headers: { "x-auth-token": token } }
@@ -263,6 +281,7 @@ function Checkout() {
       navigate("/booking-success"); 
 
     } catch (err) {
+      console.error(err);
       toast.error(err.response?.data?.msg || "Submission failed. Try again.", { id: toastId });
     } finally {
       setLoading(false);
@@ -300,26 +319,27 @@ function Checkout() {
 
         <div className="divider"></div>
 
-        {/* ⌨️ UTR Input Section */}
+        {/* 📸 Screenshot Upload Section */}
         <div className="input-wrapper">
-          <label>Enter 12-Digit UTR/Ref. Number</label>
+          <label>Upload Payment Screenshot</label>
           <input 
-            type="text" 
-            className="utr-input" 
-            placeholder="e.g. 312345678901" 
-            value={utr}
-            onChange={(e) => setUtr(e.target.value.replace(/\D/g, '').slice(0, 12))}
-            maxLength={12}
+            type="file" 
+            accept="image/*" 
+            className="file-input"
+            onChange={handleImageChange}
           />
+          {previewUrl && (
+            <img src={previewUrl} alt="Preview" className="image-preview" />
+          )}
         </div>
         
-        {/* 🚀 Action Button (Disabled state is neat grey, Active state is glowing red) */}
+        {/* 🚀 Action Button */}
         <button 
           className="submit-btn" 
           onClick={handleUPISubmit}
-          disabled={loading || utr.length < 12}
+          disabled={loading || !imageFile}
         >
-          {loading ? "Verifying..." : "Confirm Payment ✓"}
+          {loading ? "Processing..." : "Confirm Payment ✓"}
         </button>
 
         {/* 🔙 Cancel Link */}

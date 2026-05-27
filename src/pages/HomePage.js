@@ -36,11 +36,11 @@ function HomePage() {
 
   // --- एडवांस्ड और मॉडर्न इनलाइन स्टाइल्स ---
 
-  const primaryColor = "#4F46E5"; 
-  const gradient = "linear-gradient(135deg, #4F46E5, #3B82F6)"; 
-  const lightBg = "#f9fafb"; 
-  const darkText = "#111827"; 
-  const lightText = "#4B5563"; 
+  const primaryColor = "#4F46E5";
+  const gradient = "linear-gradient(135deg, #4F46E5, #3B82F6)";
+  const lightBg = "#f9fafb";
+  const darkText = "#111827";
+  const lightText = "#4B5563";
 
   const heroTitle = {
     fontSize: isMobile ? "2.2rem" : "3rem",
@@ -98,7 +98,7 @@ function HomePage() {
     maxWidth: 1200,
     margin: "0 auto",
   };
-  
+
   const cardBaseShadow = "0 8px 30px rgba(0, 0, 0, 0.06)";
   const cardHoverShadow = `0 12px 35px rgba(79, 70, 229, 0.15)`;
 
@@ -188,32 +188,32 @@ function HomePage() {
           ))}
         </div>
       </section>
-{/* 🗺️ MAP */}
-      <section className="fade-in-up" style={{ 
-        ...sectionBase, 
+      {/* 🗺️ MAP */}
+      <section className="fade-in-up" style={{
+        ...sectionBase,
         /* 🔥 यहाँ मैंने बैकग्राउंड को एक प्रीमियम ग्रेडिएंट में बदल दिया है */
         background: "linear-gradient(rgb(201 209 255) 0%, rgb(243 209 235) 100%)",
         paddingBottom: "80px" // नीचे से थोड़ा स्पेस देने के लिए
       }}>
-        <h2 style={{ 
-          ...sectionTitle, 
-          color: "#2e1065" /* हेडिंग को थोड़ा डार्क पर्पल किया ताकि और अच्छा लगे */ 
+        <h2 style={{
+          ...sectionTitle,
+          color: "#2e1065" /* हेडिंग को थोड़ा डार्क पर्पल किया ताकि और अच्छा लगे */
         }}>
           🗺️ Find Colleges on the Map
         </h2>
-        
-        <p style={{ 
-          ...sectionDesc, 
-          color: "#4b5563" 
+
+        <p style={{
+          ...sectionDesc,
+          color: "#4b5563"
         }}>
           Visually explore the locations of all major REAP colleges across Rajasthan.
         </p>
 
-        <div style={{ 
-          maxWidth: 1100, 
-          margin: "0 auto", 
+        <div style={{
+          maxWidth: 1100,
+          margin: "0 auto",
           borderRadius: '24px', // थोड़ा और गोल किया है 
-          overflow: 'hidden', 
+          overflow: 'hidden',
           boxShadow: "0 20px 40px rgba(0,0,0,0.1)", // कार्ड की शैडो को थोड़ा और 3D बनाया है
           padding: "10px", // CollegeMap के फ्रेम के लिए जगह
         }}>
@@ -234,15 +234,15 @@ function HomePage() {
         </div>
       </section>
 
-     {/* 💡 HOW IT WORKS (Zomato Style Integration) */}
-      <section 
-        className="fade-in-up" 
-        style={{ 
-          opacity: 0, 
+      {/* 💡 HOW IT WORKS (Zomato Style Integration) */}
+      <section
+        className="fade-in-up"
+        style={{
+          opacity: 0,
           transform: "translateY(40px)",
           transition: "all 1s ease",
-            background: "linear-gradient(rgb(232 232 255) 0%, rgb(197 220 255) 100%);", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
-          padding: isMobile ? "60px 20px" : "90px 20px", 
+          background: "linear-gradient(rgb(232 232 255) 0%, rgb(197 220 255) 100%);", /* 🔥 Zomato वाला लाइट ग्रे बैकग्राउंड */
+          padding: isMobile ? "60px 20px" : "90px 20px",
           textAlign: "center" /* टेक्स्ट को बीच में रखने के लिए */
         }}
       >
@@ -252,7 +252,7 @@ function HomePage() {
           Just register, choose your preferred senior, and book a call. Real advice. Real
           students. Real experiences.
         </p>
-        
+
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <HowItWorks />
         </div>
@@ -262,7 +262,7 @@ function HomePage() {
       <section
         className="fade-in-up"
         style={{
-          background: gradient, 
+          background: gradient,
           color: "#fff",
           textAlign: "center",
           padding: isMobile ? "70px 20px" : "90px 20px",

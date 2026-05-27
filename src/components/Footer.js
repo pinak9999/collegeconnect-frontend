@@ -17,13 +17,13 @@ function Footer({ loading }) {
   // Ab har link ek asli page par jayega. Koi 'Coming Soon' alert nahi aayega.
   const linksMap = {
     "Get to Know Us": [
-      { name: "About Us", href: "/about" }, 
-      { name: "Contact Us", href: "/contact" }, 
+      { name: "About Us", href: "/about" },
+      { name: "Contact Us", href: "/contact" },
     ],
     "Legal & Policies": [
-      { name: "Terms & Conditions", href: "/terms" }, 
-      { name: "Privacy Policy", href: "/privacy" }, 
-      { name: "Refund & Cancellation", href: "/refund" }, 
+      { name: "Terms & Conditions", href: "/terms" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Refund & Cancellation", href: "/refund" },
     ],
     "For Students": [
       { name: "Find Mentors", href: "/" },
@@ -44,7 +44,7 @@ function Footer({ loading }) {
       width: "100%",
       background: "#131A22",
       color: "#ddd",
-      marginBottom: isMobile ? "-25px" : "0", 
+      marginBottom: isMobile ? "-25px" : "0",
       fontFamily: "'Poppins', sans-serif",
       padding: isMobile ? "2.5rem 0 1.5rem 0" : "3rem 0 2rem 0",
       borderTop: "1px solid rgba(255,255,255,0.05)",
@@ -56,12 +56,12 @@ function Footer({ loading }) {
       padding: isMobile ? "0 39px" : "0 40px",
       display: "grid",
       gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fit, minmax(200px, 1fr))",
-      gap: isMobile ? "35px 20px" : "40px", 
+      gap: isMobile ? "35px 20px" : "40px",
     },
     column: {
       display: "flex",
       flexDirection: "column",
-      gap: "12px", 
+      gap: "12px",
       width: "100%",
     },
     heading: {
@@ -72,30 +72,30 @@ function Footer({ loading }) {
       letterSpacing: "0.5px",
     },
     link: {
-      color: "#a1a1aa", 
+      color: "#a1a1aa",
       textDecoration: "none",
       fontSize: isMobile ? "0.9rem" : "0.95rem",
       transition: "all 0.3s ease",
       cursor: "pointer",
-      display: "inline-block", 
+      display: "inline-block",
     },
     linkHover: {
-      color: "#38bdf8", 
-      transform: "translateX(6px)", 
+      color: "#38bdf8",
+      transform: "translateX(6px)",
     },
     socialRow: {
       display: "flex",
       justifyContent: "flex-start",
       gap: "12px",
       marginTop: "4px",
-      flexWrap: "wrap", 
+      flexWrap: "wrap",
     },
     socialIcon: {
       width: isMobile ? "36px" : "40px",
       height: isMobile ? "36px" : "40px",
       borderRadius: "50%",
-      background: "rgba(255,255,255,0.05)", 
-      border: "1px solid rgba(255,255,255,0.1)", 
+      background: "rgba(255,255,255,0.05)",
+      border: "1px solid rgba(255,255,255,0.1)",
       color: "#fff",
       display: "flex",
       justifyContent: "center",
@@ -115,46 +115,46 @@ function Footer({ loading }) {
       alignItems: "center",
       gap: "8px",
       padding: "0 15px",
-      gridColumn: "1 / -1", 
+      gridColumn: "1 / -1",
     },
-    brandName: { 
+    brandName: {
       background: "linear-gradient(90deg, #00E0FF, #38BDF8)",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
-      fontWeight: 800, 
-      fontSize: isMobile ? "1.4rem" : "1.6rem" 
+      fontWeight: 800,
+      fontSize: isMobile ? "1.4rem" : "1.6rem"
     },
     bottomText: { fontSize: "0.8rem", color: "#64748b", marginTop: "6px" },
     tagline: {
-      fontSize: isMobile ? "0.9rem" : "0.95rem", 
-      color: "#94a3b8", 
+      fontSize: isMobile ? "0.9rem" : "0.95rem",
+      color: "#94a3b8",
       fontWeight: 400,
       textAlign: "center",
-      margin:"-4px",
+      margin: "-4px",
     },
   };
 
   return (
     <footer style={styles.footer}>
       <div style={styles.container}>
-        
+
         {/* Dynamic Columns Rendering - Sare Links 100% Working Hain */}
         {Object.keys(linksMap).map((colName) => (
           <div key={colName} style={styles.column}>
             <h4 style={styles.heading}>{colName}</h4>
             {linksMap[colName].map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  style={{
-                    ...styles.link,
-                    ...(hovered === item.name ? styles.linkHover : {}),
-                  }}
-                  onMouseEnter={() => setHovered(item.name)}
-                  onMouseLeave={() => setHovered("")}
-                >
-                  {item.name}
-                </Link>
+              <Link
+                key={item.name}
+                to={item.href}
+                style={{
+                  ...styles.link,
+                  ...(hovered === item.name ? styles.linkHover : {}),
+                }}
+                onMouseEnter={() => setHovered(item.name)}
+                onMouseLeave={() => setHovered("")}
+              >
+                {item.name}
+              </Link>
             ))}
           </div>
         ))}
