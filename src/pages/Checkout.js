@@ -252,16 +252,17 @@ function Checkout() {
       const formData = new FormData();
       formData.append("file", imageFile);
       
-      // ⚠️ IMPORTANT: REPLACE THESE WITH YOUR ACTUAL CLOUDINARY DETAILS
-      formData.append("upload_preset", "YOUR_UPLOAD_PRESET"); 
-      formData.append("cloud_name", "YOUR_CLOUD_NAME"); 
+      // 🔥 यहाँ आपका असली Upload Preset आ गया
+      formData.append("upload_preset", "cphtfovt"); 
+      
+      // 🔥 यहाँ आपका असली Cloud Name आ गया
+      formData.append("cloud_name", "dun5iayt2"); 
 
+      // 🔥 URL में भी आपका Cloud Name आ गया
       const cloudinaryRes = await axios.post(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",
+        "https://api.cloudinary.com/v1_1/dun5iayt2/image/upload",
         formData
       );
-      
-      const screenshotUrl = cloudinaryRes.data.secure_url; 
 
       // 🚀 STEP 2: Send Data to Backend
       const token = localStorage.getItem("token");
